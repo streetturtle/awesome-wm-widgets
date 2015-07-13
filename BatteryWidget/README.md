@@ -7,18 +7,14 @@ And a pop-up window, which shows when you hover over it: ![Battery Widget](./bat
 
 ## Installation
 
-This widget ueses the output of acpi tool.
-
+This widget uses the output of acpi tool.
 - install `acpi` tool:
--
-{% highlight bash %}
+```
 sudo apt-get install acpi
-{% endhighlight %}
-
+```
 - clone/copy battery.lua file and battery-icons folder to your ~/home/username/.config/awesome/ folder;
 
 - add battery widget to your wibox in rc.lua:
-
-{% highlight lua%}
+```
 right_layout:add(batteryIcon)
-{% endhighlight %}
+```
