@@ -14,7 +14,9 @@ sudo apt-get install acpi
 ```
 - clone/copy battery.lua file and battery-icons folder to your ~/home/username/.config/awesome/ folder;
 
-- add battery widget to your wibox in rc.lua:
+- include `battery.lua` and add battery widget to your wibox in rc.lua:
 ```
+require("battery")
+...
 right_layout:add(batteryIcon)
 ```
