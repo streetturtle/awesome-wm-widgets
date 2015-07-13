@@ -1,10 +1,9 @@
 local wibox = require("wibox")
 local awful = require("awful")
 
-volume_widget = wibox.widget.textbox()
-volume_icon = wibox.widget.imagebox()
+volume_widget = wibox.widget.imagebox()
 
-function update_volume(widget, icon)
+function update_volume(widget)
   local fd = io.popen("amixer -D pulse sget Master")
   local status = fd:read("*all")
   fd:close()
@@ -25,11 +24,11 @@ function update_volume(widget, icon)
     elseif (volume >= 80 and volume <= 100) then volumeLevel=9
   end
 
-  icon:set_image("/home/pashik/.config/awesome/volume-icons/" .. volumeLevel .. ".png")
+  widget:set_image("/home/pashik/.config/awesome/volume-icons/" .. volumeLevel .. ".png")
 end
 
-update_volume(volume_widget, volume_icon)
+update_volume(volume_widget)
 
 mytimer = timer({ timeout = 0.2 })
-mytimer:connect_signal("timeout", function () update_volume(volume_widget, volume_icon) end)
+mytimer:connect_signal("timeout", function () update_volume(volume_widget) end)
 mytimer:start()
