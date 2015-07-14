@@ -10,7 +10,7 @@ This widget represents the sound level: ![Volume Wiget](./volWid.png)
 - change path to the icons in `volume.lua`:
 
 ```
-  widget:set_image("/home/<username>/.config/awesome/volume-icons/" .. volumeLevel .. ".png")
+widget:set_image("/home/<username>/.config/awesome/volume-icons/" .. volumeLevel .. ".png")
 ```
 
 - include `volume.lua` and add volume widget to your wibox in rc.lua:
