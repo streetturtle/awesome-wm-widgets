@@ -5,7 +5,7 @@ This widget consists of
 
  - an icon which shows the battery status: ![Battery Widget](./batWid1.png)
  - a pop-up window, which shows up when you hover over it: ![Battery Widget](./batWid2.png)
- - a pop-up warning message which appears when battery level is less that 15%. 
+ - a pop-up warning message which appears when battery level is less that 15%: ![Battery Widget](./batWid3.png) 
 
 ## Installation
 
