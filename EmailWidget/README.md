@@ -1,4 +1,4 @@
-This widget consists of an icon with counter which shows number of unread emails: ![email icon]({./emailWidgetScrnsht.png)
+This widget consists of an icon with counter which shows number of unread emails: ![email icon](./emailWidgetScrnsht.png)
 and a popup message which appears when mouse hovers over an icon: ![email popup](./emailWidgetScrnsht2.png)
 
 ## Installation
