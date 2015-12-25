@@ -20,8 +20,9 @@ function showWarningWidgetPopup()
       title = "Battery dying",
       timeout = 5, hover_timeout = 0.5,
       position = "bottom_right",
-      bg = "#ff1122",
-      width = 160,
+      bg = "#F06060",
+      fg = "#EEE9EF",
+      width = 200,
     })
   end
 end
