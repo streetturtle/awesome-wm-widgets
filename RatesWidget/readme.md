@@ -1,3 +1,3 @@
 # Rates Widget
 
-Widget for Awesome WM which displays the currency rate between Swiss Frank and Euro. For the rate API it uses [fixer.io](http://fixer.io/) - JSON API for foreign exchange rates and currency conversion. And a python script whihc calls this API.
+Widget for Awesome WM which displays the currency rate between Swiss Frank and Euro. For the rate API it uses [fixer.io](http://fixer.io/) - JSON API for foreign exchange rates and currency conversion. And a python script which calls this API.
