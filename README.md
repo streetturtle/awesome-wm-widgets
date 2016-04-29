@@ -2,6 +2,12 @@
 
 Set of simple widgets for Awesome Window Manager consists of following widgets:
 
+ - [Battery Widget](https://github.com/streetturtle/AwesomeWM#batter-widget)
+ - [Email Widget](https://github.com/streetturtle/AwesomeWM#email-widget)
+ - [Rates Widget](https://github.com/streetturtle/AwesomeWM#rates-widget)
+ - [Spotify Widget](https://github.com/streetturtle/AwesomeWM#spotify-widget)
+ - [Volume Control Widget](https://github.com/streetturtle/AwesomeWM#volume-control-widget)
+
 ## Battery widget
 
 This widget consists of
