@@ -63,7 +63,7 @@ python ~/.config/awesome/email/countUnreadEmails.py
 python ~/.config/awesome/email/readEmails.py
 ```
 
-Note that getting number of unread emails could take some time, so instead of `pread` or `spawn_with_shell` functions I use DBus, you can read more about it in [this]({{site.url}}/2015/09/fix-awesome-freezes) post.
+Note that getting number of unread emails could take some time, so instead of `pread` or `spawn_with_shell` functions I use DBus, you can read more about it in [this](http://pavelmakhov.com/2015/09/fix-awesome-freezes) post.
 
 ---
 
