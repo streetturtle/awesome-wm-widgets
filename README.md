@@ -4,9 +4,12 @@ Set of simple widgets for Awesome Window Manager consists of following widgets:
 
  - [Battery Widget](https://github.com/streetturtle/AwesomeWM#battery-widget)
  - [Email Widget](https://github.com/streetturtle/AwesomeWM#email-widget)
+ - [Mouse Battery Widget](https://github.com/streetturtle/AwesomeWM#mouse-battery-widget)
  - [Rates Widget](https://github.com/streetturtle/AwesomeWM#rates-widget)
  - [Spotify Widget](https://github.com/streetturtle/AwesomeWM#spotify-widget)
  - [Volume Control Widget](https://github.com/streetturtle/AwesomeWM#volume-control-widget)
+
+Note that these widget works with Awesome WM 3.5 version. I'm currently migrating them to 4.0.
 
 ## Battery widget
 
@@ -58,12 +61,29 @@ right_layout:add(emailWidget_counter)
 
 This widget uses the output of two python scripts, first is called every 5 seconds - it returns number of unread emails and second is called when mouse hovers over an icon and displays content of those emails. For both of them you'll need to provide your credentials and imap server. For testing they can simply be called from console:
 
-``` bash
+```bash
 python ~/.config/awesome/email/countUnreadEmails.py
 python ~/.config/awesome/email/readEmails.py
 ```
 
 Note that getting number of unread emails could take some time, so instead of `pread` or `spawn_with_shell` functions I use DBus, you can read more about it in [this](http://pavelmakhov.com/2015/09/fix-awesome-freezes) post.
+
+---
+
+## Mouse Battery Widget
+
+This widget shows the battery status of wireless mouse: ![screenshot](https://raw.githubusercontent.com/streetturtle/AwesomeWM/master/MouseBatteryWidget/mouse-battery.png)
+
+ Include `mouse-battery` and add battery widget to your wibox in rc.lua (you can use both icon and text, or any of them separately):
+
+```lua
+require("mouse-battery")
+...
+right_layout:add(mouse_battery_icon) -- icon
+right_layout:add(mouse_widget)       -- text
+```
+
+Read more about how it works here: [Mouse Battery status widget for Awesome WM](http://pavelmakhov.com/2017/01/awesome-wm-mouse-battery)
 
 ---
 
@@ -81,7 +101,7 @@ More about this widget in this two posts:
 Widget displaying currently playing song by Spotify application:
 ![screenshot](https://raw.githubusercontent.com/streetturtle/AwesomeWM/master/Spotify/screenshot.png)
 
-You can read more about spotify integration in this blog [post]( http://pavelmakhov.com/2016/02/awesome-wm-spotify).
+You can read more about spotify integration in this blog [post](http://pavelmakhov.com/2016/02/awesome-wm-spotify).
 
 ---
 
