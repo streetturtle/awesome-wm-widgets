@@ -9,7 +9,7 @@ Set of simple widgets for Awesome Window Manager consists of following widgets:
  - [Spotify Widget](https://github.com/streetturtle/AwesomeWM#spotify-widget)
  - [Volume Control Widget](https://github.com/streetturtle/AwesomeWM#volume-control-widget)
 
-Note that these widget works with Awesome WM 3.5 version. I'm currently migrating them to 4.0.
+Note that these widgets work with Awesome WM 3.5 version. I'm currently migrating them to 4.0.
 
 ## Battery widget
 
