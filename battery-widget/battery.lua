@@ -3,16 +3,19 @@ local awful = require("awful")
 local naughty = require("naughty")
 local watch = require("awful.widget.watch")
 
+batteryIcon = wibox.widget { widget = wibox.widget.imagebox }
+
+-- acpi sample outputs
 -- Battery 0: Discharging, 75%, 01:51:38 remaining
 -- Battery 0: Charging, 53%, 00:57:43 until charged
 
-batteryIcon = wibox.widget { widget = wibox.widget.imagebox }
+local path_to_icons = "/usr/share/icons/Arc-Icons/panel/22/"
 
 watch(
     "acpi", 10,
     function(widget, stdout, stderr, exitreason, exitcode)
         local batteryType
-        local bar, status, charge, time = string.match(stdout, '(.+): (%a+), (%d%d)%%, (.+)')
+        local _, status, charge, time = string.match(stdout, '(.+): (%a+), (%d%d)%%, (.+)')
         charge = tonumber(charge)
         if (charge >= 0 and charge < 20) then 
             batteryType="battery-empty"
@@ -25,7 +28,7 @@ watch(
         if status == 'Charging' then 
             batteryType = batteryType .. '-charging'
         end
-        batteryIcon.image = "/usr/share/icons/Arc-Icons/panel/22/" .. batteryType .. ".svg"
+        batteryIcon.image = path_to_icons .. batteryType .. ".svg"
     end
 )
 
