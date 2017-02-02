@@ -1,7 +1,7 @@
 # Email widget
 
 This widget consists of an icon with counter which shows number of unread emails: ![email icon](./em-wid-1.png)
-and a popup message which appears when mouse hovers over an icon: ![email popup](./em-wid-1.png)
+and a popup message which appears when mouse hovers over an icon: ![email popup](./em-wid-2.png)
 
 Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
 
