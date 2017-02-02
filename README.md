@@ -4,18 +4,20 @@ Set of super simple widgets compatible with Awesome Window Manager v.4.
 
 ![screenshot](https://github.com/streetturtle/AwesomeWM/blob/master/screenshot.png?raw=true)
 
-Consists of:
+From left to right:
 
-- [battery-widget](https://github.com/streetturtle/AwesomeWM/tree/master/battery-widget)
-- [brightness-widget](https://github.com/streetturtle/AwesomeWM/tree/master/brightness-widget)
+- [spotify-widget](https://github.com/streetturtle/AwesomeWM/tree/master/spotify-widget) / [rhythmbox-widget](https://github.com/streetturtle/AwesomeWM/tree/master/rhythmbox-widget)
 - [email-widget](https://github.com/streetturtle/AwesomeWM/tree/master/email-widget)
-- [rhythmbox-widget](https://github.com/streetturtle/AwesomeWM/tree/master/rhythmbox-widget)
-- [spotify-widget](https://github.com/streetturtle/AwesomeWM/tree/master/spotify-widget)
+- [brightness-widget](https://github.com/streetturtle/AwesomeWM/tree/master/brightness-widget)
 - [volume-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volume-widget)
+- [battery-widget](https://github.com/streetturtle/AwesomeWM/tree/master/battery-widget)
 
 These widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily changed to any other icon theme.
 
 # Installation
 
-[Install](https://github.com/horst3180/arc-icon-theme#installation) Arc icon theme.
-Follow installation instruction of each widget:
+[Install](https://github.com/horst3180/arc-icon-theme#installation) Arc icon theme and follow installation instructions of each widget.
+
+In case of any questions/suggestions don't hesitate to contact me, I would be happy to help =)
+
+PRs/issues are welcome!
