@@ -18,9 +18,9 @@ $ acpi
 Battery 0: Discharging, 66%, 02:34:06 remaining
 ```
 
-- clone/copy battery.lua file to ~/.config/awesome/ folder;
+- clone/copy **battery.lua** file to **~/.config/awesome/** folder;
 
-- include `battery.lua` and add battery widget to your wibox in rc.lua:
+- include **battery.lua** and add battery widget to your wibox in **rc.lua**:
 
 ```lua
 require("battery")
