@@ -12,7 +12,7 @@ email_icon = wibox.widget.imagebox()
 email_icon:set_image(path_to_icons .. "/mail-mark-new.png")
 
 watch(
-    "python /home/<username>/.config/awesome/email/count_unread_emails.py", 20,
+    "python /home/<username>/.config/awesome/email-widget/count_unread_emails.py", 20,
     function(widget, stdout, stderr, exitreason, exitcode)
         local unread_emails_num = tonumber(stdout)
         if (unread_emails_num > 0) then
@@ -27,7 +27,7 @@ watch(
 
 
 function show_emails()
-    awful.spawn.easy_async([[bash -c 'python /home/<username>/.config/awesome/email/read_unread_emails.py']],
+    awful.spawn.easy_async([[bash -c 'python /home/<username>/.config/awesome/email-widget/read_unread_emails.py']],
         function(stdout, stderr, reason, exit_code)   
             naughty.notify{
                 text = stdout,
