@@ -3,7 +3,7 @@ local awful = require("awful")
 local naughty = require("naughty")
 local watch = require("awful.widget.watch")
 
-batteryIcon = wibox.widget { widget = wibox.widget.imagebox }
+battery_widget = wibox.widget { widget = wibox.widget.imagebox }
 
 -- acpi sample outputs
 -- Battery 0: Discharging, 75%, 01:51:38 remaining
@@ -28,7 +28,7 @@ watch(
         if status == 'Charging' then 
             batteryType = batteryType .. '-charging'
         end
-        batteryIcon.image = path_to_icons .. batteryType .. ".svg"
+        battery_widget.image = path_to_icons .. batteryType .. ".svg"
     end
 )
 
@@ -58,4 +58,4 @@ function show_battery_warning()
 end
 
 -- popup with battery info
-batteryIcon:connect_signal("mouse::enter", function() show_battery_status() end)
+battery_widget:connect_signal("mouse::enter", function() show_battery_status() end)
