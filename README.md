@@ -12,7 +12,7 @@ From left to right:
 - [volume-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volume-widget)
 - [battery-widget](https://github.com/streetturtle/AwesomeWM/tree/master/battery-widget)
 
-These widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily changed to any other icon theme. If you want to have separators between widget like on screenshot create text widget with ` : ` and place it between widgets:
+These widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily changed to any other icon theme. If you want to have separators between widgets like on the screenshot create text widget with ` : ` and place it between widgets:
 
 ```lua
 ...
