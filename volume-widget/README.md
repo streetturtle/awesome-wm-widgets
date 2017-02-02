@@ -1,8 +1,6 @@
 # Volume widget
 
-Simple and easy-to-install widget for Awesome Window Manager.
-
-This widget represents the sound level: ![Volume Wiget](./vol-widget-1.png)
+Simple and easy-to-install widget for Awesome Window Manager which represents the sound level: ![Volume Wiget](./vol-widget-1.png)
 
 ## Installation
 
