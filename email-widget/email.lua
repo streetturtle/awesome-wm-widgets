@@ -3,7 +3,7 @@ local awful = require("awful")
 local naughty = require("naughty")
 local watch = require("awful.widget.watch")
 
-local path_to_icons = "/usr/share/icons/Arc-Icons/actions/22/"
+local path_to_icons = "/usr/share/icons/Arc/actions/22/"
 
 email_widget = wibox.widget.textbox()
 email_widget:set_font('Play 9')

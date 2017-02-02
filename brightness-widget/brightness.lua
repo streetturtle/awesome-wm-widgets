@@ -6,7 +6,7 @@ brightness_widget = wibox.widget.textbox()
 brightness_widget:set_font('Play 9')
 
 brightness_icon = wibox.widget.imagebox()
-brightness_icon:set_image("/usr/share/icons/Arc-Icons/actions/22/object-inverse.png")
+brightness_icon:set_image("/usr/share/icons/Arc/actions/22/object-inverse.png")
 
 watch(
     "xbacklight -get", 1,

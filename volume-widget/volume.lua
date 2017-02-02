@@ -14,7 +14,7 @@ function update_volume()
 			elseif (volume >= 60 and volume < 80) then volume_icon_name="audio-volume-medium-panel"
 			elseif (volume >= 80 and volume <= 100) then volume_icon_name="audio-volume-high-panel"
 			end
-		volume_icon:set_image("/usr/share/icons/Arc-Icons/panel/22/" .. volume_icon_name .. ".svg")
+		volume_icon:set_image("/usr/share/icons/Arc/panel/22/" .. volume_icon_name .. ".svg")
 	end)
 end
 

@@ -9,7 +9,7 @@ battery_widget = wibox.widget { widget = wibox.widget.imagebox }
 -- Battery 0: Discharging, 75%, 01:51:38 remaining
 -- Battery 0: Charging, 53%, 00:57:43 until charged
 
-local path_to_icons = "/usr/share/icons/Arc-Icons/panel/22/"
+local path_to_icons = "/usr/share/icons/Arc/panel/22/"
 
 watch(
     "acpi", 10,
@@ -17,10 +17,10 @@ watch(
         local batteryType
         local _, status, charge, time = string.match(stdout, '(.+): (%a+), (%d%d)%%, (.+)')
         charge = tonumber(charge)
-        if (charge >= 0 and charge < 20) then 
+        if (charge >= 0 and charge < 15) then 
             batteryType="battery-empty"
             show_battery_warning()
-        elseif (charge >= 20 and charge < 40) then batteryType="battery-caution"
+        elseif (charge >= 15 and charge < 40) then batteryType="battery-caution"
         elseif (charge >= 40 and charge < 60) then batteryType="battery-low"
         elseif (charge >= 60 and charge < 80) then batteryType="battery-good"
         elseif (charge >= 80 and charge <= 100) then batteryType="battery-full"

@@ -7,7 +7,7 @@ spotify_widget:set_font('Play 9')
 
 -- optional icon, could be replaced by spotfiy logo (https://developer.spotify.com/design/)
 spotify_icon = wibox.widget.imagebox()
-spotify_icon:set_image("/usr/share/icons/Arc-Icons/devices/22/audio-headphones.png")
+spotify_icon:set_image("/usr/share/icons/Arc/devices/22/audio-headphones.png")
 
 watch(
     "sp current-oneline", 1,

@@ -7,6 +7,8 @@ This widget consists of
  - a pop-up window, which shows up when you hover over an icon: ![Battery Widget](./bat-wid-2.png)
  - a pop-up warning message which appears on bottom right corner when battery level is less that 15%: ![Battery Widget](./bat-wid-3.png) 
 
+Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
+
 ## Installation
 
 This widget reads the output of acpi tool.

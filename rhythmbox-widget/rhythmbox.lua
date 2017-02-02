@@ -6,7 +6,7 @@ rhythmbox_widget = wibox.widget.textbox()
 rhythmbox_widget:set_font('Play 9')
 
 rhythmbox_icon = wibox.widget.imagebox()
-rhythmbox_icon:set_image("/usr/share/icons/Arc-Icons/devices/22/audio-speakers.png")
+rhythmbox_icon:set_image("/usr/share/icons/Arc/devices/22/audio-speakers.png")
 
 watch(
     "rhythmbox-client --no-start --print-playing", 1,

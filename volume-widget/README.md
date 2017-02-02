@@ -4,6 +4,8 @@ Simple and easy-to-install widget for Awesome Window Manager.
 
 This widget represents the sound level: ![Volume Wiget](./vol-wid-1.png)
 
+Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
+
 ## Installation
 
 - clone/copy **volume.lua** file;
