@@ -18,6 +18,6 @@ These widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) 
 
 [Install](https://github.com/horst3180/arc-icon-theme#installation) Arc icon theme and follow installation instructions of each widget.
 
-In case of any questions/suggestions don't hesitate to contact me, I would be happy to help =)
+In case of any questions/suggestions don't hesitate to contact me, I would be happy to help :)
 
 PRs/issues are welcome!
