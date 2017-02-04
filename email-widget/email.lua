@@ -14,7 +14,7 @@ email_icon:set_image(path_to_icons .. "/mail-mark-new.png")
 watch(
     "python /home/<username>/.config/awesome/email-widget/count_unread_emails.py", 20,
     function(widget, stdout, stderr, exitreason, exitcode)
-        local unread_emails_num = tonumber(stdout)
+        local unread_emails_num = tonumber(stdout) or 0
         if (unread_emails_num > 0) then
         	email_icon:set_image(path_to_icons .. "/mail-mark-unread.png")
 	        email_widget:set_text(stdout)
