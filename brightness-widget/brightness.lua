@@ -1,12 +1,19 @@
 local wibox = require("wibox")
 local awful = require("awful")
+local gears = require("gears")
 local watch = require("awful.widget.watch")
 
 brightness_widget = wibox.widget.textbox()
 brightness_widget:set_font('Play 9')
 
-brightness_icon = wibox.widget.imagebox()
-brightness_icon:set_image("/usr/share/icons/Arc/actions/22/object-inverse.png")
+brightness_icon = wibox.widget {
+    {
+    	image = "/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg",
+    	resize = false,
+        widget = wibox.widget.imagebox,
+    },
+    layout = wibox.container.margin(brightness_icon, 0, 0, 3)
+}
 
 watch(
     "xbacklight -get", 1,
