@@ -25,8 +25,8 @@ watch(
     "acpi", 10,
     function(widget, stdout, stderr, exitreason, exitcode)
         local batteryType
-        local _, status, charge, time = string.match(stdout, '(.+): (%a+), (%d?%d%d)%%,? ?.*')
-        charge = tonumber(charge)
+        local _, status, charge_str, time = string.match(stdout, '(.+): (%a+), (%d?%d%d)%%,? ?.*')
+        local charge = tonumber(charge_str)
         if (charge >= 0 and charge < 15) then 
             batteryType="battery-empty"
             show_battery_warning()
