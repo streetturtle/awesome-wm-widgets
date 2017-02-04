@@ -7,6 +7,8 @@ local watch = require("awful.widget.watch")
 -- Battery 0: Discharging, 75%, 01:51:38 remaining
 -- Battery 0: Charging, 53%, 00:57:43 until charged
 
+local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
+
 battery_widget = wibox.widget { 
     {
         id = "icon",
@@ -19,8 +21,6 @@ battery_widget = wibox.widget {
     end
 }
 
-local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
-
 watch(
     "acpi", 10,
     function(widget, stdout, stderr, exitreason, exitcode)
@@ -28,15 +28,17 @@ watch(
         local _, status, charge_str, time = string.match(stdout, '(.+): (%a+), (%d?%d%d)%%,? ?.*')
         local charge = tonumber(charge_str)
         if (charge >= 0 and charge < 15) then 
-            batteryType="battery-empty"
+            batteryType="battery-empty%s-symbolic"
             show_battery_warning()
-        elseif (charge >= 15 and charge < 40) then batteryType="battery-caution-symbolic"
-        elseif (charge >= 40 and charge < 60) then batteryType="battery-low-symbolic"
-        elseif (charge >= 60 and charge < 80) then batteryType="battery-good-symbolic"
-        elseif (charge >= 80 and charge <= 100) then batteryType="battery-full-symbolic"
+        elseif (charge >= 15 and charge < 40) then batteryType="battery-caution%s-symbolic"
+        elseif (charge >= 40 and charge < 60) then batteryType="battery-low%s-symbolic"
+        elseif (charge >= 60 and charge < 80) then batteryType="battery-good%s-symbolic"
+        elseif (charge >= 80 and charge <= 100) then batteryType="battery-full%s-symbolic"
         end
         if status == 'Charging' then 
-            batteryType = batteryType .. '-charging'
+            batteryType = string.format(batteryType,'-charging')
+        else
+            batteryType = string.format(batteryType,'')
         end
         battery_widget.image = path_to_icons .. batteryType .. ".svg"
     end
