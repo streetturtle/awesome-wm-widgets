@@ -55,7 +55,9 @@ the same name. Here is the list of icons used:
   <tr>
     <td>brightness-widget</td>
     <td>display-brightness-symbolic.svg</td>
-    <td></td>
+    <td><img src="https://cdn.rawgit.com/horst3180/arc-icon-theme/master/Arc/status/symbolic/display-brightness-symbolic
+    .svg">
+    </td>
     <td>/usr/share/icons/Arc/status/symbolic/</td>
   </tr>
   <tr>
