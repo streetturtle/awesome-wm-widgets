@@ -12,7 +12,8 @@ From left to right:
 - [volume-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volume-widget)
 - [battery-widget](https://github.com/streetturtle/AwesomeWM/tree/master/battery-widget)
 
-These widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily changed to any other icon theme. If you want to have separators between widgets like on the screenshot create text widget with ` : ` and place it between widgets:
+These widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily 
+changed to any other icon theme. If you want to have separators between widgets like on the screenshot create text widget with ` : ` and place it between widgets:
 
 ```lua
 ...
@@ -30,6 +31,86 @@ sprtr,
 # Installation
 
 [Install](https://github.com/horst3180/arc-icon-theme#installation) Arc icon theme and follow installation instructions of each widget.
+
+Alternatively you can just download the icons which are used from the Arc repository. Or create your own icons with 
+the same name. Here is the list of icons used:
+
+<table>
+  <tr>
+    <th>Widget</th>
+    <th>Icon name</th>
+    <th>Icon</th>
+    <th>Arc Path</th>
+  </tr>
+  <tr>
+    <td rowspan="2">email-widget</td>
+    <td>mail-message-new.png<br></td>
+    <td></td>
+    <td rowspan="2">/usr/share/icons/Arc/actions/22/</td>
+  </tr>
+  <tr>
+    <td>mail-mark-unread.png</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>brightness-widget</td>
+    <td>display-brightness-symbolic.svg</td>
+    <td></td>
+    <td>/usr/share/icons/Arc/status/symbolic/</td>
+  </tr>
+  <tr>
+    <td rowspan="4">volume-widget</td>
+    <td>audio-volume-muted-symbolic.svg</td>
+    <td></td>
+    <td rowspan="4">/usr/share/icons/Arc/status/symbolic/</td>
+  </tr>
+  <tr>
+    <td>audio-volume-low-symbolic.svg</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>audio-volume-medium-symbolic.svg</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>audio-volume-high-symbolic.svg</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td rowspan="8">battery-widget</td>
+    <td>battery-caution-symbolic.svg</td>
+    <td></td>
+    <td rowspan="8">/usr/share/icons/Arc/status/symbolic/</td>
+  </tr>
+  <tr>
+    <td>battery-caution-charging-symbolic.svg</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>battery-low-symbolic.svg</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>battery-low-charging-symbolic.svg</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>battery-good-symbolic.svg</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>battery-good-charging-symbolic.svg</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>battery-full-symbolic.svg</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>battery-full-charging-symbolic.svg</td>
+    <td></td>
+  </tr>
+</table>
 
 In case of any questions/suggestions don't hesitate to contact me, I would be happy to help :)
 
