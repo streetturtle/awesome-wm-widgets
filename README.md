@@ -39,13 +39,11 @@ the same name. Here is the list of icons used:
   <tr>
     <th>Widget</th>
     <th>Icon name</th>
-    <th>Icon</th>
     <th>Arc Path</th>
   </tr>
   <tr>
     <td rowspan="2">email-widget</td>
     <td>mail-message-new.png<br></td>
-    <td></td>
     <td rowspan="2">/usr/share/icons/Arc/actions/22/</td>
   </tr>
   <tr>
@@ -55,14 +53,11 @@ the same name. Here is the list of icons used:
   <tr>
     <td>brightness-widget</td>
     <td>display-brightness-symbolic.svg</td>
-    <td><img src="https://cdn.rawgit
-    .com/horst3180/arc-icon-theme/master/Arc/status/symbolic/display-brightness-symbolic.svg></td>
     <td>/usr/share/icons/Arc/status/symbolic/</td>
   </tr>
   <tr>
     <td rowspan="4">volume-widget</td>
     <td>audio-volume-muted-symbolic.svg</td>
-    <td></td>
     <td rowspan="4">/usr/share/icons/Arc/status/symbolic/</td>
   </tr>
   <tr>
@@ -80,7 +75,6 @@ the same name. Here is the list of icons used:
   <tr>
     <td rowspan="8">battery-widget</td>
     <td>battery-caution-symbolic.svg</td>
-    <td></td>
     <td rowspan="8">/usr/share/icons/Arc/status/symbolic/</td>
   </tr>
   <tr>
