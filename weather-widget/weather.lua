@@ -52,7 +52,7 @@ local icon_map = {
     ["50n"] = "weather-fog-symbolic.svg"
 }
 
--- handy function to convert temperatire in Kelvin to Celcius
+-- handy function to convert temperature from Kelvin to Celcius
 function to_celcius(kelvin)
     return math.floor(tonumber(kelvin) - 273.15)
 end
