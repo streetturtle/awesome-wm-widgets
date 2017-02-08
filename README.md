@@ -7,6 +7,7 @@ Set of super simple widgets compatible with Awesome Window Manager v.4.
 From left to right:
 
 - [spotify-widget](https://github.com/streetturtle/AwesomeWM/tree/master/spotify-widget) / [rhythmbox-widget](https://github.com/streetturtle/AwesomeWM/tree/master/rhythmbox-widget)
+- [weather-widget](https://github.com/streetturtle/AwesomeWM/tree/master/weather-widget)
 - [email-widget](https://github.com/streetturtle/AwesomeWM/tree/master/email-widget)
 - [brightness-widget](https://github.com/streetturtle/AwesomeWM/tree/master/brightness-widget)
 - [volume-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volume-widget)
