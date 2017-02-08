@@ -8,7 +8,7 @@ Note that widget uses the Arc icon theme, so it should be [installed](https://gi
 
  - install lua socket
 ```bash
-$ sudo apt-get install luasockets
+$ sudo apt-get install lua-socket
 ```
 
  - download json parser for lua: https://github.com/rxi/json.lua
