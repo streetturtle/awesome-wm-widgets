@@ -21,6 +21,15 @@ battery_widget = wibox.widget {
     end
 }
 
+-- Popup with battery info
+battery_popup = awful.tooltip({objects = {battery_widget}})
+
+-- To use colors from beautiful theme put
+-- following lines in rc.lua before require("battery")
+--
+-- beautiful.tooltip_fg = beautiful.fg_normal
+-- beautiful.tooltip_bg = beautiful.bg_normal
+
 watch(
     "acpi", 10,
     function(widget, stdout, stderr, exitreason, exitcode)
@@ -41,21 +50,12 @@ watch(
             batteryType = string.format(batteryType,'')
         end
         battery_widget.image = path_to_icons .. batteryType .. ".svg"
+
+        -- Update popup text
+        -- TODO: Filter long lines
+        battery_popup.text = string.gsub(stdout, "\n$", "")
     end
 )
-
-function show_battery_status()
-    awful.spawn.easy_async([[bash -c 'acpi']],
-        function(stdout, stderr, reason, exit_code)   
-            naughty.notify{
-                text = stdout,
-                title = "Battery status",
-                timeout = 5, hover_timeout = 0.5,
-                width = 200,
-            }
-        end
-    )
-end
 
 function show_battery_warning()
     naughty.notify{
@@ -70,6 +70,3 @@ function show_battery_warning()
     width = 300,
 }
 end
-
--- popup with battery info
-battery_widget:connect_signal("mouse::enter", function() show_battery_status() end)
