@@ -57,6 +57,21 @@ watch(
     end
 )
 
+-- Alternative to tooltip - popup message shown by naughty library. You can compare both and choose the preferred one
+--function show_battery_status()
+--    awful.spawn.easy_async([[bash -c 'acpi']],
+--        function(stdout, stderr, reason, exit_code)
+--            naughty.notify{
+--                text = stdout,
+--                title = "Battery status",
+--                timeout = 5, hover_timeout = 0.5,
+--                width = 200,
+--            }
+--        end
+--    )
+--end
+--battery_widget:connect_signal("mouse::enter", function() show_battery_status() end)
+
 function show_battery_warning()
     naughty.notify{
     icon = "/home/pashik/.config/awesome/nichosi.png",
