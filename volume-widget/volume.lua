@@ -1,7 +1,6 @@
 local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
-local gears = require("gears")
 
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 
@@ -17,6 +16,20 @@ volume_widget = wibox.widget {
         self.icon.image = path
     end
 }
+
+--[[ allows control volume level by
+- clicking on the widget to mute/unmute
+- scrolling when curson is over the widget
+]]
+volume_widget:connect_signal("button::press", function(_,_,_,button)
+    if (button == 4) then
+        awful.spawn("amixer -D pulse sset Master 5%+")
+    elseif (button == 5) then
+        awful.spawn("amixer -D pulse sset Master 5%-")
+    elseif (button == 1) then
+        awful.spawn("amixer -D pulse sset Master toggle")
+    end
+end)
 
 watch(
     'amixer -D pulse sget Master', 1,
