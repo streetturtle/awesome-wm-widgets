@@ -7,8 +7,8 @@ local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 volume_widget = wibox.widget {
     {
         id = "icon",
-   		image = path_to_icons .. "audio-volume-muted-symbolic.svg",
-		resize = false,
+   	image = path_to_icons .. "audio-volume-muted-symbolic.svg",
+	resize = false,
         widget = wibox.widget.imagebox,
     },
     layout = wibox.container.margin(brightness_icon, 0, 0, 3),
@@ -17,7 +17,7 @@ volume_widget = wibox.widget {
     end
 }
 
---[[ allows control volume level by
+--[[ allows control volume level by:
 - clicking on the widget to mute/unmute
 - scrolling when curson is over the widget
 ]]
