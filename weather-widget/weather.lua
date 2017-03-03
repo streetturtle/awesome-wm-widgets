@@ -68,6 +68,7 @@ weather_timer:connect_signal("timeout", function ()
         temp_widget:set_text(to_celcius(resp.main.temp))
     end
 end)
+weather_timer:start()
 weather_timer:emit_signal("timeout")
 
 weather_widget:connect_signal("mouse::enter", function()
