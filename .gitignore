@@ -44,3 +44,4 @@ luac.out
 
 # Jekyll
 .sass-cache
+_site

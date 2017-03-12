@@ -1,0 +1,13 @@
+---
+layout: page
+---
+
+<ul class="tabs">
+    {% for widget in site.widgets %}
+    <li class="tab col s2"><a href="#tab{{ widget.title }}">{{ widget.title }}</a></li>
+    {% endfor %}
+</ul>
+
+{% for widget in site.widgets %}
+<div id="tab{{ widget.title }}" class="widget col s12">{{ widget.content }}</div>
+{% endfor %}

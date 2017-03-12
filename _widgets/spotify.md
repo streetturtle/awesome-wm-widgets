@@ -14,7 +14,7 @@ First you need to have spotify CLI installed. Here is how you can do it (except 
 
 To use this widget put **spotify.lua** under **~/.config/awesome/** and add it in **rc.lua**:
 
-```lua
+{% highlight lua %}
 require("spotify")
 ...
 s.mytasklist, -- Middle widget
@@ -23,4 +23,4 @@ s.mytasklist, -- Middle widget
 		...
         spotify_widget,
 		...      
-```
+{% endhighlight %}

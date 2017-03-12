@@ -7,47 +7,51 @@
 
     <!-- CSS  -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="../assets/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-    <link href="../assets/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="{{ '/assets/fonts/font-awesome/css/font-awesome.min.css' | relative_url }}" rel="stylesheet">
+    <link href="{{ '/assets/css/materialize.css' | relative_url }}" type="text/css" rel="stylesheet"
+          media="screen,projection"/>
+    <link href="{{ '/assets/css/style.css' | relative_url }}" type="text/css" rel="stylesheet"
+          media="screen,projection"/>
+    <link href="{{ '/assets/css/syntax.css' | relative_url }}" type="text/css" rel="stylesheet"
+          media="screen,projection"/>
+
+    <!--  Scripts-->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="{{ '/assets/js/init.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/materialize.js' | relative_url }}"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
 </head>
 <body>
 <main>
-    {% include nav.html %}
+    <a href="https://github.com/streetturtle/AwesomeWM"><img
+            style="position: absolute; top: 0; right: 0; border: 0;"
+            src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67"
+            alt="Fork me on GitHub"
+            data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
     <div class="section" id="index-banner">
+        <!--{% include nav.html %}-->
         <div class="container">
-            <br><br><br>
-            <h1 class="header center white-text">Awesome WM widgets</h1>
-            <div class="row center">
-                <h5 class="header col s12 white-text">Set of widgets for Awesome Window Manager</h5>
+            <br><br><br><br><br><br>
+            <div id="header" class="header center white-text">
+                <a href="{{ site.url | append: site.baseurl}}/">Awesome WM widgets</a>
             </div>
+            <div id="description" class="header center white-text">Set of widgets for Awesome Window Manager</div>
             <br><br><br>
         </div>
     </div>
 
-
     <div class="container">
         <div class="section">
 
-            <div class="row">
-                <div class="col s12 center">
-                    {% for widget in site.widgets %}
-                       <a class="waves-effect waves-light btn"
-                          href="{{ site.url }}/widgets/{{ widget.title | downcase }}">{{ widget.title }}</a>
-                    {% endfor%}
-                </div>
-            </div>
 
             <div class="row">
-                <div class="col s12 m6 offset-m3">
-                    <div class="icon-block">
-                        {{ content }}
-                    </div>
+                <div class="col s12 m8 offset-m2">
+                    {{content}}
                 </div>
             </div>
-
         </div>
         <br><br>
-
         <div class="section">
 
         </div>
@@ -56,11 +60,6 @@
 </main>
 {% include footer.html %}
 
-<!--  Scripts-->
-<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script src="../assets/js/materialize.js"></script>
-<script src="../assets/js/init.js"></script>
-<script async defer src="https://buttons.github.io/buttons.js"></script>
 
 </body>
 </html>

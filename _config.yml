@@ -1,6 +1,10 @@
+baseurl: /AwesomeWM
+
 collections:
   widgets:
-    output: true
+#    output: true
+
+highlighter: pygments
 
 markdown: kramdown
 kramdown:

@@ -11,9 +11,9 @@ Note that widget uses the Arc icon theme, so it should be [installed](https://gi
 ## Installation
 
  - install lua socket
-```bash
+{% highlight bash %}
 $ sudo apt-get install lua-socket
-```
+{% endhighlight %}
 
  - download json parser for lua: https://github.com/rxi/json.lua
  - get Open Weather Map app id here: https://openweathermap.org/appid

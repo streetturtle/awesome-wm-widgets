@@ -21,10 +21,27 @@
                   rgba(0, 0, 0, 0.4),
                   rgba(0, 0, 0, 0.4)
   ),
-  url(/assets/img/pano.png) no-repeat center center;
+  url({{ '/assets/img/pano.png' | relative_url }}) no-repeat center center;
   background-size: cover;
 
 }
+nav{
+  box-shadow: none;
+}
+#header{
+  font-size: 3em; font-weight: bold;
+  a {
+    text-decoration: none;
+    color: #ffffff;
+  }
+}
+
+h1 { font-size: 2em; font-weight: bold;}
+h2 { font-size: 1.5em; }
+h3 { font-size: 1.17em; }
+h4 { font-size: 1.12em; }
+h5 { font-size: .83em; }
+h6 { font-size: .75em; }
 
 body {
   display: flex;
@@ -35,3 +52,27 @@ body {
 main {
   flex: 1 0 auto;
 }
+
+.tabs .indicator {
+  background-color: teal;
+}
+.tabs .tab {
+  a.active {
+    color: teal;
+  }
+  a:hover {
+    color: teal;
+  }
+  a{
+    color: teal;
+  }
+}
+
+.widget{
+  transition: all 2s linear;
+}
+
+.footer-copyright img{
+  height: 20px;
+}
+
