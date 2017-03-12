@@ -1,0 +1,7 @@
+collections:
+  widgets:
+    output: true
+
+markdown: kramdown
+kramdown:
+  input: GFM
