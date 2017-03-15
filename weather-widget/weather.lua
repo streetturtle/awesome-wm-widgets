@@ -72,11 +72,17 @@ weather_timer:start()
 weather_timer:emit_signal("timeout")
 
 weather_widget:connect_signal("mouse::enter", function()
-    naughty.notify{
+    notification = naughty.notify{
         icon = path_to_icons .. icon_map[resp.weather[1].icon],
         icon_size=20,
-        text = '<b>Humidity:</b> ' .. resp.main.humidity .. '%<br><b>Temperature: </b>' .. to_celcius(resp.main.temp),
-        timeout = 5, hover_timeout = 0.5,
+        text = 
+        '<big>' .. resp.weather[1].main .. ' (' .. resp.weather[1].description .. ')</big><br>' .. 
+        '<b>Humidity:</b> ' .. resp.main.humidity .. '%<br>' ..
+        '<b>Temperature: </b>' .. to_celcius(resp.main.temp) .. '<br>' ..
+        '<b>Pressure: </b>' .. resp.main.pressure .. 'hPa<br>' ..
+        '<b>Clouds: </b>' .. resp.clouds.all .. '%<br>' ..
+        '<b>Wind: </b>' .. resp.wind.speed .. 'm/s',
+        timeout = 5, hover_timeout = 10,
         width = 200,
     }
 end)
