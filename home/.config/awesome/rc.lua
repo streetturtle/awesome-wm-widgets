@@ -93,6 +93,16 @@ local function client_menu_toggle_fn()
         end
     end
 end
+
+local function show_screens(s)
+   for s in screen do
+      text = "Screen " .. s.index .. ": "
+      for k, v in pairs(s.outputs) do
+         text = text .. k .. " "
+      end
+      naughty.notify({text=text, screen=s})
+   end
+end
 -- }}}
 
 -- {{{ Menu
@@ -263,6 +273,8 @@ globalkeys = awful.util.table.join(
     ),
     awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
               {description = "show main menu", group = "awesome"}),
+    awful.key({ modkey, "Shift"   }, "s", show_screens,
+              {description = "Show screens", group = "screen"}),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
@@ -556,20 +568,16 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 
-screen.connect_signal("list", function(s)
-   for s in screen do
-      naughty.notify({text = tostring(s)})
-   end
-end)
+screen.connect_signal("list", show_screens)
 
--- local window_notification_id = nil
---
--- client.connect_signal("focus", function(c)
---    notification = naughty.notify(
---          {text=c.window .. " " .. c.name .. ": screen " .. c.screen.index,
---             replaces_id=window_notification_id, screen=c.screen})
---    window_notification_id = notification.id
--- end)
+local window_notification_id = nil
+
+client.connect_signal("focus", function(c)
+   notification = naughty.notify(
+         {text=c.window .. " " .. c.name .. ": screen " .. c.screen.index,
+            replaces_id=window_notification_id, screen=c.screen})
+   window_notification_id = notification.id
+end)
 -- }}}
 
 local function print_notify(notification)
