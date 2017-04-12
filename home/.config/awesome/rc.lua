@@ -11,6 +11,8 @@ local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local xrandr = require("xrandr")
+local multimonitor = require("multimonitor")
+local debug_util = require("debug_util")
 
 -- Load Debian menu entries
 require("debian.menu")
@@ -94,25 +96,20 @@ local function client_menu_toggle_fn()
     end
 end
 
-local function show_screens(s)
-   for s in screen do
-      text = "Screen " .. s.index .. ": "
-      for k, v in pairs(s.outputs) do
-         text = text .. k .. " "
-      end
-      naughty.notify({text=text, screen=s})
-   end
+local function handle_screen_layout_change(new_layout)
+    multimonitor.clear_layout(new_layout)
 end
+
 -- }}}
 
 -- {{{ Menu
 -- Create a launcher widget and a main menu
 myawesomemenu = {
-   { "hotkeys", function() return false, hotkeys_popup.show_help end},
-   { "manual", terminal .. " -e man awesome" },
-   { "edit config", editor_cmd .. " " .. awesome.conffile },
-   { "restart", awesome.restart },
-   { "quit", function() awesome.quit() end}
+    { "hotkeys", function() return false, hotkeys_popup.show_help end},
+    { "manual", terminal .. " -e man awesome" },
+    { "edit config", editor_cmd .. " " .. awesome.conffile },
+    { "restart", awesome.restart },
+    { "quit", function() awesome.quit() end}
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
@@ -273,8 +270,12 @@ globalkeys = awful.util.table.join(
     ),
     awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
               {description = "show main menu", group = "awesome"}),
-    awful.key({ modkey, "Shift"   }, "s", show_screens,
-              {description = "Show screens", group = "screen"}),
+    awful.key({ modkey, "Shift"   }, "s", multimonitor.show_screens,
+              {description = "show screens", group = "screen"}),
+    awful.key({ modkey, }, "F1", multimonitor.detect_screens,
+              {description = "show screens", group = "screen"}),
+    awful.key({ modkey, }, "F2", multimonitor.print_debug_info,
+              {description = "print debug info", group = "screen"}),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
@@ -285,7 +286,10 @@ globalkeys = awful.util.table.join(
               {description = "focus the next screen", group = "screen"}),
     awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end,
               {description = "focus the previous screen", group = "screen"}),
-    awful.key({ modkey, "Shift"   }, "x", function() xrandr.xrandr() end,
+    awful.key({ modkey, "Shift"   }, "x",
+          function()
+             xrandr.xrandr(handle_screen_layout_change)
+          end,
               {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
@@ -360,7 +364,7 @@ clientkeys = awful.util.table.join(
             c:raise()
         end,
         {description = "toggle fullscreen", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
+    awful.key({ "Mod1"   }, "F4",      function (c) c:kill()                         end,
               {description = "close", group = "client"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
               {description = "toggle floating", group = "client"}),
@@ -568,29 +572,21 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 
-screen.connect_signal("list", show_screens)
+screen.connect_signal("list",
+        function()
+            multimonitor.detect_screens()
+            multimonitor.show_screens()
+        end)
 
 local window_notification_id = nil
 
 client.connect_signal("focus", function(c)
-   notification = naughty.notify(
-         {text=c.window .. " " .. c.name .. ": screen " .. c.screen.index,
-            replaces_id=window_notification_id, screen=c.screen})
-   window_notification_id = notification.id
+    notification = naughty.notify(
+          {text=c.window .. " " .. c.name .. ": screen " .. c.screen.index,
+             replaces_id=window_notification_id, screen=c.screen})
+    window_notification_id = notification.id
 end)
+
+awesome.connect_signal("startup", multimonitor.detect_screens)
+
 -- }}}
-
-local function print_notify(notification)
-   local s = ""
-   for k, v in pairs(notification) do
-      if type(v) == "string" or type(v) == "number" then
-         s = s .. k .. " -> " .. v .. "\n"
-      else
-         s = s .. k
-      end
-   end
-   print(s)
-   naughty.notify({title = "Notify", text = s, timeout = 0, })
-   notification.die(naughty.notificationClosedReason.dismissedByUser)
-end
-
