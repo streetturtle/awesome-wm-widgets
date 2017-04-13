@@ -2,8 +2,8 @@
 local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
--- Widget and layout library
 local wibox = require("wibox")
+-- Widget and layout library
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -13,6 +13,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 local xrandr = require("xrandr")
 local multimonitor = require("multimonitor")
 local debug_util = require("debug_util")
+local variables = require("variables")
 
 -- Load Debian menu entries
 require("debian.menu")
@@ -44,10 +45,8 @@ end
 
 -- {{{ Variable definitions
 
-local config_dir = os.getenv("HOME") .. "/.config/awesome"
-
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(config_dir .. "/theme.lua")
+beautiful.init(variables.config_dir .. "/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "x-terminal-emulator"

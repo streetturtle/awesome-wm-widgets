@@ -4,6 +4,8 @@ require("awful.autofocus")
 local naughty = require("naughty")
 local xrandr = require("xrandr")
 local debug_util = require("debug_util")
+local json = require("json/json")
+local variables = require("variables")
 
 local function show_screens()
     for s in screen do
@@ -19,6 +21,21 @@ local function show_screens()
 end
 
 local configured_outputs = {}
+local configured_outputs_file = variables.config_dir .. "/outputs.json"
+
+local function save_configured_outputs()
+    local content = json.encode(configured_outputs)
+    local f = io.open(configured_outputs_file, "w")
+    f:write(content)
+    f:close()
+end
+
+local function load_configured_outputs()
+    local f = io.open(configured_outputs_file, "r")
+    local content = f:read("*a")
+    configured_outputs = json.decode(content)
+    f:close()
+end
 
 local function get_screen_name(s)
     return gears.table.keys(s.outputs)[1]
@@ -58,7 +75,7 @@ local function save_screen_layout()
         table.insert(layout, screen_names[offset])
     end
     configured_outputs[get_layout_key(get_active_screens())] = layout
-    -- TODO: save to file
+    save_configured_outputs()
 end
 
 local function switch_off_unknown_outputs()
@@ -104,6 +121,10 @@ end
 local function print_debug_info()
     naughty.notify({text=debug_util.to_string_recursive(configured_outputs),
             timeout=10})
+end
+
+if gears.filesystem.file_readable(configured_outputs_file) then
+    load_configured_outputs()
 end
 
 return {
