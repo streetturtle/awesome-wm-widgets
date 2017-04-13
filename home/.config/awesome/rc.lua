@@ -297,6 +297,11 @@ local globalkeys = awful.util.table.join(
                      multimonitor.detect_screens)
           end,
               {description = "Show xrandr menu", group = "screen"}),
+    awful.key({ modkey, }, "l",
+          function()
+              awful.spawn("xscreensaver-command -lock")
+          end,
+              {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
     awful.key({ modkey,           }, "Tab",
@@ -604,3 +609,5 @@ client.connect_signal("unmanage", multimonitor.unmanage_client)
 awesome.connect_signal("startup", multimonitor.detect_screens)
 
 -- }}}
+
+awful.spawn.with_shell("xscreensaver -no-splash")
