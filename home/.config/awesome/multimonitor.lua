@@ -74,7 +74,13 @@ local function save_screen_layout()
     for _, offset in ipairs(offsets) do
         table.insert(layout, screen_names[offset])
     end
-    configured_outputs[get_layout_key(get_active_screens())] = layout
+    local key = get_layout_key(get_active_screens())
+    local configuration = configured_outputs[key]
+    if not configuration then
+        configured_outputs[key] = {layout=layout}
+    else
+        configuration.layout = layout
+    end
     save_configured_outputs()
 end
 
@@ -97,9 +103,11 @@ local function detect_screens()
     --     text = text .. "\n"
     -- end
     -- naughty.notify({text=text, timeout=5, screen=1})
-    local layout = configured_outputs[get_layout_key(get_active_screens())]
-    if layout then
-        awful.spawn.easy_async(xrandr.command(xrandr.outputs(), layout, true),
+    local configuration = configured_outputs[
+            get_layout_key(get_active_screens())]
+    if configuration then
+        awful.spawn.easy_async(xrandr.command(xrandr.outputs(),
+                configuration.layout, true),
                 function(_, stderr, _, exit_code)
                     if exit_code ~= 0 then
                         naughty.notify({
