@@ -279,9 +279,17 @@ local globalkeys = awful.util.table.join(
               {description = "swap with next client by index", group = "client"}),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
               {description = "swap with previous client by index", group = "client"}),
-    awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end,
+    awful.key({ modkey, "Control" }, "k",
+            function ()
+                awful.screen.focus(awful.screen.focused()
+                        :get_next_in_direction("right"))
+            end,
               {description = "focus the next screen", group = "screen"}),
-    awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end,
+    awful.key({ modkey, "Control" }, "j",
+            function ()
+                awful.screen.focus(awful.screen.focused()
+                        :get_next_in_direction("left"))
+            end,
               {description = "focus the previous screen", group = "screen"}),
     awful.key({ modkey, "Shift"   }, "x",
           function()
@@ -580,14 +588,18 @@ screen.connect_signal("list",
             multimonitor.detect_screens()
         end)
 
-local window_notification_id = nil
+-- local window_notification_id = nil
+--
+-- client.connect_signal("focus", function(c)
+--     notification = naughty.notify(
+--           {text=c.window .. " " .. c.name .. ": screen " .. c.screen.index,
+--              replaces_id=window_notification_id, screen=c.screen})
+--     window_notification_id = notification.id
+-- end)
 
-client.connect_signal("focus", function(c)
-    notification = naughty.notify(
-          {text=c.window .. " " .. c.name .. ": screen " .. c.screen.index,
-             replaces_id=window_notification_id, screen=c.screen})
-    window_notification_id = notification.id
-end)
+client.connect_signal("manage", multimonitor.manage_client)
+client.connect_signal("property::position", multimonitor.manage_client)
+client.connect_signal("unmanage", multimonitor.unmanage_client)
 
 awesome.connect_signal("startup", multimonitor.detect_screens)
 

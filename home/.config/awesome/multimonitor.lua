@@ -21,6 +21,7 @@ local function show_screens()
 end
 
 local configured_outputs = {}
+local client_configuration = nil
 local configured_outputs_file = variables.config_dir .. "/outputs.json"
 
 local function save_configured_outputs()
@@ -59,34 +60,88 @@ local function get_active_screens()
     return screens
 end
 
+local function find_clients(s)
+    local result = {}
+    for _, c in ipairs(s.all_clients) do
+        table.insert(result, tostring(c.window))
+    end
+    return result
+end
+
+local function initialize_client_configuration()
+    for k, _ in pairs(client_configuration) do
+        client_configuration[k] = nil
+    end
+    for _, c in pairs(client.get()) do
+        client_configuration[tostring(c.window)] =
+                {screen=get_screen_name(c.screen)}
+    end
+end
+
 local function save_screen_layout()
     local screen_names = {}
     local offsets = {}
     for s in screen do
-        screen_names[s.geometry.x] = get_screen_name(s)
+        local name = get_screen_name(s)
+        screen_names[s.geometry.x] = name
         table.insert(offsets, s.geometry.x)
     end
-    local text = debug_util.to_string_recursive(offsets)
     table.sort(offsets)
-    text = text .. "\n\n" .. debug_util.to_string_recursive(offsets)
-    naughty.notify({text=text})
+
     local layout = {}
     for _, offset in ipairs(offsets) do
         table.insert(layout, screen_names[offset])
     end
+
     local key = get_layout_key(get_active_screens())
     local configuration = configured_outputs[key]
     if not configuration then
-        configured_outputs[key] = {layout=layout}
-    else
-        configuration.layout = layout
+        configuration = {}
+        configured_outputs[key] = configuration
     end
+
+    configuration.layout = layout
+    if not configuration.clients then
+        configuration.clients = {}
+    end
+    client_configuration = configuration.clients
+    initialize_client_configuration()
     save_configured_outputs()
 end
 
 local function switch_off_unknown_outputs()
     -- outputs = xrandr.outputs()
     -- awful.util.spawn(xrandr.command(
+end
+
+local function restore_clients(clients)
+    local screens = {}
+    for s in screen do
+        screens[get_screen_name(s)] = s
+    end
+    local to_move = {}
+    for _, c in ipairs(client.get()) do
+        local screen_name = clients[tostring(c.window)]
+        if screen_name ~= get_screen_name(c.screen) then
+            to_move[c] = screens[screen_name]
+        end
+    end
+    for c, s in pairs(to_move) do
+        c:move_to_screen(s)
+    end
+end
+
+local function handle_xrandr_finished(key, configuration, stderr, exit_code)
+    if exit_code ~= 0 then
+        naughty.notify({
+                preset=naughty.config.presets.critical,
+                title="Error setting screen configuration",
+                text=stderr})
+    end
+    if configuration.clients then
+        restore_clients(configuration.clients)
+    end
+    save_screen_layout()
 end
 
 local function detect_screens()
@@ -103,19 +158,22 @@ local function detect_screens()
     --     text = text .. "\n"
     -- end
     -- naughty.notify({text=text, timeout=5, screen=1})
-    local configuration = configured_outputs[
-            get_layout_key(get_active_screens())]
+    local key = get_layout_key(get_active_screens())
+    local configuration = configured_outputs[key]
     if configuration then
         awful.spawn.easy_async(xrandr.command(xrandr.outputs(),
                 configuration.layout, true),
                 function(_, stderr, _, exit_code)
-                    if exit_code ~= 0 then
+                    local result, err = xpcall(
+                            function()
+                                handle_xrandr_finished(key, configuration,
+                                        stderr, exit_code)
+                            end, debug.traceback)
+                    if not result then
                         naughty.notify({
                                 preset=naughty.config.presets.critical,
-                                title="Error setting screen configuration",
-                                text=stderr})
+                                title="Error", text=err})
                     end
-                    save_screen_layout()
                 end)
     else
         save_screen_layout()
@@ -131,8 +189,42 @@ local function print_debug_info()
             timeout=10})
 end
 
+local function manage_client(c)
+    if client_configuration then
+        client_configuration[tostring(c.window)] = {screen=get_screen_name(c.screen)}
+        save_configured_outputs()
+    end
+end
+
+local function unmanage_client(c)
+    if client_configuration then
+        client_configuration[tostring(c.window)] = nil
+    end
+end
+
+local function cleanup_clients()
+    local active_clients = {}
+    for _, c in pairs(client.get()) do
+        active_clients[tostring(c.window)] = true
+    end
+    local to_remove = {}
+    for _, configuration in pairs(configured_outputs) do
+        if configuration.clients then
+            for window, _ in pairs(configuration.clients) do
+                if not active_clients[window] then
+                    table.insert(to_remove, window)
+                end
+            end
+            for _, window in pairs(to_remove) do
+                configuration.clients[window] = nil
+            end
+        end
+    end
+end
+
 if gears.filesystem.file_readable(configured_outputs_file) then
     load_configured_outputs()
+    cleanup_clients()
 end
 
 return {
@@ -140,5 +232,7 @@ return {
     detect_screens=detect_screens,
     clear_layout=clear_layout,
     print_debug_info=print_debug_info,
-    switch_off_unknown_outputs=switch_off_unknown_outputs
+    switch_off_unknown_outputs=switch_off_unknown_outputs,
+    manage_client=manage_client,
+    unmanage_client=unmanage_client
 }
