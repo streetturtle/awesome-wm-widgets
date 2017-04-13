@@ -1,12 +1,6 @@
--- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
--- Widget and layout library
-local wibox = require("wibox")
--- Theme handling library
-local beautiful = require("beautiful")
--- Notification library
 local naughty = require("naughty")
 local xrandr = require("xrandr")
 local debug_util = require("debug_util")
@@ -15,7 +9,7 @@ local function show_screens()
     for s in screen do
         local title = "Screen " .. s.index
         local text = ""
-        for k, v in pairs(s.outputs) do
+        for k, _ in pairs(s.outputs) do
             text = text .. k .. " "
         end
         text = text .. " " .. s.geometry.width .. "x" .. s.geometry.height
@@ -27,7 +21,7 @@ end
 local configured_outputs = {}
 
 local function get_screen_name(s)
-    return awful.util.table.keys(s.outputs)[1]
+    return gears.table.keys(s.outputs)[1]
 end
 
 -- This function modifies its argument!!
@@ -45,7 +39,7 @@ local function get_active_screens()
     for s in screen do
         table.insert(screens, get_screen_name(s))
     end
-    return get_layout_key(screens)
+    return screens
 end
 
 local function save_screen_layout()
@@ -55,7 +49,7 @@ local function save_screen_layout()
         screen_names[s.geometry.x] = get_screen_name(s)
         table.insert(offsets, s.geometry.x)
     end
-    text = debug_util.to_string_recursive(offsets)
+    local text = debug_util.to_string_recursive(offsets)
     table.sort(offsets)
     text = text .. "\n\n" .. debug_util.to_string_recursive(offsets)
     naughty.notify({text=text})
@@ -63,8 +57,16 @@ local function save_screen_layout()
     for _, offset in ipairs(offsets) do
         table.insert(layout, screen_names[offset])
     end
-    configured_outputs[get_active_screens()] = layout
+    local key = get_layout_key(get_active_screens())
+    naughty.notify({text="Saving " .. key})
+    print("Saving "..key)
+    configured_outputs[key] = layout
     -- TODO: save to file
+end
+
+local function switch_off_unknown_outputs()
+    -- outputs = xrandr.outputs()
+    -- awful.util.spawn(xrandr.command(
 end
 
 local function detect_screens()
@@ -73,7 +75,7 @@ local function detect_screens()
     -- for s in screen do
     --     local output = get_screen_name(s)
     --     text = text .. output .. ": "
-    --     if awful.util.table.hasitem(outputs, output) then
+    --     if gears.table.hasitem(outputs, output) then
     --         text = text .. " found"
     --     else
     --         text = text .. " not found"
@@ -81,16 +83,31 @@ local function detect_screens()
     --     text = text .. "\n"
     -- end
     -- naughty.notify({text=text, timeout=5, screen=1})
-    local layout = configured_outputs[get_active_screens()]
+    local key = get_layout_key(get_active_screens())
+    local layout = configured_outputs[key]
     if layout then
-        awful.util.spawn(xrandr.command(xrandr.outputs(), layout), false)
+        naughty.notify({text="Found layout for " .. key})
+        awful.spawn.easy_async(xrandr.command(xrandr.outputs(), layout, true),
+                function(_, stderr, _, exit_code)
+                    if exit_code ~= 0 then
+                        naughty.notify({
+                                preset=naughty.config.presets.critical,
+                                title="Error setting screen configuration",
+                                text=stderr})
+                    end
+                    save_screen_layout()
+                end)
     else
+        naughty.notify({text="No layout for " .. key})
         save_screen_layout()
     end
 end
 
 local function clear_layout(layout)
-    configured_outputs[get_layout_key(layout)] = nil
+    local key = get_layout_key(layout)
+    naughty.notify({text="Clearing " .. key})
+    print("Clearing "..key)
+    configured_outputs[key] = nil
 end
 
 local function print_debug_info()
@@ -102,5 +119,6 @@ return {
     show_screens=show_screens,
     detect_screens=detect_screens,
     clear_layout=clear_layout,
-    print_debug_info=print_debug_info
+    print_debug_info=print_debug_info,
+    switch_off_unknown_outputs=switch_off_unknown_outputs
 }

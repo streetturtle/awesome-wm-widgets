@@ -49,13 +49,15 @@ local function arrange(out)
     return choices
 end
 
-local function command(out, choice)
+local function command(out, choice, rearrange)
      local cmd = "xrandr"
      -- Enabled outputs
-     for i, o in pairs(choice) do
-         cmd = cmd .. " --output " .. o .. " --auto"
-         if i > 1 then
-             cmd = cmd .. " --right-of " .. choice[i-1]
+     if rearrange then
+         for i, o in pairs(choice) do
+             cmd = cmd .. " --output " .. o .. " --auto"
+             if i > 1 then
+                 cmd = cmd .. " --right-of " .. choice[i-1]
+             end
          end
      end
      -- Disabled outputs
@@ -74,7 +76,7 @@ local function menu()
     local choices = arrange(out)
 
     for _, choice in pairs(choices) do
-        local cmd = command(out, choice)
+        local cmd = command(out, choice, true)
 
         local label = ""
         if #choice == 1 then
@@ -95,19 +97,23 @@ end
 -- Display xrandr notifications from choices
 local state = { cid = nil }
 
-local function naughty_destroy_callback(reason, callback)
+local function naughty_destroy_callback(reason, callback_before, callback_after)
     if reason == naughty.notificationClosedReason.expired or
         reason == naughty.notificationClosedReason.dismissedByUser then
         local action = state.index and state.menu[state.index - 1][2]
         if action then
-            callback(state.menu[state.index - 1][3])
-            awful.util.spawn(action, false)
+            local layout = state.menu[state.index - 1][3]
+            callback_before(layout)
+            awful.spawn.easy_async(action,
+                    function(_, _, _, _)
+                        callback_after(layout)
+                    end)
             state.index = nil
         end
     end
 end
 
-local function xrandr(callback)
+local function xrandr(callback_before, callback_after)
     -- Build the list of choices
     if not state.index then
         state.menu = menu()
@@ -115,7 +121,7 @@ local function xrandr(callback)
     end
 
     -- Select one and display the appropriate notification
-    local label, action
+    local label, _
     local next  = state.menu[state.index]
     state.index = state.index + 1
 
@@ -123,7 +129,7 @@ local function xrandr(callback)
         label = "Keep the current configuration"
         state.index = nil
     else
-        label, action = unpack(next)
+        label, _ = unpack(next)
     end
     state.cid = naughty.notify({
             text = label,
@@ -132,7 +138,8 @@ local function xrandr(callback)
             screen = mouse.screen,
             replaces_id = state.cid,
             destroy = function(reason)
-                naughty_destroy_callback(reason, callback)
+                naughty_destroy_callback(reason, callback_before,
+                        callback_after)
             end}).id
 end
 

@@ -96,10 +96,6 @@ local function client_menu_toggle_fn()
     end
 end
 
-local function handle_screen_layout_change(new_layout)
-    multimonitor.clear_layout(new_layout)
-end
-
 -- }}}
 
 -- {{{ Menu
@@ -288,7 +284,8 @@ globalkeys = awful.util.table.join(
               {description = "focus the previous screen", group = "screen"}),
     awful.key({ modkey, "Shift"   }, "x",
           function()
-             xrandr.xrandr(handle_screen_layout_change)
+             xrandr.xrandr(multimonitor.clear_layout,
+                     multimonitor.detect_screens)
           end,
               {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
@@ -575,7 +572,6 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 screen.connect_signal("list",
         function()
             multimonitor.detect_screens()
-            multimonitor.show_screens()
         end)
 
 local window_notification_id = nil
