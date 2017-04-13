@@ -46,7 +46,9 @@ end
 -- {{{ Variable definitions
 
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(variables.config_dir .. "/theme.lua")
+local theme = dofile(awful.util.get_themes_dir() .. "default/theme.lua")
+theme.wallpaper = "/usr/share/backgrounds/passion_flower_by_Irene_Gr.jpg"
+beautiful.init(theme)
 
 -- This is used later as the default terminal and editor to run.
 terminal = "x-terminal-emulator"
@@ -545,8 +547,7 @@ client.connect_signal("request::titlebars", function(c)
         { -- Middle
             { -- Title
                 align  = "center",
-                widget = awful.titlebar.widget.titlewidget(c),
-                markup = c.window .. " " .. c.name
+                widget = awful.titlebar.widget.titlewidget(c)
             },
             buttons = buttons,
             layout  = wibox.layout.flex.horizontal
