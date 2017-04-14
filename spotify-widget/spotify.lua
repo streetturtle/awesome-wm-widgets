@@ -4,6 +4,7 @@ local watch = require("awful.widget.watch")
 
 spotify_widget = wibox.widget.textbox()
 spotify_widget:set_font('Play 9')
+spotify_widget:connect_signal("button::release", function() awful.spawn('sp play'); end)
 
 -- optional icon, could be replaced by spotfiy logo (https://developer.spotify.com/design/)
 spotify_icon = wibox.widget.imagebox()
