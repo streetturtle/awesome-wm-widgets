@@ -19,6 +19,7 @@ watch(
     "xbacklight -get", 1,
     function(widget, stdout, stderr, exitreason, exitcode)
         local brightness_level = tonumber(string.format("%.0f", stdout))
-        brightness_widget:set_text(brightness_level)
-    end
+        widget:set_text(brightness_level)
+    end,
+    brightness_widget
 )

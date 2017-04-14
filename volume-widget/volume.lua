@@ -44,6 +44,7 @@ watch(
 		elseif (volume >= 50 and volume < 75) then volume_icon_name="audio-volume-medium-symbolic"
 		elseif (volume >= 75 and volume <= 100) then volume_icon_name="audio-volume-high-symbolic"
 		end
-        volume_widget.image = path_to_icons .. volume_icon_name .. ".svg"
-    end
+        widget.image = path_to_icons .. volume_icon_name .. ".svg"
+    end,
+    volume_widget
 )

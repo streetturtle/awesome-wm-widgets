@@ -49,12 +49,13 @@ watch(
         else
             batteryType = string.format(batteryType,'')
         end
-        battery_widget.image = path_to_icons .. batteryType .. ".svg"
+        widget.image = path_to_icons .. batteryType .. ".svg"
 
         -- Update popup text
         -- TODO: Filter long lines
         battery_popup.text = string.gsub(stdout, "\n$", "")
-    end
+    end,
+    battery_widget
 )
 
 -- Alternative to tooltip - popup message shown by naughty library. You can compare both and choose the preferred one
