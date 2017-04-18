@@ -258,13 +258,13 @@ local globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
-    awful.key({ "Mod1", "Shift"   }, "Tab",
+    awful.key({ modkey, "Mod1", }, "j",
         function ()
             awful.client.focus.byidx(-1)
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ "Mod1",           }, "Tab",
+    awful.key({ modkey, "Mod1", }, "k",
         function ()
             awful.client.focus.byidx(1)
         end,
@@ -309,7 +309,7 @@ local globalkeys = awful.util.table.join(
               {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
-    awful.key({ modkey,           }, "Tab",
+    awful.key({ "Mod1",           }, "Tab",
         function ()
             awful.client.focus.history.previous()
             if client.focus then
