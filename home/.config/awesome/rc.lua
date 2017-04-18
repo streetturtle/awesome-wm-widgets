@@ -50,6 +50,8 @@ local theme = dofile(awful.util.get_themes_dir() .. "default/theme.lua")
 theme.wallpaper = "/usr/share/backgrounds/passion_flower_by_Irene_Gr.jpg"
 beautiful.init(theme)
 
+local APW = require("apw/widget")
+
 -- This is used later as the default terminal and editor to run.
 local terminal = "x-terminal-emulator"
 local editor = os.getenv("EDITOR") or "vim"
@@ -231,6 +233,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             -- mykeyboardlayout,
+            APW,
             wibox.widget.systray(),
             mytextclock,
             s.mylayoutbox,
@@ -317,7 +320,6 @@ local globalkeys = awful.util.table.join(
             end
         end,
         {description = "go back", group = "client"}),
-
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
@@ -353,6 +355,14 @@ local globalkeys = awful.util.table.join(
                   end
               end,
               {description = "restore minimized", group = "client"}),
+
+    --- Volume
+    awful.key({ }, "XF86AudioRaiseVolume",  APW.Up,
+            {description="Volume Up", group="volume"}),
+    awful.key({ }, "XF86AudioLowerVolume",  APW.Down,
+            {description="Volume Down", group="volume"}),
+    awful.key({ }, "XF86AudioMute",         APW.ToggleMute,
+            {description="Toggle Mute", group="volume"}),
 
     -- Prompt
     awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
@@ -615,8 +625,14 @@ awesome.connect_signal("startup", multimonitor.detect_screens)
 
 -- }}}
 
+local APWTimer = timer({ timeout = 0.5 }) -- set update interval in s
+APWTimer:connect_signal("timeout", APW.Update)
+APWTimer:start()
+
 awful.spawn.with_shell("xscreensaver -no-splash")
 start_if_not_running("clipit", "")
 start_if_not_running("variety", "")
 start_if_not_running("variety", "")
 start_if_not_running("nm-applet", "")
+start_if_not_running("xbindkeys", "")
+

@@ -1,3 +1,6 @@
 [submodule "json4lua"]
 	path = json4lua
 	url = https://github.com/craigmj/json4lua.git
+[submodule "apw"]
+	path = apw
+	url = https://github.com/mokasin/apw.git
