@@ -158,10 +158,12 @@ local function detect_screens()
     --     text = text .. "\n"
     -- end
     -- naughty.notify({text=text, timeout=5, screen=1})
-    local key = get_layout_key(get_active_screens())
+    local key = get_layout_key(xrandr.outputs())
     local configuration = configured_outputs[key]
     if configuration then
-        awful.spawn.easy_async(xrandr.command(xrandr.outputs(),
+        naughty.notify({title="Setting new configuration",
+                text=debug_util.to_string_recursive(configuration)})
+        awful.spawn.easy_async(xrandr.command(xrandr.all_outputs(),
                 configuration.layout, true),
                 function(_, stderr, _, exit_code)
                     local result, err = xpcall(
@@ -187,6 +189,12 @@ end
 local function print_debug_info()
     naughty.notify({text=debug_util.to_string_recursive(configured_outputs),
             timeout=10})
+    -- naughty.notify({title="Current configuration",
+    --         text=get_layout_key(get_active_screens()), timeout=10})
+    -- naughty.notify({title="Connected outputs",
+    --         text=get_layout_key(xrandr.outputs()), timeout=10})
+    -- naughty.notify({title="All outputs",
+    --         text=get_layout_key(xrandr.all_outputs()), timeout=10})
 end
 
 local function manage_client(c)

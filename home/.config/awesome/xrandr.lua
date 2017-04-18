@@ -1,19 +1,19 @@
 --- Separating Multiple Monitor functions as a separeted module (taken from awesome wiki)
 
 local awful      = require("awful")
+local gears      = require("gears")
 local naughty    = require("naughty")
 
 -- A path to a fancy icon
 local icon_path = ""
 
--- Get active outputs
-local function outputs()
+local function parse_outputs(pattern)
     local outputs = {}
     local xrandr = io.popen("xrandr -q --current")
 
     if xrandr then
         for line in xrandr:lines() do
-            local output = line:match("^([%w-]+) connected ")
+            local output = line:match(pattern)
             if output then
                 outputs[#outputs + 1] = output
             end
@@ -22,6 +22,16 @@ local function outputs()
     end
 
     return outputs
+end
+
+-- Get active outputs
+local function outputs()
+    return parse_outputs("^([%w-]+) connected ")
+end
+
+-- Get all outputs
+local function all_outputs()
+    return gears.table.join(outputs(), parse_outputs("^([%w-]+) disconnected "))
 end
 
 local function arrange(out)
@@ -72,11 +82,12 @@ end
 -- Build available choices
 local function menu()
     local menu = {}
+    local all = all_outputs()
     local out = outputs()
     local choices = arrange(out)
 
     for _, choice in pairs(choices) do
-        local cmd = command(out, choice, true)
+        local cmd = command(all, choice, true)
 
         local label = ""
         if #choice == 1 then
@@ -145,6 +156,7 @@ end
 
 return {
     outputs = outputs,
+    all_outputs = all_outputs,
     arrange = arrange,
     menu = menu,
     command = command,

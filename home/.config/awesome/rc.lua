@@ -263,13 +263,13 @@ local globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
-    awful.key({ modkey, "Mod1", }, "j",
+    awful.key({ modkey, }, "j",
         function ()
             awful.client.focus.byidx(-1)
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey, "Mod1", }, "k",
+    awful.key({ modkey, }, "k",
         function ()
             awful.client.focus.byidx(1)
         end,
