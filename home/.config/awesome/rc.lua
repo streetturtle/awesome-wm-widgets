@@ -14,6 +14,7 @@ local xrandr = require("xrandr")
 local multimonitor = require("multimonitor")
 local debug_util = require("debug_util")
 local variables = require("variables")
+local util = require("util")
 
 -- Load Debian menu entries
 require("debian.menu")
@@ -47,7 +48,10 @@ end
 
 -- Themes define colours, icons, font and wallpapers.
 local theme = dofile(awful.util.get_themes_dir() .. "default/theme.lua")
+
 theme.wallpaper = "/usr/share/backgrounds/passion_flower_by_Irene_Gr.jpg"
+theme.titlebar_bg_focus = "#007EE6"
+
 beautiful.init(theme)
 
 local APW = require("apw/widget")
@@ -97,11 +101,6 @@ local function client_menu_toggle_fn()
             instance = awful.menu.clients({ theme = { width = 250 } })
         end
     end
-end
-
-local function start_if_not_running(command, args)
-    awful.spawn.with_shell("if ! pidof -x " .. command .. "; then " .. command
-            .. " " .. args .. "; fi")
 end
 
 -- }}}
@@ -630,9 +629,12 @@ APWTimer:connect_signal("timeout", APW.Update)
 APWTimer:start()
 
 awful.spawn.with_shell("xscreensaver -no-splash")
-start_if_not_running("clipit", "")
-start_if_not_running("variety", "")
-start_if_not_running("variety", "")
-start_if_not_running("nm-applet", "")
-start_if_not_running("xbindkeys", "")
+util.start_if_not_running("clipit", "")
+util.start_if_not_running("nm-applet", "")
+util.start_if_not_running("xbindkeys", "")
 
+local local_rc_file = variables.config_dir .. "/rc.local.lua"
+if gears.filesystem.file_readable(local_rc_file) then
+    naughty.notify({text="Loading rc.local.lua"})
+    dofile(local_rc_file)
+end
