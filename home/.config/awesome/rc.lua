@@ -2,8 +2,8 @@
 local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
-local wibox = require("wibox")
 -- Widget and layout library
+local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -95,6 +95,11 @@ local function client_menu_toggle_fn()
             instance = awful.menu.clients({ theme = { width = 250 } })
         end
     end
+end
+
+local function start_if_not_running(command, args)
+    awful.spawn.with_shell("if ! pidof -x " .. command .. "; then " .. command
+            .. " " .. args .. "; fi")
 end
 
 -- }}}
@@ -225,7 +230,7 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
+            -- mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
             s.mylayoutbox,
@@ -611,3 +616,7 @@ awesome.connect_signal("startup", multimonitor.detect_screens)
 -- }}}
 
 awful.spawn.with_shell("xscreensaver -no-splash")
+start_if_not_running("clipit", "")
+start_if_not_running("variety", "")
+start_if_not_running("variety", "")
+start_if_not_running("nm-applet", "")
