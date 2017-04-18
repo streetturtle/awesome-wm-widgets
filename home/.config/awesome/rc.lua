@@ -49,7 +49,10 @@ end
 -- Themes define colours, icons, font and wallpapers.
 local theme = dofile(awful.util.get_themes_dir() .. "default/theme.lua")
 
-theme.wallpaper = "/usr/share/backgrounds/passion_flower_by_Irene_Gr.jpg"
+local wallpaper_file = variables.config_dir .. "/wallpaper"
+if gears.filesystem.file_readable(wallpaper_file) then
+    theme.wallpaper = wallpaper_file
+end
 theme.titlebar_bg_focus = "#007EE6"
 
 beautiful.init(theme)
@@ -186,7 +189,7 @@ local function set_wallpaper(s)
         if type(wallpaper) == "function" then
             wallpaper = wallpaper(s)
         end
-        gears.wallpaper.maximized(wallpaper, s, true)
+        gears.wallpaper.maximized(wallpaper, s, false)
     end
 end
 
@@ -635,6 +638,5 @@ util.start_if_not_running("xbindkeys", "")
 
 local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
-    naughty.notify({text="Loading rc.local.lua"})
     dofile(local_rc_file)
 end
