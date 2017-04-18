@@ -109,11 +109,6 @@ local function save_screen_layout()
     save_configured_outputs()
 end
 
-local function switch_off_unknown_outputs()
-    -- outputs = xrandr.outputs()
-    -- awful.util.spawn(xrandr.command(
-end
-
 local function restore_clients(clients)
     local screens = {}
     for s in screen do
@@ -145,25 +140,14 @@ local function handle_xrandr_finished(key, configuration, stderr, exit_code)
 end
 
 local function detect_screens()
-    -- local outputs = xrandr.outputs()
-    -- local text = ""
-    -- for s in screen do
-    --     local output = get_screen_name(s)
-    --     text = text .. output .. ": "
-    --     if gears.table.hasitem(outputs, output) then
-    --         text = text .. " found"
-    --     else
-    --         text = text .. " not found"
-    --     end
-    --     text = text .. "\n"
-    -- end
-    -- naughty.notify({text=text, timeout=5, screen=1})
-    local key = get_layout_key(xrandr.outputs())
+    local out = xrandr.outputs()
+    local key = get_layout_key(out.connected)
+    naughty.notify({title="Detected configuration", text=key})
     local configuration = configured_outputs[key]
     if configuration then
         naughty.notify({title="Setting new configuration",
                 text=debug_util.to_string_recursive(configuration)})
-        awful.spawn.easy_async(xrandr.command(xrandr.all_outputs(),
+        awful.spawn.easy_async(xrandr.command(out.all,
                 configuration.layout, true),
                 function(_, stderr, _, exit_code)
                     local result, err = xpcall(
@@ -189,12 +173,6 @@ end
 local function print_debug_info()
     naughty.notify({text=debug_util.to_string_recursive(configured_outputs),
             timeout=10})
-    -- naughty.notify({title="Current configuration",
-    --         text=get_layout_key(get_active_screens()), timeout=10})
-    -- naughty.notify({title="Connected outputs",
-    --         text=get_layout_key(xrandr.outputs()), timeout=10})
-    -- naughty.notify({title="All outputs",
-    --         text=get_layout_key(xrandr.all_outputs()), timeout=10})
 end
 
 local function manage_client(c)

@@ -8,30 +8,31 @@ local naughty    = require("naughty")
 local icon_path = ""
 
 local function parse_outputs(pattern)
-    local outputs = {}
+end
+
+-- Get active outputs
+local function outputs()
+    local result = {}
+    result.connected = {}
+    result.all = {}
     local xrandr = io.popen("xrandr -q --current")
 
     if xrandr then
         for line in xrandr:lines() do
-            local output = line:match(pattern)
+            local output = line:match("^([%w-]+) connected ")
             if output then
-                outputs[#outputs + 1] = output
+                table.insert(result.connected, output)
+                table.insert(result.all, output)
+            end
+            output = line:match("^([%w-]+) disconnected ")
+            if output then
+                table.insert(result.all, output)
             end
         end
         xrandr:close()
     end
 
-    return outputs
-end
-
--- Get active outputs
-local function outputs()
-    return parse_outputs("^([%w-]+) connected ")
-end
-
--- Get all outputs
-local function all_outputs()
-    return gears.table.join(outputs(), parse_outputs("^([%w-]+) disconnected "))
+    return result
 end
 
 local function arrange(out)
@@ -82,12 +83,11 @@ end
 -- Build available choices
 local function menu()
     local menu = {}
-    local all = all_outputs()
     local out = outputs()
-    local choices = arrange(out)
+    local choices = arrange(out.connected)
 
     for _, choice in pairs(choices) do
-        local cmd = command(all, choice, true)
+        local cmd = command(out.all, choice, true)
 
         local label = ""
         if #choice == 1 then
