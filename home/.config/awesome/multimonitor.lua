@@ -2,6 +2,8 @@ local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
 local naughty = require("naughty")
+local wibox = require("wibox")
+
 local xrandr = require("xrandr")
 local debug_util = require("debug_util")
 local json = require("json/json")
@@ -22,6 +24,7 @@ end
 
 local configured_outputs = {}
 local client_configuration = nil
+local system_tray_screen = nil
 local configured_outputs_file = variables.config_dir .. "/outputs.json"
 
 local function save_configured_outputs()
@@ -106,14 +109,22 @@ local function save_screen_layout()
     end
     client_configuration = configuration.clients
     initialize_client_configuration()
+    naughty.notify({title=key, text="Set system tray configuration to "
+            .. system_tray_screen, timeout=20})
+    configuration.system_tray_screen = system_tray_screen
     save_configured_outputs()
 end
 
-local function restore_clients(clients)
+local function get_screens_by_name()
     local screens = {}
     for s in screen do
         screens[get_screen_name(s)] = s
     end
+    return screens
+end
+
+local function restore_clients(clients)
+    local screens = get_screens_by_name()
     local to_move = {}
     for _, c in ipairs(client.get()) do
         local screen_name = clients[tostring(c.window)]
@@ -126,7 +137,7 @@ local function restore_clients(clients)
     end
 end
 
-local function handle_xrandr_finished(key, configuration, stderr, exit_code)
+local function handle_xrandr_finished(_, configuration, stderr, exit_code)
     if exit_code ~= 0 then
         naughty.notify({
                 preset=naughty.config.presets.critical,
@@ -135,6 +146,14 @@ local function handle_xrandr_finished(key, configuration, stderr, exit_code)
     end
     if configuration.clients then
         restore_clients(configuration.clients)
+    end
+    if configuration.system_tray_screen then
+        local screens = get_screens_by_name()
+        system_tray_screen = configuration.system_tray_screen
+        wibox.widget.systray().set_screen(screens[system_tray_screen])
+    else
+        system_tray_screen = nil
+        wibox.widget.systray().set_screen("primary")
     end
     save_screen_layout()
 end
@@ -188,6 +207,13 @@ local function unmanage_client(c)
     end
 end
 
+local function set_system_tray_position()
+    local target_screen = mouse.screen
+    wibox.widget.systray().set_screen(target_screen)
+    system_tray_screen = get_screen_name(target_screen)
+    save_screen_layout()
+end
+
 local function cleanup_clients()
     local active_clients = {}
     for _, c in pairs(client.get()) do
@@ -220,5 +246,6 @@ return {
     print_debug_info=print_debug_info,
     switch_off_unknown_outputs=switch_off_unknown_outputs,
     manage_client=manage_client,
-    unmanage_client=unmanage_client
+    unmanage_client=unmanage_client,
+    set_system_tray_position=set_system_tray_position
 }
