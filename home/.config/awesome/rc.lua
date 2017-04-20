@@ -36,9 +36,18 @@ do
         if in_error then return end
         in_error = true
 
-        naughty.notify({ preset = naughty.config.presets.critical,
-                         title = "Oops, an error happened!",
-                         text = tostring(err) })
+        naughty.notify({
+                preset = naughty.config.presets.critical,
+                title = "Oops, an error happened!",
+                text = tostring(err),
+                destroy = function(reason) 
+                    if reason == naughty.notificationClosedReason.
+                            dismissedByUser then
+                        local stream = io.popen("xsel --input --clipboard", "w")
+                        stream:write(tostring(err))
+                        stream:close()
+                    end
+                end})
         in_error = false
     end)
 end
@@ -232,13 +241,13 @@ local globalkeys = awful.util.table.join(
     awful.key({ "Mod1",         }, "Tab", function(_)
         cyclefocus.cycle(1, {
                 modifier="Alt_L",
-                -- cycle_filters=cyclefocus.filters.same_screen
+                -- cycle_filters={cyclefocus.filters.same_screen}
             })
     end),
     awful.key({ "Mod1", "Shift" }, "Tab", function(_)
         cyclefocus.cycle(-1, {
                 modifier="Alt_L",
-                -- cycle_filters=cyclefocus.filters.same_screen
+                -- cycle_filters={cyclefocus.filters.same_screen}
             })
     end),
 
