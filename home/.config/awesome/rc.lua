@@ -230,10 +230,16 @@ local globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
     awful.key({ "Mod1",         }, "Tab", function(_)
-            cyclefocus.cycle(1, {modifier="Alt_L"})
+        cyclefocus.cycle(1, {
+                modifier="Alt_L",
+                -- cycle_filters=cyclefocus.filters.same_screen
+            })
     end),
     awful.key({ "Mod1", "Shift" }, "Tab", function(_)
-            cyclefocus.cycle(-1, {modifier="Alt_L"})
+        cyclefocus.cycle(-1, {
+                modifier="Alt_L",
+                -- cycle_filters=cyclefocus.filters.same_screen
+            })
     end),
 
 -- Standard program

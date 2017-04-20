@@ -6,4 +6,4 @@
 	url = https://github.com/mokasin/apw.git
 [submodule "cyclefocus"]
 	path = cyclefocus
-	url = git@github.com:petersohn/awesome-cyclefocus.git
+	url = https://github.com/blueyed/awesome-cyclefocus.git
