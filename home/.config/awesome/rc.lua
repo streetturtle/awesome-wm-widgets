@@ -16,6 +16,7 @@ local debug_util = require("debug_util")
 local variables = require("variables")
 local util = require("util")
 local widgets = require("widgets")
+local cyclefocus = require('cyclefocus')
 
 
 -- {{{ Error handling
@@ -228,15 +229,14 @@ local globalkeys = awful.util.table.join(
               {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
-    awful.key({ "Mod1",           }, "Tab",
-        function ()
-            awful.client.focus.history.previous()
-            if client.focus then
-                client.focus:raise()
-            end
-        end,
-        {description = "go back", group = "client"}),
-    -- Standard program
+    awful.key({ "Mod1",         }, "Tab", function(_)
+            cyclefocus.cycle(1, {modifier="Alt_L"})
+    end),
+    awful.key({ "Mod1", "Shift" }, "Tab", function(_)
+            cyclefocus.cycle(-1, {modifier="Alt_L"})
+    end),
+
+-- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(variables.terminal) end,
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
