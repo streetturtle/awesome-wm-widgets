@@ -109,8 +109,6 @@ local function save_screen_layout()
     end
     client_configuration = configuration.clients
     initialize_client_configuration()
-    naughty.notify({title=key, text="Set system tray configuration to "
-            .. system_tray_screen, timeout=20})
     configuration.system_tray_screen = system_tray_screen
     save_configured_outputs()
 end
@@ -164,8 +162,8 @@ local function detect_screens()
     naughty.notify({title="Detected configuration", text=key})
     local configuration = configured_outputs[key]
     if configuration then
-        naughty.notify({title="Setting new configuration",
-                text=debug_util.to_string_recursive(configuration)})
+        -- naughty.notify({title="Setting new configuration",
+        --         text=debug_util.to_string_recursive(configuration)})
         awful.spawn.easy_async(xrandr.command(out.all,
                 configuration.layout, true),
                 function(_, stderr, _, exit_code)
@@ -191,7 +189,7 @@ end
 
 local function print_debug_info()
     naughty.notify({text=debug_util.to_string_recursive(configured_outputs),
-            timeout=10})
+            timeout=20})
 end
 
 local function manage_client(c)
