@@ -546,37 +546,28 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 
--- client.connect_signal("unfocus",
---         function(c)
---             naughty.notify({text="unfocus client " .. c.name .. " " .. c.window
---                     .. " minimized=" .. tostring(c.minimized)})
---             local target = mouse.current_client
---             if target then
---                 naughty.notify({text="Mouse is on " .. target.name .. " "
---                         .. target.window})
---             else
---                 naughty.notify({text="No target"})
---             end
---         end)
---
--- client.connect_signal("mouse::enter",
---         function(c)
---             naughty.notify({text="mouse enter" .. c.name .. " " .. c.window})
---         end)
+client.connect_signal("unfocus",
+        function(c)
+            if not c.minimized then
+                return
+            end
+            gears.timer.start_new(0.1,
+                    function()
+                        local target = mouse.current_client
+                        if target == c then
+                            return true
+                        end
+                        if target then
+                            client.focus = target
+                        end
+                        return false
+                    end)
+        end)
 
 screen.connect_signal("list",
         function()
             multimonitor.detect_screens()
         end)
-
--- local window_notification_id = nil
---
--- client.connect_signal("focus", function(c)
---     notification = naughty.notify(
---           {text=c.window .. " " .. c.name .. ": screen " .. c.screen.index,
---              replaces_id=window_notification_id, screen=c.screen})
---     window_notification_id = notification.id
--- end)
 
 client.connect_signal("manage", multimonitor.manage_client)
 client.connect_signal("property::position", multimonitor.manage_client)
