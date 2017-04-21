@@ -40,7 +40,7 @@ do
                 preset = naughty.config.presets.critical,
                 title = "Oops, an error happened!",
                 text = tostring(err),
-                destroy = function(reason) 
+                destroy = function(reason)
                     if reason == naughty.notificationClosedReason.
                             dismissedByUser then
                         local stream = io.popen("xsel --input --clipboard", "w")
@@ -357,7 +357,7 @@ local clientkeys = awful.util.table.join(
                 initiating_client=c
             })
     end),
-    awful.key({ "Mod1", "Shift" }, "Tab", function(_)
+    awful.key({ "Mod1", "Shift" }, "Tab", function(c)
         cyclefocus.cycle(-1, {
                 modifier="Alt_L",
                 cycle_filters={cyclefocus.filters.same_screen},
@@ -545,6 +545,24 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+
+-- client.connect_signal("unfocus",
+--         function(c)
+--             naughty.notify({text="unfocus client " .. c.name .. " " .. c.window
+--                     .. " minimized=" .. tostring(c.minimized)})
+--             local target = mouse.current_client
+--             if target then
+--                 naughty.notify({text="Mouse is on " .. target.name .. " "
+--                         .. target.window})
+--             else
+--                 naughty.notify({text="No target"})
+--             end
+--         end)
+--
+-- client.connect_signal("mouse::enter",
+--         function(c)
+--             naughty.notify({text="mouse enter" .. c.name .. " " .. c.window})
+--         end)
 
 screen.connect_signal("list",
         function()
