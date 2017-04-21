@@ -138,6 +138,14 @@ awful.screen.connect_for_each_screen(function(s)
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, widgets.tasklist_buttons)
 
+    -- s.mytasklist:connect_signal("mouse::enter",
+    --         function(c)
+    --             c:raise()
+    --         end)
+    -- s.mytasklist:connect_signal("mouse::leave",
+    --         function(_)
+    --             client.focus:raise()
+    --         end)
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "bottom", screen = s })
 
@@ -238,18 +246,6 @@ local globalkeys = awful.util.table.join(
               {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
-    awful.key({ "Mod1",         }, "Tab", function(_)
-        cyclefocus.cycle(1, {
-                modifier="Alt_L",
-                -- cycle_filters={cyclefocus.filters.same_screen}
-            })
-    end),
-    awful.key({ "Mod1", "Shift" }, "Tab", function(_)
-        cyclefocus.cycle(-1, {
-                modifier="Alt_L",
-                -- cycle_filters={cyclefocus.filters.same_screen}
-            })
-    end),
 
 -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(variables.terminal) end,
@@ -353,7 +349,21 @@ local clientkeys = awful.util.table.join(
             c.maximized = not c.maximized
             c:raise()
         end ,
-        {description = "maximize", group = "client"})
+        {description = "maximize", group = "client"}),
+    awful.key({ "Mod1",         }, "Tab", function(c)
+        cyclefocus.cycle(1, {
+                modifier="Alt_L",
+                cycle_filters={cyclefocus.filters.same_screen},
+                initiating_client=c
+            })
+    end),
+    awful.key({ "Mod1", "Shift" }, "Tab", function(_)
+        cyclefocus.cycle(-1, {
+                modifier="Alt_L",
+                cycle_filters={cyclefocus.filters.same_screen},
+                initiating_client=c
+            })
+    end)
 )
 
 -- Bind all key numbers to tags.

@@ -92,6 +92,7 @@ local tasklist_buttons = awful.util.table.join(
                      awful.button({ }, 5, function ()
                                               awful.client.focus.byidx(-1)
                                           end))
+
 -- Keyboard map indicator and changer
 local keyboard_layout_switcher = {}
 keyboard_layout_switcher.cmd = "setxkbmap"
