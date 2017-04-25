@@ -250,6 +250,12 @@ local globalkeys = awful.util.table.join(
 -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(variables.terminal) end,
               {description = "open a terminal", group = "launcher"}),
+    awful.key({}, "Print",
+            function ()
+                naughty.notify({text=variables.screenshot_tool})
+                awful.spawn.with_shell(variables.screenshot_tool)
+            end,
+            {description = "Take screenshot", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit,
