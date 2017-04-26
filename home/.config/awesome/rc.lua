@@ -218,6 +218,12 @@ local globalkeys = awful.util.table.join(
                             .. " Screen " .. c.screen.index .. "\n"
                 end
                 naughty.notify({text=text, timeout=30})
+                awful.spawn.easy_async("xlsclients -a",
+                    function(stdout, stderr, _, _)
+                        naughty.notify({
+                                text=stdout .. "\n" .. stderr,
+                                timeout=30})
+                    end)
             end, {description = "print debug info", group = "screen"}),
     awful.key({modkey, "Shift"}, "t",
             function()
