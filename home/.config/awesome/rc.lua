@@ -210,6 +210,15 @@ local globalkeys = awful.util.table.join(
               {description = "show screens", group = "screen"}),
     awful.key({ modkey, }, "F2", multimonitor.print_debug_info,
               {description = "print debug info", group = "screen"}),
+    awful.key({ modkey, }, "F3",
+            function()
+                local text = ""
+                for _, c in pairs(client.get()) do
+                    text = text .. c.window .. " " .. c.class .. " " .. c.name
+                            .. " Screen " .. c.screen.index .. "\n"
+                end
+                naughty.notify({text=text, timeout=30})
+            end, {description = "print debug info", group = "screen"}),
     awful.key({modkey, "Shift"}, "t",
             function()
                 multimonitor.set_system_tray_position()
