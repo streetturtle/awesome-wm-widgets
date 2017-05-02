@@ -1,5 +1,6 @@
 local gears = require("gears")
 local awful = require("awful")
+local async = require("async")
 require("awful.autofocus")
 local naughty = require("naughty")
 local wibox = require("wibox")
@@ -135,13 +136,7 @@ local function restore_clients(clients)
     end
 end
 
-local function handle_xrandr_finished(_, configuration, stderr, exit_code)
-    if exit_code ~= 0 then
-        naughty.notify({
-                preset=naughty.config.presets.critical,
-                title="Error setting screen configuration",
-                text=stderr})
-    end
+local function handle_xrandr_finished(_, configuration)
     if configuration.clients then
         restore_clients(configuration.clients)
     end
@@ -164,19 +159,10 @@ local function detect_screens()
     if configuration then
         -- naughty.notify({title="Setting new configuration",
         --         text=debug_util.to_string_recursive(configuration)})
-        awful.spawn.easy_async(xrandr.command(out.all,
-                configuration.layout, true),
-                function(_, stderr, _, exit_code)
-                    local result, err = xpcall(
-                            function()
-                                handle_xrandr_finished(key, configuration,
-                                        stderr, exit_code)
-                            end, debug.traceback)
-                    if not result then
-                        naughty.notify({
-                                preset=naughty.config.presets.critical,
-                                title="Error", text=err})
-                    end
+        async.spawn_and_get_output(
+                xrandr.command(out.all, configuration.layout, true),
+                function(_)
+                    handle_xrandr_finished(key, configuration)
                 end)
     else
         save_screen_layout()
