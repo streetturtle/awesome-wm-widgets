@@ -17,6 +17,7 @@ local variables = require("variables")
 local util = require("util")
 local widgets = require("widgets")
 local cyclefocus = require('cyclefocus')
+local input = require('input')
 
 
 -- {{{ Error handling
@@ -330,7 +331,12 @@ local globalkeys = awful.util.table.join(
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
     awful.key({modkey, "Shift"}, "l", widgets.keyboard_layout_switcher.switch,
-            {description="switch keyboard layout", group="input"})
+            {description="switch keyboard layout", group="input"}),
+    awful.key({}, "XF86TouchpadToggle",
+            function()
+                input.toggle_device(input.touchpad)
+            end,
+            {description="toggle touchpad", group="input"})
 )
 
 local clientkeys = awful.util.table.join(
