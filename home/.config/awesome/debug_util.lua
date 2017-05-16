@@ -22,4 +22,14 @@ local function to_string_recursive(object)
     return __to_string_recursive(object, 0)
 end
 
-return {to_string_recursive=to_string_recursive}
+local log_file = io.open("awesome.log", "a")
+
+local function log(message)
+    log_file:write(os.date("%F %T: ") .. message .. "\n")
+    log_file:flush()
+end
+
+return {
+    to_string_recursive=to_string_recursive,
+    log=log
+}

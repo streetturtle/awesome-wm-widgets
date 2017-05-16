@@ -30,6 +30,7 @@ local configured_outputs_file = variables.config_dir .. "/outputs.json"
 
 local function save_configured_outputs()
     local content = json.encode(configured_outputs)
+    debug_util.log("Saving screen configuration:\n" .. content)
     local f = io.open(configured_outputs_file, "w")
     f:write(content)
     f:close()
@@ -38,6 +39,7 @@ end
 local function load_configured_outputs()
     local f = io.open(configured_outputs_file, "r")
     local content = f:read("*a")
+    debug_util.log("Loaded screen configuration:\n" .. content)
     configured_outputs = json.decode(content)
     f:close()
 end
@@ -93,9 +95,13 @@ local function save_screen_layout()
     table.sort(offsets)
 
     local layout = {}
+    local layout_names = ""
     for _, offset in ipairs(offsets) do
-        table.insert(layout, screen_names[offset])
+        local name = screen_names[offset]
+        layout_names = layout_names .. name .. " "
+        table.insert(layout, name)
     end
+    debug_util.log("Saving screen layout: " .. layout_names)
 
     local key = get_layout_key(get_active_screens())
     local configuration = configured_outputs[key]
@@ -154,17 +160,22 @@ end
 local function detect_screens()
     local out = xrandr.outputs()
     local key = get_layout_key(out.connected)
+    debug_util.log("Detected screen configuration: " .. key)
     naughty.notify({title="Detected configuration", text=key})
     local configuration = configured_outputs[key]
     if configuration then
-        -- naughty.notify({title="Setting new configuration",
-        --         text=debug_util.to_string_recursive(configuration)})
+        local layout_string = ""
+        for _, name in ipairs(configuration.layout) do
+            layout_string = layout_string .. name .. " "
+        end
+        debug_util.log("Setting new screen layout: " .. layout_string)
         async.spawn_and_get_output(
                 xrandr.command(out.all, configuration.layout, true),
                 function(_)
                     handle_xrandr_finished(key, configuration)
                 end)
     else
+        debug_util.log("No previously saved layout found.")
         save_screen_layout()
     end
 end

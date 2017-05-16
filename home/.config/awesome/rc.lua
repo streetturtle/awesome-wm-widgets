@@ -1,3 +1,8 @@
+local debug_util = require("debug_util")
+
+debug_util.log("-----------------------------------")
+debug_util.log("Awesome starting up")
+
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -12,13 +17,11 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local xrandr = require("xrandr")
 local multimonitor = require("multimonitor")
-local debug_util = require("debug_util")
 local variables = require("variables")
 local util = require("util")
 local widgets = require("widgets")
 local cyclefocus = require('cyclefocus')
 local input = require('input')
-
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -618,3 +621,5 @@ local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
     dofile(local_rc_file)
 end
+
+debug_util.log("Initialization finished")
