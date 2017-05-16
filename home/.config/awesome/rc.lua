@@ -210,7 +210,11 @@ local globalkeys = awful.util.table.join(
               {description = "show main menu", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "s", multimonitor.show_screens,
               {description = "show screens", group = "screen"}),
-    awful.key({ modkey, }, "F1", multimonitor.detect_screens,
+    awful.key({ modkey, }, "F1",
+            function()
+                debug_util.log("Detecting screen configuration")
+                multimonitor.detect_screens()
+            end,
               {description = "show screens", group = "screen"}),
     awful.key({ modkey, }, "F2", multimonitor.print_debug_info,
               {description = "print debug info", group = "screen"}),
@@ -254,6 +258,7 @@ local globalkeys = awful.util.table.join(
               {description = "focus the previous screen", group = "screen"}),
     awful.key({ modkey, "Shift"   }, "x",
           function()
+            debug_util.log("Creating new screen configuration")
              xrandr.xrandr(multimonitor.clear_layout,
                      multimonitor.detect_screens)
           end,
@@ -597,12 +602,30 @@ client.connect_signal("unfocus",
 
 screen.connect_signal("list",
         function()
+            debug_util.log("Screen configuration changed")
             multimonitor.detect_screens()
         end)
 
-client.connect_signal("manage", multimonitor.manage_client)
-client.connect_signal("property::position", multimonitor.manage_client)
-client.connect_signal("unmanage", multimonitor.unmanage_client)
+local function get_client_debug_info(c)
+    return c.window .. " - " .. c.class .. " - " .. c.name
+end
+
+client.connect_signal("manage",
+        function(c)
+            debug_util.log("Manage client: " .. get_client_debug_info(c))
+            multimonitor.manage_client(c)
+        end)
+client.connect_signal("property::position",
+        function(c)
+            debug_util.log("Client position changed: "
+                    .. get_client_debug_info(c))
+            multimonitor.manage_client(c)
+        end)
+client.connect_signal("unmanage",
+        function(c)
+            debug_util.log("Unmanage client: " .. get_client_debug_info(c))
+            multimonitor.unmanage_client(c)
+        end)
 
 awesome.connect_signal("startup", multimonitor.detect_screens)
 

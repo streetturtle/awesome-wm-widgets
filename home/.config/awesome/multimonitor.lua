@@ -98,13 +98,16 @@ local function save_screen_layout()
     local layout_names = ""
     for _, offset in ipairs(offsets) do
         local name = screen_names[offset]
-        layout_names = layout_names .. name .. " "
+        layout_names = layout_names .. name .. "-"
         table.insert(layout, name)
     end
-    debug_util.log("Saving screen layout: " .. layout_names)
 
     local key = get_layout_key(get_active_screens())
     local configuration = configured_outputs[key]
+
+    debug_util.log("Saving screen layout for configuration " .. key
+            .. ": " .. layout_names)
+
     if not configuration then
         configuration = {}
         configured_outputs[key] = configuration
@@ -166,7 +169,7 @@ local function detect_screens()
     if configuration then
         local layout_string = ""
         for _, name in ipairs(configuration.layout) do
-            layout_string = layout_string .. name .. " "
+            layout_string = layout_string .. name .. "-"
         end
         debug_util.log("Setting new screen layout: " .. layout_string)
         async.spawn_and_get_output(
@@ -180,8 +183,11 @@ local function detect_screens()
     end
 end
 
-local function clear_layout(layout)
-    configured_outputs[get_layout_key(layout)] = nil
+local function clear_layout(_)
+    local out = xrandr.outputs()
+    local key = get_layout_key(out.connected)
+    debug_util.log("Clearing screen layout for " .. key)
+    configured_outputs[key] = nil
 end
 
 local function print_debug_info()
@@ -189,12 +195,7 @@ local function print_debug_info()
             timeout=20})
 end
 
-local function get_client_debug_info(c)
-    return c.window .. " - " .. c.class .. " - " .. c.name
-end
-
 local function manage_client(c)
-    debug_util.log("Manage client: " .. get_client_debug_info(c))
     if client_configuration then
         client_configuration[tostring(c.window)] = {screen=get_screen_name(c.screen)}
         save_configured_outputs()
@@ -202,7 +203,6 @@ local function manage_client(c)
 end
 
 local function unmanage_client(c)
-    debug_util.log("Unmanage client: " .. get_client_debug_info(c))
     if client_configuration then
         client_configuration[tostring(c.window)] = nil
     end
