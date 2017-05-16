@@ -30,7 +30,7 @@ local configured_outputs_file = variables.config_dir .. "/outputs.json"
 
 local function save_configured_outputs()
     local content = json.encode(configured_outputs)
-    debug_util.log("Saving screen configuration:\n" .. content)
+    debug_util.log("Saving screen configuration")
     local f = io.open(configured_outputs_file, "w")
     f:write(content)
     f:close()
@@ -39,7 +39,7 @@ end
 local function load_configured_outputs()
     local f = io.open(configured_outputs_file, "r")
     local content = f:read("*a")
-    debug_util.log("Loaded screen configuration:\n" .. content)
+    debug_util.log("Loaded screen configuration")
     configured_outputs = json.decode(content)
     f:close()
 end
@@ -189,7 +189,12 @@ local function print_debug_info()
             timeout=20})
 end
 
+local function get_client_debug_info(c)
+    return c.window .. " - " .. c.class .. " - " .. c.name
+end
+
 local function manage_client(c)
+    debug_util.log("Manage client: " .. get_client_debug_info(c))
     if client_configuration then
         client_configuration[tostring(c.window)] = {screen=get_screen_name(c.screen)}
         save_configured_outputs()
@@ -197,6 +202,7 @@ local function manage_client(c)
 end
 
 local function unmanage_client(c)
+    debug_util.log("Unmanage client: " .. get_client_debug_info(c))
     if client_configuration then
         client_configuration[tostring(c.window)] = nil
     end
