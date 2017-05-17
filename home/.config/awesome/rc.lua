@@ -607,7 +607,9 @@ screen.connect_signal("list",
         end)
 
 local function get_client_debug_info(c)
-    return c.window .. " - " .. c.class .. " - " .. c.name
+    local class = c.class or ""
+    local name = c.name or ""
+    return c.window .. " - " .. class .. " - " .. name
 end
 
 client.connect_signal("manage",
