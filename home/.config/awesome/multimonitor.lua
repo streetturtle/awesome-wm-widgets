@@ -229,7 +229,8 @@ local function manage_client(c)
 
     local client_configuration = get_current_configuration("clients")
     local active_layout = get_active_screen_layout()
-    if client_configuration and active_layout == current_screen_layout then
+    if client_configuration and
+            active_layout.layout_names == current_screen_layout then
         client_configuration[tostring(c.window)] = {
                 screen=get_screen_name(c.screen)}
         save_configured_outputs()
