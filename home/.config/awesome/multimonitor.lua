@@ -24,7 +24,8 @@ local function show_screens()
 end
 
 local configured_outputs = {}
-local current_screen_layout = ""
+local configured_screen_layout = ""
+local saved_screen_layout = ""
 local configured_outputs_file = variables.config_dir .. "/outputs.json"
 
 -- This function modifies its argument!!
@@ -122,7 +123,7 @@ local function save_screen_layout()
     debug_util.log("Saving screen layout for configuration " .. key
             .. ": " .. active_layout.layout_names)
 
-    if active_layout.layout_names ~= current_screen_layout then
+    if active_layout.layout_names ~= configured_screen_layout then
         debug_util.log("Screen layout is not up to date. Not saving.")
         return
     end
@@ -137,6 +138,7 @@ local function save_screen_layout()
         configuration.clients = {}
     end
     initialize_client_configuration()
+    saved_screen_layout = configured_screen_layout
     save_configured_outputs()
 end
 
@@ -149,7 +151,14 @@ local function get_screens_by_name()
 end
 
 local function restore_clients(clients)
-    debug_util.log("Restoring client positions")
+    debug_util.log("Restoring client positions.")
+    local active_layout = get_active_screen_layout()
+    if active_layout.layout_names ~= configured_screen_layout then
+        debug_util.log(
+                "Screen layout is not up to date. Not restoring clients.")
+        return
+    end
+
     local screens = get_screens_by_name()
     local to_move = {}
     for _, c in ipairs(client.get()) do
@@ -171,6 +180,12 @@ local function restore_clients(clients)
 end
 
 local function handle_xrandr_finished(_, configuration)
+    local active_layout = get_active_screen_layout()
+    if active_layout.layout_names ~= configured_screen_layout then
+        debug_util.log("Screen layout is not up to date.")
+        return
+    end
+
     if configuration.clients then
         restore_clients(configuration.clients)
     end
@@ -196,7 +211,7 @@ local function detect_screens()
             layout_string = layout_string .. name .. "-"
         end
         debug_util.log("Setting new screen layout: " .. layout_string)
-        current_screen_layout = layout_string
+        configured_screen_layout = layout_string
         async.spawn_and_get_output(
                 xrandr.command(out.all, configuration.layout, true),
                 function(_)
@@ -221,16 +236,9 @@ local function print_debug_info()
 end
 
 local function manage_client(c)
-    -- local active_screens = ""
-    -- for s in screen do
-    --     active_screens = active_screens .. get_screen_name(s) .. "-"
-    -- end
-    -- debug_util.log("Active screens: " .. active_screens)
-
     local client_configuration = get_current_configuration("clients")
-    local active_layout = get_active_screen_layout()
     if client_configuration and
-            active_layout.layout_names == current_screen_layout then
+            saved_screen_layout == configured_screen_layout then
         client_configuration[tostring(c.window)] = {
                 screen=get_screen_name(c.screen)}
         save_configured_outputs()
