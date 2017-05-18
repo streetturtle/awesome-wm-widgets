@@ -27,13 +27,26 @@ local configured_outputs = {}
 local current_screen_layout = ""
 local configured_outputs_file = variables.config_dir .. "/outputs.json"
 
+-- This function modifies its argument!!
+local function get_layout_key(screens)
+    table.sort(screens)
+    local result = ""
+    for _, s in ipairs(screens) do
+        result = result .. s .. " "
+    end
+    return result
+end
+
 local function get_current_configuration(key)
     local current_configuration = configured_outputs[
-            xrandr.outputs().connected]
+            get_layout_key(xrandr.outputs().connected)]
     if key == nil then
         return current_configuration
     end
     if current_configuration then
+        if not current_configuration then
+            current_configuration[key] = {}
+        end
         return current_configuration[key]
     end
     return nil
@@ -57,16 +70,6 @@ end
 
 local function get_screen_name(s)
     return gears.table.keys(s.outputs)[1]
-end
-
--- This function modifies its argument!!
-local function get_layout_key(screens)
-    table.sort(screens)
-    local result = ""
-    for _, s in ipairs(screens) do
-        result = result .. s .. " "
-    end
-    return result
 end
 
 local function find_clients(s)
@@ -150,7 +153,11 @@ local function restore_clients(clients)
     local screens = get_screens_by_name()
     local to_move = {}
     for _, c in ipairs(client.get()) do
-        local screen_name = clients[tostring(c.window)]
+        local client_info = clients[tostring(c.window)]
+        local screen_name = nil
+        if client_info then
+            screen_name = client_info.screen
+        end
         if screen_name and screen_name ~= get_screen_name(c.screen) then
             debug_util.log("Moving client "
                     .. debug_util.get_client_debug_info(c)
@@ -214,11 +221,11 @@ local function print_debug_info()
 end
 
 local function manage_client(c)
-    local active_screens = ""
-    for s in screen do
-        active_screens = active_screens .. get_screen_name(s) .. "-"
-    end
-    debug_util.log("Active screens: " .. active_screens)
+    -- local active_screens = ""
+    -- for s in screen do
+    --     active_screens = active_screens .. get_screen_name(s) .. "-"
+    -- end
+    -- debug_util.log("Active screens: " .. active_screens)
 
     local client_configuration = get_current_configuration("clients")
     local active_layout = get_active_screen_layout()
@@ -241,7 +248,10 @@ local function set_system_tray_position()
     wibox.widget.systray().set_screen(target_screen)
     local configuration = get_current_configuration(nil)
     if configuration then
+        naughty.notify({text="Found configuration"})
         configuration.system_tray_screen = get_screen_name(target_screen)
+    else
+        naughty.notify({text="Found no configuration"})
     end
     save_screen_layout()
 end
