@@ -22,6 +22,12 @@ local function to_string_recursive(object)
     return __to_string_recursive(object, 0)
 end
 
+local function get_client_debug_info(c)
+    local class = c.class or ""
+    local name = c.name or ""
+    return c.window .. " - " .. class .. " - " .. name
+end
+
 local log_file = io.open("awesome.log", "a")
 
 local function log(message)
@@ -31,5 +37,6 @@ end
 
 return {
     to_string_recursive=to_string_recursive,
-    log=log
+    get_client_debug_info=get_client_debug_info,
+    log=log,
 }

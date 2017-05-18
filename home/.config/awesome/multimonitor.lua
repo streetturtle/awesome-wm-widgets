@@ -24,9 +24,20 @@ local function show_screens()
 end
 
 local configured_outputs = {}
-local client_configuration = nil
-local system_tray_screen = nil
+local current_screen_layout = ""
 local configured_outputs_file = variables.config_dir .. "/outputs.json"
+
+local function get_current_configuration(key)
+    local current_configuration = configured_outputs[
+            xrandr.outputs().connected]
+    if key == nil then
+        return current_configuration
+    end
+    if current_configuration then
+        return current_configuration[key]
+    end
+    return nil
+end
 
 local function save_configured_outputs()
     local content = json.encode(configured_outputs)
@@ -58,14 +69,6 @@ local function get_layout_key(screens)
     return result
 end
 
-local function get_active_screens()
-    local screens = {}
-    for s in screen do
-        table.insert(screens, get_screen_name(s))
-    end
-    return screens
-end
-
 local function find_clients(s)
     local result = {}
     for _, c in ipairs(s.all_clients) do
@@ -75,6 +78,10 @@ local function find_clients(s)
 end
 
 local function initialize_client_configuration()
+    local client_configuration = get_current_configuration("clients")
+    if not client_configuration then
+        return
+    end
     for k, _ in pairs(client_configuration) do
         client_configuration[k] = nil
     end
@@ -84,7 +91,7 @@ local function initialize_client_configuration()
     end
 end
 
-local function save_screen_layout()
+local function get_active_screen_layout()
     local screen_names = {}
     local offsets = {}
     for s in screen do
@@ -101,25 +108,32 @@ local function save_screen_layout()
         layout_names = layout_names .. name .. "-"
         table.insert(layout, name)
     end
+    return {layout=layout, layout_names=layout_names}
+end
 
-    local key = get_layout_key(get_active_screens())
+local function save_screen_layout()
+    local active_layout = get_active_screen_layout()
+    local key = get_layout_key(xrandr.outputs().connected)
     local configuration = configured_outputs[key]
 
     debug_util.log("Saving screen layout for configuration " .. key
-            .. ": " .. layout_names)
+            .. ": " .. active_layout.layout_names)
+
+    if active_layout.layout_names ~= current_screen_layout then
+        debug_util.log("Screen layout is not up to date. Not saving.")
+        return
+    end
 
     if not configuration then
         configuration = {}
         configured_outputs[key] = configuration
     end
 
-    configuration.layout = layout
+    configuration.layout = active_layout.layout
     if not configuration.clients then
         configuration.clients = {}
     end
-    client_configuration = configuration.clients
     initialize_client_configuration()
-    configuration.system_tray_screen = system_tray_screen
     save_configured_outputs()
 end
 
@@ -132,11 +146,15 @@ local function get_screens_by_name()
 end
 
 local function restore_clients(clients)
+    debug_util.log("Restoring client positions")
     local screens = get_screens_by_name()
     local to_move = {}
     for _, c in ipairs(client.get()) do
         local screen_name = clients[tostring(c.window)]
-        if screen_name ~= get_screen_name(c.screen) then
+        if screen_name and screen_name ~= get_screen_name(c.screen) then
+            debug_util.log("Moving client "
+                    .. debug_util.get_client_debug_info(c)
+                    .. " to screen " .. screen_name)
             to_move[c] = screens[screen_name]
         end
     end
@@ -151,10 +169,9 @@ local function handle_xrandr_finished(_, configuration)
     end
     if configuration.system_tray_screen then
         local screens = get_screens_by_name()
-        system_tray_screen = configuration.system_tray_screen
+        local system_tray_screen = configuration.system_tray_screen
         wibox.widget.systray().set_screen(screens[system_tray_screen])
     else
-        system_tray_screen = nil
         wibox.widget.systray().set_screen("primary")
     end
     save_screen_layout()
@@ -172,6 +189,7 @@ local function detect_screens()
             layout_string = layout_string .. name .. "-"
         end
         debug_util.log("Setting new screen layout: " .. layout_string)
+        current_screen_layout = layout_string
         async.spawn_and_get_output(
                 xrandr.command(out.all, configuration.layout, true),
                 function(_)
@@ -196,13 +214,23 @@ local function print_debug_info()
 end
 
 local function manage_client(c)
-    if client_configuration then
-        client_configuration[tostring(c.window)] = {screen=get_screen_name(c.screen)}
+    local active_screens = ""
+    for s in screen do
+        active_screens = active_screens .. get_screen_name(s) .. "-"
+    end
+    debug_util.log("Active screens: " .. active_screens)
+
+    local client_configuration = get_current_configuration("clients")
+    local active_layout = get_active_screen_layout()
+    if client_configuration and active_layout == current_screen_layout then
+        client_configuration[tostring(c.window)] = {
+                screen=get_screen_name(c.screen)}
         save_configured_outputs()
     end
 end
 
 local function unmanage_client(c)
+    local client_configuration = get_current_configuration("clients")
     if client_configuration then
         client_configuration[tostring(c.window)] = nil
     end
@@ -211,7 +239,10 @@ end
 local function set_system_tray_position()
     local target_screen = mouse.screen
     wibox.widget.systray().set_screen(target_screen)
-    system_tray_screen = get_screen_name(target_screen)
+    local configuration = get_current_configuration(nil)
+    if configuration then
+        configuration.system_tray_screen = get_screen_name(target_screen)
+    end
     save_screen_layout()
 end
 
@@ -245,7 +276,6 @@ return {
     detect_screens=detect_screens,
     clear_layout=clear_layout,
     print_debug_info=print_debug_info,
-    switch_off_unknown_outputs=switch_off_unknown_outputs,
     manage_client=manage_client,
     unmanage_client=unmanage_client,
     set_system_tray_position=set_system_tray_position

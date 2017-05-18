@@ -606,26 +606,22 @@ screen.connect_signal("list",
             multimonitor.detect_screens()
         end)
 
-local function get_client_debug_info(c)
-    local class = c.class or ""
-    local name = c.name or ""
-    return c.window .. " - " .. class .. " - " .. name
-end
-
 client.connect_signal("manage",
         function(c)
-            debug_util.log("Manage client: " .. get_client_debug_info(c))
+            debug_util.log("Manage client: "
+                    .. debug_util.get_client_debug_info(c))
             multimonitor.manage_client(c)
         end)
 client.connect_signal("property::position",
         function(c)
             debug_util.log("Client position changed: "
-                    .. get_client_debug_info(c))
+                    .. debug_util.get_client_debug_info(c))
             multimonitor.manage_client(c)
         end)
 client.connect_signal("unmanage",
         function(c)
-            debug_util.log("Unmanage client: " .. get_client_debug_info(c))
+            debug_util.log("Unmanage client: "
+                    .. debug_util.get_client_debug_info(c))
             multimonitor.unmanage_client(c)
         end)
 
