@@ -4,17 +4,34 @@ local beautiful = require("beautiful")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local variables = require("variables")
+-- local naughty = require("naughty")
+-- local debug_util = require("debug_util")
+
+local function property_toggler_menu_item(element, key, turn_on, turn_off)
+    if element[key] then
+        return {turn_off, function() element[key] = false end }
+    else
+        return {turn_on, function() element[key] = true end }
+    end
+end
 
 -- {{{ Helper functions
 local function client_menu_toggle_fn()
     local instance = nil
 
-    return function ()
+    return function (c)
         if instance and instance.wibox.visible then
             instance:hide()
             instance = nil
         else
-            instance = awful.menu.clients({ theme = { width = 250 } })
+            instance = awful.menu({
+                    property_toggler_menu_item(c, "minimized",
+                            "Minimize", "Restore"),
+                    property_toggler_menu_item(c, "maximized",
+                            "Maximize", "Unmaximize"),
+                    {"Close", function() c:kill() end},
+            })
+            instance:show()
         end
     end
 end
