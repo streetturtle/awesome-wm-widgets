@@ -110,4 +110,4 @@ the same name. Here is the list of icons used:
 
 In case of any questions/suggestions don't hesitate to contact me, I would be happy to help :)
 
-PRs/issues are welcome!
+PRs/issues and st★rs are welcome!
