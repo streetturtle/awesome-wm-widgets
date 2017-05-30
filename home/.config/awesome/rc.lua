@@ -14,6 +14,7 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
+
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local xrandr = require("xrandr")
 local multimonitor = require("multimonitor")
@@ -22,6 +23,7 @@ local util = require("util")
 local widgets = require("widgets")
 local cyclefocus = require('cyclefocus')
 local input = require('input')
+local xscreensaver = require('xscreensaver')
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -260,7 +262,7 @@ local globalkeys = awful.util.table.join(
               {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey, }, "l",
           function()
-              awful.spawn("xscreensaver-command -lock")
+              xscreensaver.lock()
           end,
               {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
@@ -608,7 +610,6 @@ local APWTimer = timer({ timeout = 0.5 }) -- set update interval in s
 APWTimer:connect_signal("timeout", APW.Update)
 APWTimer:start()
 
-awful.spawn.with_shell("xscreensaver -no-splash")
 util.start_if_not_running("clipit", "")
 util.start_if_not_running("nm-applet", "")
 util.start_if_not_running("xbindkeys", "")
