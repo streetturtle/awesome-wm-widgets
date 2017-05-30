@@ -187,21 +187,23 @@ root.buttons(awful.util.table.join(
 -- }}}
 
 -- {{{ Key bindings
+
+local function suspend()
+    xscreensaver.lock()
+    gears.timer.start_new(0.5,
+            function()
+                if not session_locked then
+                    return true
+                end
+                awful.spawn("systemctl suspend")
+                return false
+            end)
+end
+
 local globalkeys = awful.util.table.join(
     awful.key({ "Mod4",           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
-    awful.key({}, "XF86Sleep",
-            function()
-                xscreensaver.lock()
-                gears.timer.start_new(0.5,
-                        function()
-                            if not session_locked then
-                                return true
-                            end
-                            awful.spawn("systemctl suspend")
-                            return false
-                        end)
-            end,
+    awful.key({}, "XF86Sleep", suspend,
               {description = "sleep", group = "awesome"}),
     -- awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
     --           {description = "view previous", group = "tag"}),
