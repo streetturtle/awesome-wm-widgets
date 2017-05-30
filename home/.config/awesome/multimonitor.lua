@@ -55,7 +55,6 @@ end
 
 local function save_configured_outputs()
     local content = json.encode(configured_outputs)
-    debug_util.log("Saving screen configuration")
     local f = io.open(configured_outputs_file, "w")
     f:write(content)
     f:close()
@@ -64,7 +63,6 @@ end
 local function load_configured_outputs()
     local f = io.open(configured_outputs_file, "r")
     local content = f:read("*a")
-    debug_util.log("Loaded screen configuration")
     configured_outputs = json.decode(content)
     f:close()
 end

@@ -589,20 +589,14 @@ screen.connect_signal("list",
 
 client.connect_signal("manage",
         function(c)
-            debug_util.log("Manage client: "
-                    .. debug_util.get_client_debug_info(c))
             multimonitor.manage_client(c)
         end)
 client.connect_signal("property::position",
         function(c)
-            debug_util.log("Client position changed: "
-                    .. debug_util.get_client_debug_info(c))
             multimonitor.manage_client(c)
         end)
 client.connect_signal("unmanage",
         function(c)
-            debug_util.log("Unmanage client: "
-                    .. debug_util.get_client_debug_info(c))
             multimonitor.unmanage_client(c)
         end)
 
