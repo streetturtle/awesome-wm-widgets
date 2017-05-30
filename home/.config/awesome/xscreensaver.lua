@@ -8,6 +8,11 @@ local function watch()
     async.run_command_continuously("xscreensaver-command -watch",
             function(line)
                 debug_util.log("Got xscreensaver action: " .. line)
+                if string.match(line, "^LOCK") then
+                    awesome.emit_signal("xscreensaver::lock")
+                elseif string.match(line, "^UNBLANK") then
+                    awesome.emit_signal("xscreensaver::unblank")
+                end
             end)
 end
 

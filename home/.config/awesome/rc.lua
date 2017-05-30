@@ -25,6 +25,10 @@ local cyclefocus = require('cyclefocus')
 local input = require('input')
 local xscreensaver = require('xscreensaver')
 
+local lgi = require("lgi")
+local Gio = lgi.require("Gio")
+local dbus_ = require("dbus_")
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -75,6 +79,8 @@ local modkey = variables.modkey
 beautiful.init(theme)
 
 local APW = require("apw/widget")
+
+local session_locked = false
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
@@ -184,6 +190,19 @@ root.buttons(awful.util.table.join(
 local globalkeys = awful.util.table.join(
     awful.key({ "Mod4",           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
+    awful.key({}, "XF86Sleep",
+            function()
+                xscreensaver.lock()
+                gears.timer.start_new(0.5,
+                        function()
+                            if not session_locked then
+                                return true
+                            end
+                            awful.spawn("systemctl suspend")
+                            return false
+                        end)
+            end,
+              {description = "sleep", group = "awesome"}),
     -- awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
     --           {description = "view previous", group = "tag"}),
     -- awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
@@ -604,6 +623,16 @@ client.connect_signal("unmanage",
 
 awesome.connect_signal("startup", multimonitor.detect_screens)
 
+awesome.connect_signal("xscreensaver::lock",
+        function()
+            session_locked = true
+        end)
+
+awesome.connect_signal("xscreensaver::unblank",
+        function()
+            session_locked = false
+        end)
+
 -- }}}
 
 local APWTimer = timer({ timeout = 0.5 }) -- set update interval in s
@@ -618,5 +647,16 @@ local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
     dofile(local_rc_file)
 end
+
+local inhibit_fd = nil
+
+Gio.Async.call(function()
+    debug_util.log("Inhibiting power keys")
+    local bus = dbus_.bus_get_async(Gio.BusType.SYSTEM)
+    inhibit_fd = dbus_.inhibit(bus,
+            "handle-suspend-key:handle-lid-switch",
+            "awesome", "Handle suspend events manually", "block")
+    debug_util.log("Inhibiting power keys done")
+end)()
 
 debug_util.log("Initialization finished")
