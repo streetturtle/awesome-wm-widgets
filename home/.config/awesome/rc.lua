@@ -28,6 +28,7 @@ local xscreensaver = require('xscreensaver')
 local lgi = require("lgi")
 local Gio = lgi.require("Gio")
 local dbus_ = require("dbus_")
+local power = require("power")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -188,22 +189,10 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 
-local function suspend()
-    xscreensaver.lock()
-    gears.timer.start_new(0.5,
-            function()
-                if not session_locked then
-                    return true
-                end
-                awful.spawn("systemctl suspend")
-                return false
-            end)
-end
-
 local globalkeys = awful.util.table.join(
     awful.key({ "Mod4",           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
-    awful.key({}, "XF86Sleep", suspend,
+    awful.key({}, "XF86Sleep", power.suspend,
               {description = "sleep", group = "awesome"}),
     -- awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
     --           {description = "view previous", group = "tag"}),
@@ -624,16 +613,6 @@ client.connect_signal("unmanage",
         end)
 
 awesome.connect_signal("startup", multimonitor.detect_screens)
-
-awesome.connect_signal("xscreensaver::lock",
-        function()
-            session_locked = true
-        end)
-
-awesome.connect_signal("xscreensaver::unblank",
-        function()
-            session_locked = false
-        end)
 
 -- }}}
 

@@ -4,6 +4,7 @@ local beautiful = require("beautiful")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local variables = require("variables")
+local power = require("power")
 -- local naughty = require("naughty")
 -- local debug_util = require("debug_util")
 
@@ -48,10 +49,19 @@ local awesome_menu = {
     { "quit", function() awesome.quit() end}
 }
 
-local main_menu = awful.menu({ items = { { "awesome", awesome_menu, beautiful.awesome_icon },
-                                    { "open terminal", variables.terminal }
-                                  }
-                        })
+local power_menu = {
+    { "reboot", power.reboot},
+    { "suspend", power.suspend},
+    { "hibernate", power.hibernate},
+    { "power off", power.poweroff},
+}
+
+local main_menu = awful.menu({
+    items = {
+        {"awesome", awesome_menu, beautiful.awesome_icon},
+        {"open terminal", variables.terminal},
+        {"power", power_menu},
+    }})
 
 -- local launcher = {}
 
