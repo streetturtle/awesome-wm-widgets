@@ -81,7 +81,7 @@ beautiful.init(theme)
 
 local APW = require("apw/widget")
 
-local session_locked = false
+local last_started_client = nil
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
@@ -338,7 +338,16 @@ local globalkeys = awful.util.table.join(
             function()
                 input.toggle_device(input.touchpad)
             end,
-            {description="toggle touchpad", group="input"})
+            {description="toggle touchpad", group="input"}),
+
+    awful.key({modkey}, "Tab",
+            function()
+                if last_started_client then
+                    client.focus = last_started_client
+                    last_started_client:raise()
+                end
+            end,
+            {description="focus last started client", group="client"})
 )
 
 local clientkeys = awful.util.table.join(
@@ -610,6 +619,18 @@ client.connect_signal("property::position",
 client.connect_signal("unmanage",
         function(c)
             multimonitor.unmanage_client(c)
+        end)
+
+client.connect_signal("manage",
+        function(c)
+            last_started_client = c
+        end)
+
+client.connect_signal("unmanage",
+        function(c)
+            if last_started_client == c then
+                last_started_client = nil
+            end
         end)
 
 awesome.connect_signal("startup", multimonitor.detect_screens)
