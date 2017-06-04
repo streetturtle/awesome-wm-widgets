@@ -16,3 +16,7 @@ watch(
         spotify_widget:set_text(stdout)
     end
 )
+
+spotify_widget:connect_signal("button::press", function(_,_,_,button)
+    if (button == 1) then awful.spawn("sp play", false) end
+end)
