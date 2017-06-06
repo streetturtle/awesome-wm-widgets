@@ -190,9 +190,11 @@ local function handle_xrandr_finished(_, configuration)
     if configuration.system_tray_screen then
         local screens = get_screens_by_name()
         local system_tray_screen = configuration.system_tray_screen
+        debug_util.log("Moving system tray to " .. system_tray_screen)
         wibox.widget.systray().set_screen(screens[system_tray_screen])
     else
         wibox.widget.systray().set_screen("primary")
+        debug_util.log("Moving system tray to primary screen")
     end
     save_screen_layout()
 end
