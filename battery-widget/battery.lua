@@ -8,6 +8,7 @@ local watch = require("awful.widget.watch")
 -- Battery 0: Charging, 53%, 00:57:43 until charged
 
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
+local username = os.getenv("USER")
 
 battery_widget = wibox.widget { 
     {
@@ -21,22 +22,13 @@ battery_widget = wibox.widget {
     end
 }
 
--- Popup with battery info
-battery_popup = awful.tooltip({objects = {battery_widget}})
-
--- To use colors from beautiful theme put
--- following lines in rc.lua before require("battery")
---
--- beautiful.tooltip_fg = beautiful.fg_normal
--- beautiful.tooltip_bg = beautiful.bg_normal
-
 watch(
     "acpi", 10,
     function(widget, stdout, stderr, exitreason, exitcode)
         local batteryType
         local _, status, charge_str, time = string.match(stdout, '(.+): (%a+), (%d?%d%d)%%,? ?.*')
         local charge = tonumber(charge_str)
-        if (charge >= 0 and charge < 15) then 
+        if (charge >= 0 and charge < 15) then
             batteryType="battery-empty%s-symbolic"
             show_battery_warning()
         elseif (charge >= 15 and charge < 40) then batteryType="battery-caution%s-symbolic"
@@ -44,7 +36,7 @@ watch(
         elseif (charge >= 60 and charge < 80) then batteryType="battery-good%s-symbolic"
         elseif (charge >= 80 and charge <= 100) then batteryType="battery-full%s-symbolic"
         end
-        if status == 'Charging' then 
+        if status == 'Charging' then
             batteryType = string.format(batteryType,'-charging')
         else
             batteryType = string.format(batteryType,'')
@@ -53,36 +45,49 @@ watch(
 
         -- Update popup text
         -- TODO: Filter long lines
-        battery_popup.text = string.gsub(stdout, "\n$", "")
+        -- battery_popup.text = string.gsub(stdout, "\n$", "")
     end,
     battery_widget
 )
 
--- Alternative to tooltip - popup message shown by naughty library. You can compare both and choose the preferred one
---function show_battery_status()
---    awful.spawn.easy_async([[bash -c 'acpi']],
---        function(stdout, stderr, reason, exit_code)
---            naughty.notify{
---                text = stdout,
---                title = "Battery status",
---                timeout = 5, hover_timeout = 0.5,
---                width = 200,
---            }
---        end
---    )
---end
---battery_widget:connect_signal("mouse::enter", function() show_battery_status() end)
+-- Popup with battery info
+-- One way of creating a pop-up notification - naughty.notify
+local notification
+function show_battery_status()
+    awful.spawn.easy_async([[bash -c 'acpi']],
+        function(stdout, _, _, _)
+            notification = naughty.notify{
+                text =  stdout,
+                title = "Battery status",
+                timeout = 5, hover_timeout = 0.5,
+                width = 200,
+            }
+        end
+    )
+end
+battery_widget:connect_signal("mouse::enter", function() show_battery_status() end)
+battery_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
 
+-- Alternative to naughty.notify - tooltip. You can compare both and choose the preferred one
+
+--battery_popup = awful.tooltip({objects = {battery_widget}})
+
+-- To use colors from beautiful theme put
+-- following lines in rc.lua before require("battery"):
+-- beautiful.tooltip_fg = beautiful.fg_normal
+-- beautiful.tooltip_bg = beautiful.bg_normal
+
+--[[ Show warning notification ]]
 function show_battery_warning()
     naughty.notify{
-    icon = "/home/pashik/.config/awesome/nichosi.png",
-    icon_size=100,
-    text = "Huston, we have a problem",
-    title = "Battery is dying",
-    timeout = 5, hover_timeout = 0.5,
-    position = "bottom_right",
-    bg = "#F06060",
-    fg = "#EEE9EF",
-    width = 300,
-}
+        icon = "/home/" .. username .. "/.config/awesome/nichosi.png",
+        icon_size=100,
+        text = "Huston, we have a problem",
+        title = "Battery is dying",
+        timeout = 5, hover_timeout = 0.5,
+        position = "bottom_right",
+        bg = "#F06060",
+        fg = "#EEE9EF",
+        width = 300,
+    }
 end
