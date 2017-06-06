@@ -9,17 +9,17 @@ local request_command = 'amixer -D pulse sget Master'
 volume_widget = wibox.widget {
     {
         id = "icon",
-   	image = path_to_icons .. "audio-volume-muted-symbolic.svg",
-	resize = false,
+        image = path_to_icons .. "audio-volume-muted-symbolic.svg",
+        resize = false,
         widget = wibox.widget.imagebox,
     },
-    layout = wibox.container.margin(brightness_icon, 0, 0, 3),
+    layout = wibox.container.margin(_, _, _, 3),
     set_image = function(self, path)
         self.icon.image = path
     end
 }
 
-local update_graphic = function(widget, stdout, stderr, reason, exit_code)
+local update_graphic = function(widget, stdout, _, _, _)
     local mute = string.match(stdout, "%[(o%D%D?)%]")
     local volume = string.match(stdout, "(%d?%d?%d)%%")
     volume = tonumber(string.format("% 3d", volume))
@@ -42,7 +42,7 @@ volume_widget:connect_signal("button::press", function(_,_,_,button)
     elseif (button == 5) then awful.spawn("amixer -D pulse sset Master 5%-", false)
     elseif (button == 1) then awful.spawn("amixer -D pulse sset Master toggle", false)
     end
-    
+
     spawn.easy_async(request_command, function(stdout, stderr, exitreason, exitcode)
         update_graphic(volume_widget, stdout, stderr, exitreason, exitcode)
     end)
