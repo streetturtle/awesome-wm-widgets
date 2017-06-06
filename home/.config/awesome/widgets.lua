@@ -5,8 +5,8 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local variables = require("variables")
 local power = require("power")
--- local naughty = require("naughty")
--- local debug_util = require("debug_util")
+local naughty = require("naughty")
+local debug_util = require("debug_util")
 
 local function property_toggler_menu_item(element, key, turn_on, turn_off)
     if element[key] then
@@ -96,20 +96,16 @@ local taglist_buttons = awful.util.table.join(
 local tasklist_buttons = awful.util.table.join(
                      awful.button({ }, 1,
                              function (c)
-                                 if c == client.focus then
-                                     c.minimized = true
-                                 else
-                                     -- Without this, the following
-                                     -- :isvisible() makes no sense
-                                     c.minimized = false
-                                     if not c:isvisible() and c.first_tag then
-                                         c.first_tag:view_only()
-                                     end
-                                     -- This will also un-minimize
-                                     -- the client, if needed
-                                     client.focus = c
-                                     c:raise()
+                                 -- Without this, the following
+                                 -- :isvisible() makes no sense
+                                 c.minimized = false
+                                 if not c:isvisible() and c.first_tag then
+                                     c.first_tag:view_only()
                                  end
+                                 -- This will also un-minimize
+                                 -- the client, if needed
+                                 client.focus = c
+                                 c:raise()
                              end),
                      awful.button({ }, 2, function(c) c:kill() end),
                      awful.button({ }, 3, client_menu_toggle_fn()),
