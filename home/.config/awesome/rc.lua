@@ -645,6 +645,8 @@ util.start_if_not_running("clipit", "")
 util.start_if_not_running("nm-applet", "")
 util.start_if_not_running("xbindkeys", "")
 
+awful.spawn("xset +dpms dpms 0 0 900")
+
 local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
     dofile(local_rc_file)
