@@ -24,11 +24,11 @@ local update_graphic = function(widget, stdout, _, _, _)
     local volume = string.match(stdout, "(%d?%d?%d)%%")
     volume = tonumber(string.format("% 3d", volume))
     local volume_icon_name
-    if mute == "off"                     then volume_icon_name="audio-volume-muted-symbolic"
+    if mute == "off" then volume_icon_name="audio-volume-muted-symbolic_red"
     elseif (volume >= 0 and volume < 25) then volume_icon_name="audio-volume-muted-symbolic"
-    elseif (volume < 50)                 then volume_icon_name="audio-volume-low-symbolic"
-    elseif (volume < 75)                 then volume_icon_name="audio-volume-medium-symbolic"
-    elseif (volume <= 100)               then volume_icon_name="audio-volume-high-symbolic"
+    elseif (volume < 50) then volume_icon_name="audio-volume-low-symbolic"
+    elseif (volume < 75) then volume_icon_name="audio-volume-medium-symbolic"
+    elseif (volume <= 100) then volume_icon_name="audio-volume-high-symbolic"
     end
     widget.image = path_to_icons .. volume_icon_name .. ".svg"
 end
