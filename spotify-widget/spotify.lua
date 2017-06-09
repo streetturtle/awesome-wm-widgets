@@ -21,6 +21,14 @@ watch(
     spotify_widget
 )
 
+--[[
+-- Adds mouse control to the widget:
+--  - left click - play/pause
+--  - scroll up - play next song
+--  - scroll down - play previous song ]]
 spotify_widget:connect_signal("button::press", function(_,_,_,button)
-    if (button == 1) then awful.spawn("sp play", false) end
+    if (button == 1) then awful.spawn("sp play", false)
+    elseif (button == 4) then awful.spawn("sp next", false)
+    elseif (button == 5) then awful.spawn("sp prev", false)
+    end
 end)
