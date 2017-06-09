@@ -118,13 +118,22 @@ local tasklist_buttons = awful.util.table.join(
 
 -- Keyboard map indicator and changer
 local keyboard_layout_switcher = {}
+
+local function set_keyboard_layout_text(layout)
+    keyboard_layout_switcher.widget:set_text(" 🖮 " .. layout[3] .. " ")
+end
+
 keyboard_layout_switcher.cmd = "setxkbmap"
 keyboard_layout_switcher.layout = {
         { "hu", "102_qwertz_dot_nodead" , "HU" },
         { "us", "" , "EN" } }
 keyboard_layout_switcher.current = 1  -- us is our default layout
 keyboard_layout_switcher.widget = wibox.widget.textbox()
-keyboard_layout_switcher.widget:set_text(" " .. keyboard_layout_switcher.layout[keyboard_layout_switcher.current][3] .. " ")
+set_keyboard_layout_text(keyboard_layout_switcher.layout[
+        keyboard_layout_switcher.current])
+keyboard_layout_switcher.widget:set_text(" foo "
+        .. keyboard_layout_switcher.layout[keyboard_layout_switcher.current][3]
+        .. " barf ")
 keyboard_layout_switcher.switch = function ()
     keyboard_layout_switcher.current = keyboard_layout_switcher.current
             % #(keyboard_layout_switcher.layout) + 1
@@ -132,7 +141,7 @@ keyboard_layout_switcher.switch = function ()
 end
 keyboard_layout_switcher.update = function()
     local t = keyboard_layout_switcher.layout[keyboard_layout_switcher.current]
-    keyboard_layout_switcher.widget:set_text(" " .. t[3] .. " ")
+    set_keyboard_layout_text(t)
     os.execute( keyboard_layout_switcher.cmd .. " " .. t[1] .. " " .. t[2] )
 end
 keyboard_layout_switcher.widget:connect_signal("button::press",

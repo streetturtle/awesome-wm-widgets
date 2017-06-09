@@ -24,6 +24,7 @@ local widgets = require("widgets")
 local cyclefocus = require('cyclefocus')
 local input = require('input')
 local xscreensaver = require('xscreensaver')
+local pulseaudio = require("apw/pulseaudio")
 
 local lgi = require("lgi")
 local Gio = lgi.require("Gio")
@@ -640,6 +641,15 @@ awesome.connect_signal("startup", multimonitor.detect_screens)
 local APWTimer = timer({ timeout = 0.5 }) -- set update interval in s
 APWTimer:connect_signal("timeout", APW.Update)
 APWTimer:start()
+
+local apw_tooltip = awful.tooltip({
+        objects={APW},
+        delay_show=1,
+        timer_function=function()
+            local p = pulseaudio:Create()
+            p:UpdateState()
+            return tostring(math.floor(p.Volume * 100 + 0.5)) .. "%"
+        end})
 
 util.start_if_not_running("clipit", "")
 util.start_if_not_running("nm-applet", "")
