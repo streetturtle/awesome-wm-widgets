@@ -35,7 +35,7 @@ end
 
 --[[ allows control volume level by:
 - clicking on the widget to mute/unmute
-- scrolling when curson is over the widget
+- scrolling when cursor is over the widget
 ]]
 volume_widget:connect_signal("button::press", function(_,_,_,button)
     if (button == 4)     then awful.spawn("amixer -D pulse sset Master 5%+", false)
