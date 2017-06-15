@@ -10,7 +10,13 @@ Note that widget uses the Arc icon theme, so it should be [installed](https://gi
 
 ## Installation
 
-First you need to have spotify CLI installed. Here is how you can do it (except widget part): [pavelmakhov.com/2016/02/awesome-wm-spotify](http://pavelmakhov.com/2016/02/awesome-wm-spotify) 
+First you need to have spotify CLI installed. To do it put following file under **/usr/local/bin** and make it executable:
+
+```bash
+git clone https://gist.github.com/fa6258f3ff7b17747ee3.git
+sudo mv ./fa6258f3ff7b17747ee3/sp /usr/local/bin/
+sudo chmod +x /usr/local/bin/sp
+```
 
 To use this widget put **spotify.lua** under **~/.config/awesome/** and add it in **rc.lua**:
 
