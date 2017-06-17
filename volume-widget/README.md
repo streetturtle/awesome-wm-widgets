@@ -21,8 +21,8 @@ s.mytasklist, -- Middle widget
 		volume_widget,
 		...      
 ```
-- _Optional step._ In Arc icon theme the muted audio level icon (<img src="./audio-volume-muted-symbolic.svg">)) looks like 0 level icon, which could be a bit misleading.
- So I decided to use original muted icon for low audio level, and the same icon, but colored in red for muted audio level. Fortunately icons are in svg format, so you can easily recolor them with `sed`, so it would look like this (![Volume Widget](./audio-volume-muted-symbolic_red.svg)):
+- _Optional step._ In Arc icon theme the muted audio level icon (![Volume-widget](./audio-volume-muted-symbolic.png)) looks like 0 level icon, which could be a bit misleading.
+ So I decided to use original muted icon for low audio level, and the same icon, but colored in red for muted audio level. Fortunately icons are in svg format, so you can easily recolor them with `sed`, so it would look like this (![Volume Widget](./audio-volume-muted-symbolic_red.png)):
  
  ```bash
  cd /usr/share/icons/Arc/status/symbolic && 
@@ -39,5 +39,5 @@ If you want to control volume level by keyboard shortcuts add following lines in
 ```lua
 awful.key({ modkey}, "[", function () awful.spawn("amixer -D pulse sset Master 5%-") end, {description = "increase volume", group = "custom"}),
 awful.key({ modkey}, "]", function () awful.spawn("amixer -D pulse sset Master 5%+") end, {description = "decrease volume", group = "custom"}),
-awful.key({ modkey}, "\\", function () awful.spawn("amixer -D pulse set Master +1 toggle") end, {description = "mute volume", group = "custom"}),
+awful.key({ modkey}, "\", function () awful.spawn("amixer -D pulse set Master +1 toggle") end, {description = "mute volume", group = "custom"}),
 ```
