@@ -636,6 +636,9 @@ client.connect_signal("unmanage",
 
 awesome.connect_signal("startup", multimonitor.detect_screens)
 
+awesome.connect_signal("startup",
+        function() awful.spawn("xset +dpms dpms 0 0 900") end)
+
 -- }}}
 
 local APWTimer = timer({ timeout = 0.5 }) -- set update interval in s
@@ -654,8 +657,6 @@ local apw_tooltip = awful.tooltip({
 util.start_if_not_running("clipit", "")
 util.start_if_not_running("nm-applet", "")
 util.start_if_not_running("xbindkeys", "")
-
-awful.spawn("xset +dpms dpms 0 0 900")
 
 local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
