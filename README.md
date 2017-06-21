@@ -33,8 +33,36 @@ sprtr,
 
 [Install](https://github.com/horst3180/arc-icon-theme#installation) Arc icon theme and follow installation instructions of each widget.
 
-Alternatively you can just download the icons which are used from the Arc repository. Or create your own icons with 
-the same name. Here is the list of icons used:
+Or you can clone this repo under **~/.config/awesome/** and then add widgets you'd like to use in wibox:
+
+```bash
+cd ~/.config/awesome/
+git clone https://github.com/streetturtle/awesome-wm-widgets.git
+```
+
+and in **rc.lua**
+
+```lua
+require("awesome-wm-widgets.battery-widget.battery")
+...
+ -- Add widgets to the wibox
+     s.mywibox:setup {
+         layout = wibox.layout.align.horizontal,
+         { -- Left widgets
+         ...
+         },
+         s.mytasklist, -- Middle widget
+         { -- Right widgets
+         ...
+             battery_widget,
+         ...
+         }
+```
+
+# Icons
+
+If you don't want to install Arc icon them you can just download the icons which are used from the [Arc repository](https://github.com/horst3180/arc-theme).
+Or create your own icons with the same name. Here is the list of icons used:
 
 <table>
   <tr>
