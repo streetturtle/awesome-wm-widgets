@@ -4,7 +4,7 @@ layout: page
 
 # Spotify widget
 
-This widget displays currently playing song on [Spotify for Linux](https://www.spotify.com/download/linux/) client: ![screenshot](./spo-wid-1.png) and consists of two parts: 
+This widget displays currently playing song on [Spotify for Linux](https://www.spotify.com/download/linux/) client: ![screenshot](https://github.com/streetturtle/AwesomeWM/blob/master/spotify-widget/spo-wid-1.png?raw=true) and consists of two parts: 
 
  - status icon which shows if music is currently playing
  - artist and name of the current song playing
