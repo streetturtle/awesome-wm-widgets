@@ -4,8 +4,6 @@ collections:
   widgets:
 #    output: true
 
-highlighter: pygments
-
 markdown: kramdown
 kramdown:
   input: GFM
