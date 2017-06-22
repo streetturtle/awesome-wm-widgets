@@ -61,7 +61,7 @@ require("awesome-wm-widgets.battery-widget.battery")
 
 # Icons
 
-If you don't want to install Arc icon them you can just download the icons which are used from the [Arc repository](https://github.com/horst3180/arc-theme).
+If you don't want to install Arc icon theme you can just download the icons which are used from the [Arc repository](https://github.com/horst3180/arc-theme).
 Or create your own icons with the same name. Here is the list of icons used:
 
 <table>
