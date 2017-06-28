@@ -78,6 +78,8 @@ theme.titlebar_bg_focus = "#007EE6"
 
 local modkey = variables.modkey
 
+beautiful.apw_show_text = true
+
 beautiful.init(theme)
 
 local APW = require("apw/widget")
