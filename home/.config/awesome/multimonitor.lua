@@ -64,6 +64,7 @@ local function load_configured_outputs()
     local f = io.open(configured_outputs_file, "r")
     local content = f:read("*a")
     configured_outputs = json.decode(content)
+    debug_util.log(debug_util.to_string_recursive(configured_outputs))
     f:close()
 end
 
@@ -79,6 +80,11 @@ local function find_clients(s)
     return result
 end
 
+local function set_client_configuration(client_configuration, c)
+    client_configuration[tostring(c.window)] = {
+            screen=get_screen_name(c.screen), x=c.x, y=c.y}
+end
+
 local function initialize_client_configuration()
     local client_configuration = get_current_configuration("clients")
     if not client_configuration then
@@ -88,8 +94,7 @@ local function initialize_client_configuration()
         client_configuration[k] = nil
     end
     for _, c in pairs(client.get()) do
-        client_configuration[tostring(c.window)] =
-                {screen=get_screen_name(c.screen)}
+        set_client_configuration(client_configuration, c)
     end
 end
 
@@ -159,8 +164,11 @@ local function restore_clients(clients)
 
     local screens = get_screens_by_name()
     local to_move = {}
+    debug_util.log(debug_util.to_string_recursive(clients))
     for _, c in ipairs(client.get()) do
         local client_info = clients[tostring(c.window)]
+        debug_util.log("Client " .. debug_util.get_client_debug_info(c)
+                .. ": " .. debug_util.to_string_recursive(client_info))
         local screen_name = nil
         if client_info then
             screen_name = client_info.screen
@@ -170,6 +178,17 @@ local function restore_clients(clients)
                     .. debug_util.get_client_debug_info(c)
                     .. " to screen " .. screen_name)
             to_move[c] = screens[screen_name]
+        end
+        if client_info then
+            debug_util.log("Moving: " .. debug_util.get_client_debug_info(c)
+                    .. " x=" .. c.x .. "->" .. tostring(client_info.x)
+                    .. " y=" .. c.y .. "->" .. tostring(client_info.y))
+            if client_info.x then
+                c.x = client_info.x
+            end
+            if client_info.y then
+                c.y = client_info.y
+            end
         end
     end
     for c, s in pairs(to_move) do
@@ -205,6 +224,7 @@ local function detect_screens()
     debug_util.log("Detected screen configuration: " .. key)
     naughty.notify({title="Detected configuration", text=key})
     local configuration = configured_outputs[key]
+    debug_util.log(debug_util.to_string_recursive(configuration))
     if configuration then
         local layout_string = ""
         for _, name in ipairs(configuration.layout) do
@@ -235,13 +255,29 @@ local function print_debug_info()
             timeout=20})
 end
 
+local function save_client_position(client_configuration, c)
+    set_client_configuration(client_configuration, c)
+    save_configured_outputs()
+end
+
 local function manage_client(c)
     local client_configuration = get_current_configuration("clients")
-    if client_configuration and
-            saved_screen_layout == configured_screen_layout then
-        client_configuration[tostring(c.window)] = {
-                screen=get_screen_name(c.screen)}
-        save_configured_outputs()
+    if client_configuration
+            and saved_screen_layout == configured_screen_layout
+            and not client_configuration[tostring(c.window)] then
+        debug_util.log("manage " .. debug_util.get_client_debug_info(c)
+                .. " x=" .. c.x .. " y=" .. c.y)
+        save_client_position(client_configuration, c)
+    end
+end
+
+local function move_client(c)
+    local client_configuration = get_current_configuration("clients")
+    if client_configuration
+            and saved_screen_layout == configured_screen_layout then
+        debug_util.log("move " .. debug_util.get_client_debug_info(c)
+                .. " x=" .. c.x .. " y=" .. c.y)
+        save_client_position(client_configuration, c)
     end
 end
 
@@ -285,9 +321,26 @@ local function cleanup_clients()
     end
 end
 
+awesome.connect_signal("startup",
+        function()
+            client.connect_signal("manage",
+                    function(c)
+                        manage_client(c)
+                    end)
+            client.connect_signal("property::position",
+                    function(c)
+                        move_client(c)
+                    end)
+            client.connect_signal("unmanage",
+                    function(c)
+                        unmanage_client(c)
+                    end)
+            cleanup_clients()
+            detect_screens()
+        end)
+
 if gears.filesystem.file_readable(configured_outputs_file) then
     load_configured_outputs()
-    cleanup_clients()
 end
 
 return {
@@ -295,7 +348,5 @@ return {
     detect_screens=detect_screens,
     clear_layout=clear_layout,
     print_debug_info=print_debug_info,
-    manage_client=manage_client,
-    unmanage_client=unmanage_client,
     set_system_tray_position=set_system_tray_position
 }

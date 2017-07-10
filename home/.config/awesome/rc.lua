@@ -613,19 +613,6 @@ screen.connect_signal("list",
 
 client.connect_signal("manage",
         function(c)
-            multimonitor.manage_client(c)
-        end)
-client.connect_signal("property::position",
-        function(c)
-            multimonitor.manage_client(c)
-        end)
-client.connect_signal("unmanage",
-        function(c)
-            multimonitor.unmanage_client(c)
-        end)
-
-client.connect_signal("manage",
-        function(c)
             last_started_client = c
         end)
 
@@ -635,8 +622,6 @@ client.connect_signal("unmanage",
                 last_started_client = nil
             end
         end)
-
-awesome.connect_signal("startup", multimonitor.detect_screens)
 
 awesome.connect_signal("startup",
         function() awful.spawn("xset +dpms dpms 0 0 900") end)
