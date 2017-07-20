@@ -272,12 +272,12 @@ local globalkeys = awful.util.table.join(
              xrandr.xrandr(multimonitor.clear_layout,
                      multimonitor.detect_screens)
           end,
-              {description = "Show xrandr menu", group = "screen"}),
+          {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey, }, "l",
           function()
               xscreensaver.lock()
           end,
-              {description = "Show xrandr menu", group = "screen"}),
+          {description = "Lock session", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
 
