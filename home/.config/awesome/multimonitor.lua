@@ -28,6 +28,13 @@ local configured_screen_layout = ""
 local saved_screen_layout = ""
 local configured_outputs_file = variables.config_dir .. "/outputs.json"
 
+local function move_to_screen(c, s)
+    local maximized = c.maximized
+    c.maximized = false
+    c:move_to_screen(s)
+    c.maximized = maximized
+end
+
 -- This function modifies its argument!!
 local function get_layout_key(screens)
     table.sort(screens)
@@ -192,7 +199,7 @@ local function restore_clients(clients)
         end
     end
     for c, s in pairs(to_move) do
-        c:move_to_screen(s)
+        move_to_screen(c, s)
     end
 end
 
@@ -344,9 +351,10 @@ if gears.filesystem.file_readable(configured_outputs_file) then
 end
 
 return {
-    show_screens=show_screens,
-    detect_screens=detect_screens,
     clear_layout=clear_layout,
+    detect_screens=detect_screens,
+    move_to_screen=move_to_screen,
     print_debug_info=print_debug_info,
-    set_system_tray_position=set_system_tray_position
+    set_system_tray_position=set_system_tray_position,
+    show_screens=show_screens,
 }

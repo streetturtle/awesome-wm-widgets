@@ -368,12 +368,14 @@ local clientkeys = awful.util.table.join(
               {description = "move to master", group = "client"}),
     awful.key({ modkey,           }, "Right",
             function (c)
-                c:move_to_screen(c.screen:get_next_in_direction("right"))
+                multimonitor.move_to_screen(
+                        c, c.screen:get_next_in_direction("right"))
             end,
             {description = "move to previous screen", group = "client"}),
     awful.key({ modkey,           }, "Left",
             function (c)
-                c:move_to_screen(c.screen:get_next_in_direction("left"))
+                multimonitor.move_to_screen(
+                        c, c.screen:get_next_in_direction("left"))
             end,
             {description = "move to next screen", group = "client"}),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
