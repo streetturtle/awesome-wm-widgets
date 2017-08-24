@@ -410,7 +410,41 @@ local clientkeys = awful.util.table.join(
                 cycle_filters={cyclefocus.filters.same_screen},
                 initiating_client=c
             })
-    end)
+    end),
+
+    awful.key({ modkey, "Control" }, "Left", function(c)
+        c.x = c.x - 10
+    end,
+    {description="Move left", group="client"}),
+    awful.key({ modkey, "Control" }, "Right", function(c)
+        c.x = c.x + 10
+    end,
+    {description="Move right", group="client"}),
+    awful.key({ modkey, "Control" }, "Up", function(c)
+        c.y = c.y - 10
+    end,
+    {description="Move up", group="client"}),
+    awful.key({ modkey, "Control" }, "Down", function(c)
+        c.y = c.y + 10
+    end,
+    {description="Move down", group="client"}),
+
+    awful.key({ modkey, "Control", "Shift" }, "Left", function(c)
+        c.x = c.x - 1
+    end,
+    {description="Move left slowly", group="client"}),
+    awful.key({ modkey, "Control", "Shift" }, "Right", function(c)
+        c.x = c.x + 1
+    end,
+    {description="Move right", group="client"}),
+    awful.key({ modkey, "Control", "Shift" }, "Up", function(c)
+        c.y = c.y - 1
+    end,
+    {description="Move up slowly", group="client"}),
+    awful.key({ modkey, "Control", "Shift" }, "Down", function(c)
+        c.y = c.y + 1
+    end,
+    {description="Move down slowly", group="client"})
 )
 
 -- Bind all key numbers to tags.
