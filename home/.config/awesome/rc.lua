@@ -269,8 +269,12 @@ local globalkeys = awful.util.table.join(
     awful.key({ modkey, "Shift"   }, "x",
           function()
             debug_util.log("Creating new screen configuration")
-             xrandr.xrandr(multimonitor.clear_layout,
-                     multimonitor.detect_screens)
+            xrandr.xrandr(
+                    function(layout)
+                        multimonitor.clear_layout()
+                        multimonitor.move_windows_to_screens(layout)
+                    end,
+                    multimonitor.detect_screens)
           end,
           {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey, }, "l",

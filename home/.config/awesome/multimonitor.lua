@@ -225,6 +225,22 @@ local function handle_xrandr_finished(_, configuration)
     save_screen_layout()
 end
 
+local function move_windows_to_screens(target_screens)
+    local screens = get_screens_by_name()
+    local to_move = {}
+
+    for _, c in ipairs(client.get()) do
+        local screen_name = get_screen_name(c.screen)
+        if not awful.util.table.hasitem(target_screens, screen_name) then
+            to_move[c] = screens[target_screens[1]]
+        end
+    end
+
+    for c, s in pairs(to_move) do
+        move_to_screen(c, s)
+    end
+end
+
 local function detect_screens()
     local out = xrandr.outputs()
     local key = get_layout_key(out.connected)
@@ -239,6 +255,7 @@ local function detect_screens()
         end
         debug_util.log("Setting new screen layout: " .. layout_string)
         configured_screen_layout = layout_string
+        move_windows_to_screens(configuration.layout)
         async.spawn_and_get_output(
                 xrandr.command(out.all, configuration.layout, true),
                 function(_)
@@ -354,6 +371,7 @@ return {
     clear_layout=clear_layout,
     detect_screens=detect_screens,
     move_to_screen=move_to_screen,
+    move_windows_to_screens=move_windows_to_screens,
     print_debug_info=print_debug_info,
     set_system_tray_position=set_system_tray_position,
     show_screens=show_screens,
