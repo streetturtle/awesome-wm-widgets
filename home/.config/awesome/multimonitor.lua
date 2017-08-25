@@ -299,8 +299,6 @@ local function move_client(c)
     local client_configuration = get_current_configuration("clients")
     if client_configuration
             and saved_screen_layout == configured_screen_layout then
-        debug_util.log("move " .. debug_util.get_client_debug_info(c)
-                .. " x=" .. c.x .. " y=" .. c.y)
         save_client_position(client_configuration, c)
     end
 end
