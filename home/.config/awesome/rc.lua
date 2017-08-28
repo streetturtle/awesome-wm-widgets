@@ -654,6 +654,9 @@ screen.connect_signal("list",
 client.connect_signal("manage",
         function(c)
             last_started_client = c
+            if client.focus and c.pid == client.focus.pid then
+                client.focus = c
+            end
         end)
 
 client.connect_signal("unmanage",
