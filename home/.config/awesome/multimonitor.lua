@@ -5,10 +5,10 @@ require("awful.autofocus")
 local naughty = require("naughty")
 local wibox = require("wibox")
 
-local xrandr = require("xrandr")
 local debug_util = require("debug_util")
-local json = require("json/json")
+local serialize = require("serialize")
 local variables = require("variables")
+local xrandr = require("xrandr")
 
 local function show_screens()
     for s in screen do
@@ -61,18 +61,14 @@ local function get_current_configuration(key)
 end
 
 local function save_configured_outputs()
-    local content = json.encode(configured_outputs)
-    local f = io.open(configured_outputs_file, "w")
-    f:write(content)
-    f:close()
+    debug_util.log("Saving screen configuration to file.")
+    serialize.save_to_file(configured_outputs_file, configured_outputs)
 end
 
 local function load_configured_outputs()
-    local f = io.open(configured_outputs_file, "r")
-    local content = f:read("*a")
-    configured_outputs = json.decode(content)
+    configured_outputs = serialize.load_from_file(configured_outputs_file)
+    debug_util.log("Loading screen configuration from file.")
     debug_util.log(debug_util.to_string_recursive(configured_outputs))
-    f:close()
 end
 
 local function get_screen_name(s)
