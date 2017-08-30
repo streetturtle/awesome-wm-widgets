@@ -13,8 +13,6 @@ local function manage_client(c)
     if not initialized then
         return
     end
-    debug_util.log("Saving data for client: " ..
-            debug_util.get_client_debug_info(c))
     local id = tostring(c.window)
     if not persist_data.clients[id] then
         persist_data.clients[id] = {}
@@ -22,14 +20,10 @@ local function manage_client(c)
     local client_data = persist_data.clients[id]
 
     if not c.maximized_horizontal and not c.maximized then
-        debug_util.log("  Saving width = " .. tostring(c.width) ..
-                " x = " .. tostring(c.x))
         client_data.width = c.width
         client_data.x = c.x
     end
     if not c.maximized_vertical and not c.maximized then
-        debug_util.log("  Saving height = " .. tostring(c.height) ..
-                " y = " .. tostring(c.y))
         client_data.height = c.height
         client_data.y = c.y
     end
@@ -37,8 +31,6 @@ local function manage_client(c)
 end
 
 local function restore_client_data(c, data)
-    debug_util.log("Setting data for client: " ..
-            debug_util.get_client_debug_info(c))
     local maximized = c.maximized
     local maximized_horizontal = c.maximized_horizontal
     local maximized_vertical = c.maximized_vertical
@@ -47,19 +39,15 @@ local function restore_client_data(c, data)
     c.maximized_vertical = false
 
     if data.width then
-        debug_util.log("  Setting width = " .. tostring(data.width))
         c.width = data.width
     end
     if data.x then
-        debug_util.log("  Setting x = " .. tostring(data.x))
         c.x = data.x
     end
     if data.height then
-        debug_util.log("  Setting height = " .. tostring(data.width))
         c.height = data.height
     end
     if data.y then
-        debug_util.log("  Setting y = " .. tostring(data.y))
         c.y = data.y
     end
 
