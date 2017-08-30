@@ -25,6 +25,7 @@ local cyclefocus = require('cyclefocus')
 local input = require('input')
 local xscreensaver = require('xscreensaver')
 local pulseaudio = require("apw/pulseaudio")
+require("safe_restart")
 
 local lgi = require("lgi")
 local Gio = lgi.require("Gio")
@@ -663,6 +664,14 @@ client.connect_signal("unmanage",
         function(c)
             if last_started_client == c then
                 last_started_client = nil
+            end
+        end)
+
+client.connect_signal("property::geometry",
+        function(c)
+            local name = "<none>"
+            if c then
+                nme = debug_util.get_client_debug_info(c)
             end
         end)
 
