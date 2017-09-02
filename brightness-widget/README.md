@@ -10,26 +10,26 @@ Firstly you need to get the current brightness level. There are two options:
 
  - using `xbacklight` command (depending on your video card (I guess) it may or may not work)
  
-To check if it works install xbackligth and check if it works:
+    To check if it works install xbackligth and check if it works:
  
-```bash
-$ sudo apt-get install xbacklight
-$ xbackligth -get
-```
+    ```bash
+    sudo apt-get install xbacklight
+    xbackligth -get
+    ```
 
-If there is no output it means that it doesn't work, but there is a second option:
+    If there is no output it means that it doesn't work, but there is a second option:
 
  - using `light` command
  
-Install it from this git repo: [github.com/haikarainen/light](https://github.com/haikarainen/light) and check if it works but running
+    Install it from this git repo: [github.com/haikarainen/light](https://github.com/haikarainen/light) and check if it works but running
 
-```bash
-git clone https://github.com/haikarainen/light.git && \
-cd ./light && \
-sudo make && sudo make install \
-light -G
-49.18
-```
+    ```bash
+    git clone https://github.com/haikarainen/light.git && \
+    cd ./light && \
+    sudo make && sudo make install \
+    light -G
+    49.18
+    ```
 
 Then in **rc.lua** add the import on top of the file and then add widget to the wibox:
 
