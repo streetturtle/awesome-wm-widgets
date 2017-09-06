@@ -47,6 +47,7 @@ brightness_widget
 In order to change brightness by shortcuts you can add them to the `globalkeys` table in the **rc.lua**:
 
 ```lua
-awful.key({ modkey         }, ";", function () awful.spawn("light -A 5") end, {description = "decrease brightness", group = "custom"}),
-awful.key({ modkey, "Shift"}, ";", function () awful.spawn("light -U 5") end, {description = "increase brightness", group = "custom"}),
+awful.key({ modkey         }, ";", function () awful.spawn("light -A 5") end, {description = "increase brightness", group = "custom"}),
+awful.key({ modkey, "Shift"}, ";", function () awful.spawn("light -U 5") end, {description = "decrease brightness", group = "custom"}),
 ```
+On laptop you can use `XF86MonBrightnessUp` and `XF86MonBrightnessDown` keys.
