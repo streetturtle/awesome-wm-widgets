@@ -4,7 +4,7 @@ layout: page
 
 # Brightness widget
 
-![Brightness widget](./br-wid-1.png)
+![Brightness widget](https://github.com/streetturtle/awesome-wm-widgets/raw/master/brightness-widget/br-wid-1.png)
 
 This widget represents current brightness level.
 
