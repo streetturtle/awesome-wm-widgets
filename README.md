@@ -13,6 +13,7 @@ From left to right:
 - [volume-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volume-widget)
 - [battery-widget](https://github.com/streetturtle/AwesomeWM/tree/master/battery-widget)
 - [volumebar-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volumebar-widget) (not on the screenshot)
+- [cpu-widget](https://github.com/streetturtle/AwesomeWM/tree/master/cpu-widget) (not on the screenshot)
 
 These widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily 
 changed to any other icon theme. If you want to have separators between widgets like on the screenshot create text widget with ` : ` and place it between widgets:
