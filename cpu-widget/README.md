@@ -2,7 +2,7 @@
 
 This widget shows the average CPU load among all cores of the machine:
 
-![screenshot](out.git)
+![screenshot](out.gif)
 
 When the load is more than 80% the graph becomes red. You can easily customize the widget by changing colors, step width, step spacing, width and interval.
 
