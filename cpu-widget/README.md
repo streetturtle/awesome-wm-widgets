@@ -8,7 +8,7 @@ When the load is more than 80% the graph becomes red. You can easily customize t
 
 ## How it works
 
-To measure the load I took Paul Colby's bash [script](http://colby.id.au/calculating-cpu-usage-from-proc-stat/)and rewrote it in Lua, which was quite simple.
+To measure the load I took Paul Colby's bash [script](http://colby.id.au/calculating-cpu-usage-from-proc-stat/) and rewrote it in Lua, which was quite simple.
 So awesome simply reads the first line of /proc/stat:
 
 ```bash
