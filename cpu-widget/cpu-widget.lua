@@ -1,7 +1,8 @@
+local awful = require("awful")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 
-cpugraph_widget = wibox.widget {
+local cpugraph_widget = wibox.widget {
     max_value = 100,
     color = '#74aeab',
     background_color = "#1e252c",
@@ -39,4 +40,11 @@ watch("cat /proc/stat | grep '^cpu '", 1,
         idle_prev = idle
     end,
     cpugraph_widget
+)
+
+cpugraph_widget:buttons(
+    awful.util.table.join(
+        awful.button({}, 1, function() awful.spawn.with_shell("echo left | xsel --clipboard")  end),
+        awful.button({}, 3, function() awful.spawn.with_shell("echo right | xsel --clipboard") end)
+    )
 )
