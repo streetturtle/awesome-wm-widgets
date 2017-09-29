@@ -1,7 +1,8 @@
 # Battery widget
+
 Simple and easy-to-install widget for Awesome Window Manager.
 
-This widget consists of 
+This widget consists of:
 
  - an icon which shows the battery level:  
  ![Battery Widget](./bat-wid-1.png)
@@ -13,6 +14,8 @@ This widget consists of
  ![Battery Widget](./bat-wid-3.png) 
 
 Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
+
+Also it's worth mentioning that if the charge is more that 95% the widget is hidden. This is done intentionally in order to save some space on wibox when laptop is plugged in dock station or power socket.
 
 ## Installation
 
