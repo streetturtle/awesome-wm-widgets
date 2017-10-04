@@ -34,7 +34,7 @@ watch(
         elseif (charge >= 15 and charge < 40) then batteryType="battery-caution%s-symbolic"
         elseif (charge >= 40 and charge < 60) then batteryType="battery-low%s-symbolic"
         elseif (charge >= 60 and charge < 80) then batteryType="battery-good%s-symbolic"
-        elseif (charge >= 80 and charge <= 95) then batteryType="battery-full%s-symbolic"
+        elseif (charge >= 80 and charge <= 100) then batteryType="battery-full%s-symbolic"
         end
         if status == 'Charging' then
             batteryType = string.format(batteryType,'-charging')
