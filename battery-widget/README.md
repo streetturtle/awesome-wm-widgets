@@ -8,14 +8,12 @@ This widget consists of:
  ![Battery Widget](./bat-wid-1.png)
  - a pop-up window, which shows up when you hover over an icon:  
  ![Battery Widget](./bat-wid-2.png)  
- Alternatively you can use a tooltip:  
+ Alternatively you can use a tooltip (check the code):  
  ![Battery Widget](./bat-wid-22.png)
  - a pop-up warning message which appears on bottom right corner when battery level is less that 15%:  
  ![Battery Widget](./bat-wid-3.png) 
 
 Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
-
-Also it's worth mentioning that if the charge is more that 95% the widget is hidden. This is done intentionally in order to save some space on wibox when laptop is plugged in dock station or power socket. You can edit this behaviour [here](https://github.com/streetturtle/awesome-wm-widgets/blob/41b0476d84646fe04b5795e072f5ac8dfdb0066b/battery-widget/battery.lua#L37)
 
 ## Installation
 
