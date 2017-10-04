@@ -8,7 +8,7 @@ This widget consists of:
  ![Battery Widget](./bat-wid-1.png)
  - a pop-up window, which shows up when you hover over an icon:  
  ![Battery Widget](./bat-wid-2.png)  
- Alternatively you can use a tooltip:  
+ Alternatively you can use a tooltip (check the code):  
  ![Battery Widget](./bat-wid-22.png)
  - a pop-up warning message which appears on bottom right corner when battery level is less that 15%:  
  ![Battery Widget](./bat-wid-3.png) 
