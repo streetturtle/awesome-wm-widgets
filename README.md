@@ -1,6 +1,6 @@
 # AwesomeWM
 
-Set of super simple widgets compatible with Awesome Window Manager v.4.
+Set of super simple widgets compatible with Awesome Window Manager v.4+. 
 
 ![screenshot](https://github.com/streetturtle/AwesomeWM/blob/master/screenshot.png?raw=true)
 
@@ -11,8 +11,10 @@ From left to right:
 - [email-widget](https://github.com/streetturtle/AwesomeWM/tree/master/email-widget)
 - [brightness-widget](https://github.com/streetturtle/AwesomeWM/tree/master/brightness-widget)
 - [volume-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volume-widget)
-- [battery-widget](https://github.com/streetturtle/AwesomeWM/tree/master/battery-widget)
 - [volumebar-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volumebar-widget) (not on the screenshot)
+- [volumearc-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volumearc-widget) (not on the screenshot)
+- [battery-widget](https://github.com/streetturtle/AwesomeWM/tree/master/battery-widget)
+- [batteryarc-widget](https://github.com/streetturtle/AwesomeWM/tree/master/batteryarc-widget) (not on the screenshot)
 - [cpu-widget](https://github.com/streetturtle/AwesomeWM/tree/master/cpu-widget) (not on the screenshot)
 
 These widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily 
