@@ -8,6 +8,12 @@ local bar_color = "#74aeab"
 local mute_color = "#ff0000"
 
 volumearc_widget = wibox.widget {
+--    {
+--        id = "txt",
+--        text = "1",
+--        font = "Play 5",
+--        widget = wibox.widget.textbox
+--    },
     max_value = 1,
     rounded_edge = true,
     thickness = 2,
@@ -27,12 +33,12 @@ local update_graphic = function(widget, stdout, _, _, _)
     local volume = string.match(stdout, "(%d?%d?%d)%%")
     volume = tonumber(string.format("% 3d", volume))
 
+    widget.value = volume / 100;
+--    widget.txt.text = volume;
     if mute == "off" then
         widget.colors = { mute_color }
-        widget.value = volume / 100;
     else
         widget.colors = { bar_color }
-        widget.value = volume / 100;
     end
 end
 
