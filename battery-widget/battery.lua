@@ -10,10 +10,10 @@ local watch = require("awful.widget.watch")
 local PATH_TO_ICONS = "/usr/share/icons/Arc/status/symbolic/"
 local USERNAME = os.getenv("USER")
 
-battery_widget = wibox.widget { 
+battery_widget = wibox.widget {
     {
         id = "icon",
-        widget = wibox.widget.imagebox, 
+        widget = wibox.widget.imagebox,
         resize = false
     },
     layout = wibox.container.margin(_, 0, 0, 3),
@@ -29,8 +29,10 @@ watch(
         local _, status, charge_str, time = string.match(stdout, '(.+): (%a+), (%d?%d%d)%%,? ?.*')
         local charge = tonumber(charge_str)
         if (charge >= 0 and charge < 15) then
-            batteryType="battery-empty%s-symbolic"
-            show_battery_warning()
+	   batteryType="battery-empty%s-symbolic"
+	   if status ~= 'Charging' then
+	      show_battery_warning()
+	   end
         elseif (charge >= 15 and charge < 40) then batteryType="battery-caution%s-symbolic"
         elseif (charge >= 40 and charge < 60) then batteryType="battery-low%s-symbolic"
         elseif (charge >= 60 and charge < 80) then batteryType="battery-good%s-symbolic"
