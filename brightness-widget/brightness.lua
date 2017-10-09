@@ -18,8 +18,8 @@ local brightness_icon = wibox.widget {
 }
 
 brightness_widget = wibox.widget {
-    brightness_text,
     brightness_icon,
+    brightness_text,
     layout = wibox.layout.fixed.horizontal,
 }
 
@@ -27,7 +27,7 @@ watch(
     get_brightness_cmd, 1,
     function(widget, stdout, stderr, exitreason, exitcode)
         local brightness_level = tonumber(string.format("%.0f", stdout))
-        widget:set_text(brightness_level)
+        widget:set_text(" " .. brightness_level .. "%")
     end,
     brightness_text
 )
