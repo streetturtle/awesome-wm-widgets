@@ -2,20 +2,24 @@
 
 Set of super simple widgets compatible with Awesome Window Manager v.4+. 
 
-![screenshot](https://github.com/streetturtle/AwesomeWM/blob/master/screenshot.png?raw=true)
+![screenshot](./screenshot.png)
+
+or with separators
+
+![screenshot](./screenshot_with_sprtrs.png)
 
 From left to right:
 
 - [spotify-widget](https://github.com/streetturtle/AwesomeWM/tree/master/spotify-widget) / [rhythmbox-widget](https://github.com/streetturtle/AwesomeWM/tree/master/rhythmbox-widget)
+- [cpu-widget](https://github.com/streetturtle/AwesomeWM/tree/master/cpu-widget) 
 - [weather-widget](https://github.com/streetturtle/AwesomeWM/tree/master/weather-widget)
 - [email-widget](https://github.com/streetturtle/AwesomeWM/tree/master/email-widget)
 - [brightness-widget](https://github.com/streetturtle/AwesomeWM/tree/master/brightness-widget)
 - [volume-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volume-widget)
-- [volumebar-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volumebar-widget) (not on the screenshot)
-- [volumearc-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volumearc-widget) (not on the screenshot)
+- [volumebar-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volumebar-widget) 
+- [volumearc-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volumearc-widget) 
+- [batteryarc-widget](https://github.com/streetturtle/AwesomeWM/tree/master/batteryarc-widget) 
 - [battery-widget](https://github.com/streetturtle/AwesomeWM/tree/master/battery-widget)
-- [batteryarc-widget](https://github.com/streetturtle/AwesomeWM/tree/master/batteryarc-widget) (not on the screenshot)
-- [cpu-widget](https://github.com/streetturtle/AwesomeWM/tree/master/cpu-widget) (not on the screenshot)
 
 These widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily 
 changed to any other icon theme. If you want to have separators between widgets like on the screenshot create text widget with ` : ` and place it between widgets:
