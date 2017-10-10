@@ -17,11 +17,14 @@ local brightness_icon = wibox.widget {
     layout = wibox.container.margin(brightness_icon, 0, 0, 3)
 }
 
-brightness_widget = wibox.widget {
-    brightness_icon,
-    brightness_text,
-    layout = wibox.layout.fixed.horizontal,
-}
+function brightness_widget(show_percentage)
+   local widget_contents = {brightness_icon}
+   if show_percentage then
+      table.insert(widget_contents, brightness_text)
+   end
+   widget_contents.layout = wibox.layout.fixed.horizontal
+   return wibox.widget(widget_contents)
+end
 
 watch(
     get_brightness_cmd, 1,
