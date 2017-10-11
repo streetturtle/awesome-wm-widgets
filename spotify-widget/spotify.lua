@@ -1,9 +1,10 @@
-local wibox = require("wibox")
 local awful = require("awful")
+local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 
-local get_spotify_status_cmd = '/home/'.. os.getenv("USER") .. '/.config/awesome/awesome-wm-widgets/spotify-widget/spotify_stat'
-local get_current_song_cmd = 'sp current-oneline'
+local GET_SPOTIFY_STATUS_CMD = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/spotify-widget/spotify_stat'
+local GET_CURRENT_SONG_CMD = 'sp current-oneline'
+local PATH_TO_ICONS = "/usr/share/icons/Arc"
 
 spotify_widget = wibox.widget {
     {
@@ -27,9 +28,9 @@ spotify_widget = wibox.widget {
 local update_widget_icon = function(widget, stdout, _, _, _)
     stdout = string.gsub(stdout, "\n", "")
     if (stdout == 'RUNNING') then
-        widget:set_image("/usr/share/icons/Arc/actions/24/player_play.png")
+        widget:set_image(PATH_TO_ICONS .. "/actions/24/player_play.png")
     elseif (stdout == "CORKED") then
-        widget:set_image("/usr/share/icons/Arc/actions/24/player_pause.png")
+        widget:set_image(PATH_TO_ICONS .. "/actions/24/player_pause.png")
     else
         widget:set_image(nil)
     end
@@ -45,8 +46,8 @@ local update_widget_text = function(widget, stdout, _, _, _)
     end
 end
 
-watch(get_spotify_status_cmd, 1, update_widget_icon, spotify_widget)
-watch(get_current_song_cmd, 1, update_widget_text, spotify_widget)
+watch(GET_SPOTIFY_STATUS_CMD, 1, update_widget_icon, spotify_widget)
+watch(GET_CURRENT_SONG_CMD, 1, update_widget_text, spotify_widget)
 
 --[[
 -- Adds mouse control to the widget:
@@ -58,7 +59,7 @@ spotify_widget:connect_signal("button::press", function(_, _, _, button)
     elseif (button == 4) then awful.spawn("sp next", false)  -- scroll up
     elseif (button == 5) then awful.spawn("sp prev", false)  -- scroll down
     end
-    awful.spawn.easy_async(get_spotify_status_cmd, function(stdout, stderr, exitreason, exitcode)
+    awful.spawn.easy_async(GET_SPOTIFY_STATUS_CMD, function(stdout, stderr, exitreason, exitcode)
         update_widget_icon(spotify_widget, stdout, stderr, exitreason, exitcode)
     end)
 end)
