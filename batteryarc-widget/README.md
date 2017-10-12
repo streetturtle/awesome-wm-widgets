@@ -16,7 +16,7 @@ Widget uses following beautiful variables with values:
 ```lua
 theme.widget_main_color = "#74aeab"
 theme.widget_red = "#e53935"
-theme.widget_yelow = "#c0ca33"
+theme.widget_yellow = "#c0ca33"
 theme.widget_green = "#43a047"
 theme.widget_black = "#000000"
 theme.widget_transparent = "#00000000"
