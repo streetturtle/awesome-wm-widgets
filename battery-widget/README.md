@@ -26,17 +26,4 @@ $ acpi
 Battery 0: Discharging, 66%, 02:34:06 remaining
 ```
 
-- clone/copy **battery.lua** file to **~/.config/awesome/** folder;
-
-- include **battery.lua** and add battery widget to your wibox in **rc.lua**:
-
-```lua
-require("battery")
-...
-s.mytasklist, -- Middle widget
-	{ -- Right widgets
-    	layout = wibox.layout.fixed.horizontal,
-		...
-		battery_widget,
-		...      
-```
+Then refer to the [installation](https://github.com/streetturtle/awesome-wm-widgets#installation) section of the repo.
