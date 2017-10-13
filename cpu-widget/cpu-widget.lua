@@ -12,7 +12,7 @@ local cpugraph_widget = wibox.widget {
     widget = wibox.widget.graph
 }
 
-cpu_widget = wibox.container.mirror(cpugraph_widget, { horizontal = true })
+cpu_widget = wibox.container.margin(wibox.container.mirror(cpugraph_widget, { horizontal = true }), 0, 0, 0, 2)
 
 local total_prev = 0
 local idle_prev = 0
