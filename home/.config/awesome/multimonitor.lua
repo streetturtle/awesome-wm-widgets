@@ -28,7 +28,14 @@ local configured_screen_layout = ""
 local saved_screen_layout = ""
 local configured_outputs_file = variables.config_dir .. "/outputs.json"
 
+local function get_screen_name(s)
+    return gears.table.keys(s.outputs)[1]
+end
+
 local function move_to_screen(c, s)
+    debug_util.log("Moving client "
+            .. debug_util.get_client_debug_info(c)
+            .. " to screen " .. get_screen_name(s))
     local maximized = c.maximized
     c.maximized = false
     c:move_to_screen(s)
@@ -69,10 +76,6 @@ local function load_configured_outputs()
     configured_outputs = serialize.load_from_file(configured_outputs_file)
     debug_util.log("Loading screen configuration from file.")
     debug_util.log(debug_util.to_string_recursive(configured_outputs))
-end
-
-local function get_screen_name(s)
-    return gears.table.keys(s.outputs)[1]
 end
 
 local function find_clients(s)
@@ -177,10 +180,9 @@ local function restore_clients(clients)
             screen_name = client_info.screen
         end
         if screen_name and screen_name ~= get_screen_name(c.screen) then
-            debug_util.log("Moving client "
-                    .. debug_util.get_client_debug_info(c)
-                    .. " to screen " .. screen_name)
             to_move[c] = screens[screen_name]
+        else
+            to_move[c] = c.screen
         end
         if client_info then
             debug_util.log("Moving: " .. debug_util.get_client_debug_info(c)
