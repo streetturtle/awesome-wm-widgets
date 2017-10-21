@@ -9,9 +9,9 @@ This widget represents current brightness level.
 Firstly you need to get the current brightness level. There are two options:
 
  - using `xbacklight` command (depending on your video card (I guess) it may or may not work)
- 
+
     To check if it works install xbackligth and check if it works:
- 
+
     ```bash
     sudo apt-get install xbacklight
     xbackligth -get
@@ -20,7 +20,7 @@ Firstly you need to get the current brightness level. There are two options:
     If there is no output it means that it doesn't work, but there is a second option:
 
  - using `light` command
- 
+
     Install it from this git repo: [github.com/haikarainen/light](https://github.com/haikarainen/light) and check if it works but running
 
     ```bash
@@ -42,8 +42,16 @@ s.mywibox:setup {
 ...
 { -- Right widgets
 ...
-brightness_widget
+brightness_widget()
 ```
+If you want to display the percentage as text to the right of the icon you can change ```brightness_widget()``` to the following:
+```
+...
+{ -- Right widgets
+...
+brightness_widget(true)
+```
+
 
 ## Controls
 
