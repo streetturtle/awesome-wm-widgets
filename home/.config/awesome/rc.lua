@@ -653,6 +653,12 @@ screen.connect_signal("list",
 client.connect_signal("manage",
         function(c)
             last_started_client = c
+
+            if c.maximized then
+                c.maximized = false
+                c.maximized = true
+            end
+
             if client.focus and c.pid == client.focus.pid then
                 client.focus = c
             end
