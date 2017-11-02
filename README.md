@@ -1,5 +1,5 @@
-# AwesomeWM
-
+# Awesome WM widgets
+ 
 Set of super simple widgets compatible with Awesome Window Manager v.4+. 
 
 ![screenshot](./screenshot.png)
