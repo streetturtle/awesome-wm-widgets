@@ -132,6 +132,8 @@ local function save_screen_layout()
     debug_util.log("Saving screen layout for configuration " .. key
             .. ": " .. active_layout.layout_names)
 
+    debug_util.log("Active layout: " .. active_layout.layout_names)
+    debug_util.log("Configured layout: " .. configured_screen_layout)
     if active_layout.layout_names ~= configured_screen_layout then
         debug_util.log("Screen layout is not up to date. Not saving.")
         return
@@ -261,6 +263,7 @@ local function detect_screens()
                 end)
     else
         debug_util.log("No previously saved layout found.")
+        configured_screen_layout = get_active_screen_layout().layout_names
         save_screen_layout()
     end
 end
