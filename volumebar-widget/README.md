@@ -23,3 +23,7 @@ s.mytasklist, -- Middle widget
 		volumebar_widget,
 		...      
  ```
+
+## Troubleshooting
+
+If the bar is not showing up, try to decrease top or bottom margin - widget uses hardcoded margins for vertical alignment, so if your wibox is too small then bar is simply hidden by the margins.

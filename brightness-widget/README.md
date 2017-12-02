@@ -45,6 +45,8 @@ s.mywibox:setup {
 brightness_widget
 ```
 
+## Controls
+
 In order to change brightness by shortcuts you can add them to the `globalkeys` table in the **rc.lua**:
 
 ```lua
