@@ -39,7 +39,13 @@ sprtr,
 
 # Installation
 
-Clone the repo under **~/.config/awesome/**, then in **rc.lua** add the import of the widget you'd like to use in "require" section on the top of the file:
+First install acpi which is used to get information about the battery, in Ubuntu it's just
+
+```bash
+sudo apt-get install acpi
+```
+
+Then clone the repo under **~/.config/awesome/**, then in **rc.lua** add the import of the widget you'd like to use in "require" section on the top of the file:
 
 ```lua
 require("awesome-wm-widgets.battery-widget.battery")
