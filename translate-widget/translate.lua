@@ -1,7 +1,6 @@
 package.path = package.path .. ";../../secrets.lua"
 local secrets = require("secrets")
 local awful = require("awful")
-local gears = require("gears")
 local json = require("json")
 local https = require("ssl.https")
 local wibox = require("wibox")
@@ -28,25 +27,26 @@ local function urlencode(str)
 end
 
 local translate_widget_txt = wibox.widget {
+--    align  = 'center',
     layout = wibox.layout.flex.vertical
 }
 
 local lang_wdgt = wibox.widget{
     widget = wibox.widget.textbox,
-    align  = 'center',
-    valign = 'center'
+--    align  = 'center',
+--    valign = 'center'
 }
 
 local to_translate_wdgt = wibox.widget{
     widget = wibox.widget.textbox,
-    align  = 'center',
-    valign = 'center'
+--    align  = 'center',
+--    valign = 'center'
 }
 
 local translation_wdgt = wibox.widget{
     widget = wibox.widget.textbox,
-    align  = 'center',
-    valign = 'center',
+--    align  = 'center',
+--    valign = 'center',
     wrap = 'word_char',
 }
 
