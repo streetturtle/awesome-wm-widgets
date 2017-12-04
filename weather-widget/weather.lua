@@ -1,10 +1,12 @@
+package.path = package.path .. ";../../secrets.lua"
+local secrets = require("secrets")
 local wibox = require("wibox")
 local http = require("socket.http")
 local json = require("json")
 local naughty = require("naughty")
 
 local city = "Montreal,ca"
-local open_map_key = "<openWeatherMap api key>"
+local open_map_key = secrets.weather_widget_api_key
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 
 local icon_widget = wibox.widget {
