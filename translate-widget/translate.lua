@@ -27,15 +27,8 @@ local function urlencode(str)
     return str
 end
 
-local translate_widget = wibox.widget {
-    forced_num_cols = 1,
-    forced_num_rows = 3,
-    homogeneous = true,
-    expand = true,
-    vertical_spacing = 5,
-    horizontal_expand = true,
-    vertical_expand = true,
-    layout = wibox.layout.grid
+local translate_widget_txt = wibox.widget {
+    layout = wibox.layout.flex.vertical
 }
 
 local lang_wdgt = wibox.widget{
@@ -53,12 +46,25 @@ local to_translate_wdgt = wibox.widget{
 local translation_wdgt = wibox.widget{
     widget = wibox.widget.textbox,
     align  = 'center',
-    valign = 'center'
+    valign = 'center',
+    wrap = 'word_char',
 }
 
-translate_widget:add_widget_at(lang_wdgt, 1,1,1,1)
-translate_widget:add_widget_at(to_translate_wdgt, 2,1,1,1)
-translate_widget:add_widget_at(translation_wdgt, 3,1,1,1)
+translate_widget_txt:add(lang_wdgt)
+translate_widget_txt:add(to_translate_wdgt)
+translate_widget_txt:add(translation_wdgt)
+
+local image = wibox.widget {
+    image  = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg',
+    resize = false,
+    widget = wibox.widget.imagebox
+}
+local translate_widget = wibox.widget {
+    image,
+    translate_widget_txt,
+    layout  = wibox.layout.fixed.horizontal
+}
+
 
 local function translate(request_string)
     local to_translate, lang = extract(request_string)
@@ -69,27 +75,26 @@ local function translate(request_string)
         local resp = json.decode(resp_json).text[1]
 
         lang_wdgt:set_markup('<big>' .. lang.. '</big>')
-        to_translate_wdgt:set_text(to_translate)
-        translation_wdgt:set_text(resp)
+        to_translate_wdgt:set_markup('<span color="#FFFFFF"> ' .. to_translate .. '</span>')
+        translation_wdgt:set_markup('<span color="#FFFFFF"> ' .. resp .. '</span>')
 
         local w = wibox {
             width = 300,
             height = 50,
             ontop = true,
             screen = mouse.screen,
-            shape_clip = true,
-            shape = gears.shape.rounded_rect,
+            expand = true,
             widget = translate_widget
         }
-        awful.placement.top_right(w, { margins = {top = 25}})
+        awful.placement.top(w, { margins = {top = 25}})
         w.visible = true
         w:buttons(
             awful.util.table.join(
-                awful.button({}, 1, function() awful.spawn.with_shell("echo left | xsel --clipboard")
+                awful.button({}, 1, function() awful.spawn("echo left | xclip")
                     w.visible = false
                 end),
                 awful.button({}, 3, function()
-                    awful.spawn.with_shell("echo right | xsel --clipboard")
+                    awful.spawn.with_shell("echo right | xclip")
                     w.visible = false
                 end)
             )
