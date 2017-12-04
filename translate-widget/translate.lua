@@ -27,40 +27,31 @@ local function urlencode(str)
 end
 
 local translate_widget_txt = wibox.widget {
---    align  = 'center',
     layout = wibox.layout.flex.vertical
 }
 
 local lang_wdgt = wibox.widget{
     widget = wibox.widget.textbox,
---    align  = 'center',
---    valign = 'center'
 }
 
 local to_translate_wdgt = wibox.widget{
     widget = wibox.widget.textbox,
---    align  = 'center',
---    valign = 'center'
 }
 
 local translation_wdgt = wibox.widget{
     widget = wibox.widget.textbox,
---    align  = 'center',
---    valign = 'center',
-    wrap = 'word_char',
 }
 
 translate_widget_txt:add(lang_wdgt)
 translate_widget_txt:add(to_translate_wdgt)
 translate_widget_txt:add(translation_wdgt)
 
-local image = wibox.widget {
-    image  = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg',
-    resize = false,
-    widget = wibox.widget.imagebox
-}
 local translate_widget = wibox.widget {
-    image,
+    {
+        image  = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg',
+        resize = false,
+        widget = wibox.widget.imagebox
+    },
     translate_widget_txt,
     layout  = wibox.layout.fixed.horizontal
 }
@@ -80,10 +71,11 @@ local function translate(request_string)
 
         local w = wibox {
             width = 300,
-            height = 50,
+            height = 80,
             ontop = true,
             screen = mouse.screen,
             expand = true,
+            strategy = 'min',
             widget = translate_widget
         }
         awful.placement.top(w, { margins = {top = 25}})
