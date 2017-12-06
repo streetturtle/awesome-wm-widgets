@@ -27,7 +27,17 @@ local function urlencode(str)
     return str
 end
 
-local translate_widget = wibox.widget {
+local w = wibox {
+    width = 300,
+    height = 80,
+    ontop = true,
+    screen = mouse.screen,
+    expand = true,
+    bg = '#1e252c',
+    max_widget_size = 500
+}
+
+w:setup {
     {
         image  = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg',
         resize = false,
@@ -47,8 +57,9 @@ local translate_widget = wibox.widget {
             widget = wibox.widget.textbox
         },
         id = 'text',
-        layout = wibox.layout.flex.vertical
+        layout = wibox.layout.flex.vertical,
     },
+    id = 'left',
     layout  = wibox.layout.fixed.horizontal
 }
 
@@ -60,18 +71,10 @@ local function translate(request_string)
     if (code == 200 and resp_json ~= nil) then
         local resp = json.decode(resp_json).text[1]
 
-        translate_widget.text.header:set_markup('<big>' .. lang.. '</big>')
-        translate_widget.text.src:set_markup('<span color="#FFFFFF"> ' .. to_translate .. '</span>')
-        translate_widget.text.res:set_markup('<span color="#FFFFFF"> ' .. resp .. '</span>')
+        w.left.text.header:set_markup('<big>' .. lang .. '</big>')
+        w.left.text.src:set_markup('<span color="#FFFFFF"> ' .. to_translate .. '</span>')
+        w.left.text.res:set_markup('<span color="#FFFFFF"> ' .. resp .. '</span>')
 
-        local w = wibox {
-            width = 300,
-            height = 80,
-            ontop = true,
-            screen = mouse.screen,
-            expand = true,
-            widget = translate_widget
-        }
         awful.placement.top(w, { margins = {top = 25}})
         w.visible = true
         w:buttons(
