@@ -1,15 +1,26 @@
+-------------------------------------------------
+-- Translate Widget
+
+-- @author Pavel Makhov
+-- @copyright 2017 Pavel Makhov
+-------------------------------------------------
+
 package.path = package.path .. ";../../secrets.lua"
 local secrets = require("secrets")
+
 local awful = require("awful")
-local json = require("json")
-local https = require("ssl.https")
-local wibox = require("wibox")
 local capi = {keygrabber = keygrabber }
+local https = require("ssl.https")
+local json = require("json")
+local wibox = require("wibox")
 
-local api_key = secrets.translate_widget_api_key
-local base_url = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
+local API_KEY = secrets.translate_widget_api_key
+local BASE_URL = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 
--- extracts string for translation and langs
+--- Returns two values - string to translate and direction:
+-- 'dog enfr' -> 'dog', 'en-fr'
+-- @param input_string user's input which consists of
+-- text to translate and direction, 'dog enfr'
 local function extract(input_string)
     local word, lang = input_string:match('^(.+)%s(%a%a%a%a)$')
 
@@ -19,17 +30,17 @@ local function extract(input_string)
     return word, lang
 end
 
--- replaces spaces with '+' sign
-local function urlencode(str)
-    if (str) then
-        str = string.gsub(str, " ", "+")
+--- Simple url encoder - replaces spaces with '+' sign
+-- @param url to encode
+local function urlencode(url)
+    if (url) then
+        url = string.gsub(url, " ", "+")
     end
-    return str
+    return url
 end
 
 local w = wibox {
     width = 300,
-    height = 80,
     ontop = true,
     screen = mouse.screen,
     expand = true,
@@ -39,9 +50,13 @@ local w = wibox {
 
 w:setup {
     {
-        image  = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg',
-        resize = false,
-        widget = wibox.widget.imagebox
+        {
+            image  = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg',
+            widget = wibox.widget.imagebox,
+            resize = false
+        },
+        id = 'img',
+        layout = wibox.container.margin(_, 0, 0, 10)
     },
     {
         {
@@ -57,25 +72,34 @@ w:setup {
             widget = wibox.widget.textbox
         },
         id = 'text',
-        layout = wibox.layout.flex.vertical,
+        layout = wibox.layout.fixed.vertical,
     },
     id = 'left',
     layout  = wibox.layout.fixed.horizontal
 }
 
+--- Main function - takes the user input and shows the widget with translations
 local function translate(request_string)
     local to_translate, lang = extract(request_string)
-    local urll = base_url .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. api_key
+    local urll = BASE_URL .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. API_KEY
 
     local resp_json, code = https.request(urll)
     if (code == 200 and resp_json ~= nil) then
         local resp = json.decode(resp_json).text[1]
 
         w.left.text.header:set_markup('<big>' .. lang .. '</big>')
-        w.left.text.src:set_markup('<span color="#FFFFFF"> ' .. to_translate .. '</span>')
-        w.left.text.res:set_markup('<span color="#FFFFFF"> ' .. resp .. '</span>')
+        w.left.text.src:set_markup('<b>' .. lang:sub(1,2) .. '</b>: <span color="#FFFFFF"> ' .. to_translate .. '</span>')
+        w.left.text.res:set_markup('<b>' .. lang:sub(4) .. '</b>: <span color="#FFFFFF"> ' .. resp .. '</span>')
 
         awful.placement.top(w, { margins = {top = 25}})
+
+        local h1 = w.left.text.header:get_height_for_width(w.width, w.screen)
+        local h2 = w.left.text.src:get_height_for_width(w.width, w.screen)
+        local h3 = w.left.text.res:get_height_for_width(w.width, w.screen)
+
+        w.height = h1 + h2 + h3 + 20
+        w.left.img:set_top((h1 + h2 + h3 + 20 - 48)/2)
+
         w.visible = true
         w:buttons(
             awful.util.table.join(
