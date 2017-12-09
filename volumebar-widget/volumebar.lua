@@ -1,3 +1,13 @@
+-------------------------------------------------
+-- Volume Bar Widget for Awesome Window Manager
+-- Shows the current volume level
+-- More details could be found here:
+-- https://github.com/streetturtle/awesome-wm-widgets/tree/master/volumebar-widget
+
+-- @author Pavel Makhov
+-- @copyright 2017 Pavel Makhov
+-------------------------------------------------
+
 local awful = require("awful")
 local gears = require("gears")
 local spawn = require("awful.spawn")
@@ -10,8 +20,7 @@ local bar_color = "#74aeab"
 local mute_color = "#ff0000"
 local background_color = "#3a3a3a"
 
-
-volumebar_widget = wibox.widget {
+local volumebar_widget = wibox.widget {
     max_value = 1,
     forced_width = 50,
     paddings = 0,
@@ -24,9 +33,6 @@ volumebar_widget = wibox.widget {
         top = 10,
         bottom = 10,
     },
-    set_value = function(self, value)
-        self.value = value
-    end,
     widget = wibox.widget.progressbar
 }
 
@@ -56,3 +62,5 @@ volumebar_widget:connect_signal("button::press", function(_,_,_,button)
 end)
 
 watch(request_command, 1, update_graphic, volumebar_widget)
+
+return volumebar_widget

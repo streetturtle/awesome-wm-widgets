@@ -1,3 +1,13 @@
+-------------------------------------------------
+-- Volume Widget for Awesome Window Manager
+-- Shows the current volume level
+-- More details could be found here:
+-- https://github.com/streetturtle/awesome-wm-widgets/tree/master/volume-widget
+
+-- @author Pavel Makhov
+-- @copyright 2017 Pavel Makhov
+-------------------------------------------------
+
 local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
@@ -6,7 +16,7 @@ local spawn = require("awful.spawn")
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 local request_command = 'amixer -D pulse sget Master'
 
-volume_widget = wibox.widget {
+local volume_widget = wibox.widget {
     {
         id = "icon",
         image = path_to_icons .. "audio-volume-muted-symbolic.svg",
@@ -49,3 +59,5 @@ volume_widget:connect_signal("button::press", function(_,_,_,button)
 end)
 
 watch(request_command, 1, update_graphic, volume_widget)
+
+return volume_widget

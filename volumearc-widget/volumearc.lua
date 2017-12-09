@@ -1,3 +1,13 @@
+-------------------------------------------------
+-- Volume Arc Widget for Awesome Window Manager
+-- Shows the current volume level
+-- More details could be found here:
+-- https://github.com/streetturtle/awesome-wm-widgets/tree/master/volumearc-widget
+
+-- @author Pavel Makhov
+-- @copyright 2017 Pavel Makhov
+-------------------------------------------------
+
 local awful = require("awful")
 local beautiful = require("beautiful")
 local spawn = require("awful.spawn")
@@ -17,13 +27,10 @@ local volumearc = wibox.widget {
     forced_width = 17,
     bg = "#ffffff11",
     paddings = 2,
-    widget = wibox.container.arcchart,
-    set_value = function(self, value)
-        self.value = value
-    end,
+    widget = wibox.container.arcchart
 }
 
-volumearc_widget = wibox.container.mirror(volumearc, { horizontal = true })
+local volumearc_widget = wibox.container.mirror(volumearc, { horizontal = true })
 
 local update_graphic = function(widget, stdout, _, _, _)
     local mute = string.match(stdout, "%[(o%D%D?)%]")
@@ -50,3 +57,5 @@ volumearc:connect_signal("button::press", function(_, _, _, button)
 end)
 
 watch(GET_VOLUME_CMD, 1, update_graphic, volumearc)
+
+return volumearc_widget
