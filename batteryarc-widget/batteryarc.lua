@@ -36,7 +36,7 @@ local batteryarc = wibox.widget {
 }
 
 -- mirror the widget, so that chart value increases clockwise
-batteryarc_widget = wibox.container.mirror(batteryarc, { horizontal = true })
+local batteryarc_widget = wibox.container.mirror(batteryarc, { horizontal = true })
 
 watch("acpi", 10,
     function(widget, stdout, stderr, exitreason, exitcode)
@@ -109,3 +109,5 @@ function show_battery_warning()
         width = 300,
     }
 end
+
+return batteryarc_widget
