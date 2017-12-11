@@ -1,4 +1,3 @@
-local awful = require("awful")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 
@@ -12,7 +11,8 @@ local cpugraph_widget = wibox.widget {
     widget = wibox.widget.graph
 }
 
-cpu_widget = wibox.container.margin(wibox.container.mirror(cpugraph_widget, { horizontal = true }), 0, 0, 0, 2)
+-- mirros and push up a bit
+local cpu_widget = wibox.container.margin(wibox.container.mirror(cpugraph_widget, { horizontal = true }), 0, 0, 0, 2)
 
 local total_prev = 0
 local idle_prev = 0
@@ -42,9 +42,4 @@ watch("cat /proc/stat | grep '^cpu '", 1,
     cpugraph_widget
 )
 
-cpugraph_widget:buttons(
-    awful.util.table.join(
-        awful.button({}, 1, function() awful.spawn.with_shell("echo left | xsel --clipboard")  end),
-        awful.button({}, 3, function() awful.spawn.with_shell("echo right | xsel --clipboard") end)
-    )
-)
+return cpu_widget
