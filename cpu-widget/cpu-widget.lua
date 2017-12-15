@@ -1,3 +1,13 @@
+-------------------------------------------------
+-- CPU Widget for Awesome Window Manager
+-- Shows the current CPU utilization
+-- More details could be found here:
+-- https://github.com/streetturtle/awesome-wm-widgets/tree/master/cpu-widget
+
+-- @author Pavel Makhov
+-- @copyright 2017 Pavel Makhov
+-------------------------------------------------
+
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 
@@ -11,7 +21,7 @@ local cpugraph_widget = wibox.widget {
     widget = wibox.widget.graph
 }
 
--- mirros and push up a bit
+-- mirros and pushs up a bit
 local cpu_widget = wibox.container.margin(wibox.container.mirror(cpugraph_widget, { horizontal = true }), 0, 0, 0, 2)
 
 local total_prev = 0
