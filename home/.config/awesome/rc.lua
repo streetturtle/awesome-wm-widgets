@@ -644,6 +644,26 @@ client.connect_signal("unfocus",
                     end)
         end)
 
+client_status = {}
+
+client.connect_signal("unfocus",
+        function(c)
+            client_status[c.window] = {fullscreen=c.fullscreen}
+        end)
+
+client.connect_signal("focus",
+        function(c)
+            status = client_status[c.window]
+            if status then
+                c.fullscreen = status.fullscreen
+            end
+        end)
+
+client.connect_signal("unmanage",
+        function(c)
+            client_status[c.window] = nil
+        end)
+
 screen.connect_signal("list",
         function()
             debug_util.log("Screen configuration changed")
