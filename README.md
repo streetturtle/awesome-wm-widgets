@@ -20,6 +20,8 @@ From left to right:
 - [volumearc-widget](https://github.com/streetturtle/AwesomeWM/tree/master/volumearc-widget) 
 - [batteryarc-widget](https://github.com/streetturtle/AwesomeWM/tree/master/batteryarc-widget) 
 - [battery-widget](https://github.com/streetturtle/AwesomeWM/tree/master/battery-widget)
+- [ram-widget](https://github.com/streetturtle/AwesomeWM/tree/master/ram-widget) in progress
+- [translate-widget](https://github.com/streetturtle/AwesomeWM/tree/master/translate-widget) in progress
 
 Some of these widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily 
 changed to any other icon theme or custom icons. If you want to have separators between widgets like on the screenshot create text widget with ` : ` and place it between widgets:
