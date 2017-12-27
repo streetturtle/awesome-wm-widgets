@@ -41,13 +41,7 @@ sprtr,
 
 # Installation
 
-First install acpi which is used to get information about the battery, in Ubuntu it's just
-
-```bash
-sudo apt-get install acpi
-```
-
-Then clone the repo under **~/.config/awesome/**, then in **rc.lua** add the import of the widget you'd like to use in "require" section on the top of the file:
+Clone the repo under **~/.config/awesome/**, then in **rc.lua** add the import of the widget you'd like to use in "require" section on the top of the file:
 
 ```lua
 require("awesome-wm-widgets.battery-widget.battery")
@@ -71,7 +65,7 @@ and then add widget to the wibox (you can search for **mytextclock** and add wid
          }
 ```
 
-You will also need to install [Arc icon theme](https://github.com/horst3180/arc-icon-theme). By default it should be installed under **/usr/share/icons/Arc**. If you prefer different installation folder then you'll have to change path to the icons in the source code of the widget you want to use.
+You will also need to install [Arc icon theme](https://github.com/horst3180/arc-icon-theme) if widget uses icons. By default it should be installed under **/usr/share/icons/Arc**. If you prefer different installation folder then you'll have to change path to the icons in the source code of the widget you want to use.
 
 # Icons
 
