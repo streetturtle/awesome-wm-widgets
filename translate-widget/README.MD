@@ -9,6 +9,39 @@ This widget is based on the [Yandex.Translate API](https://tech.yandex.com/trans
 1. Get an [https://translate.yandex.com/developers/keys](API key)
 1.
 
+Create a translate prompt:
+
+```lua
+s.translateprompt = awful.widget.prompt()
+```
+
+Add it to the left widgets of the wibox, just after `mypromptbox`:
+
+```lua
+-- Add widgets to the wibox
+s.mywibox:setup {
+    layout = wibox.layout.align.horizontal,
+    { -- Left widgets
+        layout = wibox.layout.fixed.horizontal,
+        mylauncher,
+        s.mytaglist,
+        s.mypromptbox,
+        s.translateprompt,
+    },
+```
+
+Add a shortcut to run this prompt:
+
+```lua
+awful.key({ modkey }, "c", function()
+        awful.prompt.run {
+            prompt = "trnslt: ",
+            textbox = awful.screen.focused().translateprompt.widget,
+            exe_callback = function(text)
+                translate.translate(text)
+            end
+        }
+```
 
 ## Controls
 
