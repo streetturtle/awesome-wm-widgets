@@ -2,6 +2,7 @@ local awful = require("awful")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 
+--- Main ram widget shown on wibar
 local ramgraph_widget = wibox.widget {
     border_width = 0,
     colors = {
@@ -12,20 +13,10 @@ local ramgraph_widget = wibox.widget {
     widget = wibox.widget.piechart
 }
 
-local total, used, free, shared, buff_cache, available
-
-watch('bash -c "free | grep Mem"', 1,
-    function(widget, stdout, stderr, exitreason, exitcode)
-        total, used, free, shared, buff_cache, available = stdout:match('(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)')
-
-        widget.data = {used, total-used}
-    end,
-    ramgraph_widget
-)
-
+--- Widget which is shown when user clicks on the ram widget
 local w = wibox {
     height = 200,
-    width = 350,
+    width = 400,
     ontop = true,
     screen = mouse.screen,
     expand = true,
@@ -34,48 +25,53 @@ local w = wibox {
 }
 
 w:setup {
-    {
-        border_width = 0,
-        colors = {
-            '#74aeab',
-            '#6eaaa7',
-            '#5ea19d',
-            '#55918e',
-            '#4b817e',
-        },
-        display_labels = false,
-        forced_width = 25,
-        id = 'pie',
-        widget = wibox.widget.piechart
+    border_width = 0,
+    colors = {
+--        '#74aeab',
+--        '#6eaaa7',
+        '#5ea19d',
+        '#55918e',
+        '#4b817e',
     },
-    {
-        text = 'Hello',
-        widget = wibox.widget.textbox
-    },
-    id = 'popup',
-    layout = wibox.layout.stack
+    display_labels = false,
+    forced_width = 25,
+    id = 'pie',
+    widget = wibox.widget.piechart
 }
+
+local total, used, free, shared, buff_cache, available
 
 local function getPercentage(value)
     return math.floor(value / total * 100 + 0.5) .. '%'
 end
 
+watch('bash -c "free | grep Mem"', 1,
+    function(widget, stdout, stderr, exitreason, exitcode)
+        total, used, free, shared, buff_cache, available = stdout:match('(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)')
+        widget.data = { used, total-used }
+
+        if w.visible then
+            w.pie.data_list = {
+                {'used ' .. getPercentage(used), used},
+                {'free ' .. getPercentage(free), free},
+                {'buff_cache ' .. getPercentage(buff_cache), buff_cache}
+            }
+        end
+    end,
+    ramgraph_widget
+)
+
 ramgraph_widget:buttons(
     awful.util.table.join(
         awful.button({}, 1, function()
             awful.placement.top_right(w, { margins = {top = 25, right = 10}})
-            w.popup.pie.data_list = {
+            w.pie.data_list = {
                 {'used ' .. getPercentage(used), used},
                 {'free ' .. getPercentage(free), free},
---                {'shared ' .. getPercentage(shared), shared},
-                {'buff_cache ' .. getPercentage(buff_cache), buff_cache},
---                {'available ' .. getPercentage(available), available}
+                {'buff_cache ' .. getPercentage(buff_cache), buff_cache}
             }
-            w.popup.pie.display_labels = true
-            w.visible = true
-        end),
-        awful.button({}, 3, function()
-            w.visible = false;
+            w.pie.display_labels = true
+            w.visible = not w.visible
         end)
     )
 )
