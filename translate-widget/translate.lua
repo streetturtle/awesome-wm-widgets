@@ -1,17 +1,19 @@
 -------------------------------------------------
--- Translate Widget
+-- Translate Widget based on the Yandex.Translate API
+-- https://tech.yandex.com/translate/
 
 -- @author Pavel Makhov
 -- @copyright 2017 Pavel Makhov
 -------------------------------------------------
 
-package.path = package.path .. ";../../secrets.lua"
+--package.path = package.path .. ";/home/streetturtle/.config/awesome/awesome-wm-widgets/secrets.lua"
 local secrets = require("secrets")
 
 local awful = require("awful")
 local capi = {keygrabber = keygrabber }
 local https = require("ssl.https")
 local json = require("json")
+local naughty = require("naughty")
 local wibox = require("wibox")
 
 local API_KEY = secrets.translate_widget_api_key
@@ -27,6 +29,14 @@ local function extract(input_string)
     if word ~= nill and lang ~= nill then
         lang = lang:sub(1, 2) .. '-' .. lang:sub(3)
     end
+    if lang == nil then
+        naughty.notify({
+            preset = naughty.config.presets.critical,
+            title = 'Translate Widget Error',
+            text = 'Language is not provided',
+        })
+    end
+
     return word, lang
 end
 
@@ -121,6 +131,12 @@ local function translate(request_string)
                 w.visible = false
             end
         end)
+    else
+        naughty.notify({
+            preset = naughty.config.presets.critical,
+            title = 'Translate Widget Error',
+            text = 'resp_json',
+        })
     end
 end
 
