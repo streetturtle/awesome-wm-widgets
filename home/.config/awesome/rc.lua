@@ -194,7 +194,7 @@ root.buttons(awful.util.table.join(
 -- {{{ Key bindings
 
 local globalkeys = awful.util.table.join(
-    awful.key({ "Mod4",           }, "s",      hotkeys_popup.show_help,
+    awful.key({modkey, }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({}, "XF86Sleep", power.suspend,
               {description = "sleep", group = "awesome"}),
@@ -202,7 +202,7 @@ local globalkeys = awful.util.table.join(
     --           {description = "view previous", group = "tag"}),
     -- awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
     --           {description = "view next", group = "tag"}),
-    awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
+    awful.key({ modkey, }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
     awful.key({ modkey, }, "j",
@@ -300,6 +300,10 @@ local globalkeys = awful.util.table.join(
                 shutdown.clean_shutdown('Quit awesome', 30, awesome.quit)
             end,
               {description = "quit awesome", group = "awesome"}),
+    awful.key({ modkey, "Shift"   }, "r", power.reboot,
+              {description = "reboot", group = "awesome"}),
+    awful.key({ modkey, "Shift"   }, "p", power.poweroff,
+              {description = "power off", group = "awesome"}),
 
     awful.key({ modkey,           }, "space", function () awful.layout.inc( 1)                end,
               {description = "select next", group = "layout"}),
