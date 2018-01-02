@@ -23,6 +23,7 @@ local util = require("util")
 local widgets = require("widgets")
 local cyclefocus = require('cyclefocus')
 local input = require('input')
+local shutdown = require('shutdown')
 local xscreensaver = require('xscreensaver')
 local pulseaudio = require("apw/pulseaudio")
 require("safe_restart")
@@ -294,7 +295,10 @@ local globalkeys = awful.util.table.join(
             {description = "Take screenshot", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
-    awful.key({ modkey, "Shift"   }, "q", awesome.quit,
+    awful.key({ modkey, "Shift"   }, "q",
+            function()
+                shutdown.clean_shutdown('Quit awesome', 30, awesome.quit)
+            end,
               {description = "quit awesome", group = "awesome"}),
 
     awful.key({ modkey,           }, "space", function () awful.layout.inc( 1)                end,

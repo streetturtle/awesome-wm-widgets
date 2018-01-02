@@ -1,6 +1,7 @@
 local gears = require("gears")
 local awful = require("awful")
 local xscreensaver = require('xscreensaver')
+local shutdown = require('shutdown')
 
 local function call_systemctl(command)
     awful.spawn("systemctl " .. command)
@@ -25,7 +26,8 @@ local function suspend()
 end
 
 local function reboot()
-    call_systemctl("reboot")
+    shutdown.clean_shutdown('Reboot', 30,
+        function() call_systemctl("reboot") end)
 end
 
 local function hibernate()
@@ -33,7 +35,8 @@ local function hibernate()
 end
 
 local function poweroff()
-    call_systemctl("poweroff")
+    shutdown.clean_shutdown('Power off', 30,
+        function() call_systemctl("poweroff") end)
 end
 
 awesome.connect_signal("xscreensaver::lock",
