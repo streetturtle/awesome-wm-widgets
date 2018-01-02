@@ -14,7 +14,7 @@ Firstly you need to get the current brightness level. There are two options:
  
     ```bash
     sudo apt-get install xbacklight
-    xbackligth -get
+    xbacklight -get
     ```
 
     If there is no output it means that it doesn't work, but there is a second option:
@@ -30,7 +30,7 @@ Firstly you need to get the current brightness level. There are two options:
     light -G
     49.18
     ```
-Depending on the chosen option change `get_brightness_cmd` variable in **brightness.lua**.
+Depending on the chosen option change `GET_BRIGHTNESS_CMD` variable in **brightness.lua**.
 
 Then in **rc.lua** add the import on top of the file and then add widget to the wibox:
 
