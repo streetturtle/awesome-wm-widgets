@@ -23,7 +23,6 @@ local util = require("util")
 local widgets = require("widgets")
 local cyclefocus = require('cyclefocus')
 local input = require('input')
-local shutdown = require('shutdown')
 local xscreensaver = require('xscreensaver')
 local pulseaudio = require("apw/pulseaudio")
 require("safe_restart")
@@ -198,6 +197,8 @@ local globalkeys = awful.util.table.join(
               {description="show help", group="awesome"}),
     awful.key({}, "XF86Sleep", power.suspend,
               {description = "sleep", group = "awesome"}),
+    awful.key({}, "XF86PowerOff", power.power_menu,
+        {description = "sleep", group = "awesome"}),
     -- awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
     --           {description = "view previous", group = "tag"}),
     -- awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
@@ -295,10 +296,7 @@ local globalkeys = awful.util.table.join(
             {description = "Take screenshot", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
-    awful.key({ modkey, "Shift"   }, "q",
-            function()
-                shutdown.clean_shutdown('Quit awesome', 30, awesome.quit)
-            end,
+    awful.key({ modkey, "Shift"   }, "q", power.quit,
               {description = "quit awesome", group = "awesome"}),
     awful.key({ modkey, "Shift"   }, "r", power.reboot,
               {description = "reboot", group = "awesome"}),
@@ -738,8 +736,8 @@ Gio.Async.call(function()
     debug_util.log("Inhibiting power keys")
     local bus = dbus_.bus_get_async(Gio.BusType.SYSTEM)
     inhibit_fd = dbus_.inhibit(bus,
-            "handle-suspend-key:handle-lid-switch",
-            "awesome", "Handle suspend events manually", "block")
+            "handle-suspend-key:handle-lid-switch:handle-power-key",
+            "awesome", "Handle power keys by awesome", "block")
     debug_util.log("Inhibiting power keys done")
 end)()
 

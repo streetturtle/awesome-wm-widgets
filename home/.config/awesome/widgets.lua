@@ -46,7 +46,7 @@ local awesome_menu = {
     { "manual", variables.terminal .. " -e man awesome" },
     { "edit config", variables.editor_cmd .. " " .. awesome.conffile },
     { "restart", awesome.restart },
-    { "quit", function() awesome.quit() end}
+    { "quit", power.quit}
 }
 
 local power_menu = {
