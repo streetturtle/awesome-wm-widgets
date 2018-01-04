@@ -517,16 +517,28 @@ root.keys(globalkeys)
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
     -- All clients will match this rule.
-    { rule = { },
-      properties = { border_width = beautiful.border_width,
-                     border_color = beautiful.border_normal,
-                     raise = true,
-                     focus = false,
-                     keys = clientkeys,
-                     buttons = clientbuttons,
-                     screen = awful.screen.preferred,
-                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
-     }
+    {
+        rule = { },
+            properties={
+                border_width=beautiful.border_width,
+                border_color=beautiful.border_normal,
+                raise=true,
+                focus=false,
+                keys=clientkeys,
+                buttons=clientbuttons,
+                screen=awful.screen.preferred,
+                placement=awful.placement.centered
+           }
+    },
+
+    {
+        rule_any={
+            class={"Gnome-terminal", "konsole", "XTerm"}
+        },
+        properties={
+            focus=true,
+            placement=awful.placement.no_offscreen + awful.placement.no_overlap
+        }
     },
 
     -- Floating clients.
@@ -680,6 +692,8 @@ screen.connect_signal("list",
 
 client.connect_signal("manage",
         function(c)
+            debug_util.log("New client: "
+                    .. debug_util.get_client_debug_info(c))
             last_started_client = c
 
             if c.maximized then
@@ -696,14 +710,6 @@ client.connect_signal("unmanage",
         function(c)
             if last_started_client == c then
                 last_started_client = nil
-            end
-        end)
-
-client.connect_signal("property::geometry",
-        function(c)
-            local name = "<none>"
-            if c then
-                nme = debug_util.get_client_debug_info(c)
             end
         end)
 
