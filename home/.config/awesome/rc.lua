@@ -537,7 +537,7 @@ awful.rules.rules = {
         },
         properties={
             focus=true,
-            placement=awful.placement.no_offscreen + awful.placement.no_overlap
+            placement=awful.placement.no_overlap + awful.placement.no_offscreen
         }
     },
 
