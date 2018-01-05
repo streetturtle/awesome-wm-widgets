@@ -44,7 +44,7 @@ sprtr,
 Clone the repo under **~/.config/awesome/**, then in **rc.lua** add the import of the widget you'd like to use in "require" section on the top of the file:
 
 ```lua
-require("awesome-wm-widgets.battery-widget.battery")
+local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
 ```
 
 and then add widget to the wibox (you can search for **mytextclock** and add widget before):
