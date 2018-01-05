@@ -23,6 +23,9 @@ local function to_string_recursive(object)
 end
 
 local function get_client_debug_info(c)
+    if not c then
+        return "<none>"
+    end
     local class = c.class or ""
     local name = c.name or ""
     local instance = c.instance or ""
