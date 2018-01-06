@@ -75,14 +75,14 @@ local wallpaper_file = variables.config_dir .. "/wallpaper"
 if gears.filesystem.file_readable(wallpaper_file) then
     theme.wallpaper = wallpaper_file
 end
-theme.titlebar_bg_focus = "#007EE6"
 
-local modkey = variables.modkey
+theme.titlebar_bg_focus = "#007EE6"
+theme.apw_show_text = true
+theme.apw_notify = true
 
 beautiful.init(theme)
 
-beautiful.apw_show_text = true
-beautiful.apw_notify = true
+local modkey = variables.modkey
 
 local APW = require("apw/widget")
 
