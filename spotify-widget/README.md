@@ -19,10 +19,10 @@ Note that widget uses the Arc icon theme, so it should be [installed](https://gi
 
 First you need to have spotify CLI installed. Here is how you can do it (except widget part): [pavelmakhov.com/2016/02/awesome-wm-spotify](http://pavelmakhov.com/2016/02/awesome-wm-spotify) 
 
-To use this widget put **spotify.lua** under **~/.config/awesome/** and add it in **rc.lua**:
+To use this widget clone repo under **~/.config/awesome/** and then add it in **rc.lua**:
 
 ```lua
-require("spotify")
+local spotify_widget = require("awesome-wm-widgets.spotify-widget.spotify")
 ...
 s.mytasklist, -- Middle widget
 	{ -- Right widgets
