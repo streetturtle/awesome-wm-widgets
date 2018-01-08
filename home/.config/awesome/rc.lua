@@ -722,6 +722,37 @@ client.connect_signal("unmanage",
             end
         end)
 
+local fullscreen_idle_prevention = false
+
+function has_visible_fullscreen_client()
+    for s in screen do
+        for _, t in ipairs(s.selected_tags) do
+            for _, c in ipairs(t:clients()) do
+                if c.valid and c.fullscreen then
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
+
+function check_fullscreen()
+    local has_fullscreen = has_visible_fullscreen_client()
+    if has_fullscreen and not fullscreen_idle_prevention then
+        xscreensaver.prevent_idle()
+        fullscreen_idle_prevention = true
+    elseif not has_fullscreen and fullscreen_idle_prevention then
+        xscreensaver.allow_idle()
+        fullscreen_idle_prevention = false
+    end
+end
+
+client.connect_signal("manage", check_fullscreen)
+client.connect_signal("unmanage", check_fullscreen)
+client.connect_signal("property::size", check_fullscreen)
+client.connect_signal("property::position", check_fullscreen)
+
 -- }}}
 
 local APWTimer = timer({ timeout = 0.5 }) -- set update interval in s
