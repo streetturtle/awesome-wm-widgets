@@ -3,11 +3,13 @@ local gears = require("gears")
 
 local async = require("async")
 local debug_util = require("debug_util")
+local dbus_ = require("dbus_")
 
 local watch_pid = nil
 local locked = false
 
 local prevent_idle_counter = 0
+local inhibitor = nil
 local prevent_idle_timer = gears.timer({
     timeout=10,
     callback=function()
@@ -17,8 +19,16 @@ local prevent_idle_timer = gears.timer({
 local function update_prevent_idle()
     if prevent_idle_counter > 0 and not locked then
         prevent_idle_timer:start()
+        if not inhibitor then
+            inhibitor = dbus_.inhibit(
+                    "idle", "Disbale screen power management", "block")
+        end
     else
         prevent_idle_timer:stop()
+        if inhibitor then
+            dbus_.stop_inhibit(inhibitor)
+            inhibitor = nil
+        end
     end
 end
 

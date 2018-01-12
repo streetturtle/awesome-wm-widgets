@@ -10,7 +10,7 @@ local function bus_get_async(type)
     return Gio.bus_get_finish(b)
 end
 
-local function inhibit(bus, what, who, why, mode)
+local function inhibit_impl(bus, what, who, why, mode)
     local name = "org.freedesktop.login1"
     local object = "/org/freedesktop/login1"
     local interface = "org.freedesktop.login1.Manager"
@@ -43,10 +43,31 @@ local function inhibit(bus, what, who, why, mode)
     debug_util.log("Got inhibit fd: " .. tostring(fd))
 
     -- Now... somehow turn this fd into something we can close
-    return fd
+    return Gio.UnixInputStream.new(fd, false)
+    -- return fd
+end
+
+local function inhibit(what, why, mode)
+    local result = {}
+    debug_util.log("Start inhibit")
+    Gio.Async.call(function()
+        debug_util.log("inhibit")
+        local bus = bus_get_async(Gio.BusType.SYSTEM)
+        result.stream = inhibit_impl(bus, what, "awesome", why, mode)
+        debug_util.log("Got fd: " .. tostring(result.stream.fd)
+                .. " closed=" .. tostring(result.stream:is_closed()))
+    end)()
+    return result
+end
+
+local function stop_inhibit(inhibitor)
+        debug_util.log("Close fd: " .. tostring(inhibitor.stream.fd)
+                .. " closed=" .. tostring(inhibitor.stream:is_closed()))
+    inhibitor.stream:set_close_fd(true)
+    inhibitor.stream:close()
 end
 
 return {
-    bus_get_async=bus_get_async,
     inhibit=inhibit,
+    stop_inhibit=stop_inhibit
 }

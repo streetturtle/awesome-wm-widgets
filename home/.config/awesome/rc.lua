@@ -28,7 +28,6 @@ local pulseaudio = require("apw/pulseaudio")
 require("safe_restart")
 
 local lgi = require("lgi")
-local Gio = lgi.require("Gio")
 local dbus_ = require("dbus_")
 local power = require("power")
 
@@ -724,7 +723,7 @@ client.connect_signal("unmanage",
 
 local fullscreen_idle_prevention = false
 
-function has_visible_fullscreen_client()
+local function has_visible_fullscreen_client()
     for s in screen do
         for _, t in ipairs(s.selected_tags) do
             for _, c in ipairs(t:clients()) do
@@ -737,7 +736,7 @@ function has_visible_fullscreen_client()
     return false
 end
 
-function check_fullscreen()
+local function check_fullscreen()
     local has_fullscreen = has_visible_fullscreen_client()
     if has_fullscreen and not fullscreen_idle_prevention then
         xscreensaver.prevent_idle()
@@ -778,15 +777,8 @@ if gears.filesystem.file_readable(local_rc_file) then
     dofile(local_rc_file)
 end
 
-local inhibit_fd = nil
-
-Gio.Async.call(function()
-    debug_util.log("Inhibiting power keys")
-    local bus = dbus_.bus_get_async(Gio.BusType.SYSTEM)
-    inhibit_fd = dbus_.inhibit(bus,
-            "handle-suspend-key:handle-lid-switch:handle-power-key",
-            "awesome", "Handle power keys by awesome", "block")
-    debug_util.log("Inhibiting power keys done")
-end)()
+local power_key_inhibitor = dbus_.inhibit(
+        "handle-suspend-key:handle-lid-switch:handle-power-key",
+        "Handle power keys by awesome", "block")
 
 debug_util.log("Initialization finished")
