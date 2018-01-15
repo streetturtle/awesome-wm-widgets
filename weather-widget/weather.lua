@@ -59,6 +59,34 @@ function to_celcius(kelvin)
     return math.floor(tonumber(kelvin) - 273.15)
 end
 
+-- Return wind direction as a string.
+function to_direction(degrees)
+	 local directions = {
+			{ "N" , 348.75, 360 },
+			{ "N" , 0 , 11.25 },
+      {"NNE",11.25,33.75 },
+			{"NE",33.75,56.25},
+			{"ENE",56.25,78.75},
+			{"E",78.75,101.25},
+			{"ESE",101.25,123.75},
+			{"SE",123.75,146.25},
+			{"SSE",146.25,168.75},
+			{"S",168.75,191.25},
+			{"SSW",191.25,213.75},
+			{"SW",213.75,236.25},
+			{"WSW",236.25,258.75},
+			{"W",258.75,281.25},
+			{"WNW",281.25,303.75},
+			{"NW",303.75,326.25},
+			{"NNW",326.25,348.75},
+	 }
+	 for i,dir in ipairs(directions) do
+			if degrees > dir[2] and degrees < dir[3] then
+				 return dir[1]
+			end
+   end
+end
+
 local weather_timer = timer({ timeout = 60 })
 local resp
 
@@ -67,7 +95,7 @@ weather_timer:connect_signal("timeout", function ()
     if (resp_json ~= nil) then
         resp = json.decode(resp_json)
         icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
-        temp_widget:set_text(to_celcius(resp.main.temp))
+        temp_widget:set_text(to_celcius(resp.main.temp) .. "°C")
     end
 end)
 weather_timer:start()
@@ -85,7 +113,7 @@ weather_widget:connect_signal("mouse::enter", function()
                 '<b>Temperature: </b>' .. to_celcius(resp.main.temp) .. '<br>' ..
                 '<b>Pressure: </b>' .. resp.main.pressure .. 'hPa<br>' ..
                 '<b>Clouds: </b>' .. resp.clouds.all .. '%<br>' ..
-                '<b>Wind: </b>' .. resp.wind.speed .. 'm/s',
+      					 '<b>Wind: </b>' .. resp.wind.speed .. 'm/s (' .. to_direction(resp.wind.deg) .. ')',
         timeout = 5, hover_timeout = 10,
         width = 200
     }
