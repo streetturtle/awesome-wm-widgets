@@ -23,7 +23,7 @@ local util = require("util")
 local widgets = require("widgets")
 local cyclefocus = require('cyclefocus')
 local input = require('input')
-local xscreensaver = require('xscreensaver')
+local locker = require('locker')
 local pulseaudio = require("apw/pulseaudio")
 require("safe_restart")
 
@@ -281,7 +281,7 @@ local globalkeys = awful.util.table.join(
           {description = "Show xrandr menu", group = "screen"}),
     awful.key({ modkey, }, "l",
           function()
-              xscreensaver.lock()
+              locker.lock()
           end,
           {description = "Lock session", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
@@ -739,10 +739,10 @@ end
 local function check_fullscreen()
     local has_fullscreen = has_visible_fullscreen_client()
     if has_fullscreen and not fullscreen_idle_prevention then
-        xscreensaver.prevent_idle()
+        locker.prevent_idle:lock()
         fullscreen_idle_prevention = true
     elseif not has_fullscreen and fullscreen_idle_prevention then
-        xscreensaver.allow_idle()
+        locker.prevent_idle:unlock()
         fullscreen_idle_prevention = false
     end
 end
@@ -780,5 +780,10 @@ end
 local power_key_inhibitor = dbus_.inhibit(
         "handle-suspend-key:handle-lid-switch:handle-power-key",
         "Handle power keys by awesome", "block")
+
+locker.init({
+    lock_time=15,
+    blank_time=2
+})
 
 debug_util.log("Initialization finished")
