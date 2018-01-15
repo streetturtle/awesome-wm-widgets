@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
 slock awesome-client <<__EOF__
-require('locker').run_callback()
+require('locker')._run_callback()
 __EOF__
+
+awesome-client <<__EOF__
+require('locker')._on_lock_finished()
+__EOF__
+
