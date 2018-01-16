@@ -783,7 +783,7 @@ local power_key_inhibitor = dbus_.inhibit(
 
 locker.init({
     lock_time=15,
-    blank_time=2
+    blank_time=10
 })
 
 debug_util.log("Initialization finished")
