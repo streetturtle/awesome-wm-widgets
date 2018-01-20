@@ -2,6 +2,8 @@ in progress...
 
 # Translate Widget
 
+![demo](./demo.gif)
+
 This widget is based on the [Yandex.Translate API](https://tech.yandex.com/translate/).
 
 ## Installation
