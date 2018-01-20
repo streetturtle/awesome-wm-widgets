@@ -2,11 +2,11 @@ in progress...
 
 # Translate Widget
 
-This widget is using the [Yandex.Translate API](https://tech.yandex.com/translate/).
+This widget is based on the [Yandex.Translate API](https://tech.yandex.com/translate/).
 
 ## Installation
 
-1. Get an [API key](https://translate.yandex.com/developers/keys)
+1. Get an [https://translate.yandex.com/developers/keys](API key)
 1.
 
 Create a translate prompt:
