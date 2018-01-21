@@ -27,8 +27,6 @@ local w = wibox {
 w:setup {
     border_width = 0,
     colors = {
---        '#74aeab',
---        '#6eaaa7',
         '#5ea19d',
         '#55918e',
         '#4b817e',
