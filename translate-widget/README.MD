@@ -1,5 +1,3 @@
-in progress...
-
 # Translate Widget
 
 ![demo](./demo.gif)
@@ -8,42 +6,48 @@ This widget is based on the [Yandex.Translate API](https://tech.yandex.com/trans
 
 ## Installation
 
-1. Get an [https://translate.yandex.com/developers/keys](API key)
-1.
+1. Get an [API key](https://translate.yandex.com/developers/keys) and paste it **secrets.lua**
+1. Require widget and secrets in **rc.lua**:
 
-Create a translate prompt:
+    ```lua
+    local secrets = require("awesome-wm-widgets.secrets")
+    local translate = require("awesome-wm-widgets.translate-widget.translate")
+    ```
 
-```lua
-s.translateprompt = awful.widget.prompt()
-```
+1. Create a translate prompt (just under `mypromptbox`):
 
-Add it to the left widgets of the wibox, just after `mypromptbox`:
+    ```lua
+    s.mypromptbox = awful.widget.prompt()
+    s.translateprompt = awful.widget.prompt()
+    ```
 
-```lua
--- Add widgets to the wibox
-s.mywibox:setup {
-    layout = wibox.layout.align.horizontal,
-    { -- Left widgets
-        layout = wibox.layout.fixed.horizontal,
-        mylauncher,
-        s.mytaglist,
-        s.mypromptbox,
-        s.translateprompt,
-    },
-```
+1. Add it to the left widgets of the wibox, just after `mypromptbox`:
 
-Add a shortcut to run this prompt:
+    ```lua
+    -- Add widgets to the wibox
+    s.mywibox:setup {
+        layout = wibox.layout.align.horizontal,
+        { -- Left widgets
+            layout = wibox.layout.fixed.horizontal,
+            mylauncher,
+            s.mytaglist,
+            s.mypromptbox,
+            s.translateprompt,
+        },
+    ```
 
-```lua
-awful.key({ modkey }, "c", function()
-        awful.prompt.run {
-            prompt = "trnslt: ",
-            textbox = awful.screen.focused().translateprompt.widget,
-            exe_callback = function(text)
-                translate.translate(text)
-            end
-        }
-```
+1. Add a shortcut to run this prompt (note that we pass an API key from secrets.lua in method call):
+
+    ```lua
+    awful.key({ modkey }, "c", function()
+            awful.prompt.run {
+                prompt = "trnslt: ",
+                textbox = awful.screen.focused().translateprompt.widget,
+                exe_callback = function(text)
+                    translate.translate(text, secrets.translate_widget_api_key)
+                end
+            }
+    ```
 
 ## Controls
 
