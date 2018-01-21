@@ -81,7 +81,6 @@ w:setup {
 --- Main function - takes the user input and shows the widget with translation
 -- @param request_string - user input (dog enfr)
 local function translate(to_translate, lang)
---    local to_translate, lang = extract(request_string)
     local urll = BASE_URL .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. API_KEY
 
     local resp_json, code = https.request(urll)
@@ -152,7 +151,7 @@ input_widget:setup {
     bordet_color = '#000000'
 }
 
-local function show_input()
+local function show_translate_prompt()
     awful.placement.top(input_widget, { margins = {top = 40}})
     input_widget.height = 40
     input_widget.visible = true
@@ -181,6 +180,5 @@ local function show_input()
 end
 
 return {
-    show_input = show_input,
-    translate = translate
+    show_translate_prompt = show_translate_prompt
 }

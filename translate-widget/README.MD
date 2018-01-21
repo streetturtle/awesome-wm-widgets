@@ -13,46 +13,16 @@ This widget allows quickly translate words or phrases without opening a browser 
 ## Installation
 
 1. Clone repo under **~/.config/awesome/**
-1. Get an [API key](https://translate.yandex.com/developers/keys) and paste it in **secrets.lua**
-1. Require widget and secrets in **rc.lua**:
+1. Get an [API key](https://translate.yandex.com/developers/keys) and paste it in **translate.lua** as value of the `API_KEY` variable
+1. Require widget in **rc.lua**:
 
     ```lua
-    local secrets = require("awesome-wm-widgets.secrets")
     local translate = require("awesome-wm-widgets.translate-widget.translate")
     ```
 
-1. Create a translate prompt, just under `mypromptbox`:
+1. Add a shortcut to run translate prompt (note that we pass an API key from secrets.lua in method call):
 
     ```lua
-    s.mypromptbox = awful.widget.prompt()
-    s.translateprompt = awful.widget.prompt()
-    ```
-
-1. Add it to the left widgets of the wibox, just after `mypromptbox`:
-
-    ```lua
-    -- Add widgets to the wibox
-    s.mywibox:setup {
-        layout = wibox.layout.align.horizontal,
-        { -- Left widgets
-            layout = wibox.layout.fixed.horizontal,
-            mylauncher,
-            s.mytaglist,
-            s.mypromptbox,
-            s.translateprompt,
-        },
-    ```
-
-1. Add a shortcut to run this prompt (note that we pass an API key from secrets.lua in method call):
-
-    ```lua
-    awful.key({ modkey }, "c", function()
-            awful.prompt.run {
-                prompt = "trnslt: ",
-                textbox = awful.screen.focused().translateprompt.widget,
-                exe_callback = function(text)
-                    translate.translate(text, secrets.translate_widget_api_key)
-                end
-            }
+    awful.key({ modkey }, "c", function() translate.show_translate_prompt() end, { description = "run translate prompt", group = "launcher" }),
     ```
 
