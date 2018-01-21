@@ -3,11 +3,8 @@
 -- https://tech.yandex.com/translate/
 
 -- @author Pavel Makhov
--- @copyright 2017 Pavel Makhov
+-- @copyright 2018 Pavel Makhov
 -------------------------------------------------
-
---package.path = package.path .. ";/home/streetturtle/.config/awesome/awesome-wm-widgets/secrets.lua"
-local secrets = require("secrets")
 
 local awful = require("awful")
 local capi = {keygrabber = keygrabber }
@@ -16,8 +13,8 @@ local json = require("json")
 local naughty = require("naughty")
 local wibox = require("wibox")
 
-local API_KEY = secrets.translate_widget_api_key
 local BASE_URL = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
+local ICON = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg'
 
 --- Returns two values - string to translate and direction:
 -- 'dog enfr' -> 'dog', 'en-fr'
@@ -61,7 +58,7 @@ local w = wibox {
 w:setup {
     {
         {
-            image  = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg',
+            image  = ICON,
             widget = wibox.widget.imagebox,
             resize = false
         },
@@ -88,10 +85,12 @@ w:setup {
     layout  = wibox.layout.fixed.horizontal
 }
 
---- Main function - takes the user input and shows the widget with translations
-local function translate(request_string)
+--- Main function - takes the user input and shows the widget with translation
+-- @param request_string - user input (dog enfr)
+-- @param api_key - Yandex.Translate api key
+local function translate(request_string, api_key)
     local to_translate, lang = extract(request_string)
-    local urll = BASE_URL .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. API_KEY
+    local urll = BASE_URL .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. api_key
 
     local resp_json, code = https.request(urll)
     if (code == 200 and resp_json ~= nil) then
@@ -101,13 +100,15 @@ local function translate(request_string)
         w.left.text.src:set_markup('<b>' .. lang:sub(1,2) .. '</b>: <span color="#FFFFFF"> ' .. to_translate .. '</span>')
         w.left.text.res:set_markup('<b>' .. lang:sub(4) .. '</b>: <span color="#FFFFFF"> ' .. resp .. '</span>')
 
-        awful.placement.top(w, { margins = {top = 25}})
+        awful.placement.top(w, { margins = {top = 40}})
 
         local h1 = w.left.text.header:get_height_for_width(w.width, w.screen)
         local h2 = w.left.text.src:get_height_for_width(w.width, w.screen)
         local h3 = w.left.text.res:get_height_for_width(w.width, w.screen)
 
+        -- calculate height of the widget
         w.height = h1 + h2 + h3 + 20
+        -- try to vetrtically align the icon
         w.left.img:set_top((h1 + h2 + h3 + 20 - 48)/2)
 
         w.visible = true
@@ -135,7 +136,7 @@ local function translate(request_string)
         naughty.notify({
             preset = naughty.config.presets.critical,
             title = 'Translate Widget Error',
-            text = 'resp_json',
+            text = resp_json,
         })
     end
 end
