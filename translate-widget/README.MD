@@ -20,7 +20,7 @@ This widget allows quickly translate words or phrases without opening a browser 
     local translate = require("awesome-wm-widgets.translate-widget.translate")
     ```
 
-1. Add a shortcut to run translate prompt (note that we pass an API key from secrets.lua in method call):
+1. Add a shortcut to run translate prompt:
 
     ```lua
     awful.key({ modkey }, "c", function() translate.show_translate_prompt() end, { description = "run translate prompt", group = "launcher" }),
