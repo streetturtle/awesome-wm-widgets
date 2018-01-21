@@ -138,7 +138,8 @@ local input_widget = wibox {
     screen = mouse.screen,
     expand = true,
     bg = '#1e252c',
-    max_widget_size = 500
+    max_widget_size = 500,
+    border_width = 1;
 }
 
 local prompt = awful.widget.prompt()
@@ -146,9 +147,7 @@ local prompt = awful.widget.prompt()
 input_widget:setup {
     layout = wibox.container.margin,
     prompt,
-    left = 10,
-    border_width = 3;
-    bordet_color = '#000000'
+    left = 10
 }
 
 local function show_translate_prompt()
