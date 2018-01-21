@@ -13,6 +13,7 @@ local json = require("json")
 local naughty = require("naughty")
 local wibox = require("wibox")
 
+local API_KEY = '<your api key>'
 local BASE_URL = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 local ICON = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg'
 
@@ -26,14 +27,6 @@ local function extract(input_string)
     if word ~= nill and lang ~= nill then
         lang = lang:sub(1, 2) .. '-' .. lang:sub(3)
     end
-    if lang == nil then
-        naughty.notify({
-            preset = naughty.config.presets.critical,
-            title = 'Translate Widget Error',
-            text = 'Language is not provided',
-        })
-    end
-
     return word, lang
 end
 
@@ -87,10 +80,9 @@ w:setup {
 
 --- Main function - takes the user input and shows the widget with translation
 -- @param request_string - user input (dog enfr)
--- @param api_key - Yandex.Translate api key
-local function translate(request_string, api_key)
-    local to_translate, lang = extract(request_string)
-    local urll = BASE_URL .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. api_key
+local function translate(to_translate, lang)
+--    local to_translate, lang = extract(request_string)
+    local urll = BASE_URL .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. API_KEY
 
     local resp_json, code = https.request(urll)
     if (code == 200 and resp_json ~= nil) then
@@ -141,6 +133,54 @@ local function translate(request_string, api_key)
     end
 end
 
+local input_widget = wibox {
+    width = 300,
+    ontop = true,
+    screen = mouse.screen,
+    expand = true,
+    bg = '#1e252c',
+    max_widget_size = 500
+}
+
+local prompt = awful.widget.prompt()
+
+input_widget:setup {
+    layout = wibox.container.margin,
+    prompt,
+    left = 10,
+    border_width = 3;
+    bordet_color = '#000000'
+}
+
+local function show_input()
+    awful.placement.top(input_widget, { margins = {top = 40}})
+    input_widget.height = 40
+    input_widget.visible = true
+
+    awful.prompt.run {
+        prompt = "<b>Translate</b>: ",
+        textbox = prompt.widget,
+        bg_cursor = '#66ccff',
+        exe_callback = function(text)
+            if not text or #text == 0 then return end
+            local to_translate, lang = extract(text)
+            if not to_translate or #to_translate==0 or not lang or #lang == 0 then
+                naughty.notify({
+                    preset = naughty.config.presets.critical,
+                    title = 'Translate Widget Error',
+                    text = 'Language is not provided',
+                })
+                return
+            end
+            translate(to_translate, lang)
+        end,
+        done_callback = function()
+            input_widget.visible = false
+        end
+    }
+end
+
 return {
+    show_input = show_input,
     translate = translate
 }
