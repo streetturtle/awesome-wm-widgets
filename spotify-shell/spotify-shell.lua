@@ -24,7 +24,7 @@ local w = wibox {
     ontop = true,
     screen = mouse.screen,
     height = 50,
-    width = 200,
+    width = 250,
 }
 
 w:setup {
