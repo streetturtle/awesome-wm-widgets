@@ -1,12 +1,17 @@
-package.path = package.path .. ";../../secrets.lua"
-local secrets = require("secrets")
-local wibox = require("wibox")
+-------------------------------------------------
+-- Weather Widget based on the OpenWeatherMap
+-- https://openweathermap.org/
+--
+-- @author Pavel Makhov
+-- @copyright 2018 Pavel Makhov
+-------------------------------------------------
+
 local http = require("socket.http")
 local json = require("json")
 local naughty = require("naughty")
 
 local city = "Montreal,ca"
-local open_map_key = secrets.weather_widget_api_key
+local open_map_key = '<API_KEY>>'
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 
 local icon_widget = wibox.widget {
@@ -26,7 +31,7 @@ local temp_widget = wibox.widget{
     widget = wibox.widget.textbox,
 }
 
-weather_widget = wibox.widget {
+local weather_widget = wibox.widget {
     icon_widget,
     temp_widget,
     layout = wibox.layout.fixed.horizontal,
@@ -61,30 +66,30 @@ end
 
 -- Return wind direction as a string.
 function to_direction(degrees)
-	 local directions = {
-			{ "N" , 348.75, 360 },
-			{ "N" , 0 , 11.25 },
-      {"NNE",11.25,33.75 },
-			{"NE",33.75,56.25},
-			{"ENE",56.25,78.75},
-			{"E",78.75,101.25},
-			{"ESE",101.25,123.75},
-			{"SE",123.75,146.25},
-			{"SSE",146.25,168.75},
-			{"S",168.75,191.25},
-			{"SSW",191.25,213.75},
-			{"SW",213.75,236.25},
-			{"WSW",236.25,258.75},
-			{"W",258.75,281.25},
-			{"WNW",281.25,303.75},
-			{"NW",303.75,326.25},
-			{"NNW",326.25,348.75},
-	 }
-	 for i,dir in ipairs(directions) do
-			if degrees > dir[2] and degrees < dir[3] then
-				 return dir[1]
-			end
-   end
+    local directions = {
+        { "N", 348.75, 360 },
+        { "N", 0, 11.25 },
+        { "NNE", 11.25, 33.75 },
+        { "NE", 33.75, 56.25 },
+        { "ENE", 56.25, 78.75 },
+        { "E", 78.75, 101.25 },
+        { "ESE", 101.25, 123.75 },
+        { "SE", 123.75, 146.25 },
+        { "SSE", 146.25, 168.75 },
+        { "S", 168.75, 191.25 },
+        { "SSW", 191.25, 213.75 },
+        { "SW", 213.75, 236.25 },
+        { "WSW", 236.25, 258.75 },
+        { "W", 258.75, 281.25 },
+        { "WNW", 281.25, 303.75 },
+        { "NW", 303.75, 326.25 },
+        { "NNW", 326.25, 348.75 },
+    }
+    for i, dir in ipairs(directions) do
+        if degrees > dir[2] and degrees < dir[3] then
+            return dir[1]
+        end
+    end
 end
 
 local weather_timer = timer({ timeout = 60 })
@@ -101,7 +106,7 @@ end)
 weather_timer:start()
 weather_timer:emit_signal("timeout")
 
--- Notification with weather information. Popups only if mouse hovers over the icon
+-- Notification with weather information. Popups when mouse hovers over the icon
 local notification
 weather_widget:connect_signal("mouse::enter", function()
     notification = naughty.notify{
@@ -121,3 +126,5 @@ end)
 weather_widget:connect_signal("mouse::leave", function()
     naughty.destroy(notification)
 end)
+
+return weather_widget
