@@ -12,7 +12,8 @@ This widget allows quickly translate words or phrases without opening a browser 
 
 ## Installation
 
-1. Get an [API key](https://translate.yandex.com/developers/keys) and paste it **secrets.lua**
+1. Clone repo under **~/.config/awesome/**
+1. Get an [API key](https://translate.yandex.com/developers/keys) and paste it in **secrets.lua**
 1. Require widget and secrets in **rc.lua**:
 
     ```lua
@@ -20,7 +21,7 @@ This widget allows quickly translate words or phrases without opening a browser 
     local translate = require("awesome-wm-widgets.translate-widget.translate")
     ```
 
-1. Create a translate prompt (just under `mypromptbox`):
+1. Create a translate prompt, just under `mypromptbox`:
 
     ```lua
     s.mypromptbox = awful.widget.prompt()
@@ -54,3 +55,4 @@ This widget allows quickly translate words or phrases without opening a browser 
                 end
             }
     ```
+
