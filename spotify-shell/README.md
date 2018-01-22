@@ -70,4 +70,4 @@ Keyboard navigation (copied from [`awful.prompt`](https://awesomewm.org/doc/api/
     awful.key({ modkey,        }, "d", function () spotify_shell.launch() end, {description = "spotify shell", group = "music"}),
     ```
 
-1. It uses icon from [Papirus Icon Theme](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme). So you should either install this icon theme, or download any icon you want and provide path to it in **spotify-shell.lua**.
+1. It uses icon from [Papirus Icon Theme](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme). So you should either install this icon theme, or download an icon you want to use and provide path to it in **spotify-shell.lua**.
