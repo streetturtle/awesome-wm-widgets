@@ -26,6 +26,7 @@ end
 local configured_outputs = {}
 local configured_screen_layout = ""
 local saved_screen_layout = ""
+local current_screen_configuration = ""
 local configured_outputs_file = variables.config_dir .. "/outputs.json"
 
 local function get_screen_name(s)
@@ -244,6 +245,7 @@ end
 local function detect_screens()
     local out = xrandr.outputs()
     local key = get_layout_key(out.connected)
+    current_screen_configuration = key
     debug_util.log("Detected screen configuration: " .. key)
     naughty.notify({title="Detected configuration", text=key})
     local configuration = configured_outputs[key]
@@ -265,6 +267,15 @@ local function detect_screens()
         debug_util.log("No previously saved layout found.")
         configured_screen_layout = get_active_screen_layout().layout_names
         save_screen_layout()
+    end
+end
+
+local function check_screens()
+    local out = xrandr.outputs()
+    local key = get_layout_key(out.connected)
+    if key ~= current_screen_configuration then
+        debug_util.log("Screen layout changed.")
+        detect_screens()
     end
 end
 
@@ -365,6 +376,12 @@ awesome.connect_signal("startup",
 if gears.filesystem.file_readable(configured_outputs_file) then
     load_configured_outputs()
 end
+
+local screen_check_timer = gears.timer({
+        timeout=10,
+        autostart=true,
+        callback=check_screens,
+        single_shot=false})
 
 return {
     clear_layout=clear_layout,
