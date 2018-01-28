@@ -11,6 +11,7 @@
 local awful = require("awful")
 local gfs = require("gears.filesystem")
 local wibox = require("wibox")
+local gears = require("gears")
 
 local ICON = '/usr/share/icons/Papirus-Light/32x32/apps/spotify-linux-48x48.svg'
 
@@ -25,6 +26,9 @@ local w = wibox {
     screen = mouse.screen,
     height = 50,
     width = 250,
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 3)
+    end
 }
 
 w:setup {
