@@ -270,15 +270,9 @@ local globalkeys = awful.util.table.join(
               {description = "focus the previous screen", group = "screen"}),
     awful.key({ modkey, "Shift"   }, "x",
           function()
-            debug_util.log("Creating new screen configuration")
-            xrandr.xrandr(
-                    function(layout)
-                        multimonitor.clear_layout()
-                        multimonitor.move_windows_to_screens(layout)
-                    end,
-                    multimonitor.detect_screens)
+              awful.spawn(variables.screen_configurator)
           end,
-          {description = "Show xrandr menu", group = "screen"}),
+          {description = "Show screen configurator", group = "screen"}),
     awful.key({ modkey, }, "l",
           function()
               locker.lock()

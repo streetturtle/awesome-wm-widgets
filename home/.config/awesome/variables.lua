@@ -14,6 +14,7 @@ variables.browser = util.get_available_command({
         {command="firefox"},
         {command="chromium"},
         {command="google-chrome"}})
+variables.screen_configurator = "arandr"
 variables.editor = os.getenv("EDITOR") or "vim"
 variables.editor_cmd = variables.terminal .. " -e " .. variables.editor
 variables.screenshot_tool = util.get_available_command({

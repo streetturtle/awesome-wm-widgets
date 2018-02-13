@@ -44,8 +44,16 @@ local function spawn_and_get_output(command, callback)
     end)
 end
 
-local function spawn_and_get_lines(command, callback, finish_callback)
+local function spawn_and_get_lines(command, callback, finish_callback,
+        done_callback)
     local log = {stderr=""}
+    local done = nil
+    if done_callback then
+        done =
+            function(line)
+                safe_call(function() done_callback(line) end)
+            end
+    end
     return handle_start_command(command, function()
         return awful.spawn.with_line_callback(command, {
                 stdout=function(line)
@@ -65,7 +73,8 @@ local function spawn_and_get_lines(command, callback, finish_callback)
                                 title="Error running command: " .. command,
                                 text=log.stderr})
                     end
-                end})
+                end,
+                output_done=done})
     end)
 end
 

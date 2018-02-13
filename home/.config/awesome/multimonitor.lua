@@ -24,10 +24,10 @@ local function show_screens()
 end
 
 local configured_outputs = {}
-local configured_screen_layout = ""
+local configured_screen_layout = nil
 local saved_screen_layout = ""
-local current_screen_configuration = ""
 local configured_outputs_file = variables.config_dir .. "/outputs.json"
+local layout_changing = false
 
 local function get_screen_name(s)
     return gears.table.keys(s.outputs)[1]
@@ -43,29 +43,30 @@ local function move_to_screen(c, s)
     c.maximized = maximized
 end
 
--- This function modifies its argument!!
-local function get_layout_key(screens)
-    table.sort(screens)
-    local result = ""
-    for _, s in ipairs(screens) do
-        result = result .. s .. " "
+local function get_configuration(key)
+    if not configured_outputs[key] then
+        configured_outputs[key] = {}
     end
-    return result
+
+    return configured_outputs[key]
 end
 
-local function get_current_configuration(key)
-    local current_configuration = configured_outputs[
-            get_layout_key(xrandr.outputs().connected)]
-    if key == nil then
+local function get_current_configuration(field)
+    if not configured_screen_layout then
+        return nil
+    end
+
+    local current_configuration = get_configuration(
+            configured_screen_layout.key)
+
+    if field then
+        if not current_configuration[field] then
+            current_configuration[field] = {}
+        end
+        return current_configuration[field]
+    else
         return current_configuration
     end
-    if current_configuration then
-        if not current_configuration then
-            current_configuration[key] = {}
-        end
-        return current_configuration[key]
-    end
-    return nil
 end
 
 local function save_configured_outputs()
@@ -79,17 +80,11 @@ local function load_configured_outputs()
     debug_util.log(debug_util.to_string_recursive(configured_outputs))
 end
 
-local function find_clients(s)
-    local result = {}
-    for _, c in ipairs(s.all_clients) do
-        table.insert(result, tostring(c.window))
-    end
-    return result
-end
-
 local function set_client_configuration(client_configuration, c)
     client_configuration[tostring(c.window)] = {
-            screen=get_screen_name(c.screen), x=c.x, y=c.y}
+            screen=get_screen_name(c.screen),
+            x=c.x, y=c.y,
+            maximized=c.maximized}
 end
 
 local function initialize_client_configuration()
@@ -106,49 +101,87 @@ local function initialize_client_configuration()
 end
 
 local function get_active_screen_layout()
-    local screen_names = {}
-    local offsets = {}
+    local result = {}
     for s in screen do
         local name = get_screen_name(s)
-        screen_names[s.geometry.x] = name
-        table.insert(offsets, s.geometry.x)
+        local g = s.geometry
+        result[name] = {
+            width=g.width,
+            height=g.height,
+            dx=g.x,
+            dy=g.y,
+            connected=true,
+            active=true,
+        }
     end
-    table.sort(offsets)
+    return result
+end
 
-    local layout = {}
-    local layout_names = ""
-    for _, offset in ipairs(offsets) do
-        local name = screen_names[offset]
-        layout_names = layout_names .. name .. "-"
-        table.insert(layout, name)
+local function is_screen_equal(settings1, settings2)
+    if not (settings1.width == settings2.width
+            and settings1.height == settings2.height
+            and settings1.dx == settings2.dx
+            and settings1.dy == settings2.dy) then
+        return false
     end
-    return {layout=layout, layout_names=layout_names}
+
+    if settings1.orientation and settings2.orientation then
+        return settings1.orientation == settings2.orientation and
+                settings1.primary == settings2.primary
+    else
+        return true
+    end
+end
+
+local function is_layout_equal_(layout1, layout2)
+    for name, settings1 in pairs(layout1) do
+        if not settings1.active then
+            goto continue
+        end
+        local settings2 = layout2[name]
+        if not settings2 or not settings2.active
+                or not is_screen_equal(settings1, settings2) then
+            return false
+        end
+        ::continue::
+    end
+
+    return true
+end
+
+local function is_layout_equal(layout1, layout2)
+    return is_layout_equal_(layout1, layout2)
+            and is_layout_equal_(layout2, layout1)
+end
+
+local function is_layout_up_to_date()
+    if not configured_screen_layout then
+        return false
+    end
+
+    local active_layout = get_active_screen_layout()
+
+    return is_layout_equal(configured_screen_layout.outputs, active_layout)
 end
 
 local function save_screen_layout()
-    local active_layout = get_active_screen_layout()
-    local key = get_layout_key(xrandr.outputs().connected)
-    local configuration = configured_outputs[key]
+    local layout = configured_screen_layout
 
-    debug_util.log("Saving screen layout for configuration " .. key
-            .. ": " .. active_layout.layout_names)
+    if not layout then
+        debug_util.log("No configuration yet. Not saving.")
+        return
+    end
 
-    debug_util.log("Active layout: " .. active_layout.layout_names)
-    debug_util.log("Configured layout: " .. configured_screen_layout)
-    if active_layout.layout_names ~= configured_screen_layout then
+    debug_util.log("Saving screen layout for configuration: "
+            .. debug_util.to_string_recursive(layout))
+
+    if not is_layout_up_to_date() then
         debug_util.log("Screen layout is not up to date. Not saving.")
         return
     end
 
-    if not configuration then
-        configuration = {}
-        configured_outputs[key] = configuration
-    end
+    get_current_configuration().layout = layout
 
-    configuration.layout = active_layout.layout
-    if not configuration.clients then
-        configuration.clients = {}
-    end
     initialize_client_configuration()
     saved_screen_layout = configured_screen_layout
     save_configured_outputs()
@@ -164,8 +197,7 @@ end
 
 local function restore_clients(clients)
     debug_util.log("Restoring client positions.")
-    local active_layout = get_active_screen_layout()
-    if active_layout.layout_names ~= configured_screen_layout then
+    if not is_layout_up_to_date() then
         debug_util.log(
                 "Screen layout is not up to date. Not restoring clients.")
         return
@@ -197,6 +229,9 @@ local function restore_clients(clients)
             if client_info.y then
                 c.y = client_info.y
             end
+            if client_info.maximized ~= nil then
+                c.maximized = client_info.maximized
+            end
         end
     end
     for c, s in pairs(to_move) do
@@ -204,11 +239,10 @@ local function restore_clients(clients)
     end
 end
 
-local function handle_xrandr_finished(_, configuration)
-    local active_layout = get_active_screen_layout()
-    if active_layout.layout_names ~= configured_screen_layout then
+local function finalize_configuration(configuration)
+    if not is_layout_up_to_date() then
         debug_util.log("Screen layout is not up to date.")
-        return
+        return false
     end
 
     if configuration.clients then
@@ -224,9 +258,26 @@ local function handle_xrandr_finished(_, configuration)
         debug_util.log("Moving system tray to primary screen")
     end
     save_screen_layout()
+    layout_changing = false
+    return true
 end
 
-local function move_windows_to_screens(target_screens)
+local function handle_xrandr_finished(configuration)
+    if not finalize_configuration(configuration) then
+        gears.timer.start_new(0.5,
+                function()
+                    return not finalize_configuration(configuration)
+                end)
+    end
+end
+
+local function move_windows_to_screens(layout)
+    local target_screens = {}
+
+    for name, _ in pairs(layout) do
+        table.insert(target_screens, name)
+    end
+
     local screens = get_screens_by_name()
     local to_move = {}
 
@@ -242,48 +293,96 @@ local function move_windows_to_screens(target_screens)
     end
 end
 
-local function detect_screens()
-    local out = xrandr.outputs()
-    local key = get_layout_key(out.connected)
-    current_screen_configuration = key
-    debug_util.log("Detected screen configuration: " .. key)
-    naughty.notify({title="Detected configuration", text=key})
-    local configuration = configured_outputs[key]
-    debug_util.log(debug_util.to_string_recursive(configuration))
-    if configuration then
-        local layout_string = ""
-        for _, name in ipairs(configuration.layout) do
-            layout_string = layout_string .. name .. "-"
-        end
-        debug_util.log("Setting new screen layout: " .. layout_string)
-        configured_screen_layout = layout_string
-        move_windows_to_screens(configuration.layout)
-        async.spawn_and_get_output(
-                xrandr.command(out.all, configuration.layout, true),
-                function(_)
-                    handle_xrandr_finished(key, configuration)
-                end)
-    else
-        debug_util.log("No previously saved layout found.")
-        configured_screen_layout = get_active_screen_layout().layout_names
-        save_screen_layout()
+local function set_screen_layout(configuration)
+    layout_changing = true
+    debug_util.log("Setting new screen layout: "
+            .. debug_util.to_string_recursive(configuration.layout))
+    configured_screen_layout = configuration.layout
+    move_windows_to_screens(configuration.layout)
+
+    async.spawn_and_get_output(
+            "xrandr " .. configuration.layout.arguments,
+            function(_)
+                handle_xrandr_finished(configuration)
+            end)
+end
+
+local function reset_screen_layout(layout)
+    local key = layout.key
+    debug_util.log("Reset screen layout for " .. key)
+    local configuration = get_configuration(key)
+    configuration.layout = layout
+    set_screen_layout(configuration)
+end
+
+local layout_change_notification
+
+local function dismiss_layout_change_notification()
+    naughty.destroy(layout_change_notification,
+            naughty.notificationClosedReason.dismissedByCommand)
+end
+
+local function prompt_layout_change(configuration, new_layout)
+    if layout_change_notification then
+        dismiss_layout_change_notification()
     end
+    layout_change_notification = naughty.notify({
+        title="Screen layout changed",
+        text="New configuration detected on " .. new_layout.key,
+        timeout=30,
+        actions={
+            apply=function()
+                debug_util.log("Applying new configuration")
+                dismiss_layout_change_notification()
+                reset_screen_layout(new_layout)
+            end,
+            revert=function()
+                debug_util.log("Reverting to old configuration")
+                dismiss_layout_change_notification()
+                set_screen_layout(configuration)
+            end,
+        },
+        destroy=function(reason)
+            if reason == naughty.notificationClosedReason.expired then
+                debug_util.log("Timeout - reverting to old configuration")
+                set_screen_layout(configuration)
+            end
+        end})
+end
+
+local function reconfigure_screen_layout(layout)
+    local key = layout.key
+    local configuration = configured_outputs[key]
+
+    if configured_screen_layout and configured_screen_layout.key == key then
+        if is_layout_equal(layout.outputs, configuration.layout.outputs) then
+            debug_util.log("Screen configuration is unchanged.")
+        else
+            debug_util.log("New screen layout detected.")
+            prompt_layout_change(configuration, layout)
+        end
+    else
+        debug_util.log("Detected new screen configuration: " .. key)
+        if configuration then
+            debug_util.log("Found saved configuration.")
+            set_screen_layout(configuration)
+        else
+            debug_util.log("No saved configuration found.")
+            reset_screen_layout(layout)
+        end
+    end
+
+end
+
+local function detect_screens()
+    -- debug_util.log("Detect screens")
+    xrandr.get_outputs(reconfigure_screen_layout)
 end
 
 local function check_screens()
-    local out = xrandr.outputs()
-    local key = get_layout_key(out.connected)
-    if key ~= current_screen_configuration then
-        debug_util.log("Screen layout changed.")
+    if not layout_changing then
         detect_screens()
     end
-end
-
-local function clear_layout(_)
-    local out = xrandr.outputs()
-    local key = get_layout_key(out.connected)
-    debug_util.log("Clearing screen layout for " .. key)
-    configured_outputs[key] = nil
 end
 
 local function print_debug_info()
@@ -378,16 +477,14 @@ if gears.filesystem.file_readable(configured_outputs_file) then
 end
 
 local screen_check_timer = gears.timer({
-        timeout=10,
+        timeout=2,
         autostart=true,
         callback=check_screens,
         single_shot=false})
 
 return {
-    clear_layout=clear_layout,
     detect_screens=detect_screens,
     move_to_screen=move_to_screen,
-    move_windows_to_screens=move_windows_to_screens,
     print_debug_info=print_debug_info,
     set_system_tray_position=set_system_tray_position,
     show_screens=show_screens,

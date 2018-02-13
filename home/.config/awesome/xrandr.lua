@@ -1,164 +1,122 @@
---- Separating Multiple Monitor functions as a separeted module (taken from awesome wiki)
+local debug_util = require("debug_util")
+local async = require("async")
 
-local awful      = require("awful")
-local gears      = require("gears")
-local naughty    = require("naughty")
+local rex = require("rex_pcre")
 
--- A path to a fancy icon
-local icon_path = ""
+local xrandr = {}
 
-local function parse_outputs(pattern)
-end
-
--- Get active outputs
-local function outputs()
-    local result = {}
-    result.connected = {}
-    result.all = {}
-    local xrandr = io.popen("xrandr -q --current")
-
-    if xrandr then
-        for line in xrandr:lines() do
-            local output = line:match("^([%w-]+) connected ")
-            if output then
-                table.insert(result.connected, output)
-                table.insert(result.all, output)
+local function get_xrandr_argument(outputs)
+    result = ""
+    for name, setting in pairs(outputs) do
+        result = result .. " --output " .. name
+        if not setting.active then
+            result = result .. " --off"
+        else
+            if setting.primary then
+                result = result .. " --primary"
             end
-            output = line:match("^([%w-]+) disconnected ")
-            if output then
-                table.insert(result.all, output)
+            local resolution
+            if setting.orientation == "left"
+                    or setting.orientation == "right" then
+                resolution = tostring(setting.height) .. "x"
+                        .. tostring(setting.width)
+            else
+                resolution = tostring(setting.width) .. "x"
+                        .. tostring(setting.height)
             end
+            result = result
+                    .. " --mode " .. resolution
+                    .. " --pos " .. setting.dx .. "x" .. setting.dy
+                    .. " --rotate " .. setting.orientation
         end
-        xrandr:close()
     end
-
     return result
 end
 
-local function arrange(out)
-    -- We need to enumerate all permutations of horizontal outputs.
-
-    local choices  = {}
-    local previous = { {} }
-    for i = 1, #out do
-        -- Find all permutation of length `i`: we take the permutation
-        -- of length `i-1` and for each of them, we create new
-        -- permutations by adding each output at the end of it if it is
-        -- not already present.
-        local new = {}
-        for _, p in pairs(previous) do
-            for _, o in pairs(out) do
-                if not awful.util.table.hasitem(p, o) then
-                    new[#new + 1] = awful.util.table.join(p, {o})
-                end
-            end
-        end
-        choices = awful.util.table.join(choices, new)
-        previous = new
-    end
-
-    return choices
-end
-
-local function command(out, choice, rearrange)
-     local cmd = "xrandr"
-     -- Enabled outputs
-     if rearrange then
-         for i, o in pairs(choice) do
-             cmd = cmd .. " --output " .. o .. " --auto"
-             if i > 1 then
-                 cmd = cmd .. " --right-of " .. choice[i-1]
-             end
-         end
-     end
-     -- Disabled outputs
-     for _, o in pairs(out) do
-         if not awful.util.table.hasitem(choice, o) then
-             cmd = cmd .. " --output " .. o .. " --off"
-         end
-     end
-     return cmd
-end
-
--- Build available choices
-local function menu()
-    local menu = {}
-    local out = outputs()
-    local choices = arrange(out.connected)
-
-    for _, choice in pairs(choices) do
-        local cmd = command(out.all, choice, true)
-
-        local label = ""
-        if #choice == 1 then
-            label = 'Only <span weight="bold">' .. choice[1] .. '</span>'
-        else
-            for i, o in pairs(choice) do
-                if i > 1 then label = label .. " + " end
-                label = label .. '<span weight="bold">' .. o .. '</span>'
-            end
-        end
-
-        menu[#menu + 1] = { label, cmd, choice }
-    end
-
-    return menu
-end
-
--- Display xrandr notifications from choices
-local state = { cid = nil }
-
-local function naughty_destroy_callback(reason, callback_before, callback_after)
-    if reason == naughty.notificationClosedReason.expired or
-        reason == naughty.notificationClosedReason.dismissedByUser then
-        local action = state.index and state.menu[state.index - 1][2]
-        if action then
-            local layout = state.menu[state.index - 1][3]
-            callback_before(layout)
-            awful.spawn.easy_async(action,
-                    function(_, _, _, _)
-                        callback_after(layout)
-                    end)
-            state.index = nil
+local function get_output_configuration(outputs)
+    configuration = {}
+    for name, setting in pairs(outputs) do
+        if setting.connected then
+            table.insert(configuration, name)
         end
     end
+    table.sort(configuration)
+
+    local result = ""
+    for _, s in ipairs(configuration) do
+        result = result .. s .. " "
+    end
+    return result
 end
 
-local function xrandr(callback_before, callback_after)
-    -- Build the list of choices
-    if not state.index then
-        state.menu = menu()
-        state.index = 1
-    end
-
-    -- Select one and display the appropriate notification
-    local label, _
-    local next  = state.menu[state.index]
-    state.index = state.index + 1
-
-    if not next then
-        label = "Keep the current configuration"
-        state.index = nil
+local function min_or_set(value, new_value)
+    if value then
+        return math.min(value, new_value)
     else
-        label, _ = unpack(next)
+        return new_value
     end
-    state.cid = naughty.notify({
-            text = label,
-            icon = icon_path,
-            timeout = 4,
-            screen = mouse.screen,
-            replaces_id = state.cid,
-            destroy = function(reason)
-                naughty_destroy_callback(reason, callback_before,
-                        callback_after)
-            end}).id
 end
 
-return {
-    outputs = outputs,
-    all_outputs = all_outputs,
-    arrange = arrange,
-    menu = menu,
-    command = command,
-    xrandr = xrandr
-}
+function xrandr.get_outputs(callback)
+    local result = {}
+    local minx = nil
+    local miny = nil
+    async.spawn_and_get_lines(
+            "xrandr -q --current",
+            function(line)
+                -- debug_util.log("-> " .. line)
+                local output, primary, active, width, height, dx, dy, orientation =
+                        rex.match(line,
+                                "^([\\w-]+) connected (primary )?" ..
+                                "((\\d+)x(\\d+)\\+(\\d+)\\+(\\d+) )?(\\w+)?")
+                if output then
+                    if not active then
+                        result[output] = {connected=true, active=false}
+                    else
+                        if not orientation then
+                            orientation = "normal"
+                        else
+                            orientation = rex.gsub(orientation, " $", "")
+                        end
+                        if primary then
+                            primary = true
+                        end
+                        result[output] = {
+                            active=true,
+                            connected=true,
+                            width=tonumber(width),
+                            height=tonumber(height),
+                            dx=tonumber(dx),
+                            dy=tonumber(dy),
+                            primary=primary,
+                            orientation=orientation
+                        }
+                        minx = min_or_set(minx, dx)
+                        miny = min_or_set(miny, dy)
+                    end
+                else
+                    output = rex.match(line, "^([\\w-]+) disconnected")
+                    if output then
+                        result[output] = {connected=false, active=false}
+                    end
+                end
+            end,
+            nil,
+            function()
+                -- debug_util.log("xrandr finished")
+                for _, layout in pairs(result) do
+                    if layout.dx then
+                        layout.dx = layout.dx - minx
+                    end
+                    if layout.dy then
+                        layout.dy = layout.dy - miny
+                    end
+                end
+                callback({
+                    outputs=result,
+                    arguments=get_xrandr_argument(result),
+                    key=get_output_configuration(result)})
+            end)
+end
+
+return xrandr
