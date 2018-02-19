@@ -26,7 +26,8 @@ local function get_xrandr_argument(outputs)
             end
             result = result
                     .. " --mode " .. resolution
-                    .. " --pos " .. setting.dx .. "x" .. setting.dy
+                    .. " --pos " .. string.format("%d", setting.dx)
+                    .. "x" .. string.format("%d", setting.dy)
                     .. " --rotate " .. setting.orientation
         end
     end
