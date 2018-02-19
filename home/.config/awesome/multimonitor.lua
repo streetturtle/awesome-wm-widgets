@@ -312,6 +312,7 @@ local function reset_screen_layout(layout)
     debug_util.log("Reset screen layout for " .. key)
     local configuration = get_configuration(key)
     configuration.layout = layout
+    configuration.clients = nil
     set_screen_layout(configuration)
 end
 
