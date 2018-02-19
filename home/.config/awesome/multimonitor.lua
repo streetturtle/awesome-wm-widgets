@@ -70,7 +70,7 @@ local function get_current_configuration(field)
 end
 
 local function save_configured_outputs()
-    debug_util.log("Saving screen configuration to file.")
+    -- debug_util.log("Saving screen configuration to file.")
     serialize.save_to_file(configured_outputs_file, configured_outputs)
 end
 
@@ -356,7 +356,7 @@ local function reconfigure_screen_layout(layout)
 
     if configured_screen_layout and configured_screen_layout.key == key then
         if is_layout_equal(layout.outputs, configuration.layout.outputs) then
-            debug_util.log("Screen configuration is unchanged.")
+            -- debug_util.log("Screen configuration is unchanged.")
         else
             debug_util.log("New screen layout detected.")
             prompt_layout_change(configuration, layout)
@@ -391,6 +391,8 @@ local function print_debug_info()
 end
 
 local function save_client_position(client_configuration, c)
+    debug_util.log("Save client position for "
+            .. debug_util.get_client_debug_info(c))
     set_client_configuration(client_configuration, c)
     save_configured_outputs()
 end
@@ -456,18 +458,9 @@ end
 
 awesome.connect_signal("startup",
         function()
-            client.connect_signal("manage",
-                    function(c)
-                        manage_client(c)
-                    end)
-            client.connect_signal("property::position",
-                    function(c)
-                        move_client(c)
-                    end)
-            client.connect_signal("unmanage",
-                    function(c)
-                        unmanage_client(c)
-                    end)
+            client.connect_signal("manage", manage_client)
+            client.connect_signal("property::position", move_client)
+            client.connect_signal("unmanage", unmanage_client)
             cleanup_clients()
             detect_screens()
         end)
