@@ -461,6 +461,7 @@ awesome.connect_signal("startup",
         function()
             client.connect_signal("manage", manage_client)
             client.connect_signal("property::position", move_client)
+            client.connect_signal("property::size", move_client)
             client.connect_signal("unmanage", unmanage_client)
             cleanup_clients()
             detect_screens()
