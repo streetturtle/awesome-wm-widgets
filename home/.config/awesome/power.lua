@@ -12,29 +12,31 @@ local function lock_and_call_systemctl(command)
     locker.lock(function() call_systemctl(command) end)
 end
 
-local function suspend()
+local power = {}
+
+function power.suspend()
     lock_and_call_systemctl("suspend")
 end
 
-local function reboot()
+function power.reboot()
     shutdown.clean_shutdown('Reboot', 30,
         function() call_systemctl("reboot") end)
 end
 
-local function hibernate()
+function power.hibernate()
     lock_and_call_systemctl("hibernate")
 end
 
-local function poweroff()
+function power.poweroff()
     shutdown.clean_shutdown('Power off', 30,
         function() call_systemctl("poweroff") end)
 end
 
-local function quit()
+function power.quit()
     shutdown.clean_shutdown('Quit awesome', 30, awesome.quit)
 end
 
-local function power_menu()
+function power.power_menu()
     local notification = nil
     local function call(f)
         return function()
@@ -49,21 +51,14 @@ local function power_menu()
         text='Choose action to take.',
         timeout=30,
         actions={
-            ['power off']=call(poweroff),
-            suspend=call(suspend),
-            hibernate=call(hibernate),
-            reboot=call(reboot),
-            ['quit awesome']=call(quit),
+            ['power off']=call(power.poweroff),
+            suspend=call(power.suspend),
+            hibernate=call(power.hibernate),
+            reboot=call(power.reboot),
+            ['quit awesome']=call(power.quit),
             cancel=call(function() end),
         }
     })
 end
 
-return {
-    suspend=suspend,
-    reboot=reboot,
-    hibernate=hibernate,
-    poweroff=poweroff,
-    quit=quit,
-    power_menu=power_menu,
-}
+return power

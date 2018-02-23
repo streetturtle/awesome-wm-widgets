@@ -149,6 +149,8 @@ keyboard_layout_switcher.widget:connect_signal("button::press",
 
 keyboard_layout_switcher.update()
 
+-- }}}
+
 return {
     main_menu=main_menu,
     text_clock=text_clock,

@@ -4,7 +4,9 @@ local naughty = require("naughty")
 
 local debug_util = require("debug_util")
 
-local function safe_call(action)
+local async = {}
+
+function async.safe_call(action)
     local result, err = xpcall(action, debug.traceback)
     if not result then
         naughty.notify({
@@ -25,12 +27,12 @@ local function handle_start_command(command, action)
     end
 end
 
-local function spawn_and_get_output(command, callback)
+function async.spawn_and_get_output(command, callback)
     return handle_start_command(command, function()
         return awful.spawn.easy_async(command,
                 function(stdout, stderr, _, exit_code)
                     local result = nil
-                    safe_call(
+                    async.safe_call(
                             function()
                                 result = callback(stdout, exit_code)
                             end)
@@ -44,20 +46,20 @@ local function spawn_and_get_output(command, callback)
     end)
 end
 
-local function spawn_and_get_lines(command, callback, finish_callback,
+function async.spawn_and_get_lines(command, callback, finish_callback,
         done_callback)
     local log = {stderr=""}
     local done = nil
     if done_callback then
         done =
             function(line)
-                safe_call(function() done_callback(line) end)
+                async.safe_call(function() done_callback(line) end)
             end
     end
     return handle_start_command(command, function()
         return awful.spawn.with_line_callback(command, {
                 stdout=function(line)
-                    safe_call(function() callback(line) end)
+                    async.safe_call(function() callback(line) end)
                 end,
                 stderr=function(line)
                     log.stderr = log.stderr .. line .. "\n"
@@ -78,7 +80,7 @@ local function spawn_and_get_lines(command, callback, finish_callback,
     end)
 end
 
-local function run_continuously(action)
+function async.run_continuously(action)
     local retries = 0
     local timer = gears.timer({
             timeout=1,
@@ -103,14 +105,14 @@ local function run_continuously(action)
     start()
 end
 
-local function run_command_continuously(command, line_callback, start_callback)
+function async.run_command_continuously(command, line_callback, start_callback)
     if not line_callback then
         line_callback = function() end
     end
-    run_continuously(
+    async.run_continuously(
             function(callback)
                 debug_util.log("Running command: " .. command)
-                local pid = spawn_and_get_lines(command, line_callback,
+                local pid = async.spawn_and_get_lines(command, line_callback,
                         function()
                             debug_util.log("Command stopped: " .. command)
                             return callback()
@@ -125,10 +127,4 @@ local function run_command_continuously(command, line_callback, start_callback)
             end)
 end
 
-return {
-    safe_call=safe_call,
-    spawn_and_get_output=spawn_and_get_output,
-    spawn_and_get_lines=spawn_and_get_lines,
-    run_continuously=run_continuously,
-    run_command_continuously=run_command_continuously,
-}
+return async

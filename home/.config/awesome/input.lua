@@ -28,7 +28,9 @@ local function get_device_property(device, property, action)
             end)
 end
 
-local function enable_device(device, enabled)
+local input = {}
+
+function input.enable_device(device, enabled)
     local value = "disable"
     if enabled then
         value = "enable"
@@ -40,21 +42,16 @@ local function enable_device(device, enabled)
             end)
 end
 
-local function is_device_enabled(device, action)
+function input.is_device_enabled(device, action)
     get_device_property(device, "Device Enabled",
             function(value) action(value == "1") end)
 end
 
-local function toggle_device(device)
-    is_device_enabled(device,
-            function(value) enable_device(device, not value) end)
+function input.toggle_device(device)
+    input.is_device_enabled(device,
+            function(value) input.enable_device(device, not value) end)
 end
 
-local touchpad = "TouchPad"
+input.touchpad = "TouchPad"
 
-return {
-    enable_device=enable_device,
-    is_device_enabled=is_device_enabled,
-    toggle_device=toggle_device,
-    touchpad=touchpad
-}
+return input

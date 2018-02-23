@@ -7,7 +7,9 @@ local function get_message(timeout)
     return 'Forcing in ' .. tostring(timeout) .. ' seconds.'
 end
 
-local function clean_shutdown(message, timeout, callback)
+local shutdown = {}
+
+function shutdown.clean_shutdown(message, timeout, callback)
     debug_util.log('Stopping all clients')
     local clients_to_close = client.get()
     debug_util.log('Number of clients to stop: ' .. tostring(#clients_to_close))
@@ -82,6 +84,4 @@ local function clean_shutdown(message, timeout, callback)
     end
 end
 
-return {
-    clean_shutdown=clean_shutdown
-}
+return shutdown
