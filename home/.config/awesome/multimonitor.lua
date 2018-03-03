@@ -352,6 +352,9 @@ local function prompt_layout_change(configuration, new_layout)
 end
 
 local function reconfigure_screen_layout(layout)
+    if #layout.outputs == 0 then
+        return
+    end
     local key = layout.key
     local configuration = configured_outputs[key]
 
