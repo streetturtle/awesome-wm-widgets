@@ -9,7 +9,7 @@ local locker = {}
 local args = {}
 
 local enable_command = "xautolock -enable"
-local disable_command = "xautolock -disable"
+local disable_commands = {"xautolock -disable", "xset -dpms", "xset s off"}
 local lock_command = "xautolock -locknow"
 local locked = false
 local disabled = false
@@ -35,10 +35,16 @@ function locker.lock(callback)
     end
 end
 
+local function disable_screensaver()
+    for _, command in ipairs(disable_commands) do
+        async.spawn_and_get_output(command, function() end)
+    end
+end
+
 locker.prevent_idle = Semaphore(
         function()
             disabled = true
-            awful.spawn(disable_command)
+            disable_screensaver()
         end,
         function()
             disabled = false
@@ -56,7 +62,7 @@ end
 function locker._on_lock_finished()
     locked = false
     if locker.prevent_idle:is_locked() then
-        awful.spawn(disable_command)
+        disable_screensaver()
     end
 end
 
