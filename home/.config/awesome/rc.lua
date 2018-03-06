@@ -19,7 +19,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 local xrandr = require("xrandr")
 local multimonitor = require("multimonitor")
 local variables = require("variables")
-local util = require("util")
+local command = require("command")
 local widgets = require("widgets")
 local cyclefocus = require('cyclefocus')
 local input = require('input')
@@ -761,10 +761,10 @@ local apw_tooltip = awful.tooltip({
             return tostring(math.floor(p.Volume * 100 + 0.5)) .. "%"
         end})
 
-util.start_if_not_running("clipit", "")
-util.start_if_not_running("nm-applet", "")
-util.start_if_not_running("blueman-applet", "")
-util.start_if_not_running("xbindkeys", "")
+command.start_if_not_running("clipit", "")
+command.start_if_not_running("nm-applet", "")
+command.start_if_not_running("blueman-applet", "")
+command.start_if_not_running("xbindkeys", "")
 
 local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
