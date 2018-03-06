@@ -208,13 +208,13 @@ local globalkeys = awful.util.table.join(
     awful.key({ modkey, }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
-    awful.key({ modkey, }, "j",
+    awful.key({ modkey, "Shift"}, "j",
         function ()
             awful.client.focus.byidx(-1)
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey, }, "k",
+    awful.key({ modkey, "Shift"}, "k",
         function ()
             awful.client.focus.byidx(1)
         end,
@@ -252,9 +252,9 @@ local globalkeys = awful.util.table.join(
             {description = "Put system tray to this screen", group="screen"}),
 
     -- Layout manipulation
-    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
+    awful.key({ modkey, }, "Right", function () awful.client.swap.byidx(  1)    end,
               {description = "swap with next client by index", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
+    awful.key({ modkey, }, "Left", function () awful.client.swap.byidx( -1)    end,
               {description = "swap with previous client by index", group = "client"}),
     awful.key({ modkey, "Control" }, "k",
             function ()
@@ -379,13 +379,13 @@ local clientkeys = awful.util.table.join(
               {description = "toggle floating", group = "client"}),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
               {description = "move to master", group = "client"}),
-    awful.key({ modkey,           }, "Right",
+    awful.key({ modkey, }, "k",
             function (c)
                 multimonitor.move_to_screen(
                         c, c.screen:get_next_in_direction("right"))
             end,
             {description = "move to previous screen", group = "client"}),
-    awful.key({ modkey,           }, "Left",
+    awful.key({ modkey, }, "j",
             function (c)
                 multimonitor.move_to_screen(
                         c, c.screen:get_next_in_direction("left"))
