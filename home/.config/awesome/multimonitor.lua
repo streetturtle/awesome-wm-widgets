@@ -7,6 +7,7 @@ local wibox = require("wibox")
 
 local debug_util = require("debug_util")
 local serialize = require("serialize")
+local tables = require("tables")
 local variables = require("variables")
 local xrandr = require("xrandr")
 
@@ -352,7 +353,7 @@ local function prompt_layout_change(configuration, new_layout)
 end
 
 local function reconfigure_screen_layout(layout)
-    if #layout.outputs == 0 then
+    if tables.is_empty(layout.outputs) then
         return
     end
     local key = layout.key
