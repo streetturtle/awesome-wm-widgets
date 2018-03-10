@@ -211,32 +211,38 @@ local function restore_clients(clients)
         local client_info = clients[tostring(c.window)]
         debug_util.log("Client " .. debug_util.get_client_debug_info(c)
                 .. ": " .. debug_util.to_string_recursive(client_info))
-        local screen_name = nil
         if client_info then
-            screen_name = client_info.screen
-        end
-        if screen_name and screen_name ~= get_screen_name(c.screen) then
-            to_move[c] = screens[screen_name]
-        else
-            to_move[c] = c.screen
-        end
-        if client_info then
-            debug_util.log("Moving: " .. debug_util.get_client_debug_info(c)
-                    .. " x=" .. c.x .. "->" .. tostring(client_info.x)
-                    .. " y=" .. c.y .. "->" .. tostring(client_info.y))
-            if client_info.x then
-                c.x = client_info.x
+            local screen_name = client_info.screen
+            local target = {
+                x=client_info.x,
+                y=client_info.y,
+                maximized=client_info.maximized,
+                screen_name=screen_name}
+
+            if screen_name then
+                target.screen = screens[screen_name]
+            else
+                target.screen = c.screen
+                target.screen_name = get_screen_name(c.screen)
             end
-            if client_info.y then
-                c.y = client_info.y
-            end
-            if client_info.maximized ~= nil then
-                c.maximized = client_info.maximized
-            end
+            to_move[c] = target
         end
     end
-    for c, s in pairs(to_move) do
-        move_to_screen(c, s)
+    for c, target in pairs(to_move) do
+        debug_util.log("Moving: " .. debug_util.get_client_debug_info(c)
+                .. " x=" .. c.x .. "->" .. tostring(target.x)
+                .. " y=" .. c.y .. "->" .. tostring(target.y)
+                .. " screen=" .. get_screen_name(target.screen))
+        move_to_screen(c, target.screen)
+        if target.x then
+            c.x = target.x
+        end
+        if target.y then
+            c.y = target.y
+        end
+        if target.maximized ~= nil then
+            c.maximized = target.maximized
+        end
     end
 end
 
@@ -273,24 +279,37 @@ local function handle_xrandr_finished(configuration)
 end
 
 local function move_windows_to_screens(layout)
-    local target_screens = {}
-
-    for name, _ in pairs(layout) do
-        table.insert(target_screens, name)
-    end
-
     local screens = get_screens_by_name()
     local to_move = {}
 
+    local outputs = layout.outputs
+    local target_screen = nil
+
+    for name, output in pairs(outputs) do
+        if output.active then
+            target_screen = name
+            break
+        end
+    end
+
+    debug_util.log("Move windows to screens, target=" .. target_screen)
+
+    if not target_screen then
+        return
+    end
+
     for _, c in ipairs(client.get()) do
         local screen_name = get_screen_name(c.screen)
-        if not awful.util.table.hasitem(target_screens, screen_name) then
-            to_move[c] = screens[target_screens[1]]
+        local target = outputs[screen_name]
+        if not target or not target.active then
+            to_move[c] = screens[target_screen]
         end
     end
 
     for c, s in pairs(to_move) do
+        debug_util.log(debug_util.get_client_debug_info(c))
         move_to_screen(c, s)
+        awful.placement.no_offscreen(c)
     end
 end
 
@@ -308,7 +327,7 @@ local function set_screen_layout(configuration)
             end)
 end
 
-local function reset_screen_layout(layout)
+local function apply_screen_layout(layout)
     local key = layout.key
     debug_util.log("Reset screen layout for " .. key)
     local configuration = get_configuration(key)
@@ -336,7 +355,7 @@ local function prompt_layout_change(configuration, new_layout)
             apply=function()
                 debug_util.log("Applying new configuration")
                 dismiss_layout_change_notification()
-                reset_screen_layout(new_layout)
+                apply_screen_layout(new_layout)
             end,
             revert=function()
                 debug_util.log("Reverting to old configuration")
@@ -352,7 +371,7 @@ local function prompt_layout_change(configuration, new_layout)
         end})
 end
 
-local function reconfigure_screen_layout(layout)
+local function on_sreen_layout_detected(layout)
     if tables.is_empty(layout.outputs) then
         return
     end
@@ -373,7 +392,7 @@ local function reconfigure_screen_layout(layout)
             set_screen_layout(configuration)
         else
             debug_util.log("No saved configuration found.")
-            reset_screen_layout(layout)
+            apply_screen_layout(layout)
         end
     end
 
@@ -381,7 +400,7 @@ end
 
 local function detect_screens()
     -- debug_util.log("Detect screens")
-    xrandr.get_outputs(reconfigure_screen_layout)
+    xrandr.get_outputs(on_sreen_layout_detected)
 end
 
 local function check_screens()
