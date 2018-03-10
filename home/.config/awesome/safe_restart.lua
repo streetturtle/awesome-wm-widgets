@@ -2,6 +2,7 @@ local gears = require("gears")
 
 local debug_util = require("debug_util")
 local serialize = require("serialize")
+local tables = require("tables")
 local variables = require("variables")
 
 local persist_data = {}
@@ -14,10 +15,7 @@ local function manage_client(c)
         return
     end
     local id = tostring(c.window)
-    if not persist_data.clients[id] then
-        persist_data.clients[id] = {}
-    end
-    local client_data = persist_data.clients[id]
+    local client_data = tables.get(persist_data.clients, id)
 
     if not c.maximized_horizontal and not c.maximized then
         client_data.width = c.width

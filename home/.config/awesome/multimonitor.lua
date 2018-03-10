@@ -45,11 +45,7 @@ local function move_to_screen(c, s)
 end
 
 local function get_configuration(key)
-    if not configured_outputs[key] then
-        configured_outputs[key] = {}
-    end
-
-    return configured_outputs[key]
+    return tables.get(configured_outputs, key)
 end
 
 local function get_current_configuration(field)
@@ -61,10 +57,7 @@ local function get_current_configuration(field)
             configured_screen_layout.key)
 
     if field then
-        if not current_configuration[field] then
-            current_configuration[field] = {}
-        end
-        return current_configuration[field]
+        return tables.get(current_configuration, field)
     else
         return current_configuration
     end
