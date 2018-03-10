@@ -239,7 +239,7 @@ local function restore_clients(clients)
     end
 end
 
-local function finalize_configuration(configuration)
+local function finalize_configuration(configuration, preferred_positions)
     if not is_layout_up_to_date() then
         debug_util.log("Screen layout is not up to date.")
         return false
@@ -248,6 +248,21 @@ local function finalize_configuration(configuration)
     if configuration.clients then
         restore_clients(configuration.clients)
     end
+
+    for _, preferred in pairs(preferred_positions) do
+        local c = preferred.client
+        debug_util.log("Preferred position of client "
+                .. debug_util.get_client_debug_info(c) .. ": "
+                .. debug_util.print_property(preferred, "x") .. " "
+                .. debug_util.print_property(preferred, "y") .. " "
+                .. debug_util.print_property(preferred, "maximized"))
+        local s = c.screen
+        c.maximized = false
+        c.x = preferred.x + s.geometry.x
+        c.y = preferred.y + s.geometry.y
+        c.maximized = preferred.maximized
+    end
+
     if configuration.system_tray_screen then
         local screens = get_screens_by_name()
         local system_tray_screen = configuration.system_tray_screen
@@ -262,11 +277,12 @@ local function finalize_configuration(configuration)
     return true
 end
 
-local function handle_xrandr_finished(configuration)
-    if not finalize_configuration(configuration) then
+local function handle_xrandr_finished(configuration, preferred_positions)
+    if not finalize_configuration(configuration, preferred_positions) then
         gears.timer.start_new(0.5,
                 function()
-                    return not finalize_configuration(configuration)
+                    return not finalize_configuration(configuration,
+                            preferred_positions)
                 end)
     end
 end
@@ -293,17 +309,25 @@ local function move_windows_to_screens(layout)
 
     for _, c in ipairs(client.get()) do
         local screen_name = get_screen_name(c.screen)
-        local target = outputs[screen_name]
-        if not target or not target.active then
+        debug_util.log(debug_util.get_client_debug_info(c)
+                .. ": x=" .. c.x .. " y=" .. c.y .. " screen=" .. screen_name)
+        local current_screen = outputs[screen_name]
+        if not current_screen or not current_screen.active then
+            debug_util.log("Need to move")
             to_move[c] = screens[target_screen]
         end
     end
 
+    local preferred_positions = {}
     for c, s in pairs(to_move) do
         debug_util.log(debug_util.get_client_debug_info(c))
         move_to_screen(c, s)
         awful.placement.no_offscreen(c)
+        preferred_positions[tostring(c.window)] = {client=c,
+                x=c.x - s.geometry.x, y=c.y - s.geometry.y,
+                maximized=c.maximized}
     end
+    return preferred_positions
 end
 
 local function set_screen_layout(configuration)
@@ -311,12 +335,12 @@ local function set_screen_layout(configuration)
     debug_util.log("Setting new screen layout: "
             .. debug_util.to_string_recursive(configuration.layout))
     configured_screen_layout = configuration.layout
-    move_windows_to_screens(configuration.layout)
+    local preferred_positions = move_windows_to_screens(configuration.layout)
 
     async.spawn_and_get_output(
             "xrandr " .. configuration.layout.arguments,
             function(_)
-                handle_xrandr_finished(configuration)
+                handle_xrandr_finished(configuration, preferred_positions)
             end)
 end
 
