@@ -224,27 +224,25 @@ local globalkeys = awful.util.table.join(
               {description = "show screens", group = "screen"}),
     awful.key({ modkey, }, "F1",
             function()
-                debug_util.log("Detecting screen configuration")
-                multimonitor.detect_screens()
+                local c = client.focus
+                naughty.notify({text=
+                        debug_util.print_property(c, "name") .. "\n"
+                        .. debug_util.print_property(c, "type") .. "\n"
+                        .. debug_util.print_property(c, "class") .. "\n"
+                        .. debug_util.print_property(c, "role") .. "\n"
+                        .. debug_util.print_property(c, "window") .. "\n"
+                        .. debug_util.print_property(c, "pid") .. "\n"
+                        .. debug_util.print_property(c, "x") .. "\n"
+                        .. debug_util.print_property(c, "y") .. "\n"
+                        .. debug_util.print_property(c, "width") .. "\n"
+                        .. debug_util.print_property(c, "height") .. "\n"
+                        .. debug_util.print_property(c, "fullscreen") .. "\n"
+                        .. debug_util.print_property(c, "maximized"),
+                        timeout=30})
             end,
-              {description = "show screens", group = "screen"}),
+              {description = "print debug info", group = "client"}),
     awful.key({ modkey, }, "F2", multimonitor.print_debug_info,
               {description = "print debug info", group = "screen"}),
-    awful.key({ modkey, }, "F3",
-            function()
-                local text = ""
-                for _, c in pairs(client.get()) do
-                    text = text .. c.window .. " " .. c.class .. " " .. c.name
-                            .. " Screen " .. c.screen.index .. "\n"
-                end
-                naughty.notify({text=text, timeout=30})
-                awful.spawn.easy_async("xlsclients -a",
-                    function(stdout, stderr, _, _)
-                        naughty.notify({
-                                text=stdout .. "\n" .. stderr,
-                                timeout=30})
-                    end)
-            end, {description = "print debug info", group = "screen"}),
     awful.key({modkey, "Shift"}, "t",
             function()
                 multimonitor.set_system_tray_position()

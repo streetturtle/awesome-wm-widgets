@@ -24,6 +24,10 @@ function debug_util.to_string_recursive(object)
     return __to_string_recursive(object, 0)
 end
 
+function debug_util.print_property(obj, property)
+    return property .. "=" .. debug_util.to_string_recursive(obj[property])
+end
+
 function debug_util.get_client_debug_info(c)
     if not c then
         return "<none>"
