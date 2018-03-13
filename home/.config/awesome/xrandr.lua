@@ -63,7 +63,7 @@ function xrandr.get_outputs(callback)
     local minx = nil
     local miny = nil
     async.spawn_and_get_lines(
-            "xrandr -q --current",
+            "xrandr -q",
             function(line)
                 -- debug_util.log("-> " .. line)
                 local output, primary, active, width, height, dx, dy, orientation =
