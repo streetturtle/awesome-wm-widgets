@@ -15,6 +15,7 @@ local spawn = require("awful.spawn")
 
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 local request_command = 'amixer -D pulse sget Master'
+local path_to_red_mute = os.getenv("HOME") .. "/.config/awesome/awesome-wm-widgets/volume-widget/audio-volume-muted-symbolic_red.svg"
 
 local volume_widget = wibox.widget {
     {
@@ -34,7 +35,9 @@ local update_graphic = function(widget, stdout, _, _, _)
     local volume = string.match(stdout, "(%d?%d?%d)%%")
     volume = tonumber(string.format("% 3d", volume))
     local volume_icon_name
-    if mute == "off" then volume_icon_name="audio-volume-muted-symbolic_red"
+    if mute == "off" then
+        widget.image = path_to_red_mute
+        return
     elseif (volume >= 0 and volume < 25) then volume_icon_name="audio-volume-muted-symbolic"
     elseif (volume < 50) then volume_icon_name="audio-volume-low-symbolic"
     elseif (volume < 75) then volume_icon_name="audio-volume-medium-symbolic"

@@ -22,15 +22,6 @@ s.mytasklist, -- Middle widget
 		...      
 ```
 
-- _Optional step._ In Arc icon theme the muted audio level icon (![Volume-widget](./audio-volume-muted-symbolic.png)) looks like 0 level icon, which could be a bit misleading.
- So I decided to use original muted icon for low audio level, and the same icon, but colored in red for muted audio level. Fortunately icons are in svg format, so you can easily recolor them with `sed`, so it would look like this (![Volume Widget](./audio-volume-muted-symbolic_red.png)):
- 
- ```bash
- cd /usr/share/icons/Arc/status/symbolic && 
- sudo cp audio-volume-muted-symbolic.svg audio-volume-muted-symbolic_red.svg && 
- sudo sed -i 's/bebebe/ed4737/g' ./audio-volume-muted-symbolic_red.svg 
- ```
-
 ## Control volume
 
 To mute/unmute click on the widget. To increase/decrease volume scroll up or down when mouse cursor is over the widget.
