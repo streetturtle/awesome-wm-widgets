@@ -774,8 +774,9 @@ local power_key_inhibitor = dbus_.inhibit(
         "Handle power keys by awesome", "block")
 
 locker.init({
-    lock_time=15,
-    blank_time=10
+    lock_time=15,   -- minutes
+    blank_time=10,  -- minutes
+    notify_time=30  -- seconds
 })
 
 debug_util.log("Initialization finished")

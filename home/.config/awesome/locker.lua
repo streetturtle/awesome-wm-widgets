@@ -81,7 +81,9 @@ local function initialize()
                             .. " -locker ~/.config/awesome/lock-session"
                             .. " -time " .. tostring(args.lock_time)
                             .. " -killer 'xset dpms force off'"
-                            .. " -killtime " .. tostring(args.blank_time))
+                            .. " -killtime " .. tostring(args.blank_time)
+                            .. " -notifier 'xset s activate'"
+                            .. " -notify " .. tostring(args.notify_time))
                 end
                 return true
             end)
