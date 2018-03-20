@@ -1,5 +1,4 @@
 local debug_util = require("debug_util")
-
 debug_util.log("-----------------------------------")
 debug_util.log("Awesome starting up")
 
@@ -40,6 +39,7 @@ if awesome.startup_errors then
                      text = awesome.startup_errors })
 end
 
+debug_util.log('2')
 -- Handle runtime errors after startup
 do
     local in_error = false
@@ -744,6 +744,12 @@ client.connect_signal("unmanage", check_fullscreen)
 client.connect_signal("property::size", check_fullscreen)
 client.connect_signal("property::position", check_fullscreen)
 
+awesome.connect_signal("startup",
+        function()
+            command.start_if_not_running(variables.clipboard_manager, "")
+        end)
+
+
 -- }}}
 
 local APWTimer = timer({ timeout = 0.5 }) -- set update interval in s
@@ -759,19 +765,14 @@ local apw_tooltip = awful.tooltip({
             return tostring(math.floor(p.Volume * 100 + 0.5)) .. "%"
         end})
 
-command.start_if_not_running("clipit", "")
-command.start_if_not_running("nm-applet", "")
-command.start_if_not_running("blueman-applet", "")
-command.start_if_not_running("xbindkeys", "")
-
 local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
     dofile(local_rc_file)
 end
 
-local power_key_inhibitor = dbus_.inhibit(
-        "handle-suspend-key:handle-lid-switch:handle-power-key",
-        "Handle power keys by awesome", "block")
+-- local power_key_inhibitor = dbus_.inhibit(
+--         "handle-suspend-key:handle-lid-switch:handle-power-key",
+--         "Handle power keys by awesome", "block")
 
 locker.init({
     lock_time=15,   -- minutes

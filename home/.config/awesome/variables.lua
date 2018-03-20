@@ -12,8 +12,13 @@ variables.terminal = command.get_available_command({
         {command="xterm"}})
 variables.browser = command.get_available_command({
         {command="firefox"},
+        {command="firefox-bin"},
         {command="chromium"},
         {command="google-chrome"}})
+variables.clipboard_manager = command.get_available_command({
+        {command="clipit"},
+        {command="klipper"},
+        {command="qlipper", test="which qlipper"}})
 variables.screen_configurator = "arandr"
 variables.editor = os.getenv("EDITOR") or "vim"
 variables.editor_cmd = variables.terminal .. " -e " .. variables.editor
