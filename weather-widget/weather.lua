@@ -11,8 +11,8 @@ local json = require("json")
 local naughty = require("naughty")
 local wibox = require("wibox")
 
-local city = "Montreal,ca"
-local open_map_key = 'c3d7320b359da4e48c2d682a04076576'
+local city = os.getenv("AWW_WEATHER_CITY") or "Montreal,ca"
+local open_map_key = os.getenv("AWW_WEATHER_API_KEY") or 'c3d7320b359da4e48c2d682a04076576'
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 
 local icon_widget = wibox.widget {
