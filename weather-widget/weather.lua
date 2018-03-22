@@ -86,6 +86,9 @@ function to_direction(degrees)
         { "NW", 303.75, 326.25 },
         { "NNW", 326.25, 348.75 },
     }
+    if degrees == nil then
+        return "Unknown dir"
+    end
     for i, dir in ipairs(directions) do
         if degrees > dir[2] and degrees < dir[3] then
             return dir[1]
