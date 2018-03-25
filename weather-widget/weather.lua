@@ -11,8 +11,8 @@ local json = require("json")
 local naughty = require("naughty")
 local wibox = require("wibox")
 
-local city = "Montreal,ca"
-local open_map_key = 'c3d7320b359da4e48c2d682a04076576'
+local city = os.getenv("AWW_WEATHER_CITY") or "Montreal,ca"
+local open_map_key = os.getenv("AWW_WEATHER_API_KEY") or 'c3d7320b359da4e48c2d682a04076576'
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 
 local icon_widget = wibox.widget {
@@ -86,6 +86,9 @@ function to_direction(degrees)
         { "NW", 303.75, 326.25 },
         { "NNW", 326.25, 348.75 },
     }
+    if degrees == nil then
+        return "Unknown dir"
+    end
     for i, dir in ipairs(directions) do
         if degrees > dir[2] and degrees < dir[3] then
             return dir[1]
@@ -97,7 +100,7 @@ local weather_timer = timer({ timeout = 60 })
 local resp
 
 weather_timer:connect_signal("timeout", function ()
-    local resp_json = http.request("http://api.openweathermap.org/data/2.5/weather?q=" .. city .."&appid=" .. open_map_key)
+    local resp_json = http.request("https://api.openweathermap.org/data/2.5/weather?q=" .. city .."&appid=" .. open_map_key)
     if (resp_json ~= nil) then
         resp = json.decode(resp_json)
         icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
@@ -114,12 +117,12 @@ weather_widget:connect_signal("mouse::enter", function()
         icon = path_to_icons .. icon_map[resp.weather[1].icon],
         icon_size=20,
         text =
-        '<big>' .. resp.weather[1].main .. ' (' .. resp.weather[1].description .. ')</big><br>' ..
-                '<b>Humidity:</b> ' .. resp.main.humidity .. '%<br>' ..
-                '<b>Temperature: </b>' .. to_celcius(resp.main.temp) .. '<br>' ..
-                '<b>Pressure: </b>' .. resp.main.pressure .. 'hPa<br>' ..
-                '<b>Clouds: </b>' .. resp.clouds.all .. '%<br>' ..
-      					 '<b>Wind: </b>' .. resp.wind.speed .. 'm/s (' .. to_direction(resp.wind.deg) .. ')',
+            '<big>' .. resp.weather[1].main .. ' (' .. resp.weather[1].description .. ')</big><br>' ..
+            '<b>Humidity:</b> ' .. resp.main.humidity .. '%<br>' ..
+            '<b>Temperature: </b>' .. to_celcius(resp.main.temp) .. '<br>' ..
+            '<b>Pressure: </b>' .. resp.main.pressure .. 'hPa<br>' ..
+            '<b>Clouds: </b>' .. resp.clouds.all .. '%<br>' ..
+            '<b>Wind: </b>' .. resp.wind.speed .. 'm/s (' .. to_direction(resp.wind.deg) .. ')',
         timeout = 5, hover_timeout = 10,
         width = 200
     }
