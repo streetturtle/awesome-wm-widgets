@@ -61,12 +61,12 @@ local icon_map = {
 }
 
 -- handy function to convert temperature from Kelvin to Celcius
-function to_celcius(kelvin)
+local function to_celcius(kelvin)
     return math.floor(tonumber(kelvin) - 273.15)
 end
 
 -- Return wind direction as a string.
-function to_direction(degrees)
+local function to_direction(degrees)
     local directions = {
         { "N", 348.75, 360 },
         { "N", 0, 11.25 },
