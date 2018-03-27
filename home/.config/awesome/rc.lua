@@ -353,6 +353,11 @@ local globalkeys = awful.util.table.join(
                 input.toggle_device(input.touchpad)
             end,
             {description="toggle touchpad", group="input"}),
+    awful.key({modkey}, "F4",
+            function()
+                input.toggle_device(input.touchpad)
+            end,
+            {description="toggle touchpad", group="input"}),
 
     awful.key({modkey}, "Tab",
             function()
