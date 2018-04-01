@@ -48,8 +48,8 @@ Keyboard navigation (copied from [`awful.prompt`](https://awesomewm.org/doc/api/
 1. Install [sp](https://gist.github.com/streetturtle/fa6258f3ff7b17747ee3) - CLI client for [Spotify for Linux](https://www.spotify.com/ca-en/download/linux/):
 
     ```bash
-    $ sudo git clone https://gist.github.com/fa6258f3ff7b17747ee3.git /opt/
-    $ sudo ln -s /opt/sp /usr/local/bin/
+    $ sudo git clone https://gist.github.com/fa6258f3ff7b17747ee3.git ~/dev/
+    $ sudo ln -s ~/dev/sp /usr/local/bin/
     ```
 
     Check if it works by running `sp help`.
