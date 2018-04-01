@@ -10,7 +10,7 @@ This widget consists of:
  ![Battery Widget](./bat-wid-2.png)  
  Alternatively you can use a tooltip (check the code):  
  ![Battery Widget](./bat-wid-22.png)
- - a pop-up warning message which appears on bottom right corner when battery level is less that 15%:  
+ - a pop-up warning message which appears on bottom right corner when battery level is less that 15% (you can get the image [here](https://vk.com/images/stickers/1933/512.png)):  
  ![Battery Widget](./bat-wid-3.png) 
 
 Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
