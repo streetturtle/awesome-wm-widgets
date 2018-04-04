@@ -20,7 +20,7 @@ local INC_VOLUME_CMD = 'amixer -q -c 0 sset Master 2dB+'
 --local DEC_VOLUME_CMD = 'amixer -D pulse sset Master 5%-'
 local DEC_VOLUME_CMD = 'amixer -q -c 0 sset Master 2dB-'
 local TOG_VOLUME_CMD = 'amixer -D pulse sset Master toggle'
-local MIXER_CMD = 'urxvtc -e alsamixer'
+local MIXER_CMD = 'urxvtc -e bash -c "alsamixer -c0"'
 
 local text = wibox.widget {
     id = "txt",
@@ -39,8 +39,8 @@ local mirrored_text_with_background = wibox.container.background(mirrored_text)
 local volumearc = wibox.widget {
     mirrored_text_with_background,
     max_value = 1,
-    thickness = 2,
     start_angle = 4.71238898, -- 2pi*3/4
+    thickness = 2,
     forced_height = 32,
     forced_width = 32,
     rounded_edge = true,

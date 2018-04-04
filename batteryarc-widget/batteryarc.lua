@@ -67,8 +67,8 @@ watch("acpi", 30,
 
         if charge == 100 then
           --text.text = string.format("%03d", charge)
-          text.text = charge
-          text.font = "Play 8"
+          text.text = "OK"
+          text.font = "Play 10"
         else
           text.text = charge
           text.font = "Play 12"
