@@ -73,6 +73,17 @@ menubar.utils.terminal = variables.terminal -- Set the terminal for applications
 -- Create a textclock widget
 local text_clock = wibox.widget.textclock()
 
+local calendar_widget = awful.widget.calendar_popup.month()
+
+text_clock:buttons(awful.util.table.join(
+        awful.button({}, 1,
+        function()
+            if not calendar_widget.visible then
+                calendar_widget:call_calendar(0, "br", mouse.screen)
+            end
+            calendar_widget.visible = not calendar_widget.visible
+        end)))
+
 local systray_widget = wibox.widget.systray()
 
 -- Create a wibox for each screen and add it
