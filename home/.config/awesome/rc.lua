@@ -331,6 +331,14 @@ local globalkeys = awful.util.table.join(
     awful.key({ }, "XF86AudioMute",         APW.ToggleMute,
             {description="Toggle Mute", group="volume"}),
 
+    --- Brightness
+    awful.key({ }, "XF86MonBrightnessUp",
+            function() awful.spawn("xbacklight -inc 10") end,
+            {description="Increase brightness", group="screen"}),
+    awful.key({ }, "XF86MonBrightnessDown",
+            function() awful.spawn("xbacklight -dec 10") end,
+            {description="Decrease brightness", group="screen"}),
+
     -- Prompt
     awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"}),
@@ -351,6 +359,11 @@ local globalkeys = awful.util.table.join(
     awful.key({modkey, "Shift"}, "l", widgets.keyboard_layout_switcher.switch,
             {description="switch keyboard layout", group="input"}),
     awful.key({}, "XF86TouchpadToggle",
+            function()
+                input.toggle_device(input.touchpad)
+            end,
+            {description="toggle touchpad", group="input"}),
+    awful.key({modkey}, "F4",
             function()
                 input.toggle_device(input.touchpad)
             end,
