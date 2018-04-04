@@ -9,7 +9,7 @@ local HOME = os.getenv("HOME")
 -- only text
 local text = wibox.widget {
     id = "txt",
-    font = "Play 5",
+    font = "Play 8",
     widget = wibox.widget.textbox
 }
 
@@ -25,10 +25,10 @@ local batteryarc = wibox.widget {
     rounded_edge = true,
     thickness = 2,
     start_angle = 4.71238898, -- 2pi*3/4
-    forced_height = 17,
-    forced_width = 17,
+    forced_height = 32,
+    forced_width = 32,
     bg = "#ffffff11",
-    paddings = 2,
+    paddings = 4,
     widget = wibox.container.arcchart,
     set_value = function(self, value)
         self.value = value
@@ -38,31 +38,41 @@ local batteryarc = wibox.widget {
 -- mirror the widget, so that chart value increases clockwise
 local batteryarc_widget = wibox.container.mirror(batteryarc, { horizontal = true })
 
-watch("acpi", 10,
+watch("acpi", 30,
     function(widget, stdout, stderr, exitreason, exitcode)
         local batteryType
         local _, status, charge_str, time = string.match(stdout, '(.+): (%a+), (%d?%d%d)%%,? ?.*')
         local charge = tonumber(charge_str)
         widget.value = charge / 100
         if status == 'Charging' then
-            mirrored_text_with_background.bg = beautiful.widget_green
-            mirrored_text_with_background.fg = beautiful.widget_black
+            mirrored_text_with_background.fg = beautiful.widget_green
+            --mirrored_text_with_background.fg = beautiful.widget_black
         else
             mirrored_text_with_background.bg = beautiful.widget_transparent
             mirrored_text_with_background.fg = beautiful.widget_main_color
         end
 
-        if charge < 15 then
+        if charge < 10 then
             batteryarc.colors = { beautiful.widget_red }
             if status ~= 'Charging' then
                 show_battery_warning()
             end
-        elseif charge > 15 and charge < 40 then
+        elseif charge > 10 and charge < 25 then
             batteryarc.colors = { beautiful.widget_yellow }
+        elseif charge < 100 then
+            batteryarc.colors = { beautiful.widget_green }
         else
             batteryarc.colors = { beautiful.widget_main_color }
         end
-        text.text = charge
+
+        if charge == 100 then
+          --text.text = string.format("%03d", charge)
+          text.text = charge
+          text.font = "Play 8"
+        else
+          text.text = charge
+          text.font = "Play 12"
+        end
     end,
     batteryarc)
 
