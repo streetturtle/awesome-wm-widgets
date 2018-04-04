@@ -776,6 +776,8 @@ command.start_if_not_running("clipit", "")
 command.start_if_not_running("nm-applet", "")
 command.start_if_not_running("blueman-applet", "")
 command.start_if_not_running("xbindkeys", "")
+command.start_if_not_running("compton",
+        "--backend glx --paint-on-overlay --vsync opengl-swc -b -c -r 4")
 
 local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
