@@ -26,6 +26,9 @@ local input = require('input')
 local locker = require('locker')
 local pulseaudio = require("apw/pulseaudio")
 require("safe_restart")
+battery_widget = require("awesome-wm-widgets.battery-widget.battery")
+cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
+ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
 
 local lgi = require("lgi")
 local dbus_ = require("dbus_")
@@ -175,6 +178,9 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             widgets.keyboard_layout_switcher.widget,
             APW,
+            battery_widget,
+            cpu_widget,
+            ram_widget,
             widgets.systray_widget,
             widgets.text_clock,
             s.mylayoutbox,
