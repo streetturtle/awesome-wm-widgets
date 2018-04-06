@@ -789,7 +789,7 @@ local apw_tooltip = awful.tooltip({
         end})
 
 command.start_if_not_running("compton",
-        "--backend glx --paint-on-overlay --vsync opengl-swc -b -c -r 4")
+        "--backend glx --paint-on-overlay --vsync opengl-swc -b")
 local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
     dofile(local_rc_file)
