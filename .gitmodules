@@ -9,4 +9,4 @@
 	url = https://github.com/blueyed/awesome-cyclefocus.git
 [submodule "awesome-wm-widgets"]
 	path = awesome-wm-widgets
-	url = git@github.com:streetturtle/awesome-wm-widgets.git
+	url = git@github.com:petersohn/awesome-wm-widgets.git

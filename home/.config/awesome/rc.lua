@@ -25,10 +25,6 @@ local input = require('input')
 local locker = require('locker')
 local pulseaudio = require("apw/pulseaudio")
 require("safe_restart")
-battery_widget = require("awesome-wm-widgets.battery-widget.battery")
-cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
-ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
-
 local lgi = require("lgi")
 local dbus_ = require("dbus_")
 local power = require("power")
@@ -81,12 +77,21 @@ end
 theme.titlebar_bg_focus = "#007EE6"
 theme.apw_show_text = true
 theme.apw_notify = true
+theme.battery_widget_popup_position = "bottom_right"
+theme.memory_widget_popup_placement = function(w)
+    return awful.placement.bottom_right(w,
+            { margins = {bottom = 25, right = 10}})
+end
 
 beautiful.init(theme)
 
 local modkey = variables.modkey
 
 local APW = require("apw/widget")
+local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
+local cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
+local ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
+
 
 local last_started_client = nil
 
