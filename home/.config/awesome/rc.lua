@@ -28,6 +28,9 @@ require("safe_restart")
 local lgi = require("lgi")
 local dbus_ = require("dbus_")
 local power = require("power")
+local wallpaper = require("wallpaper")
+
+math.randomseed(os.time())
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -69,11 +72,6 @@ end
 -- Themes define colours, icons, font and wallpapers.
 local theme = dofile(awful.util.get_themes_dir() .. "default/theme.lua")
 
-local wallpaper_file = variables.config_dir .. "/wallpaper"
-if gears.filesystem.file_readable(wallpaper_file) then
-    theme.wallpaper = wallpaper_file
-end
-
 theme.titlebar_bg_focus = "#007EE6"
 theme.apw_show_text = true
 theme.apw_notify = true
@@ -84,6 +82,8 @@ theme.memory_widget_popup_placement = function(w)
 end
 
 beautiful.init(theme)
+
+wallpaper.init()
 
 local modkey = variables.modkey
 
@@ -117,27 +117,16 @@ awful.layout.layouts = {
 -- }}}
 
 -- {{{ Menu
-local function set_wallpaper(s)
-    -- Wallpaper
-    if beautiful.wallpaper then
-        local wallpaper = beautiful.wallpaper
-        -- If wallpaper is a function, call it with the screen
-        if type(wallpaper) == "function" then
-            wallpaper = wallpaper(s)
-        end
-        gears.wallpaper.maximized(wallpaper, s, false)
-    end
-end
-
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
-screen.connect_signal("property::geometry", set_wallpaper)
+screen.connect_signal("property::geometry", wallpaper.set_wallpaper)
 
 local launcher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = widgets.main_menu })
 
 awful.screen.connect_for_each_screen(function(s)
+    debug_util.log("Got screen: " .. multimonitor.get_screen_name(s))
     -- Wallpaper
-    set_wallpaper(s)
+    wallpaper.set_wallpaper(s)
 
     -- Each screen has its own tag table.
     awful.tag({"1", "2"}, s, awful.layout.layouts[1])

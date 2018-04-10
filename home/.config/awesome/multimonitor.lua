@@ -519,6 +519,7 @@ local screen_check_timer = gears.timer({
 
 return {
     detect_screens=detect_screens,
+    get_screen_name=get_screen_name,
     move_to_screen=move_to_screen,
     print_debug_info=print_debug_info,
     set_system_tray_position=set_system_tray_position,
