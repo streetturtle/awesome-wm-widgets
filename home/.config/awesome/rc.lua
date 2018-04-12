@@ -41,7 +41,6 @@ if awesome.startup_errors then
                      text = awesome.startup_errors })
 end
 
-debug_util.log('2')
 -- Handle runtime errors after startup
 do
     local in_error = false
