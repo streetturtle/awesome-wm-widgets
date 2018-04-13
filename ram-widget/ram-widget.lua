@@ -1,7 +1,6 @@
 local awful = require("awful")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
-local gd = require("gears.debug")
 
 --- Main ram widget shown on wibar
 local ramgraph_widget = wibox.widget {
