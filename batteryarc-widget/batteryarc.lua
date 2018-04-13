@@ -60,7 +60,11 @@ watch("acpi", 30,
         elseif charge > 10 and charge < 25 then
             batteryarc.colors = { beautiful.widget_yellow }
         elseif charge < 100 then
-            batteryarc.colors = { beautiful.widget_green }
+            if status == 'Charging' then
+              batteryarc.colors = { beautiful.widget_green }
+            else
+              batteryarc.colors = { beautiful.widget_main_color }
+            end
         else
             batteryarc.colors = { beautiful.widget_main_color }
         end
