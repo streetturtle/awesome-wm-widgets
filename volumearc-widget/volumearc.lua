@@ -49,6 +49,10 @@ local volumearc = wibox.widget {
     widget = wibox.container.arcchart
 }
 
+--local volumearc_widget = wibox.container.margin(wibox.container.mirror(volumearc, { horizontal = true }))
+--volumearc_widget.margins = 4
+--local mirrored_text = wibox.container.margin(wibox.container.mirror(text, { horizontal = true }))
+--mirrored_text.right = 2 -- pour centrer le texte dans le rond
 local volumearc_widget = wibox.container.mirror(volumearc, { horizontal = true })
 
 local update_graphic = function(widget, stdout, _, _, _)
