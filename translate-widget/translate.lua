@@ -12,6 +12,7 @@ local https = require("ssl.https")
 local json = require("json")
 local naughty = require("naughty")
 local wibox = require("wibox")
+local gears = require("gears")
 
 local API_KEY = '<your api key>'
 local BASE_URL = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
@@ -41,11 +42,17 @@ end
 
 local w = wibox {
     width = 300,
+    border_width = 1,
+    border_color = '#66ccff',
     ontop = true,
     screen = mouse.screen,
     expand = true,
     bg = '#1e252c',
-    max_widget_size = 500
+    max_widget_size = 500,
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 3)
+    end
+
 }
 
 w:setup {
@@ -140,6 +147,11 @@ local input_widget = wibox {
     bg = '#1e252c',
     max_widget_size = 500,
     border_width = 1;
+    border_width = 1,
+    border_color = '#66ccff',
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 3)
+    end
 }
 
 local prompt = awful.widget.prompt()
