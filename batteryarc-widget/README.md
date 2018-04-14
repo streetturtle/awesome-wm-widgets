@@ -38,6 +38,7 @@ s.mytasklist, -- Middle widget
 		batteryarc_widget,
 		...
 ```
+You can get the icon for warning popup [here](https://vk.com/images/stickers/1933/512.png)
 
 ## Troubleshooting
 

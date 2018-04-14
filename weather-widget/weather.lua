@@ -61,39 +61,36 @@ local icon_map = {
 }
 
 -- handy function to convert temperature from Kelvin to Celcius
-local function to_celcius(kelvin)
+function to_celcius(kelvin)
     return math.floor(tonumber(kelvin) - 273.15)
 end
 
 -- Return wind direction as a string.
-local function to_direction(degrees)
-    local directions = {
-        { "N", 348.75, 360 },
-        { "N", 0, 11.25 },
-        { "NNE", 11.25, 33.75 },
-        { "NE", 33.75, 56.25 },
-        { "ENE", 56.25, 78.75 },
-        { "E", 78.75, 101.25 },
-        { "ESE", 101.25, 123.75 },
-        { "SE", 123.75, 146.25 },
-        { "SSE", 146.25, 168.75 },
-        { "S", 168.75, 191.25 },
-        { "SSW", 191.25, 213.75 },
-        { "SW", 213.75, 236.25 },
-        { "WSW", 236.25, 258.75 },
-        { "W", 258.75, 281.25 },
-        { "WNW", 281.25, 303.75 },
-        { "NW", 303.75, 326.25 },
-        { "NNW", 326.25, 348.75 },
-    }
+function to_direction(degrees)
+    -- Ref: https://www.campbellsci.eu/blog/convert-wind-directions
     if degrees == nil then
         return "Unknown dir"
     end
-    for i, dir in ipairs(directions) do
-        if degrees > dir[2] and degrees < dir[3] then
-            return dir[1]
-        end
-    end
+    local directions = {
+        "N",
+        "NNE",
+        "NE",
+        "ENE",
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "W",
+        "WNW",
+        "NW",
+        "NNW",
+        "N",
+    }
+    return directions[math.floor((degrees % 360) / 22.5) + 1]
 end
 
 local weather_timer = timer({ timeout = 60 })
