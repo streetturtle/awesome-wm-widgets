@@ -15,8 +15,9 @@ local naughty = require("naughty")
 
 local GET_MPD_CMD = "mpc status"
 local PAUSE_MPD_CMD = "mpc pause"
-local START_MPD_CMD = "mpc play"
 local STOP_MPD_CMD = "mpc stop"
+local NEXT_MPD_CMD = "mpc next"
+local PREV_MPD_CMD = "mpc prev"
 
 local PATH_TO_ICONS = "/usr/share/icons/Arc"
 local PAUSE_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_pause.png"
@@ -66,10 +67,10 @@ end
 
 mpdarc:connect_signal("button::press", function(_, _, _, button)
     if (button == 1) then awful.spawn("mpc toggle", false)      -- left click
-    elseif (button == 2) then awful.spawn("mpc stop", false) 
-    elseif (button == 3) then awful.spawn("mpc pause", false)
-    elseif (button == 4) then awful.spawn("mpc next", false)  -- scroll up
-    elseif (button == 5) then awful.spawn("mpc prev", false)  -- scroll down
+    elseif (button == 2) then awful.spawn(STOP_MPD_CMD, false)
+    elseif (button == 3) then awful.spawn(PAUSE_MPD_CMD, false)
+    elseif (button == 4) then awful.spawn(NEXT_MPD_CMD, false)  -- scroll up
+    elseif (button == 5) then awful.spawn(PREV_MPD_CMD, false)  -- scroll down
     end
 
     spawn.easy_async(GET_MPD_CMD, function(stdout, stderr, exitreason, exitcode)
