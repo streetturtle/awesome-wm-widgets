@@ -45,13 +45,15 @@ end
 
 watch('bash -c "free | grep -z Mem.*Swap.*"', 1,
     function(widget, stdout, stderr, exitreason, exitcode)
-        total, used, free, shared, buff_cache, available, total_swap, used_swap, free_swap = stdout:match('(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*Swap:%s*(%d+)%s*(%d+)%s*(%d+)')
-        widget.data = { used, total-used }
+        total, used, free, shared, buff_cache, available, total_swap, used_swap, free_swap =
+            stdout:match('(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*Swap:%s*(%d+)%s*(%d+)%s*(%d+)')
+
+        widget.data = { used, total-used } widget.data = { used, total-used }
 
         if w.visible then
             w.pie.data_list = {
-                {'used ' .. getPercentage(used+used_swap), used+used_swap},
-                {'free ' .. getPercentage(free+free_swap), free+free_swap},
+                {'used ' .. getPercentage(used + used_swap), used + used_swap},
+                {'free ' .. getPercentage(free + free_swap), free + free_swap},
                 {'buff_cache ' .. getPercentage(buff_cache), buff_cache}
             }
         end
@@ -64,8 +66,8 @@ ramgraph_widget:buttons(
         awful.button({}, 1, function()
             awful.placement.top_right(w, { margins = {top = 25, right = 10}})
             w.pie.data_list = {
-                {'used ' .. getPercentage(used+used_swap), used+used_swap},
-                {'free ' .. getPercentage(free+free_swap), free+free_swap},
+                {'used ' .. getPercentage(used + used_swap), used + used_swap},
+                {'free ' .. getPercentage(free + free_swap), free + free_swap},
                 {'buff_cache ' .. getPercentage(buff_cache), buff_cache}
             }
             w.pie.display_labels = true
