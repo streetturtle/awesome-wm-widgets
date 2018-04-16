@@ -18,10 +18,15 @@ local PAUSE_MPD_CMD = "mpc pause"
 local START_MPD_CMD = "mpc play"
 local STOP_MPD_CMD = "mpc stop"
 
-local PATH_TO_ICONS = "/usr/share/icons/Arc"
-local PAUSE_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_pause.png"
-local PLAY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_play.png"
-local STOP_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_stop.png"
+--local PATH_TO_ICONS = "/usr/share/icons/Arc/actions/24/player_"
+local PATH_TO_ICONS = "/home/raph/.config/awesome/themes/myzenburn/"
+
+local PAUSE_ICON_NAME = PATH_TO_ICONS .. "pause.png"
+local PLAY_ICON_NAME = PATH_TO_ICONS .. "play.png"
+local STOP_ICON_NAME = PATH_TO_ICONS .. "stop.png"
+--local PAUSE_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_pause.png"
+--local PLAY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_play.png"
+--local STOP_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_stop.png"
 
 local icon = wibox.widget { 
         id = "icon",
@@ -48,19 +53,21 @@ local mpdarc_widget = wibox.container.mirror(mpdarc, { horizontal = true })
 
 local update_graphic = function(widget, stdout, _, _, _)
     stdout = string.gsub(stdout, "\n", "")
-    local mpdpercent = string.match(stdout, "(%d%d)%%")
     local mpdstatus = string.match(stdout, "%[(%a+)%]")
     if mpdstatus == "playing" then 
+      local mpdpercent = string.match(stdout, "(%d%d)%%")
       icon.image = PLAY_ICON_NAME
       widget.colors = { beautiful.widget_main_color }
       widget.value = tonumber((100-mpdpercent)/100)
     elseif mpdstatus == "paused" then 
+      local mpdpercent = string.match(stdout, "(%d%d)%%")
       icon.image = PAUSE_ICON_NAME
       widget.colors = { beautiful.widget_main_color }
       widget.value = tonumber(mpdpercent/100)
     else
       icon.image = STOP_ICON_NAME
-      widget.colors = { beautiful.widget_red }
+      widget.value = 1
+      --widget.colors = { beautiful.widget_red }
     end
 end
 
