@@ -215,6 +215,13 @@ local globalkeys = awful.util.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
+    awful.key({ modkey, "Control"}, "v",
+        function ()
+            awful.spawn.with_shell(
+                    'sleep 0.5; xdotool type "$(xsel --clipboard)"')
+        end,
+        {description = "Force paste", group = "client"}
+    ),
     awful.key({ modkey, "Shift"}, "k",
         function ()
             awful.client.focus.byidx(1)
@@ -660,8 +667,8 @@ client.connect_signal("mouse::enter", function(c)
 end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 
+client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 client.connect_signal("unfocus",
         function(c)
             if not c.minimized then
