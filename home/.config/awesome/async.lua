@@ -113,7 +113,7 @@ function async.run_command_continuously(command, line_callback, start_callback,
         line_callback = function() end
     end
     if not finish_callback then
-        finish_callback = function() return true end
+        finish_callback = function() return false end
     end
     local command_str = debug_util.to_string_recursive(command)
     async.run_continuously(
@@ -122,7 +122,7 @@ function async.run_command_continuously(command, line_callback, start_callback,
                 local pid = async.spawn_and_get_lines(command, line_callback,
                         function()
                             debug_util.log("Command stopped: " .. command_str)
-                            if finish_callback() then
+                            if not finish_callback() then
                                 return callback()
                             end
                             return true

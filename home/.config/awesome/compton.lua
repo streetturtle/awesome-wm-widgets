@@ -8,6 +8,7 @@ local enabled = true
 local transparency_enabled = true
 local opacity = 0.85
 local pid = nil
+local restarting = false
 
 local compton_command = command.get_available_command({{command="compton"}})
 
@@ -33,7 +34,9 @@ end
 local function reset_config()
     setup_config_file()
     if enabled and pid then
-        awful.spawn("kill -USR1 " .. tostring(pid))
+        restarting = true
+        -- awful.spawn("kill -USR1 " .. tostring(pid))
+        awful.spawn("kill " .. tostring(pid))
     end
 end
 
@@ -47,7 +50,16 @@ local function start()
     async.run_command_continuously("compton",
             function() end,
             function(pid_) pid = pid_ end,
-            function() return enabled end)
+            function()
+                if restarting then
+                    restarting = false
+                    if enabled then
+                        start()
+                    end
+                    return true
+                end
+                return not enabled
+            end)
 end
 
 local function set_enabled(value)
