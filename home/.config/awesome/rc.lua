@@ -210,6 +210,20 @@ local globalkeys = awful.util.table.join(
     awful.key({ modkey, }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
+    awful.key({ modkey, "Mod1"}, "Up",
+        function() compton.increase_opacity(0.05) end,
+        {description = "Increase inactive window opacity",
+            group = "compositor"}),
+    awful.key({ modkey, "Mod1"}, "Down",
+            function() compton.decrease_opacity(0.05) end,
+            {description = "Decrease inactive window opacity",
+                group = "compositor"}),
+    awful.key({modkey}, "F5", compton.toggle,
+        {description = "Toggle compositor", group = "compositor"}),
+    awful.key({ modkey, "Shift"}, "F5", compton.toggle_transparency,
+        {description = "Toggle inactive window transparency",
+            group = "compositor"}),
+
     awful.key({ modkey, "Shift"}, "j",
         function ()
             awful.client.focus.byidx(-1)
