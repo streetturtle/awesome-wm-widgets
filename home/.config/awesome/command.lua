@@ -2,9 +2,9 @@ local awful = require("awful")
 local async = require("async")
 local debug_util = require("debug_util")
 
-local util = {}
+local command = {}
 
-function util.start_if_not_running(command, args, path)
+function command.start_if_not_running(command, args, path)
     debug_util.log('Starting ' .. command)
     async.spawn_and_get_output("pidof -x " .. command,
             function(stdout, result_code)
@@ -22,7 +22,7 @@ function util.start_if_not_running(command, args, path)
             end)
 end
 
-function util.get_available_command(commands)
+function command.get_available_command(commands)
     for _, command in ipairs(commands) do
         local args = ""
         if command.args then
@@ -46,4 +46,4 @@ function util.get_available_command(commands)
     return nil
 end
 
-return util
+return command

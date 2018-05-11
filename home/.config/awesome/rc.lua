@@ -19,6 +19,7 @@ local xrandr = require("xrandr")
 local multimonitor = require("multimonitor")
 local variables = require("variables")
 local command = require("command")
+local compton = require("compton")
 local widgets = require("widgets")
 local cyclefocus = require('cyclefocus')
 local input = require('input')
@@ -788,8 +789,6 @@ local apw_tooltip = awful.tooltip({
             return tostring(math.floor(p.Volume * 100 + 0.5)) .. "%"
         end})
 
-command.start_if_not_running("compton",
-        "--backend glx --paint-on-overlay --vsync opengl-swc -b")
 local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
     dofile(local_rc_file)
