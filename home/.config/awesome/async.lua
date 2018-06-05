@@ -132,7 +132,7 @@ function async.run_command_continuously(command, line_callback, start_callback,
                         start_callback(pid)
                     end
                 else
-                    if finish_callback() then
+                    if not finish_callback() then
                         callback()
                     end
                 end
