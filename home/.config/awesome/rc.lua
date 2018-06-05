@@ -27,7 +27,6 @@ local locker = require('locker')
 local pulseaudio = require("apw/pulseaudio")
 require("safe_restart")
 local lgi = require("lgi")
-local dbus_ = require("dbus_")
 local power = require("power")
 local wallpaper = require("wallpaper")
 
@@ -807,10 +806,6 @@ local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
     dofile(local_rc_file)
 end
-
--- local power_key_inhibitor = dbus_.inhibit(
---         "handle-suspend-key:handle-lid-switch:handle-power-key",
---         "Handle power keys by awesome", "block")
 
 locker.init({
     lock_time=15,   -- minutes

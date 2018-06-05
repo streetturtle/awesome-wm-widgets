@@ -3,6 +3,7 @@ local gears = require("gears")
 
 local async = require("async")
 local Semaphore = require("Semaphore")
+local debug_util = require("debug_util")
 
 local locker = {}
 
@@ -52,6 +53,7 @@ locker.prevent_idle = Semaphore(
         end)
 
 function locker._run_callback()
+    debug_util.log("Session locked")
     locked = true
     if locker.callback then
         locker.callback()
@@ -60,6 +62,7 @@ function locker._run_callback()
 end
 
 function locker._on_lock_finished()
+    debug_util.log("Session unlocked")
     locked = false
     if locker.prevent_idle:is_locked() then
         disable_screensaver()

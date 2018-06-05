@@ -3,33 +3,46 @@ local awful = require("awful")
 local naughty = require("naughty")
 local locker = require('locker')
 local shutdown = require('shutdown')
+local command = require('command')
+local dbus_ = require("dbus_")
+local debug_util = require("debug_util")
 
-local function call_systemctl(command)
-    awful.spawn("systemctl " .. command)
+local commands = {}
+
+local function call_power_command(name)
+    local command = commands[name]
+    if command then
+        debug_util.log("Calling command: " .. command)
+        awful.spawn(command)
+    else
+        local message = "No command found for " .. name
+        debug_util.log(message)
+        naughty.notify({preset=naughty.config.presets.critical, text=message})
+    end
 end
 
-local function lock_and_call_systemctl(command)
-    locker.lock(function() call_systemctl(command) end)
+local function lock_and_call_power_command(command)
+    locker.lock(function() call_power_command(command) end)
 end
 
 local power = {}
 
 function power.suspend()
-    lock_and_call_systemctl("suspend")
+    lock_and_call_power_command("suspend")
 end
 
 function power.reboot()
     shutdown.clean_shutdown('Reboot', 30,
-        function() call_systemctl("reboot") end)
+        function() call_power_command("reboot") end)
 end
 
 function power.hibernate()
-    lock_and_call_systemctl("hibernate")
+    lock_and_call_power_command("hibernate")
 end
 
 function power.poweroff()
     shutdown.clean_shutdown('Power off', 30,
-        function() call_systemctl("poweroff") end)
+        function() call_power_command("poweroff") end)
 end
 
 function power.quit()
@@ -60,5 +73,29 @@ function power.power_menu()
         }
     })
 end
+
+awesome.connect_signal("startup",
+    function()
+        local systemctl_command = command.get_available_command({
+            {command="systemctl"}})
+        if systemctl_command then
+            commands = {
+                suspend=systemctl_command .. " suspend",
+                reboot=systemctl_command .. " reboot",
+                hibernate=systemctl_command .. " hibernate",
+                poweroff=systemctl_command .. " poweroff",
+            }
+            local power_key_inhibitor = dbus_.inhibit(
+                "handle-suspend-key:handle-lid-switch:handle-power-key",
+                "Handle power keys by awesome", "block")
+
+        else
+            commands = {
+                suspend="sudo pm-suspend",
+                poweroff="sudo poweroff",
+                reboot="sudo reboot",
+            }
+        end
+    end)
 
 return power
