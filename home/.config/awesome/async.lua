@@ -139,4 +139,10 @@ function async.run_command_continuously(command, line_callback, start_callback,
             end)
 end
 
+function async.run_commands(commands)
+    for _, command in ipairs(commands) do
+        async.spawn_and_get_output(command, function() end)
+    end
+end
+
 return async

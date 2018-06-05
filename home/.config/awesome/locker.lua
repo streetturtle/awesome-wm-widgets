@@ -8,10 +8,12 @@ local debug_util = require("debug_util")
 local locker = {}
 
 local args = {}
+local callbacks = {}
 
-local enable_command = "xautolock -enable"
-local disable_commands = {"xautolock -disable", "xset -dpms", "xset s off"}
-local lock_command = "xautolock -locknow"
+local enable_commands = {"xautolock -enable"}
+local disable_commands = {"xautolock -disable"}
+local disable_screensaver_commands = {"xset -dpms", "xset s off"}
+local lock_commands = {"xautolock -locknow"}
 local locked = false
 local disabled = false
 
@@ -21,7 +23,7 @@ local function do_lock()
                 if locked then
                     return false
                 end
-                awful.spawn(lock_command)
+                async.run_commands(lock_commands)
                 return true
             end)
 end
@@ -29,27 +31,22 @@ end
 function locker.lock(callback)
     locker.callback = callback
     if disabled then
-        awful.spawn(enable_command)
+        async.run_commands(enable_commands)
         do_lock()
     else
-        awful.spawn(lock_command)
-    end
-end
-
-local function disable_screensaver()
-    for _, command in ipairs(disable_commands) do
-        async.spawn_and_get_output(command, function() end)
+        async.run_commands(lock_commands)
     end
 end
 
 locker.prevent_idle = Semaphore(
         function()
             disabled = true
-            disable_screensaver()
+            async.run_commands(disable_commands)
+            async.run_commands(disable_screensaver_commands)
         end,
         function()
             disabled = false
-            awful.spawn(enable_command)
+            async.run_commands(enable_commands)
         end)
 
 function locker._run_callback()
@@ -64,8 +61,9 @@ end
 function locker._on_lock_finished()
     debug_util.log("Session unlocked")
     locked = false
+    async.run_commands(disable_screensaver_commands)
     if locker.prevent_idle:is_locked() then
-        disable_screensaver()
+        async.run_commands(disable_commands)
     end
 end
 
