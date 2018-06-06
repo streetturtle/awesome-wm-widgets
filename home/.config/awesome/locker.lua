@@ -53,6 +53,8 @@ local state_machine = StateMachine({
                     guard="is_disabled"
                 },
             },
+            enable={},
+            disable={},
         },
         Enabled={
             lock={
@@ -200,8 +202,11 @@ local function initialize()
                             .. " -killer 'xset dpms force off'"
                             .. " -killtime " .. tostring(args.blank_time)
                             .. " -notifier 'xset s activate'"
-                            .. " -notify " .. tostring(args.notify_time))
-                    state_machine:process_event("init")
+                            .. " -notify " .. tostring(args.notify_time),
+                            function() end,
+                            function()
+                                state_machine:process_event("init")
+                            end)
                 end
                 return true
             end)
