@@ -4,6 +4,7 @@ local gears = require("gears")
 local async = require("async")
 local Semaphore = require("Semaphore")
 local debug_util = require("debug_util")
+local StateMachine = require("StateMachine")
 
 local locker = {}
 
@@ -17,54 +18,169 @@ local lock_commands = {"xautolock -locknow"}
 local locked = false
 local disabled = false
 
-local function do_lock()
-    gears.timer.start_new(1,
-            function()
-                if locked then
-                    return false
-                end
-                async.run_commands(lock_commands)
-                return true
-            end)
-end
+local actions = {}
 
-function locker.lock(callback)
-    locker.callback = callback
-    if disabled then
-        async.run_commands(enable_commands)
-        do_lock()
-    else
-        async.run_commands(lock_commands)
-    end
-end
+local state_machine = StateMachine({
+    name="Locker",
+    initial="Start",
+    actions=actions,
+    states={
+        Start={
+        },
+        Enabled={
+        },
+        Disabled={
+            enter="disable",
+            exit="enable",
+        },
+        Locking={
+            exit="stop_timer",
+        },
+        Locked={
+            enter="call_callbacks",
+            exit="disable_screensaver",
+        },
+    },
+    transitions={
+        Start={
+            init={
+                {
+                    to="Enabled",
+                    guard="is_enabled"
+                },
+                {
+                    to="Disabled",
+                    guard="is_disabled"
+                },
+            },
+        },
+        Enabled={
+            lock={
+                to="Locking",
+                action={"lock", "add_callback"},
+            },
+            locked={
+                to="Locked",
+            },
+            disable={
+                to="Disabled",
+            },
+        },
+        Disabled={
+            lock={
+                to="Locking",
+                action={"start_timer", "add_callback"},
+            },
+            enable={
+                to="Enabled",
+            },
+        },
+        Locking={
+            lock={
+                action="add_callback"
+            },
+            timeout={
+                action="lock",
+            },
+            locked={
+                to="Locked",
+            },
+        },
+        Locked={
+            lock={
+                action="call_callback",
+            },
+            unlocked={
+                {
+                    to="Enabled",
+                    guard="is_enabled"
+                },
+                {
+                    to="Disabled",
+                    guard="is_disabled"
+                },
+            },
+        },
+    },
+})
+
+local timer = gears.timer({
+    timeout=1, autostart=false,
+    callback=function() state_machine:process_event("timeout") end})
 
 locker.prevent_idle = Semaphore(
         function()
-            disabled = true
-            async.run_commands(disable_commands)
-            async.run_commands(disable_screensaver_commands)
+            state_machine:process_event("disable")
         end,
         function()
-            disabled = false
-            async.run_commands(enable_commands)
+            state_machine:process_event("enable")
         end)
 
-function locker._run_callback()
-    debug_util.log("Session locked")
-    locked = true
-    if locker.callback then
-        locker.callback()
-        locker.callback = nil
+function actions.add_callback(args)
+    if args.arg then
+        debug_util.log("Has callback")
+        table.insert(callbacks, args.arg)
+    else
+        debug_util.log("No callback")
     end
 end
 
-function locker._on_lock_finished()
-    debug_util.log("Session unlocked")
-    locked = false
-    async.run_commands(disable_screensaver_commands)
-    if locker.prevent_idle:is_locked() then
-        async.run_commands(disable_commands)
+function actions.call_callbacks(args)
+    local callbacks_local = callbacks
+    callbacks = {}
+
+    debug_util.log("Number of callbacks: " .. tostring(#callbacks_local))
+    for _, callback in ipairs(callbacks_local) do
+        async.safe_call(callback)
     end
+end
+
+function actions.call_callback(args)
+    async.safe_call(args.arg)
+end
+
+function actions.lock()
+    async.run_commands(lock_commands)
+end
+
+function actions.start_timer()
+    timer:start()
+end
+
+function actions.stop_timer()
+    timer:stop()
+end
+
+function actions.enable()
+    async.run_commands(enable_commands)
+end
+
+function actions.disable()
+    async.run_commands(disable_commands)
+end
+
+function actions.disable_screensaver()
+    async.run_commands(disable_screensaver_commands)
+end
+
+function actions.is_enabled()
+    return not locker.prevent_idle:is_locked()
+end
+
+function actions.is_disabled()
+    return locker.prevent_idle:is_locked()
+end
+
+function locker.lock(callback)
+    state_machine:process_event("lock", callback)
+end
+
+function locker._run_callback()
+    state_machine:process_event("locked")
+end
+
+function locker._on_lock_finished()
+    state_machine:process_event("unlocked")
 end
 
 local function initialize()
@@ -85,9 +201,11 @@ local function initialize()
                             .. " -killtime " .. tostring(args.blank_time)
                             .. " -notifier 'xset s activate'"
                             .. " -notify " .. tostring(args.notify_time))
+                    state_machine:process_event("init")
                 end
                 return true
             end)
+    return true
 end
 
 function locker.init(args_)

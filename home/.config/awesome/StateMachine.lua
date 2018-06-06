@@ -1,0 +1,146 @@
+local tables = require("tables")
+local debug_util = require("debug_util")
+
+local StateMachine = {}
+StateMachine.__index = StateMachine
+
+setmetatable(StateMachine, {
+    __call = function(cls, ...)
+        return cls.new(...)
+    end
+})
+
+function log(self, msg)
+    if self.name then
+        debug_util.log(self.name .. ": " .. msg)
+    end
+end
+
+local function do_call(self, action, arg)
+    if not self.actions[action] then
+        log(self, "WARNING: action not found: " .. action)
+        return
+    end
+
+    log(self, "Executing action: " .. action)
+    return self.actions[action](arg)
+end
+
+local function call(self, action, arg)
+    if type(action) == "table" then
+        for _, a in ipairs(action) do
+            do_call(self, a, arg)
+        end
+    else
+        return do_call(self, action, arg)
+    end
+end
+
+function enter_state(self, state, arg)
+    if state then
+        log(self, "Entering state: " .. state)
+        self.state = state
+        if self.states[state] and self.states[state].enter then
+            call(self, self.states[state].enter, {
+                state=state,
+                state_machine=self,
+                arg=arg})
+        end
+    end
+end
+
+function leave_state(self, arg)
+    if self.state then
+        if self.states[self.state] and self.states[self.state].exit then
+            call(self, self.states[self.state].exit, {
+                state=state,
+                state_machine=self,
+                arg=arg})
+        end
+        log(self, "Leaving state: " .. self.state)
+        self.state = nil
+    end
+end
+
+local function process_transition(self, transition, arg)
+    if transition.guard and not call(self, transition.guard, {
+        state=self.state,
+        event=event,
+        state_machine=self}) then
+        log(self, "Guard failed")
+        return false
+    end
+
+    from_state = self.state
+    if transition.to then
+        leave_state(self)
+    end
+
+    if transition.action then
+        call(self, transition.action, {
+            from=from_state,
+            to=transition.to,
+            event=event,
+            state_machine=state_machine,
+            arg=arg})
+    end
+
+    if transition.to then
+        enter_state(self, transition.to)
+    end
+
+    return true
+end
+
+-- args:
+-- states={<state1>={enter=..., exit=...},...}
+-- transitions={<from>={<event>=<event_spec>, ...}, ...}
+-- <event_spec>={to=..., action=..., guard=...}
+-- <event_spec>={{to=..., action=..., guard=...}, ...}
+-- actions={<name>=<action>, ...}
+--
+-- Enter/exit actions: action({state, state_machine, arg})
+-- Actions: action({from, to, event, state_machine, arg})
+-- Guards: guard({state, event, state_machine}) -> bool
+function StateMachine.new(args)
+    local self = setmetatable({}, StateMachine)
+    self.states = tables.get(args, "states")
+    self.transitions = tables.get(args, "transitions")
+    self.actions = args.actions
+    self.name = args.name
+
+    initial_state = tables.get(args, "initial", "")
+    enter_state(self, initial_state)
+
+    return self
+end
+
+function StateMachine:process_event(event, arg)
+    if not self.state then
+        log(self, "WARNING: No state.")
+        return
+    end
+
+    if not self.transitions[self.state]
+            or not self.transitions[self.state][event] then
+        log(self, "WARNING: No transition from state " .. self.state
+            .. " on event " .. event .. ".")
+        return
+    end
+
+    log(self, "Processing event: " .. self.state .. " -> " .. event)
+
+    transition = self.transitions[self.state][event]
+
+    if transition[1] then
+        for _, t in ipairs(transition) do
+            if process_transition(self, t, arg) then
+                return
+            end
+        end
+    else
+        process_transition(self, transition, arg)
+    end
+end
+
+return StateMachine
