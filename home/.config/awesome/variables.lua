@@ -7,18 +7,29 @@ variables.config_dir = os.getenv("HOME") .. "/.config/awesome"
 -- This is used later as the default terminal and editor to run.
 variables.terminal = command.get_available_command({
         {command="gnome-terminal"},
-        {command="konsole"},
         {command="x-terminal-emulator"},
-        {command="xterm"}})
+        {command="terminator"},
+        {command="konsole"},
+        {command="xterm"},
+    })
 variables.browser = command.get_available_command({
         {command="firefox"},
+        {command="firefox-bin"},
         {command="chromium"},
-        {command="google-chrome"}})
+        {command="google-chrome"},
+    })
+variables.clipboard_manager = command.get_available_command({
+        {command="clipit"},
+        {command="klipper"},
+        {command="qlipper", test="which qlipper"},
+    })
 variables.screen_configurator = "arandr"
 variables.editor = os.getenv("EDITOR") or "vim"
 variables.editor_cmd = variables.terminal .. " -e " .. variables.editor
 variables.screenshot_tool = command.get_available_command({
-    {command="gnome-screenshot", args="--interactive"}})
+    {command="gnome-screenshot", args="--interactive"},
+    {command="spectacle"},
+    })
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.

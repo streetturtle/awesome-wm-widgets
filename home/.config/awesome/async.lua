@@ -28,7 +28,8 @@ local function handle_start_command(command, action)
 end
 
 function async.spawn_and_get_output(command, callback)
-    return handle_start_command(command, function()
+    local command_str = debug_util.to_string_recursive(command)
+    return handle_start_command(command_str, function()
         return awful.spawn.easy_async(command,
                 function(stdout, stderr, _, exit_code)
                     local result = nil
@@ -39,7 +40,7 @@ function async.spawn_and_get_output(command, callback)
                     if not result and exit_code ~= 0 then
                         naughty.notify({
                                 preset=naughty.config.presets.critical,
-                                title="Error running command: " .. command,
+                                title="Error running command: " .. command_str,
                                 text=stderr})
                     end
                 end)
@@ -56,7 +57,8 @@ function async.spawn_and_get_lines(command, callback, finish_callback,
                 async.safe_call(function() done_callback(line) end)
             end
     end
-    return handle_start_command(command, function()
+    local command_str = debug_util.to_string_recursive(command)
+    return handle_start_command(command_str, function()
         return awful.spawn.with_line_callback(command, {
                 stdout=function(line)
                     async.safe_call(function() callback(line) end)
@@ -72,7 +74,7 @@ function async.spawn_and_get_lines(command, callback, finish_callback,
                     if not result and code ~= 0 then
                         naughty.notify({
                                 preset=naughty.config.presets.critical,
-                                title="Error running command: " .. command,
+                                title="Error running command: " .. command_str,
                                 text=log.stderr})
                     end
                 end,
@@ -105,26 +107,42 @@ function async.run_continuously(action)
     start()
 end
 
-function async.run_command_continuously(command, line_callback, start_callback)
+function async.run_command_continuously(command, line_callback, start_callback,
+        finish_callback)
     if not line_callback then
         line_callback = function() end
     end
+    if not finish_callback then
+        finish_callback = function() return false end
+    end
+    local command_str = debug_util.to_string_recursive(command)
     async.run_continuously(
             function(callback)
-                debug_util.log("Running command: " .. command)
+                debug_util.log("Running command: " .. command_str)
                 local pid = async.spawn_and_get_lines(command, line_callback,
                         function()
-                            debug_util.log("Command stopped: " .. command)
-                            return callback()
+                            debug_util.log("Command stopped: " .. command_str)
+                            if not finish_callback() then
+                                return callback()
+                            end
+                            return true
                         end)
                 if pid then
                     if start_callback then
                         start_callback(pid)
                     end
                 else
-                    callback()
+                    if not finish_callback() then
+                        callback()
+                    end
                 end
             end)
+end
+
+function async.run_commands(commands)
+    for _, command in ipairs(commands) do
+        async.spawn_and_get_output(command, function() end)
+    end
 end
 
 return async

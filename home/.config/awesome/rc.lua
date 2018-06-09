@@ -1,5 +1,4 @@
 local debug_util = require("debug_util")
-
 debug_util.log("-----------------------------------")
 debug_util.log("Awesome starting up")
 
@@ -20,6 +19,7 @@ local xrandr = require("xrandr")
 local multimonitor = require("multimonitor")
 local variables = require("variables")
 local command = require("command")
+local compton = require("compton")
 local widgets = require("widgets")
 local cyclefocus = require('cyclefocus')
 local input = require('input')
@@ -27,8 +27,10 @@ local locker = require('locker')
 local pulseaudio = require("apw/pulseaudio")
 require("safe_restart")
 local lgi = require("lgi")
-local dbus_ = require("dbus_")
 local power = require("power")
+local wallpaper = require("wallpaper")
+
+math.randomseed(os.time())
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -69,11 +71,6 @@ end
 -- Themes define colours, icons, font and wallpapers.
 local theme = dofile(awful.util.get_themes_dir() .. "default/theme.lua")
 
-local wallpaper_file = variables.config_dir .. "/wallpaper"
-if gears.filesystem.file_readable(wallpaper_file) then
-    theme.wallpaper = wallpaper_file
-end
-
 theme.titlebar_bg_focus = "#007EE6"
 theme.apw_show_text = true
 theme.apw_notify = true
@@ -84,6 +81,8 @@ theme.memory_widget_popup_placement = function(w)
 end
 
 beautiful.init(theme)
+
+wallpaper.init()
 
 local modkey = variables.modkey
 
@@ -117,27 +116,16 @@ awful.layout.layouts = {
 -- }}}
 
 -- {{{ Menu
-local function set_wallpaper(s)
-    -- Wallpaper
-    if beautiful.wallpaper then
-        local wallpaper = beautiful.wallpaper
-        -- If wallpaper is a function, call it with the screen
-        if type(wallpaper) == "function" then
-            wallpaper = wallpaper(s)
-        end
-        gears.wallpaper.maximized(wallpaper, s, false)
-    end
-end
-
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
-screen.connect_signal("property::geometry", set_wallpaper)
+screen.connect_signal("property::geometry", wallpaper.set_wallpaper)
 
 local launcher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = widgets.main_menu })
 
 awful.screen.connect_for_each_screen(function(s)
+    debug_util.log("Got screen: " .. multimonitor.get_screen_name(s))
     -- Wallpaper
-    set_wallpaper(s)
+    wallpaper.set_wallpaper(s)
 
     -- Each screen has its own tag table.
     awful.tag({"1", "2"}, s, awful.layout.layouts[1])
@@ -197,7 +185,9 @@ end)
 -- {{{ Mouse bindings
 root.buttons(awful.util.table.join(
     awful.button({ }, 4, awful.tag.viewnext),
-    awful.button({ }, 5, awful.tag.viewprev)
+    awful.button({ }, 5, awful.tag.viewprev),
+    awful.button({ }, 6, APW.Down),
+    awful.button({ }, 7, APW.Up)
 ))
 -- }}}
 
@@ -219,11 +209,32 @@ local globalkeys = awful.util.table.join(
     awful.key({ modkey, }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
+    awful.key({ modkey, "Mod1"}, "Up",
+        function() compton.increase_opacity(0.05) end,
+        {description = "Increase inactive window opacity",
+            group = "compositor"}),
+    awful.key({ modkey, "Mod1"}, "Down",
+            function() compton.decrease_opacity(0.05) end,
+            {description = "Decrease inactive window opacity",
+                group = "compositor"}),
+    awful.key({modkey}, "F5", compton.toggle,
+        {description = "Toggle compositor", group = "compositor"}),
+    awful.key({ modkey, "Shift"}, "F5", compton.toggle_transparency,
+        {description = "Toggle inactive window transparency",
+            group = "compositor"}),
+
     awful.key({ modkey, "Shift"}, "j",
         function ()
             awful.client.focus.byidx(-1)
         end,
         {description = "focus previous by index", group = "client"}
+    ),
+    awful.key({ modkey, "Control"}, "v",
+        function ()
+            awful.spawn.with_shell(
+                    'sleep 0.5; xdotool type "$(xsel --clipboard)"')
+        end,
+        {description = "Force paste", group = "client"}
     ),
     awful.key({ modkey, "Shift"}, "k",
         function ()
@@ -531,7 +542,9 @@ end
 local clientbuttons = awful.util.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
-    awful.button({ modkey }, 3, awful.mouse.client.resize))
+    awful.button({ modkey }, 3, awful.mouse.client.resize),
+    awful.button({ }, 6, APW.Down),
+    awful.button({ }, 7, APW.Up))
 
 -- Set keys
 root.keys(globalkeys)
@@ -668,8 +681,8 @@ client.connect_signal("mouse::enter", function(c)
 end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 
+client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 client.connect_signal("unfocus",
         function(c)
             if not c.minimized then
@@ -768,6 +781,12 @@ client.connect_signal("unmanage", check_fullscreen)
 client.connect_signal("property::size", check_fullscreen)
 client.connect_signal("property::position", check_fullscreen)
 
+awesome.connect_signal("startup",
+        function()
+            command.start_if_not_running(variables.clipboard_manager, "")
+        end)
+
+
 -- }}}
 
 local APWTimer = timer({ timeout = 0.5 }) -- set update interval in s
@@ -783,21 +802,10 @@ local apw_tooltip = awful.tooltip({
             return tostring(math.floor(p.Volume * 100 + 0.5)) .. "%"
         end})
 
-command.start_if_not_running("clipit", "")
-command.start_if_not_running("nm-applet", "")
-command.start_if_not_running("blueman-applet", "")
-command.start_if_not_running("xbindkeys", "")
-command.start_if_not_running("compton",
-        "--backend glx --paint-on-overlay --vsync opengl-swc -b -c -r 4")
-
 local local_rc_file = variables.config_dir .. "/rc.local.lua"
 if gears.filesystem.file_readable(local_rc_file) then
     dofile(local_rc_file)
 end
-
-local power_key_inhibitor = dbus_.inhibit(
-        "handle-suspend-key:handle-lid-switch:handle-power-key",
-        "Handle power keys by awesome", "block")
 
 locker.init({
     lock_time=15,   -- minutes
