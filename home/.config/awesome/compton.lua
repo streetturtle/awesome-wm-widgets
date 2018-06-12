@@ -3,14 +3,15 @@ local awful = require("awful")
 local async = require("async")
 local command = require("command")
 local debug_util = require("debug_util")
+local Process = require("Process")
 
 local enabled = true
 local transparency_enabled = true
 local opacity = 0.85
-local pid = nil
-local restarting = false
 
 local compton_command = command.get_available_command({{command="compton"}})
+
+local process = Process("Compton", compton_command)
 
 local compton = {}
 
@@ -33,10 +34,8 @@ end
 
 local function reset_config()
     setup_config_file()
-    if enabled and pid then
-        restarting = true
-        -- awful.spawn("kill -USR1 " .. tostring(pid))
-        awful.spawn("kill " .. tostring(pid))
+    if enabled then
+        process:restart()
     end
 end
 
@@ -45,21 +44,8 @@ local function start()
         debug_util.log("Compton is not available")
         return
     end
-    debug_util.log("Running compton")
     setup_config_file()
-    async.run_command_continuously("compton",
-            function() end,
-            function(pid_) pid = pid_ end,
-            function()
-                if restarting then
-                    restarting = false
-                    if enabled then
-                        start()
-                    end
-                    return true
-                end
-                return not enabled
-            end)
+    process:start()
 end
 
 local function set_enabled(value)
@@ -72,7 +58,7 @@ local function set_enabled(value)
     if enabled then
         start()
     else
-        awful.spawn("kill " .. tostring(pid))
+        process:stop()
     end
 end
 

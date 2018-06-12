@@ -151,7 +151,8 @@ function Process.new(name, command)
                     to="Stopping",
                 },
                 stopped={
-                    to="Idle",
+                    to="Starting",
+                    action="start",
                 },
                 stop_timeout={
                     to="Stopping",
