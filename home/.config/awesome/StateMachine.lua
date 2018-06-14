@@ -1,4 +1,5 @@
 local tables = require("tables")
+local gears = require("gears")
 local debug_util = require("debug_util")
 
 local StateMachine = {}
@@ -62,7 +63,7 @@ function leave_state(self, arg)
     end
 end
 
-local function process_transition(self, transition, arg)
+local function process_transition(self, event, transition, arg)
     if transition.guard and not call(self, transition.guard, {
         state=self.state,
         event=event,
@@ -78,10 +79,10 @@ local function process_transition(self, transition, arg)
 
     if transition.action then
         call(self, transition.action, {
+            event=event,
+            state_machine=self,
             from=from_state,
             to=transition.to,
-            event=event,
-            state_machine=state_machine,
             arg=arg})
     end
 
@@ -134,13 +135,19 @@ function StateMachine:process_event(event, arg)
 
     if transition[1] then
         for _, t in ipairs(transition) do
-            if process_transition(self, t, arg) then
+            if process_transition(self, event, t, arg) then
                 return
             end
         end
     else
-        process_transition(self, transition, arg)
+        process_transition(self, event, transition, arg)
     end
+end
+
+function StateMachine:postpone_event(event, arg)
+    gears.timer.delayed_call(function()
+        self:process_event(event, arg)
+    end)
 end
 
 return StateMachine
