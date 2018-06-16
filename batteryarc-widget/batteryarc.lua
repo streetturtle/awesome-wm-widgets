@@ -38,11 +38,30 @@ local batteryarc = wibox.widget {
 -- mirror the widget, so that chart value increases clockwise
 local batteryarc_widget = wibox.container.mirror(batteryarc, { horizontal = true })
 
+local last_battery_check = os.time()
+
 watch("acpi", 10,
     function(widget, stdout, stderr, exitreason, exitcode)
         local batteryType
-        local _, status, charge_str, time = string.match(stdout, '(.+): (%a+), (%d?%d%d)%%,? ?.*')
-        local charge = tonumber(charge_str)
+
+        local battery_info = {}
+        for s in stdout:gmatch("[^\r\n]+") do
+            local _, status, charge_str, time = string.match(s, '(.+): (%a+), (%d?%d?%d)%%,? ?.*')
+            table.insert(battery_info, {status = status, charge = tonumber(charge_str)})
+        end
+
+        local charge = 0
+        local status
+        for i, batt in ipairs(battery_info) do
+            if batt.charge >= charge then
+                status = batt.status -- use most charged battery status
+                -- this is arbitrary, and maybe another metric should be used
+            end
+
+            charge = charge + batt.charge
+        end
+        charge = charge // #battery_info -- use average charge for battery icon
+
         widget.value = charge / 100
         if status == 'Charging' then
             mirrored_text_with_background.bg = beautiful.widget_green
@@ -54,7 +73,8 @@ watch("acpi", 10,
 
         if charge < 15 then
             batteryarc.colors = { beautiful.widget_red }
-            if status ~= 'Charging' then
+            if status ~= 'Charging' and os.difftime(os.time(), last_battery_check) > 300 then
+                -- if 5 minutes have elapsed since the last warning
                 show_battery_warning()
             end
         elseif charge > 15 and charge < 40 then
