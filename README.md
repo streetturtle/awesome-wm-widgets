@@ -8,6 +8,8 @@ or with separators
 
 ![screenshot](./screenshot_with_sprtrs.png)
 
+Some more screenshots in this reddit [post](https://www.reddit.com/r/unixporn/comments/8qijmx/awesomewm_dark_theme/)
+
 From left to right:
 
 - [spotify-widget](https://github.com/streetturtle/AwesomeWM/tree/master/spotify-widget) / [rhythmbox-widget](https://github.com/streetturtle/AwesomeWM/tree/master/rhythmbox-widget)
