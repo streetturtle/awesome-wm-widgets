@@ -234,7 +234,7 @@ local globalkeys = awful.util.table.join(
             awful.spawn.with_shell(
                     'sleep 0.5; xdotool type "$(xsel --clipboard)"')
         end,
-        {description = "Force paste", group = "client"}
+        {description = "Force paste", group = "input"}
     ),
     awful.key({ modkey, "Shift"}, "k",
         function ()
