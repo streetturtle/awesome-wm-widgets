@@ -19,92 +19,98 @@ local locked = false
 local disabled = false
 
 local actions = {}
+local state_machine = nil
 
-local state_machine = StateMachine({
-    name="Locker",
-    initial="Start",
-    actions=actions,
-    states={
-        Start={
+local function reset_state_machine()
+    state_machine = StateMachine({
+        name="Locker",
+        initial="Start",
+        actions=actions,
+        states={
+            Start={
+            },
+            Enabled={
+            },
+            Disabled={
+                enter="disable",
+                exit="enable",
+            },
+            Locking={
+                exit="stop_timer",
+            },
+            Locked={
+                enter="call_callbacks",
+                exit="disable_screensaver",
+            },
         },
-        Enabled={
-        },
-        Disabled={
-            enter="disable",
-            exit="enable",
-        },
-        Locking={
-            exit="stop_timer",
-        },
-        Locked={
-            enter="call_callbacks",
-            exit="disable_screensaver",
-        },
-    },
-    transitions={
-        Start={
-            init={
-                {
-                    to="Enabled",
-                    guard="is_enabled"
+        transitions={
+            Start={
+                init={
+                    {
+                        to="Enabled",
+                        guard="is_enabled"
+                    },
+                    {
+                        to="Disabled",
+                        guard="is_disabled"
+                    },
                 },
-                {
+                lock={
+                    action="print_not_running",
+                },
+                enable={},
+                disable={},
+            },
+            Enabled={
+                lock={
+                    to="Locking",
+                    action={"lock", "add_callback"},
+                },
+                locked={
+                    to="Locked",
+                },
+                disable={
                     to="Disabled",
-                    guard="is_disabled"
                 },
             },
-            enable={},
-            disable={},
-        },
-        Enabled={
-            lock={
-                to="Locking",
-                action={"lock", "add_callback"},
-            },
-            locked={
-                to="Locked",
-            },
-            disable={
-                to="Disabled",
-            },
-        },
-        Disabled={
-            lock={
-                to="Locking",
-                action={"start_timer", "add_callback"},
-            },
-            enable={
-                to="Enabled",
-            },
-        },
-        Locking={
-            lock={
-                action="add_callback"
-            },
-            timeout={
-                action="lock",
-            },
-            locked={
-                to="Locked",
-            },
-        },
-        Locked={
-            lock={
-                action="call_callback",
-            },
-            unlocked={
-                {
+            Disabled={
+                lock={
+                    to="Locking",
+                    action={"start_timer", "add_callback"},
+                },
+                enable={
                     to="Enabled",
-                    guard="is_enabled"
                 },
-                {
-                    to="Disabled",
-                    guard="is_disabled"
+            },
+            Locking={
+                lock={
+                    action="add_callback"
+                },
+                timeout={
+                    action="lock",
+                },
+                locked={
+                    to="Locked",
+                },
+            },
+            Locked={
+                lock={
+                    action="call_callback",
+                },
+                unlocked={
+                    {
+                        to="Enabled",
+                        guard="is_enabled"
+                    },
+                    {
+                        to="Disabled",
+                        guard="is_disabled"
+                    },
                 },
             },
         },
-    },
-})
+    })
+end
 
 local timer = gears.timer({
     timeout=1, autostart=false,
@@ -165,6 +171,12 @@ function actions.disable_screensaver()
     async.run_commands(disable_screensaver_commands)
 end
 
+function actions.print_not_running()
+    naughty.notify({ preset = naughty.config.presets.critical,
+                     title = "Locker",
+                     text = "Locker is not running." })
+end
+
 function actions.is_enabled()
     return not locker.prevent_idle:is_locked()
 end
@@ -206,6 +218,9 @@ local function initialize()
                             function() end,
                             function()
                                 state_machine:process_event("init")
+                            end,
+                            function()
+                                reset_state_machine()
                             end)
                 end
                 return true
@@ -218,5 +233,7 @@ function locker.init(args_)
     awful.spawn("xset dpms 0 0 0")
     async.spawn_and_get_output("xautolock -exit", initialize)
 end
+
+reset_state_machine()
 
 return locker
