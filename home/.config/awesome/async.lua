@@ -127,6 +127,13 @@ function async.run_command_continuously(command, line_callback, start_callback,
                             end
                             return true
                         end)
+                if type(pid) == "string" then
+                    naughty.notify({
+                        preset=naughty.config.presets.critical,
+                        title="Failed to start command",
+                        text=pid
+                    })
+                end
                 if pid then
                     if start_callback then
                         start_callback(pid)
