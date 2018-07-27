@@ -111,8 +111,8 @@ function Process.new(name, command)
                     to="Starting",
                     action={"start", "reset_tries"},
                 },
-            },
             WaitForStartBeforeStop={
+            },
                 start={
                     to="Starting",
                 },
@@ -204,7 +204,7 @@ function actions.start(args)
                 args.state_machine:postpone_event("stopped")
                 return true
             end)
-    if pid then
+    if pid and type(pid) == "number" then
         self.pid = pid
         args.state_machine:postpone_event("started")
     else

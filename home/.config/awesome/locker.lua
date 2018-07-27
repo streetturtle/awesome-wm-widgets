@@ -64,7 +64,7 @@ local function reset_state_machine()
             Enabled={
                 lock={
                     to="Locking",
-                    action={"lock", "add_callback"},
+                    action={"lock", "add_callback", "start_timer"},
                 },
                 locked={
                     to="Locked",

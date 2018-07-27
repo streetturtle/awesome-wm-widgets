@@ -133,6 +133,8 @@ function async.run_command_continuously(command, line_callback, start_callback,
                         title="Failed to start command",
                         text=pid
                     })
+                    finish_callback()
+                    return
                 end
                 if pid then
                     if start_callback then
