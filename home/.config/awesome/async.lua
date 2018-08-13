@@ -66,7 +66,7 @@ function async.spawn_and_get_lines(command, callback, finish_callback,
                 stderr=function(line)
                     log.stderr = log.stderr .. line .. "\n"
                 end,
-                exit=function(_, code)
+                exit=function(reason, code)
                     local result = nil
                     if finish_callback then
                         result = finish_callback(code)

@@ -3,7 +3,9 @@ local gears = require("gears")
 
 local async = require("async")
 local debug_util = require("debug_util")
+local serialize = require("serialize")
 local StateMachine = require("StateMachine")
+local variables = require("variables")
 
 local actions = {}
 
@@ -17,7 +19,17 @@ setmetatable(Process, {
 
 local timer_names = {"ok", "stop", "restart"}
 
+local active_names = {}
+local running_pids = {}
+
+local function check_name(name)
+    if active_names[name] then
+        error(name .. " is already running")
+    end
+end
+
 function Process.new(name, command)
+    check_name(name)
     local self = setmetatable({}, Process)
     self.command = command
     self.pid = nil
@@ -28,6 +40,8 @@ function Process.new(name, command)
         actions=actions,
         states={
             Idle={
+                enter="clear_name",
+                exit="set_name",
             },
             Starting={
             },
@@ -176,6 +190,14 @@ function Process.new(name, command)
     create_timer("restart", {timeout=0.5, single_shot=true})
     create_timer("stop", {timeout=2, single_shot=false})
 
+    local pid = running_pids[name]
+    if pid then
+        debug_util.log("Process " .. name .. " is already running as "
+            .. tostring(pid) .. ". Restarting.")
+        awful.spawn("kill " .. tostring(pid))
+        self.state_machine:process_event("start")
+    end
+
     return self
 end
 
@@ -191,6 +213,12 @@ function Process:restart()
     self.state_machine:process_event("restart")
 end
 
+local running_pids_file = variables.config_dir .. "/running_pids.json"
+
+local function save_running_pids()
+    serialize.save_to_file(running_pids_file, running_pids)
+end
+
 function actions.start(args)
     local state_machine = args.state_machine
     local self = state_machine.obj
@@ -201,15 +229,19 @@ function actions.start(args)
             function()
                 debug_util.log("Command stopped: " .. command)
                 self.pid = nil
+                running_pids[state_machine.name] = nil
+                save_running_pids()
                 args.state_machine:postpone_event("stopped")
                 return true
             end)
     if pid and type(pid) == "number" then
         self.pid = pid
-        args.state_machine:postpone_event("started")
+        running_pids[state_machine.name] = pid
+        save_running_pids()
+        state_machine:postpone_event("started")
     else
         debug_util.log("Could not start command: " .. command)
-        args.state_machine:postpone_event("stopped")
+        state_machine:postpone_event("stopped")
     end
 end
 
@@ -238,6 +270,15 @@ function actions.print_giveup(args)
         .. args.state_machine.obj.command)
 end
 
+function actions.set_name(args)
+    check_name(args.state_machine.name)
+    active_names[args.state_machine.name] = true
+end
+
+function actions.clear_name(args)
+    active_names[args.state_machine.name] = nil
+end
+
 for _, name in ipairs(timer_names) do
     local timer_name = name .. "_timer"
     actions["start_" .. timer_name] = function(args)
@@ -246,6 +287,10 @@ for _, name in ipairs(timer_names) do
     actions["stop_" .. timer_name] = function(args)
         args.state_machine.obj.timers[name]:stop()
     end
+end
+
+if gears.filesystem.file_readable(running_pids_file) then
+    running_pids = serialize.load_from_file(running_pids_file)
 end
 
 return Process
