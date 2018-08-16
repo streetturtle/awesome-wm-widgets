@@ -42,26 +42,40 @@ function Process.new(name, command)
             Idle={
                 enter="clear_name",
                 exit="set_name",
+                should_be_running=false,
+                running=false,
             },
             Starting={
+                should_be_running=true,
+                running=false,
             },
             Running={
                 enter="start_ok_timer",
                 exit="stop_ok_timer",
+                should_be_running=true,
+                running=true,
             },
             WaitForRestart={
                 enter={"start_restart_timer", "increment_tries"},
                 exit="stop_restart_timer",
+                should_be_running=true,
+                running=false,
             },
             WaitForStartBeforeStop={
+                should_be_running=false,
+                running=false,
             },
             Stopping={
                 enter="start_stop_timer",
                 exit="stop_stop_timer",
+                should_be_running=false,
+                running=true,
             },
             Restarting={
                 enter="start_stop_timer",
                 exit="stop_stop_timer",
+                should_be_running=true,
+                running=true,
             },
         },
         transitions={
@@ -211,6 +225,14 @@ end
 
 function Process:restart()
     self.state_machine:process_event("restart")
+end
+
+function Process:should_be_running()
+    return self.state_machine.states[self.state_machine.state].should_be_running
+end
+
+function Process:is_running()
+    return self.state_machine.states[self.state_machine.state].running
 end
 
 local running_pids_file = variables.config_dir .. "/running_pids.json"
