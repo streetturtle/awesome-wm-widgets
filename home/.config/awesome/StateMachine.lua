@@ -47,6 +47,7 @@ function enter_state(self, state, arg)
                 state_machine=self,
                 arg=arg})
         end
+        self:emit_signal("state_changed", self.state)
     end
 end
 
@@ -104,7 +105,7 @@ end
 -- Actions: action({from, to, event, state_machine, arg})
 -- Guards: guard({state, event, state_machine}) -> bool
 function StateMachine.new(args)
-    local self = setmetatable({}, StateMachine)
+    local self = setmetatable(gears.object{}, StateMachine)
     self.states = tables.get(args, "states")
     self.transitions = tables.get(args, "transitions")
     self.actions = args.actions
