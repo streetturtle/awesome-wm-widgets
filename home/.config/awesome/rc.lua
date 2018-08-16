@@ -122,6 +122,13 @@ screen.connect_signal("property::geometry", wallpaper.set_wallpaper)
 local launcher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = widgets.main_menu })
 
+local local_widgets_file = variables.config_dir .. "/widgets.local.lua"
+if gears.filesystem.file_readable(local_widgets_file) then
+    local_widgets = dofile(local_widgets_file)
+else
+    local_widgets = {}
+end
+
 awful.screen.connect_for_each_screen(function(s)
     debug_util.log("Got screen: " .. multimonitor.get_screen_name(s))
     -- Wallpaper
@@ -167,17 +174,20 @@ awful.screen.connect_for_each_screen(function(s)
             s.mypromptbox,
         },
         s.mytasklist, -- Middle widget
-        { -- Right widgets
-            layout = wibox.layout.fixed.horizontal,
-            widgets.keyboard_layout_switcher.widget,
-            APW,
-            widgets.systray_widget,
-            battery_widget,
-            cpu_widget,
-            ram_widget,
-            widgets.text_clock,
-            s.mylayoutbox,
-        },
+        gears.table.join(
+            { -- Right widgets
+                layout = wibox.layout.fixed.horizontal,
+                widgets.keyboard_layout_switcher.widget,
+                APW,
+                widgets.systray_widget,
+                battery_widget,
+                cpu_widget,
+                ram_widget,
+            }, local_widgets,
+            {
+                widgets.text_clock,
+                s.mylayoutbox,
+            }),
     }
 end)
 -- }}}
@@ -193,7 +203,7 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 
-local globalkeys = awful.util.table.join(
+local globalkeys = awful.util.table.join(root.keys(),
     awful.key({modkey, }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({}, "XF86Sleep", power.suspend,
