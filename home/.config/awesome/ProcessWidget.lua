@@ -26,6 +26,7 @@ function ProcessWidget.new(name, command, not_running_icon, running_icon)
         icon_widget,
         question_widget,
         layout=wibox.layout.stack,
+
         icon_widget=icon_widget,
         question_widget=question_widget,
         not_running_icon=not_running_icon,
@@ -34,14 +35,15 @@ function ProcessWidget.new(name, command, not_running_icon, running_icon)
 
     local process = Process(name, command)
     process.state_machine:connect_signal("state_changed", function()
-        if process:should_be_running() then
+        local should_be_running = process:should_be_running()
+        if should_be_running then
             widget.icon_widget.image = widget.running_icon
         else
             widget.icon_widget.image = widget.not_running_icon
         end
 
         widget.question_widget.visible =
-            process:should_be_running() ~= process:is_running()
+            should_be_running ~= process:is_running()
     end)
     widget.process = process
 
