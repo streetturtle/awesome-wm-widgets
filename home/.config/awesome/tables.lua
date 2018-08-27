@@ -18,4 +18,21 @@ function tables.get(t, key, default)
     return t[key]
 end
 
+function tables.concatenate(t, separator)
+    if not separator then
+        separator = " "
+    end
+    if type(t) == "table" then
+        result = ""
+        for _, x in ipairs(t) do
+            result = result .. tables.concatenate(x, separator) .. separator
+        end
+        return result
+    elseif type(t) == "string" then
+        return t
+    else
+        return tostring(x)
+    end
+end
+
 return tables

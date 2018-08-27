@@ -6,6 +6,7 @@ local debug_util = require("debug_util")
 local serialize = require("serialize")
 local StateMachine = require("StateMachine")
 local variables = require("variables")
+local tables = require("tables")
 
 local actions = {}
 
@@ -30,7 +31,7 @@ end
 
 function Process.new(name, command)
     check_name(name)
-    local self = setmetatable({}, Process)
+    local self = setmetatable(gears.object{}, Process)
     self.command = command
     self.pid = nil
     self.tries = 0
@@ -102,7 +103,7 @@ function Process.new(name, command)
                     to="Running",
                 },
                 stopped={
-                    to="WaitFroRestart",
+                    to="WaitForRestart",
                 },
             },
             Running={
@@ -129,7 +130,7 @@ function Process.new(name, command)
                 },
                 give_up={
                     to="Idle",
-                    action="print_giveup",
+                    action={"print_giveup", "reset_tries"},
                 },
                 start={},
                 stop={
@@ -212,6 +213,21 @@ function Process.new(name, command)
         self.state_machine:process_event("start")
     end
 
+    self.was_running = false
+
+    self.state_machine:connect_signal("state_changed",
+        function()
+            is_running = self:is_running()
+            if is_running ~= self.was_running then
+                if is_running then
+                    self:emit_signal("started")
+                else
+                    self:emit_signal("stopped")
+                end
+                self.was_running = is_running
+            end
+        end)
+
     return self
 end
 
@@ -245,24 +261,32 @@ function actions.start(args)
     local state_machine = args.state_machine
     local self = state_machine.obj
     local command = self.command
+    local command_name = tables.concatenate(command)
 
-    debug_util.log("Running command: " .. command)
-    local pid = async.spawn_and_get_lines(command, function() end,
-            function()
-                debug_util.log("Command stopped: " .. command)
-                self.pid = nil
-                running_pids[state_machine.name] = nil
-                save_running_pids()
-                args.state_machine:postpone_event("stopped")
-                return true
-            end)
+    debug_util.log("Running command: " .. command_name)
+    local pid = async.spawn_and_get_lines(command,
+        function(line)
+            self:emit_signal("line", line)
+        end,
+        function(code, log)
+            debug_util.log("Command stopped: " .. command_name)
+            debug_util.log(log.stderr)
+            self.pid = nil
+            running_pids[state_machine.name] = nil
+            save_running_pids()
+            args.state_machine:postpone_event("stopped")
+            return true
+        end,
+        function()
+            self:emit_signal("output_done", line)
+        end)
     if pid and type(pid) == "number" then
         self.pid = pid
         running_pids[state_machine.name] = pid
         save_running_pids()
         state_machine:postpone_event("started")
     else
-        debug_util.log("Could not start command: " .. command)
+        debug_util.log("Could not start command: " .. command_name)
         state_machine:postpone_event("stopped")
     end
 end
@@ -289,7 +313,7 @@ end
 
 function actions.print_giveup(args)
     debug_util.log("Failed to start command: "
-        .. args.state_machine.obj.command)
+        .. tables.concatenate(args.state_machine.obj.command))
 end
 
 function actions.set_name(args)

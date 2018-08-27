@@ -69,7 +69,7 @@ function async.spawn_and_get_lines(command, callback, finish_callback,
                 exit=function(reason, code)
                     local result = nil
                     if finish_callback then
-                        result = finish_callback(code)
+                        result = finish_callback(code, log)
                     end
                     if not result and code ~= 0 then
                         naughty.notify({

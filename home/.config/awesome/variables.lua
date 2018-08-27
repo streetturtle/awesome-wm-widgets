@@ -26,6 +26,7 @@ variables.clipboard_manager = command.get_available_command({
 variables.screen_configurator = "arandr"
 variables.editor = os.getenv("EDITOR") or "vim"
 variables.editor_cmd = variables.terminal .. " -e " .. variables.editor
+variables.lgi_workaround = variables.config_dir .. "/lgi_workaround.sh"
 variables.screenshot_tool = command.get_available_command({
     {command="gnome-screenshot", args="--interactive"},
     {command="spectacle"},
