@@ -278,7 +278,7 @@ function actions.start(args)
             return true
         end,
         function()
-            self:emit_signal("output_done", line)
+            self:emit_signal("output_done")
         end)
     if pid and type(pid) == "number" then
         self.pid = pid
