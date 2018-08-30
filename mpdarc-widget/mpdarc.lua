@@ -1,6 +1,8 @@
 -------------------------------------------------
 -- mpd Arc Widget for Awesome Window Manager
+--
 -- Modelled after Pavel Makhov's work
+-- See his github repo: https://github.com/streetturtle/awesome-wm-widgets/
 
 -- @author Raphaël Fournier-S'niehotta
 -- @copyright 2018 Raphaël Fournier-S'niehotta
@@ -14,9 +16,13 @@ local wibox = require("wibox")
 local naughty = require("naughty")
 
 local GET_MPD_CMD = "mpc status"
-local PAUSE_MPD_CMD = "mpc pause"
+local TOGGLE_MPD_CMD = "mpc toggle"
 local START_MPD_CMD = "mpc play"
+local PAUSE_MPD_CMD = "mpc pause"
 local STOP_MPD_CMD = "mpc stop"
+local PREV_MPD_CMD = "mpc prev"
+local NEXT_MPD_CMD = "mpc next"
+local MPDCLIENT_CMD = "sonata"
 
 --local PATH_TO_ICONS = "/usr/share/icons/Arc/actions/24/player_"
 local PATH_TO_ICONS = "/home/raph/.config/awesome/themes/myzenburn/"
@@ -54,16 +60,15 @@ local mpdarc_widget = wibox.container.mirror(mpdarc, { horizontal = true })
 local update_graphic = function(widget, stdout, _, _, _)
     stdout = string.gsub(stdout, "\n", "")
     local mpdstatus = string.match(stdout, "%[(%a+)%]")
+    local mpdpercent = string.match(stdout, "(%d?%d)%%")
     if mpdstatus == "playing" then 
-      local mpdpercent = string.match(stdout, "(%d%d)%%")
       icon.image = PLAY_ICON_NAME
       widget.colors = { beautiful.widget_main_color }
       widget.value = tonumber((100-mpdpercent)/100)
     elseif mpdstatus == "paused" then 
-      local mpdpercent = string.match(stdout, "(%d%d)%%")
       icon.image = PAUSE_ICON_NAME
       widget.colors = { beautiful.widget_main_color }
-      widget.value = tonumber(mpdpercent/100)
+      widget.value = tonumber((100-mpdpercent)/100)
     else
       icon.image = STOP_ICON_NAME
       widget.value = 1
@@ -72,11 +77,11 @@ local update_graphic = function(widget, stdout, _, _, _)
 end
 
 mpdarc:connect_signal("button::press", function(_, _, _, button)
-    if (button == 1) then awful.spawn("mpc toggle", false)      -- left click
-    elseif (button == 2) then awful.spawn("mpc stop", false) 
-    elseif (button == 3) then awful.spawn("mpc pause", false)
-    elseif (button == 4) then awful.spawn("mpc next", false)  -- scroll up
-    elseif (button == 5) then awful.spawn("mpc prev", false)  -- scroll down
+    if (button == 1) then awful.spawn(TOGGLE_MPD_CMD, false)      -- left click
+    elseif (button == 2) then awful.spawn(MPDCLIENT_CMD, false) -- middle click
+    elseif (button == 3) then awful.spawn(STOP_MPD_CMD, false)
+    elseif (button == 4) then awful.spawn(NEXT_MPD_CMD, false)  -- scroll up
+    elseif (button == 5) then awful.spawn(PREV_MPD_CMD, false)  -- scroll down
     end
 
     spawn.easy_async(GET_MPD_CMD, function(stdout, stderr, exitreason, exitcode)
