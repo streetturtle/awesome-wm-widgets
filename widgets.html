@@ -2,12 +2,17 @@
 layout: page
 ---
 
-<ul class="tabs">
-    {% for widget in site.widgets %}
-    <li class="tab col s2"><a href="#tab{{ widget.title }}">{{ widget.title }}</a></li>
-    {% endfor %}
-</ul>
-
-{% for widget in site.widgets %}
-<div id="tab{{ widget.title }}" class="widget col s12">{{ widget.content }}</div>
-{% endfor %}
+<div class="tabs-vertical">
+    <div class="col s4 m3 l2">
+        <ul class="tabs">
+            {% for widget in site.widgets %}
+            <li class="tab"><a href="#tab{{ widget.title }}">{{ widget.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col s8 m9 l6">
+        {% for widget in site.widgets %}
+        <div id="tab{{ widget.title }}" class="widget col s12">{{ widget.content }}</div>
+        {% endfor %}
+    </div>
+</div>

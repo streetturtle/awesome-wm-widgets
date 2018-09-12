@@ -53,18 +53,45 @@ main {
   flex: 1 0 auto;
 }
 
-.tabs .indicator {
-  background-color: teal;
-}
-.tabs .tab {
-  a.active {
-    color: teal;
+.tabs-vertical {
+  .tabs {
+    height: auto;
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    display: -webkit-flex;
+    display: flex;
   }
-  a:hover {
-    color: teal;
+
+  .tab {
+    width: 100%;
+
+    .active {
+      -moz-transition: border-color .5s ease;
+      -o-transition: border-color .5s ease;
+      -webkit-transition: border-color .5s ease;
+      transition: border-color .5s ease;
+      border-right: 3px solid teal;
+    }
+
+    :hover {
+      border-right: 3px solid #eeeeee;
+    }
+
+    a {
+      color: teal;
+      :hover { color: teal; }
+    }
+    a:hover{
+        color: teal;
+    }
+    a.active {
+        color: teal;
+      }
   }
-  a{
-    color: teal;
+
+  .indicator {
+    display: none;
   }
 }
 
