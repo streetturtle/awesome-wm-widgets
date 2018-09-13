@@ -1,11 +1,15 @@
-(function($){
-  $(function(){
+document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.sidenav');
+    var options = {};
+    var instances = M.Sidenav.init(elems, options);
+});
 
-    $('.button-collapse').sideNav();
+// Initialize collapsible (uncomment the lines below if you use the dropdown variation)
+// var collapsibleElem = document.querySelector('.collapsible');
+// var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
 
-  }); // end of document ready
-})(jQuery); // end of jQuery name space
+// Or with jQuery
 
-// $(document).ready(function(){
-//     $('ul.tabs').tabs({ 'swipeable': true });
-// });
+$(document).ready(function(){
+    $('.sidenav').sidenav();
+});
