@@ -36,6 +36,7 @@ $(document).ready(function(){
         $(target_tab_selector).removeClass('hide');
         $(target_tab_selector).addClass('active');
 
+        window.location.hash = $(this).attr('href');
     });
 
     var hash = window.location.hash;
