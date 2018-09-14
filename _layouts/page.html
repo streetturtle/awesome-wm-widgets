@@ -41,12 +41,10 @@
             <span class="balck-text name">Awesome WM Widgets</span>
         </div></li>
         <li><div class="divider"></div></li>
-        <li><a href="battery">Battery</a>
-        <li><a href="brightness">Brightness</a></li>
-        <li><a href="email">Email</a></li>
-        <li><a href="spotify">Spotify</a></li>
-        <li><a href="volume">Volume</a></li>
-        <li><a href="weather">Weather</a></li>
+
+        {% for widget in site.widgets %}
+        <li class="tab col s2 "><a href="#tab{{ widget.title }}">{{ widget.title }}</a></li>
+        {% endfor %}
         <li><div class="divider"></div></li>
         <li><a class="subheader">Subheader</a></li>
         <li><a class="waves-effect" href="https://github.com/streetturtle/awesome-wm-widgets"><i class="fa fa-github fa-2x"></i>Github Repo</a></li>
@@ -57,7 +55,8 @@
         <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 
         <div class="container">
-            <!--<br><br><br><br><br><br>-->
+            <div id="particles-js"></div>
+
             <div id="header" class="header center white-text">
                 <a href="{{ site.url | append: site.baseurl}}/">Awesome WM widgets</a>
             </div>
@@ -69,7 +68,11 @@
     <div class="container">
         <div class="section">
             <div class="row">
-                {{content}}
+
+                {% for widget in site.widgets %}
+                <div id="tab{{ widget.title }}" class="widget col s12 hide">{{ widget.content }}</div>
+                {% endfor %}
+
             </div>
         </div>
         <br><br>

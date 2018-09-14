@@ -112,3 +112,19 @@ header, main, footer {
     padding-left: 0;
   }
 }
+
+#particles-js{
+  height: 200px;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.tab.hide{
+  display: none;
+}
+
+.tab.active{
+  display: block;
+}
