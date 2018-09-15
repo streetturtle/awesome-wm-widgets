@@ -35,16 +35,12 @@ $(document).ready(function(){
         var target_tab_selector = $(this).attr('href');
         $(target_tab_selector).removeClass('hide');
         $(target_tab_selector).addClass('active');
-
-        window.location.hash = $(this).attr('href');
     });
 
     var hash = window.location.hash;
     $('tab'+hash+':first').addClass('active');
 
 });
-
-
 
 particlesJS.load('particles-js', 'assets/js/particlesjs-config.json', function() {
     console.log('callback - particles.js config loaded');

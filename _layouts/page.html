@@ -4,80 +4,77 @@
 <html lang="en">
 {% include head.html %}
 <body>
-    <!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function (d, w, c) {
-        (w[c] = w[c] || []).push(function() {
-            try {
-                w.yaCounter43482459 = new Ya.Metrika({
-                    id:43482459,
-                    clickmap:true,
-                    trackLinks:true,
-                    accurateTrackBounce:true
-                });
-            } catch(e) { }
-        });
-
-        var n = d.getElementsByTagName("script")[0],
-            s = d.createElement("script"),
-            f = function () { n.parentNode.insertBefore(s, n); };
-        s.type = "text/javascript";
-        s.async = true;
-        s.src = "https://mc.yandex.ru/metrika/watch.js";
-
-        if (w.opera == "[object Opera]") {
-            d.addEventListener("DOMContentLoaded", f, false);
-        } else { f(); }
-    })(document, window, "yandex_metrika_callbacks");
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/43482459" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
-<main>
-
-    <a href="https://github.com/streetturtle/AwesomeWM" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
-
-    <ul class="sidenav sidenav-fixed" style="transform: translateX(0px);">
-        <li><div class="user-view">
-            <span class="balck-text name">Awesome WM Widgets</span>
-        </div></li>
-        <li><div class="divider"></div></li>
-
-        {% for widget in site.widgets %}
-        <li class="tab col s2 "><a href="#tab{{ widget.title }}">{{ widget.title }}</a></li>
-        {% endfor %}
-        <li><div class="divider"></div></li>
-        <li><a class="subheader">Subheader</a></li>
-        <li><a class="waves-effect" href="https://github.com/streetturtle/awesome-wm-widgets"><i class="fa fa-github fa-2x"></i>Github Repo</a></li>
-    </ul>
-
-    <div class="top-nav teal darken-3" >
-        <!--{% include nav.html %}-->
-        <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+{% include yandex-metrica.html %}
+<header>
+    <div class="topnav">
+        <!--<a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>-->
 
         <div class="container">
             <div id="particles-js"></div>
-
-            <div id="header" class="header center white-text">
-                <a href="{{ site.url | append: site.baseurl}}/">Awesome WM widgets</a>
+            <div class="site-header">
+                <div id="header" class="header center white-text">
+                    <a href="{{ site.url | append: site.baseurl}}/"><span
+                            style="font-family: awesomewm-font; font-weight: 100;">awesome wm</span></a>
+                </div>
+                <div id="description" class="header center white-text">Set of widgets for Awesome
+                    Window Manager
+                </div>
             </div>
-            <div id="description" class="header center white-text">Set of widgets for Awesome Window Manager</div>
-            <br><br><br>
         </div>
     </div>
+</header>
+
+<main>
+    {% include github-corner.html %}
+
+    <ul class="sidenav sidenav-fixed" style="transform: translateX(0px);">
+        <li><a class="subheader white-text">Widgets</a></li>
+        <!--<li>-->
+        <!--<div class="">-->
+        <!--<span class="balck-text name">Project documentation page</span>-->
+        <!--</div>-->
+        <!--</li>-->
+        <!--<li>-->
+        <!--<div class="divider"></div>-->
+        <!--</li>-->
+
+        {% for widget in site.widgets %}
+        <li class="tab col s2 ">
+            <a href="#tab{{ widget.title | replace: ' ', '_'}}">{{ widget.title }}</a>
+        </li>
+        {% endfor %}
+
+        <li>
+            <div class="divider"></div>
+        </li>
+            <li><a class="subheader white-text">Links</a></li>
+        <div class="sidenav-footer">
+
+            <ul>
+                <li><a class="github-button" href="https://github.com/streetturtle/awesome-wm-widgets"
+                       data-icon="octicon-star" data-count-href="/streetturtle/awesome-wm-widgets/stargazers" data-count-api="/repos/streetturtle/AwesomeWM#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star streetturtle/AwesomeWM on GitHub">Star</a></li>
+                <li> <a class="github-button" href="https://github.com/streetturtle/awesome-wm-widgets/archive/master.zip" data-icon="octicon-cloud-download" aria-label="Download streetturtle/AwesomeWM on GitHub">Download</a></li>
+                <li><a class="github-button" href="https://github.com/streetturtle" data-count-href="/streetturtle/followers" data-count-api="/users/streetturtle#followers" data-count-aria-label="# followers on GitHub" aria-label="Follow @streetturtle on GitHub">Follow @streetturtle</a></li>
+            </ul>
+
+        </div>
+    </ul>
 
     <div class="container">
         <div class="section">
             <div class="row">
 
+                <div class="center-align">
+                    <img src="https://github.com/streetturtle/AwesomeWM/blob/master/screenshot.png?raw=true"/>
+                </div>
+
                 {% for widget in site.widgets %}
-                <div id="tab{{ widget.title }}" class="widget col s12 hide">{{ widget.content }}</div>
+                <div id="tab{{ widget.title | replace: ' ', '_' }}" class="widget col s12 hide">{{
+                    widget.content }}
+                </div>
                 {% endfor %}
 
             </div>
-        </div>
-        <br><br>
-        <div class="section">
-
         </div>
     </div>
 

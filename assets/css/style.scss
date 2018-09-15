@@ -1,47 +1,57 @@
 ---
 ---
-
-/* Custom Stylesheet */
-/**
- * Use this file to override Materialize files so you can update
- * the core Materialize files in the future
- *
- * Made By MaterializeCSS.com
- */
-
 .icon-block {
   padding: 0 15px;
 }
+
 .icon-block .material-icons {
-	font-size: inherit;
+  font-size: inherit;
 }
 
-#index-banner {
-  background: linear-gradient(
-                  rgba(0, 0, 0, 0.4),
-                  rgba(0, 0, 0, 0.4)
-  ),
-  url({{ '/assets/img/pano.png' | relative_url }}) no-repeat center center;
-  background-size: cover;
+.topnav {
+  background-color: #222222;
+  border-top: 3px #3CA2A2 solid;
+  border-bottom: 1px #080808 solid;
+
+  .site-header {
+    padding: 50px 0;
+  }
 
 }
-nav{
-  box-shadow: none;
-}
-#header{
-  font-size: 3em; font-weight: bold;
+
+#header {
+  font-size: 3em;
+  font-weight: bold;
   a {
     text-decoration: none;
     color: #ffffff;
   }
 }
 
-h1 { font-size: 2em; font-weight: bold;}
-h2 { font-size: 1.5em; }
-h3 { font-size: 1.17em; }
-h4 { font-size: 1.12em; }
-h5 { font-size: .83em; }
-h6 { font-size: .75em; }
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 1.5em;
+}
+
+h3 {
+  font-size: 1.17em;
+}
+
+h4 {
+  font-size: 1.12em;
+}
+
+h5 {
+  font-size: .83em;
+}
+
+h6 {
+  font-size: .75em;
+}
 
 body {
   display: flex;
@@ -51,80 +61,70 @@ body {
 
 main {
   flex: 1 0 auto;
+  background-color: #393939;
+  color: white;
 }
 
-.tabs-vertical {
-  .tabs {
-    height: auto;
-    -ms-flex-direction: column;
-    -webkit-flex-direction: column;
-    flex-direction: column;
-    display: -webkit-flex;
-    display: flex;
+.sidenav {
+  background-color: #202020;
+  color: white;
+
+  li > a {
+    color: #8a9ba1;
   }
-
-  .tab {
-    width: 100%;
-
-    .active {
-      -moz-transition: border-color .5s ease;
-      -o-transition: border-color .5s ease;
-      -webkit-transition: border-color .5s ease;
-      transition: border-color .5s ease;
-      border-right: 3px solid teal;
-    }
-
-    :hover {
-      border-right: 3px solid #eeeeee;
-    }
-
-    a {
-      color: teal;
-      :hover { color: teal; }
-    }
-    a:hover{
-        color: teal;
-    }
-    a.active {
-        color: teal;
-      }
+  li > a.subheader {
+    padding-left: 16px;
   }
-
-  .indicator {
-    display: none;
+  li {
+    border-left: 3px solid transparent;
+  }
+  li.active {
+    -moz-transition: border-color .5s ease;
+    -o-transition: border-color .5s ease;
+    -webkit-transition: border-color .5s ease;
+    transition: border-color .5s ease;
+    border-left: 3px solid teal;
+    > a {
+      color: white;
+    }
+  }
+  .sidenav-footer {
+    li {
+      line-height: normal;
+      padding: 4px 32px;
+    }
   }
 }
 
-.widget{
+.widget {
   transition: all 2s linear;
 }
 
-.footer-copyright img{
+.footer-copyright img {
   height: 20px;
+}
+
+main {
 }
 
 header, main, footer {
   padding-left: 300px;
 }
 
-@media only screen and (max-width : 992px) {
+@media only screen and (max-width: 992px) {
   header, main, footer {
     padding-left: 0;
   }
 }
 
-#particles-js{
-  height: 200px;
+#particles-js {
+  height: 193px;
   width: 100%;
   position: absolute;
   top: 0;
   left: 0;
 }
 
-.tab.hide{
-  display: none;
-}
-
-.tab.active{
+.tab.active {
   display: block;
 }

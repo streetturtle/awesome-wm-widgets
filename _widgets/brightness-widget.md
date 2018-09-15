@@ -4,7 +4,7 @@ layout: page
 
 # Brightness widget
 
-![Brightness widget](https://github.com/streetturtle/awesome-wm-widgets/raw/master/brightness-widget/br-wid-1.png)
+![Brightness widget](./br-wid-1.png)
 
 This widget represents current brightness level.
 
@@ -18,7 +18,7 @@ Firstly you need to get the current brightness level. There are two options:
  
     ```bash
     sudo apt-get install xbacklight
-    xbackligth -get
+    xbacklight -get
     ```
 
     If there is no output it means that it doesn't work, but there is a second option:
@@ -34,7 +34,7 @@ Firstly you need to get the current brightness level. There are two options:
     light -G
     49.18
     ```
-Depending on the chosen option change `get_brightness_cmd` variable in **brightness.lua**.
+Depending on the chosen option change `GET_BRIGHTNESS_CMD` variable in **brightness.lua**.
 
 Then in **rc.lua** add the import on top of the file and then add widget to the wibox:
 
@@ -48,6 +48,8 @@ s.mywibox:setup {
 ...
 brightness_widget
 ```
+
+## Controls
 
 In order to change brightness by shortcuts you can add them to the `globalkeys` table in the **rc.lua**:
 
