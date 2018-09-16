@@ -10,16 +10,16 @@
         <!--<a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>-->
 
         <div class="container">
-            <div id="particles-js"></div>
             <div class="site-header">
                 <div id="header" class="header center white-text">
                     <a href="{{ site.url | append: site.baseurl}}/"><span
                             style="font-family: awesomewm-font; font-weight: 100;">awesome wm</span></a>
                 </div>
-                <div id="description" class="header center white-text">Set of widgets for Awesome
-                    Window Manager
+                <div id="description" class="header center white-text">
+                    Set of widgets for Awesome Window Manager
                 </div>
             </div>
+            <div id="particles-js"></div>
         </div>
     </div>
 </header>
@@ -29,34 +29,20 @@
 
     <ul class="sidenav sidenav-fixed" style="transform: translateX(0px);">
         <li><a class="subheader white-text">Widgets</a></li>
-        <!--<li>-->
-        <!--<div class="">-->
-        <!--<span class="balck-text name">Project documentation page</span>-->
-        <!--</div>-->
-        <!--</li>-->
-        <!--<li>-->
-        <!--<div class="divider"></div>-->
-        <!--</li>-->
 
         {% for widget in site.widgets %}
         <li class="tab col s2 ">
-            <a href="#tab{{ widget.title | replace: ' ', '_'}}">{{ widget.title }}</a>
+            <a href="#tab{{ widget.title | replace: ' ', '_' }}">
+                {{ widget.title | replace: 'Cpu', 'CPU' | replace: 'Ram', 'RAM'}}
+            </a>
         </li>
         {% endfor %}
 
-        <li>
-            <div class="divider"></div>
-        </li>
-            <li><a class="subheader white-text">Links</a></li>
+        <li><div class="divider"></div></li>
+        <li><a class="subheader white-text">Links</a></li>
+
         <div class="sidenav-footer">
-
-            <ul>
-                <li><a class="github-button" href="https://github.com/streetturtle/awesome-wm-widgets"
-                       data-icon="octicon-star" data-count-href="/streetturtle/awesome-wm-widgets/stargazers" data-count-api="/repos/streetturtle/AwesomeWM#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star streetturtle/AwesomeWM on GitHub">Star</a></li>
-                <li> <a class="github-button" href="https://github.com/streetturtle/awesome-wm-widgets/archive/master.zip" data-icon="octicon-cloud-download" aria-label="Download streetturtle/AwesomeWM on GitHub">Download</a></li>
-                <li><a class="github-button" href="https://github.com/streetturtle" data-count-href="/streetturtle/followers" data-count-api="/users/streetturtle#followers" data-count-aria-label="# followers on GitHub" aria-label="Follow @streetturtle on GitHub">Follow @streetturtle</a></li>
-            </ul>
-
+            {% include links.html %}
         </div>
     </ul>
 
@@ -81,6 +67,7 @@
 </main>
 {% include footer.html %}
 
-
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 </html>

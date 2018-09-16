@@ -6,14 +6,14 @@ layout: page
 
 This widget is more informative version of [battery widget](https://github.com/streetturtle/awesome-wm-widgets/tree/master/battery-widget).
 
-Depending of the battery status it could look following ways:
+Depending of the battery status it may look one of the following ways:
 
- - ![10_d](./10_d.png) - less than 15 percent
- - ![10_c](./10_c.png) - less than 15 percent, charging
- - ![20_d](./20_d.png) - between 15 and 40 percent
- - ![20_c](./20_c.png) - between 15 and 40 percent, charging
- - ![80_d](./80_d.png) - more than 40 percent
- - ![80_c](./80_c.png) - more than 40 percent, charging
+ - ![10_d]({{'/assets/img/screenshots/batteryarc-10_d.png' | relative_url }}) - less than 15 percent
+ - ![10_c]({{'/assets/img/screenshots/batteryarc-10_c.png' | relative_url }}) - less than 15 percent, charging
+ - ![20_d]({{'/assets/img/screenshots/batteryarc-20_d.png' | relative_url }}) - between 15 and 40 percent
+ - ![20_c]({{'/assets/img/screenshots/batteryarc-20_c.png' | relative_url }}) - between 15 and 40 percent, charging
+ - ![80_d]({{'/assets/img/screenshots/batteryarc-80_d.png' | relative_url }}) - more than 40 percent
+ - ![80_c]({{'/assets/img/screenshots/batteryarc-80_c.png' | relative_url }}) - more than 40 percent, charging
 
 Widget uses following beautiful variables with values:
 

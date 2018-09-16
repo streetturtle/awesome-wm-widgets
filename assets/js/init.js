@@ -28,13 +28,13 @@ $(document).ready(function(){
         $(this).parents('li').addClass('active');
 
         //hide displaying tab content
-        $(active_tab_selector).removeClass('active');
-        $(active_tab_selector).addClass('hide');
+        $(active_tab_selector).removeClass('active fade-in');
+        $(active_tab_selector).addClass('hide ');
 
         //show target tab content
         var target_tab_selector = $(this).attr('href');
-        $(target_tab_selector).removeClass('hide');
-        $(target_tab_selector).addClass('active');
+        $(target_tab_selector).removeClass('hide ');
+        $(target_tab_selector).addClass('active fade-in');
     });
 
     var hash = window.location.hash;
