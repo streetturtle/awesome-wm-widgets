@@ -33,7 +33,7 @@ $(document).ready(function(){
 
         //show target tab content
         var target_tab_selector = $(this).attr('href');
-        $(target_tab_selector).removeClass('hide ');
+        $(target_tab_selector).removeClass('hide');
         $(target_tab_selector).addClass('active fade-in');
     });
 

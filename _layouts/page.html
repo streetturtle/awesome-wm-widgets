@@ -28,7 +28,7 @@
     {% include github-corner.html %}
 
     <ul class="sidenav sidenav-fixed" style="transform: translateX(0px);">
-        <li><a class="subheader white-text">Widgets</a></li>
+        <li><a class="white-text active" href="#tabMain">Awesome WM Widgets</a></li>
 
         {% for widget in site.widgets %}
         <li class="tab col s2 ">
@@ -52,6 +52,11 @@
 
                 <div class="center-align">
                     <img src="https://github.com/streetturtle/AwesomeWM/blob/master/screenshot.png?raw=true"/>
+                </div>
+
+                <div id="tabMain" class="widget col s12 active">
+                    <h1>Awesome WM Widgets</h1>
+                    <p>This is a project page of the github repo with set of widgets for Awesome Window Manager</p>
                 </div>
 
                 {% for widget in site.widgets %}

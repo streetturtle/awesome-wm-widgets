@@ -5,7 +5,7 @@ layout: page
 
 This widget shows the RAM usage. When clicked another widget appears with more detailed information:
 
-![screenshot](./out.gif)
+![screenshot]({{'/assets/img/screenshots/ram-widget.gif' | relative_url }})
 
 ## Installation
 

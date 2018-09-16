@@ -4,7 +4,7 @@ layout: page
 
 # Brightness widget
 
-![Brightness widget](./br-wid-1.png)
+![Brightness widget]({{'/assets/img/screenshots/brightness-wid-1.png' | relative_url }})
 
 This widget represents current brightness level.
 
