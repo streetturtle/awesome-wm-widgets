@@ -65,6 +65,11 @@ main {
   color: white;
 }
 
+footer {
+  padding-top: 0 !important;
+  padding-bottom: 12px;
+}
+
 .sidenav {
   background-color: #202020;
   color: white;
@@ -100,8 +105,23 @@ main {
   transition: all 2s linear;
 }
 
-.footer-copyright img {
-  height: 20px;
+.footer-copyright {
+  .jekyll-icon {
+    height: 30px;
+  }
+
+  .materialcss-icon {
+    height: 22px;
+    padding: 0 4px;
+  }
+  .fa-spotify {
+    padding: 0 6px;
+  }
+
+  .cprght {
+    padding-top: 12px;
+  }
+
 }
 
 main {
@@ -166,4 +186,9 @@ header, main, footer {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #202020;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }

@@ -35,6 +35,9 @@ $(document).ready(function(){
         var target_tab_selector = $(this).attr('href');
         $(target_tab_selector).removeClass('hide');
         $(target_tab_selector).addClass('active fade-in');
+
+        // var instance = M.Sidenav.getInstance(document.querySelector('.sidenav'));
+        // instance.close();
     });
 
     var hash = window.location.hash;
