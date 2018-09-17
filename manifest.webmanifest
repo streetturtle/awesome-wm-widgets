@@ -1,0 +1,23 @@
+{
+  "name": "Awesome WM Widgets",
+  "short_name": "Awesome WM Widgets",
+  "description":"Set of widgets for Awesome Window Manager",
+  "theme_color": "#222222",
+  "background_color": "#3939393",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "images/app-images/192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/app-images/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "splash_pages": null
+}

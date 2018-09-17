@@ -48,3 +48,9 @@ $(document).ready(function(){
 particlesJS.load('particles-js', 'assets/js/particlesjs-config.json', function() {
     console.log('callback - particles.js config loaded');
 });
+
+// if ('serviceWorker' in navigator) {
+//     navigator.serviceWorker.register("{{ '/assets/js/service-worker.js| relative_url '}}").catch(function() {
+//         console.log("Error registering service worker");
+//     });
+// }

@@ -192,3 +192,9 @@ img {
   max-width: 100%;
   height: auto;
 }
+
+
+@font-face {
+  font-family: awesomewm-font;
+  src: url({{ '/assets/fonts/awesomewm-font.ttf' | relative_url }});
+}
