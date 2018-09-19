@@ -3,8 +3,8 @@ layout: page
 ---
 # Email widget
 
-This widget consists of an icon with counter which shows number of unread emails: ![email icon](./em-wid-1.png)
-and a popup message which appears when mouse hovers over an icon: ![email popup](./em-wid-2.png)
+This widget consists of an icon with counter which shows number of unread emails: ![email icon]({{'/assets/img/screenshots/email-widget-1.png' | relative_url }})
+and a popup message which appears when mouse hovers over an icon: ![email popup]({{'/assets/img/screenshots/email-widget-2.png' | relative_url }})
 
 Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
 

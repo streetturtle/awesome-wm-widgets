@@ -4,7 +4,7 @@ layout: page
 # Volume widget
 
 Simple and easy-to-install widget for Awesome Window Manager which represents the sound level: ![Volume Widget](
-./vol-widget-1.png)
+{{'/assets/img/screenshots/volume-widget.png' | relative_url }})
 
 Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
 
@@ -25,8 +25,8 @@ s.mytasklist, -- Middle widget
 		...      
 ```
 
-- _Optional step._ In Arc icon theme the muted audio level icon (![Volume-widget](./audio-volume-muted-symbolic.png)) looks like 0 level icon, which could be a bit misleading.
- So I decided to use original muted icon for low audio level, and the same icon, but colored in red for muted audio level. Fortunately icons are in svg format, so you can easily recolor them with `sed`, so it would look like this (![Volume Widget](./audio-volume-muted-symbolic_red.png)):
+- _Optional step._ In Arc icon theme the muted audio level icon (![Volume-widget]({{'/assets/img/screenshots/audio-volume-muted-symbolic.png' | relative_url }}) looks like 0 level icon, which could be a bit misleading.
+ So I decided to use original muted icon for low audio level, and the same icon, but colored in red for muted audio level. Fortunately icons are in svg format, so you can easily recolor them with `sed`, so it would look like this (![Volume Widget]({{'/assets/img/screenshots/audio-volume-muted-symbolic_red.png' | relative_url }}))):
  
  ```bash
  cd /usr/share/icons/Arc/status/symbolic && 

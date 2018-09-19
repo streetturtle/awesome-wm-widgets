@@ -1,3 +1,5 @@
+---
+---
 document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.sidenav');
     var options = {};
@@ -49,8 +51,8 @@ particlesJS.load('particles-js', 'assets/js/particlesjs-config.json', function()
     console.log('callback - particles.js config loaded');
 });
 
-// if ('serviceWorker' in navigator) {
-//     navigator.serviceWorker.register("{{ '/assets/js/service-worker.js| relative_url '}}").catch(function() {
-//         console.log("Error registering service worker");
-//     });
-// }
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register("assets/js/service-worker.js").catch(function(e) {
+        console.log("Error registering service worker" + e);
+    });
+}

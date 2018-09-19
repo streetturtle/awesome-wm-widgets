@@ -5,7 +5,7 @@ layout: page
 
 Almost the same as volume widget, but more minimalistic:
 
-![screenshot](out.gif)
+![screenshot]({{'/assets/img/screenshots/volumebar-widget.gif' | relative_url }})
 
 Supports 
  - scroll up - increase volume, 

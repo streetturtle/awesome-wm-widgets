@@ -5,7 +5,7 @@ layout: page
 
 Almost the same as [volumebar widget](https://github.com/streetturtle/awesome-wm-widgets/tree/master/volumebar-widget), but using arcchart:
 
-![screenshot](out.gif)
+![screenshot]({{'/assets/img/screenshots/volumearc-widget.gif' | relative_url }})
 
 Supports:
  - scroll up - increase volume,
