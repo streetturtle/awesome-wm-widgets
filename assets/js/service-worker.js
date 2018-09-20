@@ -1,7 +1,7 @@
 const CACHE_NAME = 'awmw-cache';
 const PRE_CACHED_ASSETS = [
     '/assets/css/materialize.min.css',
-    '/assets/css/stylw.css',
+    '/assets/css/style.css',
     '/assets/css/syntax1.css',
     '/assets/js/materialize.min.js',
     '/assets/js/particles.min.js',
