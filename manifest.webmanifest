@@ -3,10 +3,10 @@
   "short_name": "Awesome WM Widgets",
   "description":"Set of widgets for Awesome Window Manager",
   "theme_color": "#222222",
-  "background_color": "#3939393",
+  "background_color": "#393939",
   "display": "standalone",
   "orientation": "portrait",
-  "start_url": "/",
+  "start_url": "/awesome-wm-widgets/",
   "icons": [
     {
       "src": "images/app-images/192x192.png",
