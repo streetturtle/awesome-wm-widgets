@@ -27,7 +27,7 @@ local cpu_widget = wibox.container.margin(wibox.container.mirror(cpugraph_widget
 local total_prev = 0
 local idle_prev = 0
 
-watch("cat /proc/stat | grep '^cpu '", 1,
+watch([[bash -c "cat /proc/stat | grep '^cpu '"]], 1,
     function(widget, stdout, stderr, exitreason, exitcode)
         local user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice =
         stdout:match('(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s')
