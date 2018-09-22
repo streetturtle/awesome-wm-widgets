@@ -13,10 +13,10 @@ local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 local naughty = require("naughty")
 
-local GET_pomodoro_CMD = "/home/raph/scripts/pomo/pomo.sh clock"
-local PAUSE_pomodoro_CMD = "/home/raph/scripts/pomo/pomo.sh pause"
-local START_pomodoro_CMD = "/home/raph/scripts/pomo/pomo.sh start"
-local STOP_pomodoro_CMD = "/home/raph/scripts/pomo/pomo.sh stop"
+local GET_pomodoro_CMD = "pomo clock"
+local PAUSE_pomodoro_CMD = "pomo pause"
+local START_pomodoro_CMD = "pomo start"
+local STOP_pomodoro_CMD = "pomo stop"
 
 local text = wibox.widget {
     id = "txt",
@@ -65,6 +65,7 @@ text.font      = "Inconsolata Medium 13"
       local workbreak = string.match(stdout, "[ P]?([BW])%d?%d?:%d?%d?")
       text.text = pomomin
 
+--    Helps debugging
       --naughty.notify {
         --text = pomomin,
         --title = "pomodoro debug",
