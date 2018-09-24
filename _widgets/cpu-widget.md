@@ -23,15 +23,25 @@ and calculates the percentage.
 
 ## Installation
 
-Clone/download repo and use widget in **rc.lua**:
+1. Clone this repo under **~/.config/awesome/**
 
-```lua
-require("awesome-wm-widgets.cpu-widget.cpu-widget")
-...
-s.mytasklist, -- Middle widget
-	{ -- Right widgets
-    	layout = wibox.layout.fixed.horizontal,
-		...
-		cpu_widget,
-		...
-```
+    ```bash
+    git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
+    ```
+
+1. Require spotify-widget at the beginning of **rc.lua**:
+
+    ```lua
+    local cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
+    ```
+
+1. Add widget to the tasklist:
+
+    ```lua
+    s.mytasklist, -- Middle widget
+        { -- Right widgets
+            layout = wibox.layout.fixed.horizontal,
+            ...
+            cpu_widget,
+            ...
+    ```

@@ -5,7 +5,7 @@ layout: page
 
 This widget allows quickly translate words or phrases without opening a browser - just using Awesome. To provide direction of the translation add the 2 letters code of the source and target languages at the end of the phrase, for example _hello enfr_ will translate _hello_ from English to French. This widget is based on [Yandex.Translate API](https://tech.yandex.com/translate/).
 
-![demo]({{'/assets/img/screenshots/translate-shell.gif' | relative_url }})
+![demo]({{'/assets/img/screenshots/translate-shell.gif' | relative_url }}){:.center-image}
 
 ## Controls
 
@@ -16,6 +16,11 @@ This widget allows quickly translate words or phrases without opening a browser 
 ## Installation
 
 1. Clone repo under **~/.config/awesome/**
+
+    ```bash
+    git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
+    ```
+
 1. Get an [API key](https://translate.yandex.com/developers/keys) and paste it in **translate.lua** as value of the `API_KEY` variable
 1. Require widget in **rc.lua**:
 

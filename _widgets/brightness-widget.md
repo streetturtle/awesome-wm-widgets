@@ -4,13 +4,11 @@ layout: page
 
 # Brightness widget
 
-![Brightness widget]({{'/assets/img/screenshots/brightness-wid-1.png' | relative_url }})
-
-This widget represents current brightness level.
+This widget represents current brightness level: ![Brightness widget]({{'/assets/img/screenshots/brightness-wid-1.png' | relative_url }})
 
 ## Installation
 
-Firstly you need to get the current brightness level. There are two options:
+First you need to get the current brightness level. There are two options:
 
  - using `xbacklight` command (depending on your video card (I guess) it may or may not work)
  
@@ -34,7 +32,31 @@ Firstly you need to get the current brightness level. There are two options:
     light -G
     49.18
     ```
+
 Depending on the chosen option change `GET_BRIGHTNESS_CMD` variable in **brightness.lua**.
+
+Then clone this repo under **~/.config/awesome/**:
+
+```bash
+git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
+```
+
+Require spotify-widget at the beginning of **rc.lua**:
+
+```lua
+local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
+```
+
+Add widget to the tasklist:
+
+```lua
+s.mytasklist, -- Middle widget
+    { -- Right widgets
+        layout = wibox.layout.fixed.horizontal,
+        ...
+        brightness_widget,
+        ...
+```
 
 Then in **rc.lua** add the import on top of the file and then add widget to the wibox:
 

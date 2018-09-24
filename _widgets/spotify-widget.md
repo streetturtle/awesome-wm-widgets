@@ -20,17 +20,37 @@ Note that widget uses the Arc icon theme, so it should be [installed](https://gi
 
 ## Installation
 
-First you need to have spotify CLI installed. Here is how you can do it (except widget part): [pavelmakhov.com/2016/02/awesome-wm-spotify](http://pavelmakhov.com/2016/02/awesome-wm-spotify) 
+1. Install [sp](https://gist.github.com/streetturtle/fa6258f3ff7b17747ee3) - CLI client for [Spotify for Linux](https://www.spotify.com/ca-en/download/linux/):
 
-To use this widget clone repo under **~/.config/awesome/** and then add it in **rc.lua**:
+    ```bash
+    $ sudo git clone https://gist.github.com/fa6258f3ff7b17747ee3.git ~/dev/
+    $ sudo ln -s ~/dev/sp /usr/local/bin/
+    ```
 
-```lua
-local spotify_widget = require("awesome-wm-widgets.spotify-widget.spotify")
-...
-s.mytasklist, -- Middle widget
-	{ -- Right widgets
-    	layout = wibox.layout.fixed.horizontal,
-		...
-        spotify_widget,
-		...      
-```
+    Check if it works by running `sp help`.
+
+1. Get an 'id' and 'secret' from [developer.spotify.com](https://beta.developer.spotify.com/documentation/general/guides/app-settings/) and paste it in the header of the `sp` (`SP_ID` and `SP_SECRET`) - this enables search feature.
+
+1. Clone this repo under **~/.config/awesome/**
+
+    ```bash
+    git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
+    ```
+
+1. Require spotify-widget at the beginning of **rc.lua**:
+
+    ```lua
+    local spotify_widget = require("awesome-wm-widgets.spotify-widget.spotify")
+    ```
+
+1. Add widget to the tasklist:
+
+    ```lua
+    s.mytasklist, -- Middle widget
+        { -- Right widgets
+            layout = wibox.layout.fixed.horizontal,
+            ...
+            spotify_widget,
+            ...
+    ```
+

@@ -101,6 +101,12 @@ footer {
   }
 }
 
+.section {
+  ul > li {
+    list-style-type: disc;
+  }
+}
+
 .widget {
   transition: all 2s linear;
 }
@@ -138,6 +144,7 @@ header, main, footer {
 }
 
 #particles-js {
+  padding-left: 300px;
   height: 193px;
   width: 100%;
   position: absolute;
@@ -148,7 +155,6 @@ header, main, footer {
 .tab.active {
   display: block;
 }
-
 
 .fade-in {
   opacity: 1;
@@ -191,6 +197,10 @@ header, main, footer {
 img {
   max-width: 100%;
   height: auto;
+}
+img.center-image {
+    margin: 0 auto;
+    display: block;
 }
 
 

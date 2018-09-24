@@ -10,6 +10,8 @@ Note that widget uses the Arc icon theme, so it should be [installed](https://gi
 
 ## Installation
 
+
+
 - clone/copy **volume.lua** file;
 
 - include `volume.lua` and add volume widget to your wibox in rc.lua:
