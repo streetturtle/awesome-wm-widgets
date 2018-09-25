@@ -1,3 +1,4 @@
+importScripts('cache-polyfill.js');
 const CACHE_NAME = 'awmw-cache';
 const PRE_CACHED_ASSETS = [
     '/assets/css/materialize.min.css',
