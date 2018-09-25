@@ -12,7 +12,7 @@ const PRE_CACHED_ASSETS = [
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll([PRE_CACHED_ASSETS]).then(() => self.skipWaiting());
+      return cache.addAll(PRE_CACHED_ASSETS).then(() => self.skipWaiting());
     })
   );
 });
