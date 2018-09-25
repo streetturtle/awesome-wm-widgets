@@ -9,31 +9,12 @@ const PRE_CACHED_ASSETS = [
     '/index.html'
 ];
 
-// self.addEventListener('install', function(event) {
-//     event.waitUntil(
-//         caches.open(CACHE_NAME).then(function(cache) {
-//             let cachePromises = PRE_CACHED_ASSETS.map(function(asset) {
-//                 var url = new URL(asset, location.href);
-//                 var request = new Request(url);
-//                 return fetch(request).then(function(response) {
-//                     return cache.put(asset, response);
-//                 });
-//             });
-
-//             return Promise.all(cachePromises);
-//         })
-//     );
-// });
-
-importScripts('/cache-polyfill.js');
-
-
-self.addEventListener('install', function(e) {
-    e.waitUntil(
-        caches.open(CACHE_NAME).then(function(cache) {
-            return cache.addAll(PRE_CACHED_ASSETS);
-        })
-    );
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll([PRE_CACHED_ASSETS]).then(() => self.skipWaiting());
+    })
+  );
 });
 
 self.addEventListener('activate', function(event) {
@@ -61,11 +42,12 @@ self.addEventListener('activate', function(event) {
 //     }
 // });
 
-self.addEventListener('fetch', function(event) {
-    console.log(event.request.url);
-    event.respondWith(
-        caches.match(event.request).then(function(response) {
-            return response || fetch(event.request);
-        })
-    );
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.match(event.request, {ignoreSearch: true}))
+      .then(response => {
+      return response || fetch(event.request);
+    })
+  );
 });
