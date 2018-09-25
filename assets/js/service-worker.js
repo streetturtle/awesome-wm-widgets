@@ -1,12 +1,12 @@
 importScripts('cache-polyfill.js');
 const CACHE_NAME = 'awmw-cache';
 const PRE_CACHED_ASSETS = [
-    '/assets/css/materialize.min.css',
-    '/assets/css/style.css',
-    '/assets/css/syntax1.css',
-    '/assets/js/materialize.min.js',
-    '/assets/js/particles.min.js',
-    '/assets/js/init.js'
+    'awesome-wm-widgets/assets/css/materialize.min.css',
+    'awesome-wm-widgets/assets/css/style.css',
+    'awesome-wm-widgets/assets/css/syntax1.css',
+    'awesome-wm-widgets/assets/js/materialize.min.js',
+    'awesome-wm-widgets/assets/js/particles.min.js',
+    'awesome-wm-widgets/assets/js/init.js'
 ];
 
 self.addEventListener('install', e => {
