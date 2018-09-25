@@ -6,7 +6,7 @@
   "background_color": "#393939",
   "display": "standalone",
   "orientation": "portrait",
-  "start_url": "/",
+  "start_url": "/awesome-wm-widgets/",
   "icons": [
     {
       "src": "images/app-images/192x192.png",
