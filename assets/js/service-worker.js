@@ -6,8 +6,7 @@ const PRE_CACHED_ASSETS = [
     '/assets/css/syntax1.css',
     '/assets/js/materialize.min.js',
     '/assets/js/particles.min.js',
-    '/assets/js/init.js',
-    '/index.html'
+    '/assets/js/init.js'
 ];
 
 self.addEventListener('install', e => {
