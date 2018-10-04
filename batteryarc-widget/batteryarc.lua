@@ -60,7 +60,7 @@ watch("acpi", 10,
 
             charge = charge + batt.charge
         end
-        charge = charge // #battery_info -- use average charge for battery icon
+        charge = charge / #battery_info -- use average charge for battery icon
 
         widget.value = charge / 100
         if status == 'Charging' then

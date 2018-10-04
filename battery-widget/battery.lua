@@ -89,7 +89,7 @@ watch("acpi", 10,
 
             charge = charge + batt.charge
         end
-        charge = charge // #battery_info -- use average charge for battery icon
+        charge = charge / #battery_info -- use average charge for battery icon
 
         if (charge >= 0 and charge < 15) then
             batteryType = "battery-empty%s-symbolic"
