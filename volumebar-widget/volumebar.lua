@@ -5,7 +5,7 @@
 -- https://github.com/streetturtle/awesome-wm-widgets/tree/master/volumebar-widget
 
 -- @author Pavel Makhov
--- @copyright 2017 Pavel Makhov
+-- @copyright 2018 Pavel Makhov
 -------------------------------------------------
 
 local awful = require("awful")
@@ -14,7 +14,10 @@ local spawn = require("awful.spawn")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 
-local request_command = 'amixer -D pulse sget Master'
+local GET_VOLUME_CMD = 'amixer -D pulse sget Master'
+local INC_VOLUME_CMD = 'amixer -D pulse sset Master 5%+'
+local DEC_VOLUME_CMD = 'amixer -D pulse sset Master 5%-'
+local TOG_VOLUME_CMD = 'amixer -D pulse sset Master toggle'
 
 local bar_color = "#74aeab"
 local mute_color = "#ff0000"
@@ -41,26 +44,23 @@ local update_graphic = function(widget, stdout, _, _, _)
     local volume = string.match(stdout, "(%d?%d?%d)%%")
     volume = tonumber(string.format("% 3d", volume))
 
-    if mute == "off" then
-        widget.color = mute_color
-        widget.value = volume / 100;
-    else
-        widget.color = bar_color
-        widget.value = volume / 100;
-    end
+    widget.value = volume / 100;
+    widget.color = mute == "off" and mute_color
+                                  or bar_color
+
 end
 
 volumebar_widget:connect_signal("button::press", function(_,_,_,button)
-    if (button == 4)     then awful.spawn("amixer -D pulse sset Master 5%+", false)
-    elseif (button == 5) then awful.spawn("amixer -D pulse sset Master 5%-", false)
-    elseif (button == 1) then awful.spawn("amixer -D pulse sset Master toggle", false)
+    if (button == 4)     then awful.spawn(INC_VOLUME_CMD)
+    elseif (button == 5) then awful.spawn(DEC_VOLUME_CMD)
+    elseif (button == 1) then awful.spawn(TOG_VOLUME_CMD)
     end
 
-    spawn.easy_async(request_command, function(stdout, stderr, exitreason, exitcode)
+    spawn.easy_async(GET_VOLUME_CMD, function(stdout, stderr, exitreason, exitcode)
         update_graphic(volumebar_widget, stdout, stderr, exitreason, exitcode)
     end)
 end)
 
-watch(request_command, 1, update_graphic, volumebar_widget)
+watch(GET_VOLUME_CMD, 1, update_graphic, volumebar_widget)
 
 return volumebar_widget
