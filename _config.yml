@@ -1,6 +1,7 @@
 baseurl: /awesome-wm-widgets
 
 collections:
+  main:
   widgets:
 #    output: true
 
