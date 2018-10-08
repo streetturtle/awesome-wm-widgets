@@ -21,7 +21,7 @@ local icon_widget = wibox.widget {
         resize = false,
         widget = wibox.widget.imagebox,
     },
-    layout = wibox.container.margin(brightness_icon, 0, 0, 3),
+    layout = wibox.container.margin(_ , 0, 0, 3),
     set_image = function(self, path)
         self.icon.image = path
     end,
@@ -38,7 +38,7 @@ local weather_widget = wibox.widget {
     layout = wibox.layout.fixed.horizontal,
 }
 
--- helps to map openWeatherMap icons to Arc icons
+--- Maps openWeatherMap icons to Arc icons
 local icon_map = {
     ["01d"] = "weather-clear-symbolic.svg",
     ["02d"] = "weather-few-clouds-symbolic.svg",
@@ -60,12 +60,12 @@ local icon_map = {
     ["50n"] = "weather-fog-symbolic.svg"
 }
 
--- handy function to convert temperature from Kelvin to Celcius
+--- handy function to convert temperature from Kelvin to Celcius
 function to_celcius(kelvin)
     return math.floor(tonumber(kelvin) - 273.15)
 end
 
--- Return wind direction as a string.
+--- Return wind direction as a string.
 function to_direction(degrees)
     -- Ref: https://www.campbellsci.eu/blog/convert-wind-directions
     if degrees == nil then
@@ -107,7 +107,7 @@ end)
 weather_timer:start()
 weather_timer:emit_signal("timeout")
 
--- Notification with weather information. Popups when mouse hovers over the icon
+--- Notification with weather information. Popups when mouse hovers over the icon
 local notification
 weather_widget:connect_signal("mouse::enter", function()
     notification = naughty.notify{
@@ -124,6 +124,7 @@ weather_widget:connect_signal("mouse::enter", function()
         width = 200
     }
 end)
+
 weather_widget:connect_signal("mouse::leave", function()
     naughty.destroy(notification)
 end)
