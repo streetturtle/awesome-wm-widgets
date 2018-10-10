@@ -29,6 +29,7 @@ require("safe_restart")
 local lgi = require("lgi")
 local power = require("power")
 local wallpaper = require("wallpaper")
+local tresorit = require("tresorit")
 
 math.randomseed(os.time())
 
@@ -170,6 +171,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
             launcher,
+            tresorit.widget,
             s.mytaglist,
             s.mypromptbox,
         },
