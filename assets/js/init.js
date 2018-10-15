@@ -4,6 +4,21 @@ document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.sidenav');
     var options = {};
     var instances = M.Sidenav.init(elems, options);
+
+    // var actived_nav = $('.sidenav > li.active');
+    // actived_nav.removeClass('active');
+
+    // var hash = window.location.hash;
+    // $(hash.replace('#', '') +':first').addClass('active');
+    //
+    // var active_tab_selector = $('.sidenav > li.active > a').attr('href');
+    // $(active_tab_selector).removeClass('active');
+    // $(active_tab_selector).addClass('hide ');
+    //
+    // var target_tab_selector = $(hash);
+    // $(target_tab_selector).removeClass('hide');
+    // $(target_tab_selector).addClass('active');
+
 });
 
 // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
@@ -18,6 +33,8 @@ $(document).ready(function(){
     $('.sidenav > li > a').click(function(event){
 
         event.preventDefault();//stop browser to take action for clicked anchor
+
+        location.hash = event.target.hash;
 
         //get displaying tab content jQuery selector
         var active_tab_selector = $('.sidenav > li.active > a').attr('href');
