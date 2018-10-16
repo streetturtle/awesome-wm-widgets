@@ -5,6 +5,7 @@ local wibox = require("wibox")
 
 local async = require("async")
 local command = require("command")
+local debug_util = require("debug_util")
 local variables = require("variables")
 
 local tresorit = {}
@@ -61,6 +62,7 @@ local tooltip = awful.tooltip{
 }
 
 if tresorit_command ~= nil then
+    debug_util.log("Has tresorit-cli")
     local timer
     timer = gears.timer{
         timeout=2,
@@ -91,6 +93,8 @@ if tresorit_command ~= nil then
         end}
 
     call_tresorit_cli("start")
+else
+    debug_util.log("No tresorit-cli")
 end
 
 return tresorit
