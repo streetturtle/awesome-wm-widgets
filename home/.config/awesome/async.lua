@@ -97,7 +97,7 @@ function async.run_continuously(action)
             start()
             return true
         end
-        D.log("Too many retries, giving up.")
+        D.log(D.error, "Too many retries, giving up.")
         return false
     end
     start = function()
@@ -118,10 +118,10 @@ function async.run_command_continuously(command, line_callback, start_callback,
     local command_str = D.to_string_recursive(command)
     async.run_continuously(
             function(callback)
-                D.log("Running command: " .. command_str)
+                D.log(D.debug, "Running command: " .. command_str)
                 local pid = async.spawn_and_get_lines(command, line_callback,
                         function()
-                            D.log("Command stopped: " .. command_str)
+                            D.log(D.debug, "Command stopped: " .. command_str)
                             if not finish_callback() then
                                 return callback()
                             end

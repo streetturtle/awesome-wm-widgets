@@ -41,7 +41,7 @@ end
 
 local function start()
     if not compton_command then
-        D.log("Compton is not available")
+        D.log(D.warning, "Compton is not available")
         return
     end
     setup_config_file()

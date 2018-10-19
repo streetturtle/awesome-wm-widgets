@@ -127,10 +127,10 @@ locker.prevent_idle = Semaphore(
 
 function actions.add_callback(args)
     if args.arg then
-        D.log("Has callback")
+        D.log(D.debug, "Has callback")
         table.insert(callbacks, args.arg)
     else
-        D.log("No callback")
+        D.log(D.debug, "No callback")
     end
 end
 
@@ -138,7 +138,7 @@ function actions.call_callbacks(args)
     local callbacks_local = callbacks
     callbacks = {}
 
-    D.log("Number of callbacks: " .. tostring(#callbacks_local))
+    D.log(D.debug, "Number of callbacks: " .. tostring(#callbacks_local))
     for _, callback in ipairs(callbacks_local) do
         async.safe_call(callback)
     end

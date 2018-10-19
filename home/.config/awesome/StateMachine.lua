@@ -11,19 +11,19 @@ setmetatable(StateMachine, {
     end
 })
 
-function log(self, msg)
+function log(self, severity, msg)
     if self.name then
-        D.log(self.name .. ": " .. msg)
+        D.log(severity, self.name .. ": " .. msg)
     end
 end
 
 local function do_call(self, action, arg)
     if not self.actions[action] then
-        log(self, "WARNING: action not found: " .. action)
+        log(self, D.error, "Action not found: " .. action)
         return
     end
 
-    log(self, "Executing action: " .. action)
+    log(self, D.debug, "Executing action: " .. action)
     return self.actions[action](arg)
 end
 
@@ -39,7 +39,7 @@ end
 
 function enter_state(self, state, arg)
     if state then
-        log(self, "Entering state: " .. state)
+        log(self, D.debug, "Entering state: " .. state)
         self.state = state
         if self.states[state] and self.states[state].enter then
             call(self, self.states[state].enter, {
@@ -59,7 +59,7 @@ function leave_state(self, arg)
                 state_machine=self,
                 arg=arg})
         end
-        log(self, "Leaving state: " .. self.state)
+        log(self, D.debug, "Leaving state: " .. self.state)
         self.state = nil
     end
 end
@@ -69,7 +69,7 @@ local function process_transition(self, event, transition, arg)
         state=self.state,
         event=event,
         state_machine=self}) then
-        log(self, "Guard failed")
+        log(self, D.debug, "Guard failed")
         return false
     end
 
@@ -119,18 +119,18 @@ end
 
 function StateMachine:process_event(event, arg)
     if not self.state then
-        log(self, "WARNING: No state.")
+        log(self, D.error, "No state.")
         return
     end
 
     if not self.transitions[self.state]
             or not self.transitions[self.state][event] then
-        log(self, "WARNING: No transition from state " .. self.state
+        log(self, D.error, "No transition from state " .. self.state
             .. " on event " .. event .. ".")
         return
     end
 
-    log(self, "Processing event: " .. self.state .. " -> " .. event)
+    log(self, D.debug, "Processing event: " .. self.state .. " -> " .. event)
 
     transition = self.transitions[self.state][event]
 

@@ -15,7 +15,7 @@ local has_wallpapers_dir = gears.filesystem.dir_readable(wallpapers_dir)
 local wallpaper = {}
 
 function wallpaper.init()
-    D.log("Init wallpapers")
+    D.log(D.info, "Init wallpapers")
     if has_wallpapers_dir then
         wallpaper.choose_wallpaper()
     elseif gears.filesystem.file_readable(wallpaper_file) then
@@ -29,7 +29,7 @@ function wallpaper.choose_wallpaper()
         return
     end
 
-    D.log("Choosing wallpapers")
+    D.log(D.debug, "Choosing wallpapers")
     local wallpapers = {}
     async.spawn_and_get_lines({"find", wallpapers_dir, "-type", "f"},
         function(line)
@@ -38,7 +38,7 @@ function wallpaper.choose_wallpaper()
         function() end,
         function()
             beautiful.wallpaper = wallpapers[math.random(#wallpapers)]
-            D.log("Chosen wallpaper: " .. beautiful.wallpaper)
+            D.log(D.debug, "Chosen wallpaper: " .. beautiful.wallpaper)
             for s in screen do
                 wallpaper.set_wallpaper(s)
             end
@@ -47,7 +47,7 @@ end
 
 function wallpaper.set_wallpaper(s)
     if beautiful.wallpaper then
-        D.log("Set wallpaper for screen "
+        D.log(D.debug, "Set wallpaper for screen "
                 .. multimonitor.get_screen_name(s) .. ": "
                 .. beautiful.wallpaper)
         gears.wallpaper.maximized(beautiful.wallpaper, s, false)

@@ -207,7 +207,7 @@ function Process.new(name, command)
 
     local pid = running_pids[name]
     if pid then
-        D.log("Process " .. name .. " is already running as "
+        D.log(D.info, "Process " .. name .. " is already running as "
             .. tostring(pid) .. ". Restarting.")
         awful.spawn("kill " .. tostring(pid))
         self.state_machine:process_event("start")
@@ -263,14 +263,14 @@ function actions.start(args)
     local command = self.command
     local command_name = tables.concatenate(command)
 
-    D.log("Running command: " .. command_name)
+    D.log(D.info, "Running command: " .. command_name)
     local pid = async.spawn_and_get_lines(command,
         function(line)
             self:emit_signal("line", line)
         end,
         function(code, log)
-            D.log("Command stopped: " .. command_name)
-            D.log(log.stderr)
+            D.log(D.warning, "Command stopped: " .. command_name)
+            D.log(D.debug, log.stderr)
             self.pid = nil
             running_pids[state_machine.name] = nil
             save_running_pids()
@@ -286,7 +286,7 @@ function actions.start(args)
         save_running_pids()
         state_machine:postpone_event("started")
     else
-        D.log("Could not start command: " .. command_name)
+        D.log(D.error, "Could not start command: " .. command_name)
         state_machine:postpone_event("stopped")
     end
 end
@@ -312,7 +312,7 @@ function actions.increment_tries(args)
 end
 
 function actions.print_giveup(args)
-    D.log("Failed to start command: "
+    D.log(D.error, "Failed to start command: "
         .. tables.concatenate(args.state_machine.obj.command))
 end
 

@@ -1,6 +1,6 @@
 local D = require("debug_util")
-D.log("-----------------------------------")
-D.log("Awesome starting up")
+D.log(D.info, "-----------------------------------")
+D.log(D.info, "Awesome starting up")
 
 -- Standard awesome library
 local gears = require("gears")
@@ -14,22 +14,6 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 
-local hotkeys_popup = require("awful.hotkeys_popup").widget
-local xrandr = require("xrandr")
-local multimonitor = require("multimonitor")
-local variables = require("variables")
-local command = require("command")
-local compton = require("compton")
-local widgets = require("widgets")
-local cyclefocus = require('cyclefocus')
-local input = require('input')
-local locker = require('locker')
-local pulseaudio = require("apw/pulseaudio")
-require("safe_restart")
-local lgi = require("lgi")
-local power = require("power")
-local wallpaper = require("wallpaper")
-local tresorit = require("tresorit")
 
 math.randomseed(os.time())
 
@@ -66,6 +50,23 @@ do
     end)
 end
 -- }}}
+
+local hotkeys_popup = require("awful.hotkeys_popup").widget
+local xrandr = require("xrandr")
+local multimonitor = require("multimonitor")
+local variables = require("variables")
+local command = require("command")
+local compton = require("compton")
+local widgets = require("widgets")
+local cyclefocus = require('cyclefocus')
+local input = require('input')
+local locker = require('locker')
+local pulseaudio = require("apw/pulseaudio")
+require("safe_restart")
+local lgi = require("lgi")
+local power = require("power")
+local wallpaper = require("wallpaper")
+local tresorit = require("tresorit")
 
 -- {{{ Variable definitions
 
@@ -131,7 +132,7 @@ else
 end
 
 awful.screen.connect_for_each_screen(function(s)
-    D.log("Got screen: " .. multimonitor.get_screen_name(s))
+    D.log(D.debug, "Got screen: " .. multimonitor.get_screen_name(s))
     -- Wallpaper
     wallpaper.set_wallpaper(s)
 
@@ -247,6 +248,9 @@ local globalkeys = awful.util.table.join(root.keys(),
                     'sleep 0.5; xdotool type "$(xsel --clipboard)"')
         end,
         {description = "Force paste", group = "input"}
+    ),
+    awful.key({ modkey, "Control", "Shift"}, "d", D.toggle_debug,
+        {description = "Toggle debug", group = "awesome"}
     ),
     awful.key({ modkey, "Shift"}, "k",
         function ()
@@ -735,13 +739,13 @@ client.connect_signal("unmanage",
 
 screen.connect_signal("list",
         function()
-            D.log("Screen configuration changed")
+            D.log(D.info, "Screen configuration changed")
             multimonitor.detect_screens()
         end)
 
 client.connect_signal("manage",
         function(c)
-            D.log("New client: " .. D.get_client_debug_info(c))
+            D.log(D.debug, "New client: " .. D.get_client_debug_info(c))
             last_started_client = c
 
             if c.maximized then
@@ -824,4 +828,4 @@ locker.init({
     notify_time=30  -- seconds
 })
 
-D.log("Initialization finished")
+D.log(D.info, "Initialization finished")

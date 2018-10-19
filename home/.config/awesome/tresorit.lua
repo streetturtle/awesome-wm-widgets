@@ -75,7 +75,7 @@ local tooltip = awful.tooltip{
 }
 
 if tresorit_command ~= nil then
-    D.log("Has tresorit-cli")
+    D.log(D.debug, "Has tresorit-cli")
     local timer
     timer = gears.timer{
         timeout=2,
@@ -83,10 +83,10 @@ if tresorit_command ~= nil then
         call_now=true,
         autostart=true,
         callback=function()
-            D.log("Tresorit: check status")
+            D.log(D.debug, "Tresorit: check status")
             call_tresorit_cli("status",
                 function(result)
-                    D.log(D.to_string_recursive(result))
+                    -- D.log(D.debug, D.to_string_recursive(result))
                     local running = false
                     local logged_in = false
                     local error_code = nil
@@ -108,7 +108,7 @@ if tresorit_command ~= nil then
                         tooltip.text = error_code .. ": " .. description
                         error = true
                     end
-                    D.log("Tresorit: running=" .. tostring(running)
+                    D.log(D.debug, "Tresorit: running=" .. tostring(running)
                         .. " logged_in=" .. tostring(logged_in)
                         .. " error=" .. tostring(error))
                     stopped_widget.visible = not error and not running
@@ -121,7 +121,7 @@ if tresorit_command ~= nil then
 
     call_tresorit_cli("start")
 else
-    D.log("No tresorit-cli")
+    D.log(D.debug, "No tresorit-cli")
 end
 
 return tresorit

@@ -69,7 +69,7 @@ client.connect_signal("unmanage",
 
 awesome.connect_signal("startup",
         function()
-            D.log("Restoring client data")
+            D.log(D.info, "Restoring client data")
             local to_remove = {}
             for id, data in pairs(persist_data.clients) do
                 local current_client = nil
@@ -82,12 +82,12 @@ awesome.connect_signal("startup",
                 if current_client then
                     restore_client_data(current_client, data)
                 else
-                    D.log("Client not found: " .. id)
+                    D.log(D.debug, "Client not found: " .. id)
                     table.insert(to_remove, id)
                 end
             end
             initialized = true
-            D.log("Restoring client data done")
+            D.log(D.debug, "Restoring client data done")
 
             for _, id in ipairs(to_remove) do
                 persist_data.clients[id] = nil

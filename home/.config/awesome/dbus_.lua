@@ -23,24 +23,24 @@ local function inhibit_impl(bus, what, who, why, mode)
         timeout, nil)
 
     if err then
-        D.log("inhibit error: " .. tostring(err))
+        D.log(D.error, "inhibit error: " .. tostring(err))
         return
     end
 
     if result:get_message_type() == "ERROR" then
         local _, err = result:to_gerror()
-        D.log("inhibit error: " .. tostring(err))
+        D.log(D.error, "inhibit error: " .. tostring(err))
         return
     end
 
     local fd_list = result:get_unix_fd_list()
     local fd, err = fd_list:get(0)
     if err then
-        D.log("inhibit error: " .. tostring(err))
+        D.log(D.error, "inhibit error: " .. tostring(err))
         return
     end
 
-    D.log("Got inhibit fd: " .. tostring(fd))
+    D.log(D.info, "Got inhibit fd: " .. tostring(fd))
 
     -- Now... somehow turn this fd into something we can close
     return Gio.UnixInputStream.new(fd, false)
@@ -49,19 +49,19 @@ end
 
 local function inhibit(what, why, mode)
     local result = {}
-    D.log("Start inhibit")
+    D.log(D.info, "Start inhibit")
     Gio.Async.call(function()
-        D.log("inhibit")
+        D.log(D.debug, "inhibit")
         local bus = bus_get_async(Gio.BusType.SYSTEM)
         result.stream = inhibit_impl(bus, what, "awesome", why, mode)
-        D.log("Got fd: " .. tostring(result.stream.fd)
+        D.log(D.debug, "Got fd: " .. tostring(result.stream.fd)
                 .. " closed=" .. tostring(result.stream:is_closed()))
     end)()
     return result
 end
 
 local function stop_inhibit(inhibitor)
-        D.log("Close fd: " .. tostring(inhibitor.stream.fd)
+        D.log(D.debug, "Close fd: " .. tostring(inhibitor.stream.fd)
                 .. " closed=" .. tostring(inhibitor.stream:is_closed()))
     inhibitor.stream:set_close_fd(true)
     inhibitor.stream:close()

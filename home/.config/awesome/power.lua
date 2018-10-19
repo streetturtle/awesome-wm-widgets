@@ -12,11 +12,11 @@ local commands = {}
 local function call_power_command(name)
     local command = commands[name]
     if command then
-        D.log("Calling command: " .. command)
+        D.log(D.info, "Calling command: " .. command)
         awful.spawn(command)
     else
         local message = "No command found for " .. name
-        D.log(message)
+        D.log(D.error, message)
         naughty.notify({preset=naughty.config.presets.critical, text=message})
     end
 end

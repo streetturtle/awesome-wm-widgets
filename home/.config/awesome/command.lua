@@ -5,7 +5,7 @@ local D = require("debug_util")
 local command = {}
 
 function command.start_if_not_running(command, args, path)
-    D.log('Starting ' .. command)
+    D.log(D.info, 'Starting ' .. command)
     async.spawn_and_get_output("pidof -x " .. command,
             function(stdout, result_code)
                 if result_code ~= 0 then
@@ -13,11 +13,11 @@ function command.start_if_not_running(command, args, path)
                     if path then
                         full_command = path .. "/" .. full_command
                     end
-                    D.log('Running: ' .. full_command)
+                    D.log(D.debug, 'Running: ' .. full_command)
                     awful.spawn(full_command)
                     return true
                 else
-                    D.log('Already running')
+                    D.log(D.debug, 'Already running')
                 end
             end)
 end
