@@ -59,13 +59,14 @@ end
 
 local log_file = io.open("awesome.log", "a")
 local severities = {"D", "I", "W", "E"}
+local config = {}
 
 function D.log(severity, message)
     local severity_name = severities[severity]
     if not severity_name then
         return
     end
-    if D.log_level > severity then
+    if config.log_level > severity then
         return
     end
     log_file:write(os.date("%F %T: ") .. "[" .. severities[severity] .. "] "
@@ -73,24 +74,23 @@ function D.log(severity, message)
     log_file:flush()
 end
 
+local config_file = variables.config_dir .. '/debug.json'
+
 function D.toggle_debug()
-    if D.log_level == D.debug then
-        D.log_level = D.info
+    if config.log_level == D.debug then
+        config.log_level = D.info
     else
-        D.log_level = D.debug
+        config.log_level = D.debug
     end
-    D.log(D.info, "Log level is now " .. severities[D.log_level])
+    D.log(D.info, "Log level is now " .. severities[config.log_level])
+    serialize.save_to_file(config_file, config)
 end
 
-local config_file = variables.config_dir .. '/debug.json'
-local config = {}
 if gears.filesystem.file_readable(config_file) then
     config = serialize.load_from_file(config_file)
 end
-if config.log_level ~= nil then
-    D.log_level = config.log_level
-else
-    D.log_level = D.info
+if config.log_level == nil then
+    config.log_level = D.info
 end
 
 return D
