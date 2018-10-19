@@ -14,14 +14,20 @@ local tresorit_command = command.get_available_command({
     {command="tresorit-cli", test="tresorit-cli status"}
 })
 
+local has_error = false
+
 local function call_tresorit_cli(command, callback)
     local result = {}
     async.spawn_and_get_lines(tresorit_command .. " --porcelain " .. command,
-        function(line) table.insert(result, gears.string.split(line, "\t")) end,
-        nil,
+        function(line)
+            table.insert(result, gears.string.split(line, "\t"))
+        end,
+        function()
+            return has_error
+        end,
         function()
             if callback then
-                callback(result)
+                has_error = callback(result)
             end
         end)
 end
@@ -48,10 +54,17 @@ local logout_widget = wibox.widget{
     widget=wibox.widget.imagebox,
 }
 
+local error_widget = wibox.widget{
+    image=variables.config_dir .. "/exclamation-red.svg",
+    resize=true,
+    widget=wibox.widget.imagebox,
+}
+
 tresorit.widget = wibox.widget{
     menu_widget,
     logout_widget,
     stopped_widget,
+    error_widget,
     layout=wibox.layout.stack,
     visible=tresorit_command ~= nil
 }
@@ -76,19 +89,33 @@ if tresorit_command ~= nil then
                     debug_util.log(debug_util.to_string_recursive(result))
                     local running = false
                     local logged_in = false
+                    local error_code = nil
+                    local description = nil
                     for _, line in ipairs(result) do
                         if line[1] == "Tresorit daemon:" then
                             running = line[2] == "running"
                         elseif line[1] == "Logged in as:" then
                             logged_in = line[2] ~= "-"
                             tooltip.text = line[2]
+                        elseif line[1] == "Error code:" then
+                            error_code = line[2]
+                        elseif line[1] == "Description:" then
+                            description = line[2]
                         end
                     end
+                    error = false
+                    if error_code then
+                        tooltip.text = error_code .. ": " .. description
+                        error = true
+                    end
                     debug_util.log("Tresorit: running=" .. tostring(running)
-                        .. " logged_in=" .. tostring(logged_in))
-                    stopped_widget.visible = not running
+                        .. " logged_in=" .. tostring(logged_in)
+                        .. " error=" .. tostring(error))
+                    stopped_widget.visible = not error and not running
                     logout_widget.visible = running and not logged_in
+                    error_widget.visible = error
                     timer:start()
+                    return error
                 end)
         end}
 
