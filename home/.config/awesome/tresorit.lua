@@ -5,7 +5,7 @@ local wibox = require("wibox")
 
 local async = require("async")
 local command = require("command")
-local debug_util = require("debug_util")
+local D = require("debug_util")
 local variables = require("variables")
 
 local tresorit = {}
@@ -75,7 +75,7 @@ local tooltip = awful.tooltip{
 }
 
 if tresorit_command ~= nil then
-    debug_util.log("Has tresorit-cli")
+    D.log("Has tresorit-cli")
     local timer
     timer = gears.timer{
         timeout=2,
@@ -83,10 +83,10 @@ if tresorit_command ~= nil then
         call_now=true,
         autostart=true,
         callback=function()
-            debug_util.log("Tresorit: check status")
+            D.log("Tresorit: check status")
             call_tresorit_cli("status",
                 function(result)
-                    debug_util.log(debug_util.to_string_recursive(result))
+                    D.log(D.to_string_recursive(result))
                     local running = false
                     local logged_in = false
                     local error_code = nil
@@ -108,7 +108,7 @@ if tresorit_command ~= nil then
                         tooltip.text = error_code .. ": " .. description
                         error = true
                     end
-                    debug_util.log("Tresorit: running=" .. tostring(running)
+                    D.log("Tresorit: running=" .. tostring(running)
                         .. " logged_in=" .. tostring(logged_in)
                         .. " error=" .. tostring(error))
                     stopped_widget.visible = not error and not running
@@ -121,7 +121,7 @@ if tresorit_command ~= nil then
 
     call_tresorit_cli("start")
 else
-    debug_util.log("No tresorit-cli")
+    D.log("No tresorit-cli")
 end
 
 return tresorit

@@ -1,7 +1,7 @@
 local naughty = require("naughty")
 local gears = require("gears")
 
-local debug_util = require("debug_util")
+local D = require("debug_util")
 
 local function get_message(timeout)
     return 'Forcing in ' .. tostring(timeout) .. ' seconds.'
@@ -10,9 +10,9 @@ end
 local shutdown = {}
 
 function shutdown.clean_shutdown(message, timeout, callback)
-    debug_util.log('Stopping all clients')
+    D.log('Stopping all clients')
     local clients_to_close = client.get()
-    debug_util.log('Number of clients to stop: ' .. tostring(#clients_to_close))
+    D.log('Number of clients to stop: ' .. tostring(#clients_to_close))
 
     local finish = nil
 
@@ -23,7 +23,7 @@ function shutdown.clean_shutdown(message, timeout, callback)
         end
 
         table.remove(clients_to_close, index)
-        debug_util.log('Stopped ' .. debug_util.get_client_debug_info(c)
+        D.log('Stopped ' .. D.get_client_debug_info(c)
                 .. ' Number of clients remaining: '
                 .. tostring(#clients_to_close))
         if #clients_to_close == 0 then
@@ -72,10 +72,10 @@ function shutdown.clean_shutdown(message, timeout, callback)
         naughty.destroy(notification,
                 naughty.notificationClosedReason.dismissedByCommand)
         if success then
-            debug_util.log('Shutdown finished. Calling callback.')
+            D.log('Shutdown finished. Calling callback.')
             callback()
         else
-            debug_util.log('Shutdown cancelled.')
+            D.log('Shutdown cancelled.')
         end
     end
 

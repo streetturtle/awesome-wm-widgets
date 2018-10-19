@@ -1,6 +1,6 @@
 local tables = require("tables")
 local gears = require("gears")
-local debug_util = require("debug_util")
+local D = require("debug_util")
 
 local StateMachine = {}
 StateMachine.__index = StateMachine
@@ -13,7 +13,7 @@ setmetatable(StateMachine, {
 
 function log(self, msg)
     if self.name then
-        debug_util.log(self.name .. ": " .. msg)
+        D.log(self.name .. ": " .. msg)
     end
 end
 

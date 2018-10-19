@@ -4,7 +4,7 @@ local naughty = require("naughty")
 
 local async = require("async")
 local Semaphore = require("Semaphore")
-local debug_util = require("debug_util")
+local D = require("debug_util")
 local StateMachine = require("StateMachine")
 
 local locker = {}
@@ -127,10 +127,10 @@ locker.prevent_idle = Semaphore(
 
 function actions.add_callback(args)
     if args.arg then
-        debug_util.log("Has callback")
+        D.log("Has callback")
         table.insert(callbacks, args.arg)
     else
-        debug_util.log("No callback")
+        D.log("No callback")
     end
 end
 
@@ -138,7 +138,7 @@ function actions.call_callbacks(args)
     local callbacks_local = callbacks
     callbacks = {}
 
-    debug_util.log("Number of callbacks: " .. tostring(#callbacks_local))
+    D.log("Number of callbacks: " .. tostring(#callbacks_local))
     for _, callback in ipairs(callbacks_local) do
         async.safe_call(callback)
     end

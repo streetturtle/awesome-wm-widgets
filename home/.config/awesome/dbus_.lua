@@ -1,7 +1,7 @@
 local lgi = require("lgi")
 local Gio = lgi.require("Gio")
 local GLib = lgi.require("GLib")
-local debug_util = require("debug_util")
+local D = require("debug_util")
 
 -- Workaround for https://github.com/pavouk/lgi/issues/142
 local function bus_get_async(type)
@@ -23,24 +23,24 @@ local function inhibit_impl(bus, what, who, why, mode)
         timeout, nil)
 
     if err then
-        debug_util.log("inhibit error: " .. tostring(err))
+        D.log("inhibit error: " .. tostring(err))
         return
     end
 
     if result:get_message_type() == "ERROR" then
         local _, err = result:to_gerror()
-        debug_util.log("inhibit error: " .. tostring(err))
+        D.log("inhibit error: " .. tostring(err))
         return
     end
 
     local fd_list = result:get_unix_fd_list()
     local fd, err = fd_list:get(0)
     if err then
-        debug_util.log("inhibit error: " .. tostring(err))
+        D.log("inhibit error: " .. tostring(err))
         return
     end
 
-    debug_util.log("Got inhibit fd: " .. tostring(fd))
+    D.log("Got inhibit fd: " .. tostring(fd))
 
     -- Now... somehow turn this fd into something we can close
     return Gio.UnixInputStream.new(fd, false)
@@ -49,19 +49,19 @@ end
 
 local function inhibit(what, why, mode)
     local result = {}
-    debug_util.log("Start inhibit")
+    D.log("Start inhibit")
     Gio.Async.call(function()
-        debug_util.log("inhibit")
+        D.log("inhibit")
         local bus = bus_get_async(Gio.BusType.SYSTEM)
         result.stream = inhibit_impl(bus, what, "awesome", why, mode)
-        debug_util.log("Got fd: " .. tostring(result.stream.fd)
+        D.log("Got fd: " .. tostring(result.stream.fd)
                 .. " closed=" .. tostring(result.stream:is_closed()))
     end)()
     return result
 end
 
 local function stop_inhibit(inhibitor)
-        debug_util.log("Close fd: " .. tostring(inhibitor.stream.fd)
+        D.log("Close fd: " .. tostring(inhibitor.stream.fd)
                 .. " closed=" .. tostring(inhibitor.stream:is_closed()))
     inhibitor.stream:set_close_fd(true)
     inhibitor.stream:close()

@@ -1,4 +1,4 @@
-local debug_util = require("debug_util")
+local D = require("debug_util")
 local async = require("async")
 
 local rex = require("rex_pcre")
@@ -65,7 +65,7 @@ function xrandr.get_outputs(callback)
     async.spawn_and_get_lines(
             "xrandr -q --current",
             function(line)
-                -- debug_util.log("-> " .. line)
+                -- D.log("-> " .. line)
                 local output, primary, active, width, height, dx, dy, orientation =
                         rex.match(line,
                                 "^([\\w-]+) connected (primary )?" ..

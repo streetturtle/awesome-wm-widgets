@@ -2,7 +2,7 @@ local awful = require("awful")
 
 local async = require("async")
 local command = require("command")
-local debug_util = require("debug_util")
+local D = require("debug_util")
 local Process = require("Process")
 
 local enabled = true
@@ -41,7 +41,7 @@ end
 
 local function start()
     if not compton_command then
-        debug_util.log("Compton is not available")
+        D.log("Compton is not available")
         return
     end
     setup_config_file()

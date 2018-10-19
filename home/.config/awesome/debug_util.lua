@@ -27,17 +27,17 @@ local function __to_string_recursive(object, depth, index, found)
     end
 end
 
-local debug_util = {}
+local D = {}
 
-function debug_util.to_string_recursive(object)
+function D.to_string_recursive(object)
     return __to_string_recursive(object, 0, 0, {})
 end
 
-function debug_util.print_property(obj, property)
-    return property .. "=" .. debug_util.to_string_recursive(obj[property])
+function D.print_property(obj, property)
+    return property .. "=" .. D.to_string_recursive(obj[property])
 end
 
-function debug_util.get_client_debug_info(c)
+function D.get_client_debug_info(c)
     if not c then
         return "<none>"
     end
@@ -49,9 +49,9 @@ end
 
 local log_file = io.open("awesome.log", "a")
 
-function debug_util.log(message)
+function D.log(message)
     log_file:write(os.date("%F %T: ") .. message .. "\n")
     log_file:flush()
 end
 
-return debug_util
+return D

@@ -1,6 +1,6 @@
 local gears = require("gears")
 
-local debug_util = require("debug_util")
+local D = require("debug_util")
 local serialize = require("serialize")
 local tables = require("tables")
 local variables = require("variables")
@@ -69,7 +69,7 @@ client.connect_signal("unmanage",
 
 awesome.connect_signal("startup",
         function()
-            debug_util.log("Restoring client data")
+            D.log("Restoring client data")
             local to_remove = {}
             for id, data in pairs(persist_data.clients) do
                 local current_client = nil
@@ -82,12 +82,12 @@ awesome.connect_signal("startup",
                 if current_client then
                     restore_client_data(current_client, data)
                 else
-                    debug_util.log("Client not found: " .. id)
+                    D.log("Client not found: " .. id)
                     table.insert(to_remove, id)
                 end
             end
             initialized = true
-            debug_util.log("Restoring client data done")
+            D.log("Restoring client data done")
 
             for _, id in ipairs(to_remove) do
                 persist_data.clients[id] = nil

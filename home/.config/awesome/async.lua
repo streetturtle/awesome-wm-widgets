@@ -2,7 +2,7 @@ local awful = require("awful")
 local gears = require("gears")
 local naughty = require("naughty")
 
-local debug_util = require("debug_util")
+local D = require("debug_util")
 
 local async = {}
 
@@ -28,7 +28,7 @@ local function handle_start_command(command, action)
 end
 
 function async.spawn_and_get_output(command, callback)
-    local command_str = debug_util.to_string_recursive(command)
+    local command_str = D.to_string_recursive(command)
     return handle_start_command(command_str, function()
         return awful.spawn.easy_async(command,
                 function(stdout, stderr, _, exit_code)
@@ -57,7 +57,7 @@ function async.spawn_and_get_lines(command, callback, finish_callback,
                 async.safe_call(function() done_callback(line) end)
             end
     end
-    local command_str = debug_util.to_string_recursive(command)
+    local command_str = D.to_string_recursive(command)
     return handle_start_command(command_str, function()
         return awful.spawn.with_line_callback(command, {
                 stdout=function(line)
@@ -97,7 +97,7 @@ function async.run_continuously(action)
             start()
             return true
         end
-        debug_util.log("Too many retries, giving up.")
+        D.log("Too many retries, giving up.")
         return false
     end
     start = function()
@@ -115,13 +115,13 @@ function async.run_command_continuously(command, line_callback, start_callback,
     if not finish_callback then
         finish_callback = function() return false end
     end
-    local command_str = debug_util.to_string_recursive(command)
+    local command_str = D.to_string_recursive(command)
     async.run_continuously(
             function(callback)
-                debug_util.log("Running command: " .. command_str)
+                D.log("Running command: " .. command_str)
                 local pid = async.spawn_and_get_lines(command, line_callback,
                         function()
-                            debug_util.log("Command stopped: " .. command_str)
+                            D.log("Command stopped: " .. command_str)
                             if not finish_callback() then
                                 return callback()
                             end

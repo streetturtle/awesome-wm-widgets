@@ -2,7 +2,7 @@ local awful = require("awful")
 local gears = require("gears")
 
 local async = require("async")
-local debug_util = require("debug_util")
+local D = require("debug_util")
 local serialize = require("serialize")
 local StateMachine = require("StateMachine")
 local variables = require("variables")
@@ -207,7 +207,7 @@ function Process.new(name, command)
 
     local pid = running_pids[name]
     if pid then
-        debug_util.log("Process " .. name .. " is already running as "
+        D.log("Process " .. name .. " is already running as "
             .. tostring(pid) .. ". Restarting.")
         awful.spawn("kill " .. tostring(pid))
         self.state_machine:process_event("start")
@@ -263,14 +263,14 @@ function actions.start(args)
     local command = self.command
     local command_name = tables.concatenate(command)
 
-    debug_util.log("Running command: " .. command_name)
+    D.log("Running command: " .. command_name)
     local pid = async.spawn_and_get_lines(command,
         function(line)
             self:emit_signal("line", line)
         end,
         function(code, log)
-            debug_util.log("Command stopped: " .. command_name)
-            debug_util.log(log.stderr)
+            D.log("Command stopped: " .. command_name)
+            D.log(log.stderr)
             self.pid = nil
             running_pids[state_machine.name] = nil
             save_running_pids()
@@ -286,7 +286,7 @@ function actions.start(args)
         save_running_pids()
         state_machine:postpone_event("started")
     else
-        debug_util.log("Could not start command: " .. command_name)
+        D.log("Could not start command: " .. command_name)
         state_machine:postpone_event("stopped")
     end
 end
@@ -312,7 +312,7 @@ function actions.increment_tries(args)
 end
 
 function actions.print_giveup(args)
-    debug_util.log("Failed to start command: "
+    D.log("Failed to start command: "
         .. tables.concatenate(args.state_machine.obj.command))
 end
 

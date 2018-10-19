@@ -5,7 +5,7 @@ require("awful.autofocus")
 local naughty = require("naughty")
 local wibox = require("wibox")
 
-local debug_util = require("debug_util")
+local D = require("debug_util")
 local serialize = require("serialize")
 local tables = require("tables")
 local variables = require("variables")
@@ -35,9 +35,8 @@ local function get_screen_name(s)
 end
 
 local function move_to_screen(c, s)
-    debug_util.log("Moving client "
-            .. debug_util.get_client_debug_info(c)
-            .. " to screen " .. get_screen_name(s))
+    D.log("Moving client " .. D.get_client_debug_info(c)
+        .. " to screen " .. get_screen_name(s))
     local maximized = c.maximized
     c.maximized = false
     c:move_to_screen(s)
@@ -64,14 +63,14 @@ local function get_current_configuration(field)
 end
 
 local function save_configured_outputs()
-    -- debug_util.log("Saving screen configuration to file.")
+    D.log("Saving screen configuration to file.")
     serialize.save_to_file(configured_outputs_file, configured_outputs)
 end
 
 local function load_configured_outputs()
     configured_outputs = serialize.load_from_file(configured_outputs_file)
-    debug_util.log("Loading screen configuration from file.")
-    debug_util.log(debug_util.to_string_recursive(configured_outputs))
+    D.log("Loading screen configuration from file.")
+    D.log(D.to_string_recursive(configured_outputs))
 end
 
 local function set_client_configuration(client_configuration, c)
@@ -162,15 +161,15 @@ local function save_screen_layout()
     local layout = configured_screen_layout
 
     if not layout then
-        debug_util.log("No configuration yet. Not saving.")
+        D.log("No configuration yet. Not saving.")
         return
     end
 
-    debug_util.log("Saving screen layout for configuration: "
-            .. debug_util.to_string_recursive(layout))
+    D.log("Saving screen layout for configuration: "
+            .. D.to_string_recursive(layout))
 
     if not is_layout_up_to_date() then
-        debug_util.log("Screen layout is not up to date. Not saving.")
+        D.log("Screen layout is not up to date. Not saving.")
         return
     end
 
@@ -190,20 +189,19 @@ local function get_screens_by_name()
 end
 
 local function restore_clients(clients)
-    debug_util.log("Restoring client positions.")
+    D.log("Restoring client positions.")
     if not is_layout_up_to_date() then
-        debug_util.log(
-                "Screen layout is not up to date. Not restoring clients.")
+        D.log("Screen layout is not up to date. Not restoring clients.")
         return
     end
 
     local screens = get_screens_by_name()
     local to_move = {}
-    debug_util.log(debug_util.to_string_recursive(clients))
+    D.log(D.to_string_recursive(clients))
     for _, c in ipairs(client.get()) do
         local client_info = clients[tostring(c.window)]
-        debug_util.log("Client " .. debug_util.get_client_debug_info(c)
-                .. ": " .. debug_util.to_string_recursive(client_info))
+        D.log("Client " .. D.get_client_debug_info(c)
+                .. ": " .. D.to_string_recursive(client_info))
         if client_info then
             local screen_name = client_info.screen
             local target = {
@@ -222,7 +220,7 @@ local function restore_clients(clients)
         end
     end
     for c, target in pairs(to_move) do
-        debug_util.log("Moving: " .. debug_util.get_client_debug_info(c)
+        D.log("Moving: " .. D.get_client_debug_info(c)
                 .. " x=" .. c.x .. "->" .. tostring(target.x)
                 .. " y=" .. c.y .. "->" .. tostring(target.y)
                 .. " screen=" .. get_screen_name(target.screen))
@@ -241,7 +239,7 @@ end
 
 local function finalize_configuration(configuration, preferred_positions)
     if not is_layout_up_to_date() then
-        debug_util.log("Screen layout is not up to date.")
+        D.log("Screen layout is not up to date.")
         return false
     end
 
@@ -251,11 +249,11 @@ local function finalize_configuration(configuration, preferred_positions)
 
     for _, preferred in pairs(preferred_positions) do
         local c = preferred.client
-        debug_util.log("Preferred position of client "
-                .. debug_util.get_client_debug_info(c) .. ": "
-                .. debug_util.print_property(preferred, "x") .. " "
-                .. debug_util.print_property(preferred, "y") .. " "
-                .. debug_util.print_property(preferred, "maximized"))
+        D.log("Preferred position of client "
+                .. D.get_client_debug_info(c) .. ": "
+                .. D.print_property(preferred, "x") .. " "
+                .. D.print_property(preferred, "y") .. " "
+                .. D.print_property(preferred, "maximized"))
         local s = c.screen
         c.maximized = false
         c.x = preferred.x + s.geometry.x
@@ -266,11 +264,11 @@ local function finalize_configuration(configuration, preferred_positions)
     if configuration.system_tray_screen then
         local screens = get_screens_by_name()
         local system_tray_screen = configuration.system_tray_screen
-        debug_util.log("Moving system tray to " .. system_tray_screen)
+        D.log("Moving system tray to " .. system_tray_screen)
         wibox.widget.systray().set_screen(screens[system_tray_screen])
     else
         wibox.widget.systray().set_screen("primary")
-        debug_util.log("Moving system tray to primary screen")
+        D.log("Moving system tray to primary screen")
     end
     save_screen_layout()
     layout_changing = false
@@ -301,7 +299,7 @@ local function move_windows_to_screens(layout)
         end
     end
 
-    debug_util.log("Move windows to screens, target=" .. target_screen)
+    D.log("Move windows to screens, target=" .. target_screen)
 
     if not target_screen then
         return
@@ -309,18 +307,18 @@ local function move_windows_to_screens(layout)
 
     for _, c in ipairs(client.get()) do
         local screen_name = get_screen_name(c.screen)
-        debug_util.log(debug_util.get_client_debug_info(c)
+        D.log(D.get_client_debug_info(c)
                 .. ": x=" .. c.x .. " y=" .. c.y .. " screen=" .. screen_name)
         local current_screen = outputs[screen_name]
         if not current_screen or not current_screen.active then
-            debug_util.log("Need to move")
+            D.log("Need to move")
             to_move[c] = screens[target_screen]
         end
     end
 
     local preferred_positions = {}
     for c, s in pairs(to_move) do
-        debug_util.log(debug_util.get_client_debug_info(c))
+        D.log(D.get_client_debug_info(c))
         move_to_screen(c, s)
         awful.placement.no_offscreen(c)
         preferred_positions[tostring(c.window)] = {client=c,
@@ -332,8 +330,8 @@ end
 
 local function set_screen_layout(configuration)
     layout_changing = true
-    debug_util.log("Setting new screen layout: "
-            .. debug_util.to_string_recursive(configuration.layout))
+    D.log("Setting new screen layout: "
+            .. D.to_string_recursive(configuration.layout))
     configured_screen_layout = configuration.layout
     local preferred_positions = move_windows_to_screens(configuration.layout)
 
@@ -346,7 +344,7 @@ end
 
 local function apply_screen_layout(layout)
     local key = layout.key
-    debug_util.log("Reset screen layout for " .. key)
+    D.log("Reset screen layout for " .. key)
     local configuration = get_configuration(key)
     configuration.layout = layout
     configuration.clients = nil
@@ -370,19 +368,19 @@ local function prompt_layout_change(configuration, new_layout)
         timeout=30,
         actions={
             apply=function()
-                debug_util.log("Applying new configuration")
+                D.log("Applying new configuration")
                 dismiss_layout_change_notification()
                 apply_screen_layout(new_layout)
             end,
             revert=function()
-                debug_util.log("Reverting to old configuration")
+                D.log("Reverting to old configuration")
                 dismiss_layout_change_notification()
                 set_screen_layout(configuration)
             end,
         },
         destroy=function(reason)
             if reason == naughty.notificationClosedReason.expired then
-                debug_util.log("Timeout - reverting to old configuration")
+                D.log("Timeout - reverting to old configuration")
                 set_screen_layout(configuration)
             end
         end})
@@ -397,18 +395,18 @@ local function on_sreen_layout_detected(layout)
 
     if configured_screen_layout and configured_screen_layout.key == key then
         if is_layout_equal(layout.outputs, configuration.layout.outputs) then
-            -- debug_util.log("Screen configuration is unchanged.")
+            -- D.log("Screen configuration is unchanged.")
         else
-            debug_util.log("New screen layout detected.")
+            D.log("New screen layout detected.")
             prompt_layout_change(configuration, layout)
         end
     else
-        debug_util.log("Detected new screen configuration: " .. key)
+        D.log("Detected new screen configuration: " .. key)
         if configuration then
-            debug_util.log("Found saved configuration.")
+            D.log("Found saved configuration.")
             set_screen_layout(configuration)
         else
-            debug_util.log("No saved configuration found.")
+            D.log("No saved configuration found.")
             apply_screen_layout(layout)
         end
     end
@@ -416,7 +414,7 @@ local function on_sreen_layout_detected(layout)
 end
 
 local function detect_screens()
-    -- debug_util.log("Detect screens")
+    D.log("Detect screens")
     xrandr.get_outputs(on_sreen_layout_detected)
 end
 
@@ -427,13 +425,13 @@ local function check_screens()
 end
 
 local function print_debug_info()
-    naughty.notify({text=debug_util.to_string_recursive(configured_outputs),
+    naughty.notify({text=D.to_string_recursive(configured_outputs),
             timeout=20})
 end
 
 local function save_client_position(client_configuration, c)
-    debug_util.log("Save client position for "
-            .. debug_util.get_client_debug_info(c))
+    D.log("Save client position for "
+            .. D.get_client_debug_info(c))
     set_client_configuration(client_configuration, c)
     save_configured_outputs()
 end
@@ -443,7 +441,7 @@ local function manage_client(c)
     if client_configuration
             and saved_screen_layout == configured_screen_layout
             and not client_configuration[tostring(c.window)] then
-        debug_util.log("manage " .. debug_util.get_client_debug_info(c)
+        D.log("manage " .. D.get_client_debug_info(c)
                 .. " x=" .. c.x .. " y=" .. c.y)
         save_client_position(client_configuration, c)
     end

@@ -5,18 +5,18 @@ local locker = require('locker')
 local shutdown = require('shutdown')
 local command = require('command')
 local dbus_ = require("dbus_")
-local debug_util = require("debug_util")
+local D = require("debug_util")
 
 local commands = {}
 
 local function call_power_command(name)
     local command = commands[name]
     if command then
-        debug_util.log("Calling command: " .. command)
+        D.log("Calling command: " .. command)
         awful.spawn(command)
     else
         local message = "No command found for " .. name
-        debug_util.log(message)
+        D.log(message)
         naughty.notify({preset=naughty.config.presets.critical, text=message})
     end
 end

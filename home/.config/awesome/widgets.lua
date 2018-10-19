@@ -6,7 +6,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 local variables = require("variables")
 local power = require("power")
 local naughty = require("naughty")
-local debug_util = require("debug_util")
+local D = require("debug_util")
 
 local function property_toggler_menu_item(element, key, turn_on, turn_off)
     if element[key] then

@@ -1,6 +1,6 @@
-local debug_util = require("debug_util")
-debug_util.log("-----------------------------------")
-debug_util.log("Awesome starting up")
+local D = require("debug_util")
+D.log("-----------------------------------")
+D.log("Awesome starting up")
 
 -- Standard awesome library
 local gears = require("gears")
@@ -131,7 +131,7 @@ else
 end
 
 awful.screen.connect_for_each_screen(function(s)
-    debug_util.log("Got screen: " .. multimonitor.get_screen_name(s))
+    D.log("Got screen: " .. multimonitor.get_screen_name(s))
     -- Wallpaper
     wallpaper.set_wallpaper(s)
 
@@ -260,18 +260,18 @@ local globalkeys = awful.util.table.join(root.keys(),
             function()
                 local c = client.focus
                 naughty.notify({text=
-                        debug_util.print_property(c, "name") .. "\n"
-                        .. debug_util.print_property(c, "type") .. "\n"
-                        .. debug_util.print_property(c, "class") .. "\n"
-                        .. debug_util.print_property(c, "role") .. "\n"
-                        .. debug_util.print_property(c, "window") .. "\n"
-                        .. debug_util.print_property(c, "pid") .. "\n"
-                        .. debug_util.print_property(c, "x") .. "\n"
-                        .. debug_util.print_property(c, "y") .. "\n"
-                        .. debug_util.print_property(c, "width") .. "\n"
-                        .. debug_util.print_property(c, "height") .. "\n"
-                        .. debug_util.print_property(c, "fullscreen") .. "\n"
-                        .. debug_util.print_property(c, "maximized"),
+                        D.print_property(c, "name") .. "\n"
+                        .. D.print_property(c, "type") .. "\n"
+                        .. D.print_property(c, "class") .. "\n"
+                        .. D.print_property(c, "role") .. "\n"
+                        .. D.print_property(c, "window") .. "\n"
+                        .. D.print_property(c, "pid") .. "\n"
+                        .. D.print_property(c, "x") .. "\n"
+                        .. D.print_property(c, "y") .. "\n"
+                        .. D.print_property(c, "width") .. "\n"
+                        .. D.print_property(c, "height") .. "\n"
+                        .. D.print_property(c, "fullscreen") .. "\n"
+                        .. D.print_property(c, "maximized"),
                         timeout=30})
             end,
               {description = "print debug info", group = "client"}),
@@ -735,14 +735,13 @@ client.connect_signal("unmanage",
 
 screen.connect_signal("list",
         function()
-            debug_util.log("Screen configuration changed")
+            D.log("Screen configuration changed")
             multimonitor.detect_screens()
         end)
 
 client.connect_signal("manage",
         function(c)
-            debug_util.log("New client: "
-                    .. debug_util.get_client_debug_info(c))
+            D.log("New client: " .. D.get_client_debug_info(c))
             last_started_client = c
 
             if c.maximized then
@@ -825,4 +824,4 @@ locker.init({
     notify_time=30  -- seconds
 })
 
-debug_util.log("Initialization finished")
+D.log("Initialization finished")
