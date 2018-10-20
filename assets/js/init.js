@@ -33,9 +33,8 @@ $(document).ready(function(){
     $('.sidenav > li > a').click(function(event){
         event.preventDefault();//stop browser to take action for clicked anchor
 
-        let replace = $(this).text().trim().replace(/\s+/g, '-');
-        console.log(replace);
-        ga('set', 'page', replace);
+        let currentPage = $(this).text().trim().replace(/\s+/g, '-');
+        ga('set', 'page', currentPage);
         ga('send', 'pageview');
 
         location.hash = event.target.hash;
