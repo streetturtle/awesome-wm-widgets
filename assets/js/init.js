@@ -31,8 +31,12 @@ $(document).ready(function(){
     $('.sidenav').sidenav();
 
     $('.sidenav > li > a').click(function(event){
-
         event.preventDefault();//stop browser to take action for clicked anchor
+
+        let replace = $(this).text().trim().replace(/\s+/g, '-');
+        console.log(replace);
+        ga('set', 'page', replace);
+        ga('send', 'pageview');
 
         location.hash = event.target.hash;
 
@@ -73,3 +77,4 @@ if ('serviceWorker' in navigator) {
         console.log("Error registering service worker" + e);
     });
 }
+
