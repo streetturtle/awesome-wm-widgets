@@ -4,21 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.sidenav');
     var options = {};
     var instances = M.Sidenav.init(elems, options);
-
-    // var actived_nav = $('.sidenav > li.active');
-    // actived_nav.removeClass('active');
-
-    // var hash = window.location.hash;
-    // $(hash.replace('#', '') +':first').addClass('active');
-    //
-    // var active_tab_selector = $('.sidenav > li.active > a').attr('href');
-    // $(active_tab_selector).removeClass('active');
-    // $(active_tab_selector).addClass('hide ');
-    //
-    // var target_tab_selector = $(hash);
-    // $(target_tab_selector).removeClass('hide');
-    // $(target_tab_selector).addClass('active');
-
 });
 
 // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
@@ -30,10 +15,15 @@ document.addEventListener('DOMContentLoaded', function() {
 $(document).ready(function(){
     $('.sidenav').sidenav();
 
+    let currentPage = document.location.hash.replace('#tab', '').replace(/[\s+_]/g, '-').toLowerCase();
+    if (currentPage === 'main') currentPage = 'awesome-wm-widgets';
+    ga('set', 'page', currentPage);
+    ga('send', 'pageview');
+
     $('.sidenav > li > a').click(function(event){
         event.preventDefault();//stop browser to take action for clicked anchor
 
-        let currentPage = $(this).text().trim().replace(/\s+/g, '-');
+        let currentPage = $(this).text().trim().replace(/\s+/g, '-').toLowerCase();
         ga('set', 'page', currentPage);
         ga('send', 'pageview');
 
