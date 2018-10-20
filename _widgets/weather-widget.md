@@ -29,7 +29,7 @@ Note that widget uses the Arc icon theme, so it should be [installed](https://gi
     git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
     ```
 
-1. Require volumearc widget at the beginning of **rc.lua**:
+1. Require weather widget at the beginning of **rc.lua**:
 
     ```lua
     local weather_widget = require("awesome-wm-widgets.weather-widget.weather")
