@@ -12,7 +12,7 @@ changed to any other icon theme.
 
 # Installation
 
-[Install](https://github.com/horst3180/arc-icon-theme#installation) Arc icon theme and follow installation instructions of each widget.
+Follow installation instructions of each widget.
 
 <div class="row center">
 <a class="waves-effect waves-light btn-large" href="{{site.baseurl}}/widgets">get started</a>
