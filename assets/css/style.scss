@@ -105,6 +105,15 @@ footer {
   ul > li {
     list-style-type: disc;
   }
+
+  ul {
+    padding-left: 40px;
+  }
+
+  .highlighter-rouge {
+    width: 80%;
+    margin: auto;
+  }
 }
 
 .widget {
@@ -116,7 +125,6 @@ footer {
     height: 30px;
     margin-bottom: -3px;
   }
-
   .materialcss-icon {
     height: 22px;
     padding: 0 4px;
@@ -124,7 +132,6 @@ footer {
   .fa-spotify {
     padding: 0 6px;
   }
-
   .cprght {
     padding-top: 12px;
   }
