@@ -2,6 +2,8 @@ baseurl: /awesome-wm-widgets
 
 collections:
   main:
+  tips:
+  prompts:
   widgets:
 #    output: true
 

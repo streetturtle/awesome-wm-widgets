@@ -208,3 +208,22 @@ img.center-image {
   font-family: awesomewm-font;
   src: url({{ '/assets/fonts/awesomewm-font.ttf' | relative_url }});
 }
+
+.filename{
+  background-color: #292929;
+  color: lightgrey;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  margin: 0;
+  font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+  border-left: 0;
+  bottom: -2px;
+  position: relative;
+  padding: 0 0 2px 1em;
+  border-top: 1px solid #222;
+  border-right: 1px solid #222;
+  border-left: 1px solid #222;
+  p{
+    margin: 0;
+  }
+}

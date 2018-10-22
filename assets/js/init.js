@@ -1,23 +1,25 @@
 ---
 ---
+
+var hash = window.location.hash;
+
 document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.sidenav');
     var options = {};
     var instances = M.Sidenav.init(elems, options);
+
+    if (hash)
+        $('a[href=' + hash +']').click();
+    else
+        $('a[href=#tabMain]').click();
 });
-
-// Initialize collapsible (uncomment the lines below if you use the dropdown variation)
-// var collapsibleElem = document.querySelector('.collapsible');
-// var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
-
-// Or with jQuery
 
 $(document).ready(function(){
     $('.sidenav').sidenav();
 
     let currentPage = document.location.hash.replace('#tab', '').replace(/[\s+_]/g, '-').toLowerCase();
     if (currentPage === 'main') currentPage = 'awesome-wm-widgets';
-    ga('set', 'page', currentPage);
+    ga('set', 'page', currentPage);1
     ga('send', 'pageview');
 
     $('.sidenav > li > a').click(function(event){
@@ -30,10 +32,10 @@ $(document).ready(function(){
         location.hash = event.target.hash;
 
         //get displaying tab content jQuery selector
-        var active_tab_selector = $('.sidenav > li.active > a').attr('href');
+        let active_tab_selector = $('.sidenav > li.active > a').attr('href');
 
         //find actived navigation and remove 'active' css
-        var actived_nav = $('.sidenav > li.active');
+        let actived_nav = $('.sidenav > li.active');
         actived_nav.removeClass('active');
 
         //add 'active' css into clicked navigation
@@ -44,17 +46,10 @@ $(document).ready(function(){
         $(active_tab_selector).addClass('hide ');
 
         //show target tab content
-        var target_tab_selector = $(this).attr('href');
+        let target_tab_selector = $(this).attr('href');
         $(target_tab_selector).removeClass('hide');
         $(target_tab_selector).addClass('active fade-in');
-
-        // var instance = M.Sidenav.getInstance(document.querySelector('.sidenav'));
-        // instance.close();
     });
-
-    var hash = window.location.hash;
-    $('tab'+hash+':first').addClass('active');
-
 });
 
 particlesJS.load('particles-js', 'assets/js/particlesjs-config.json', function() {
