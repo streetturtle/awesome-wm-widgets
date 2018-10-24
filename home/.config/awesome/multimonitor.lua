@@ -63,7 +63,7 @@ local function get_current_configuration(field)
 end
 
 local function save_configured_outputs()
-    D.log(D.info, "Saving screen configuration to file.")
+    D.log(D.debug, "Saving screen configuration to file.")
     serialize.save_to_file(configured_outputs_file, configured_outputs)
 end
 
