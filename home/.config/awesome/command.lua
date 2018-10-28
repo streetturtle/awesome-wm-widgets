@@ -9,7 +9,10 @@ function command.start_if_not_running(command, args, path)
     async.spawn_and_get_output("pidof -x " .. command,
             function(stdout, result_code)
                 if result_code ~= 0 then
-                    local full_command = command .. " " .. args
+                    local full_command = command 
+                    if args then
+                        full_command = full_command .. " " .. args
+                    end
                     if path then
                         full_command = path .. "/" .. full_command
                     end
