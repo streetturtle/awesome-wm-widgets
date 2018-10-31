@@ -210,6 +210,8 @@ local function on_status(result, error_string)
     if logged_in then
         call_tresorit_cli("transfers", on_transfers)
     else
+        sync_widget.visible = false
+        sync_error_widget.visible = false
         commit()
     end
 end
