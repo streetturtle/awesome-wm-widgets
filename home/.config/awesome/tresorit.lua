@@ -14,20 +14,35 @@ local tresorit_command = command.get_available_command({
     {command="tresorit-cli", test="tresorit-cli status"}
 })
 
-local has_error = false
-
 local function call_tresorit_cli(command, callback)
-    local result = {}
+    local result = {lines={}, has_error=false}
+    D.log(D.debug, "Call tresorit-cli " .. command)
     async.spawn_and_get_lines(tresorit_command .. " --porcelain " .. command,
         function(line)
-            table.insert(result, gears.string.split(line, "\t"))
+            table.insert(result.lines, gears.string.split(line, "\t"))
         end,
         function()
             return has_error
         end,
         function()
+            local error_code = nil
+            local description = nil
+            local error_string = nil
+            for _, line in ipairs(result.lines) do
+                if line[1] == "Error code:" then
+                    error_code = line[2]
+                elseif line[1] == "Description:" then
+                    description = line[2]
+                end
+            end
+            if error_code then
+                result.has_error = true
+                error_string = error_code .. ": " .. description
+                D.log(D.debug, "Tresorit: error running command: " .. command)
+                D.log(D.debug, error_string)
+            end
             if callback then
-                has_error = callback(result)
+                callback(result.lines, error_string)
             end
         end)
 end
@@ -60,11 +75,27 @@ local error_widget = wibox.widget{
     widget=wibox.widget.imagebox,
 }
 
+local sync_widget = wibox.widget{
+    image=variables.config_dir .. "/sync.svg",
+    resize=true,
+    widget=wibox.widget.imagebox,
+    visible=false,
+}
+local sync_error_widget = wibox.widget{
+    image=variables.config_dir .. "/sync-error.svg",
+    resize=true,
+    widget=wibox.widget.imagebox,
+    visible=false,
+}
+
+
 tresorit.widget = wibox.widget{
     menu_widget,
     logout_widget,
     stopped_widget,
     error_widget,
+    sync_widget,
+    sync_error_widget,
     layout=wibox.layout.stack,
     visible=tresorit_command ~= nil
 }
@@ -74,49 +105,124 @@ local tooltip = awful.tooltip{
     text="-"
 }
 
+local tooltip_text = "-"
+
+local timer
+
+local function set_tooltip_text(s)
+    tooltip_text = s
+end
+
+local function append_tooltip_text(s)
+    tooltip_text = tooltip_text .. s
+end
+
+local function commit()
+    tooltip.text = tooltip_text
+    timer:start()
+end
+
+local function on_files(result, error_string)
+    if error_string then
+        append_tooltip_text("\n" .. error_string)
+        sync_error_widget.visible = true
+        commit()
+        return
+    end
+    status_text = ""
+    for _, line in ipairs(result) do
+        tresor = line[1]
+        file = line[2]
+        status = line[3]
+        progress = line[4]
+        if status then
+            status_text = status_text .. "\n" .. tresor .. "/" .. file .. ": "
+                .. status
+        end
+        if progress and progress ~= "-" then
+            status_text = status_text .. " " .. progress .. "%"
+        end
+    end
+    append_tooltip_text(status_text)
+    commit()
+end
+
+local function on_transfers(result, error_string)
+    if error_string then
+        append_tooltip_text("\n" .. error_string)
+        sync_error_widget.visible = true
+        commit()
+        return
+    end
+    local has_sync = false
+    local has_error = false
+    local status_text = ""
+    for _, line in ipairs(result) do
+        tresor = line[1]
+        status = line[2]
+        remaining = line[3]
+        errors = tonumber(line[4])
+        if status ~= "idle" then
+            has_sync = true
+            status_text = status_text .. "\n" .. tresor
+                .. ": Files remaining: " .. remaining
+        end
+        if errors ~= 0 then
+            has_error = true
+        end
+    end
+
+    sync_widget.visible = has_sync
+    sync_error_widget.visible = not has_sync and has_error
+    append_tooltip_text(status_text)
+    if has_sync or has_error then
+        call_tresorit_cli("transfers --files", on_files)
+    else
+        commit()
+    end
+end
+
+local function on_status(result, error_string)
+    -- D.log(D.debug, D.to_string_recursive(result))
+    local running = false
+    local logged_in = false
+    local error_code = nil
+    local description = nil
+    if error_string then
+        set_tooltip_text(error_string)
+    else
+        set_tooltip_text("")
+        for _, line in ipairs(result) do
+            if line[1] == "Tresorit daemon:" then
+                running = line[2] == "running"
+            elseif line[1] == "Logged in as:" then
+                logged_in = line[2] ~= "-"
+                set_tooltip_text(line[2])
+            end
+        end
+    end
+    D.log(D.debug, "Tresorit: running=" .. tostring(running)
+        .. " logged_in=" .. tostring(logged_in)
+        .. " error=" .. tostring(error_string))
+    stopped_widget.visible = not error_string and not running
+    logout_widget.visible = running and not logged_in
+    error_widget.visible = error_string ~= nil
+    if logged_in then
+        call_tresorit_cli("transfers", on_transfers)
+    else
+        commit()
+    end
+end
+
 if tresorit_command ~= nil then
     D.log(D.debug, "Has tresorit-cli")
-    local timer
     timer = gears.timer{
         timeout=2,
         single_shot=true,
         call_now=true,
         autostart=true,
         callback=function()
-            D.log(D.debug, "Tresorit: check status")
-            call_tresorit_cli("status",
-                function(result)
-                    -- D.log(D.debug, D.to_string_recursive(result))
-                    local running = false
-                    local logged_in = false
-                    local error_code = nil
-                    local description = nil
-                    for _, line in ipairs(result) do
-                        if line[1] == "Tresorit daemon:" then
-                            running = line[2] == "running"
-                        elseif line[1] == "Logged in as:" then
-                            logged_in = line[2] ~= "-"
-                            tooltip.text = line[2]
-                        elseif line[1] == "Error code:" then
-                            error_code = line[2]
-                        elseif line[1] == "Description:" then
-                            description = line[2]
-                        end
-                    end
-                    error = false
-                    if error_code then
-                        tooltip.text = error_code .. ": " .. description
-                        error = true
-                    end
-                    D.log(D.debug, "Tresorit: running=" .. tostring(running)
-                        .. " logged_in=" .. tostring(logged_in)
-                        .. " error=" .. tostring(error))
-                    stopped_widget.visible = not error and not running
-                    logout_widget.visible = running and not logged_in
-                    error_widget.visible = error
-                    timer:start()
-                    return error
-                end)
+            call_tresorit_cli("status", on_status)
         end}
 
     call_tresorit_cli("start")
