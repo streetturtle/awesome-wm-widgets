@@ -6,7 +6,7 @@ local wibox = require("wibox")
 local async = require("async")
 local command = require("command")
 local D = require("debug_util")
-local variables = require("variables")
+local variables = require("variables_base")
 
 local tresorit = {}
 
