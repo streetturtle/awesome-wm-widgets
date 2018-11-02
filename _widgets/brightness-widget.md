@@ -41,7 +41,7 @@ Then clone this repo under **~/.config/awesome/**:
 git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
 ```
 
-Require spotify-widget at the beginning of **rc.lua**:
+Require widget at the beginning of **rc.lua**:
 
 ```lua
 local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
