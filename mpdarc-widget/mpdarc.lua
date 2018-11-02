@@ -14,6 +14,7 @@ local wibox = require("wibox")
 local naughty = require("naughty")
 
 local GET_MPD_CMD = "mpc status"
+local TOGGLE_MPD_CMD = "mpc toggle"
 local PAUSE_MPD_CMD = "mpc pause"
 local STOP_MPD_CMD = "mpc stop"
 local NEXT_MPD_CMD = "mpc next"
@@ -66,7 +67,7 @@ local update_graphic = function(widget, stdout, _, _, _)
 end
 
 mpdarc:connect_signal("button::press", function(_, _, _, button)
-    if (button == 1) then awful.spawn("mpc toggle", false)      -- left click
+    if (button == 1) then awful.spawn(TOGGLE_MPD_CMD, false)      -- left click
     elseif (button == 2) then awful.spawn(STOP_MPD_CMD, false)
     elseif (button == 3) then awful.spawn(PAUSE_MPD_CMD, false)
     elseif (button == 4) then awful.spawn(NEXT_MPD_CMD, false)  -- scroll up
