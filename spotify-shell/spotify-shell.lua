@@ -23,7 +23,6 @@ local w = wibox {
     border_color = '#84bd00',
     max_widget_size = 500,
     ontop = true,
-    screen = mouse.screen,
     height = 50,
     width = 250,
     shape = function(cr, width, height)
@@ -55,7 +54,7 @@ w:setup {
 local function launch()
     w.visible = true
 
-    awful.placement.top(w, { margins = {top = 40}})
+    awful.placement.top(w, { margins = {top = 40}, parent = awful.screen.focused()})
     awful.prompt.run{
         prompt = "<b>Spotify Shell</b>: ",
         bg_cursor = '#84bd00',
