@@ -46,9 +46,15 @@ local mpdarc = wibox.widget {
     widget = wibox.container.arcchart
 }
 
-local mpdarc_widget = wibox.container.mirror(mpdarc, { horizontal = true })
+local mpdarc_icon_widget = wibox.container.mirror(mpdarc, { horizontal = true })
+local mpdarc_current_song_widget = wibox.widget {
+    id = 'current_song',
+    widget = wibox.widget.textbox,
+    font = 'Play 9'
+}
 
 local update_graphic = function(widget, stdout, _, _, _)
+    local current_song = string.gmatch(stdout, "[^\r\n]+")()
     stdout = string.gsub(stdout, "\n", "")
     local mpdpercent = string.match(stdout, "(%d%d)%%")
     local mpdstatus = string.match(stdout, "%[(%a+)%]")
@@ -56,13 +62,16 @@ local update_graphic = function(widget, stdout, _, _, _)
       icon.image = PLAY_ICON_NAME
       widget.colors = { beautiful.widget_main_color }
       widget.value = tonumber((100-mpdpercent)/100)
-    elseif mpdstatus == "paused" then 
+      mpdarc_current_song_widget.markup = current_song
+    elseif mpdstatus == "paused" then
       icon.image = PAUSE_ICON_NAME
       widget.colors = { beautiful.widget_main_color }
       widget.value = tonumber(mpdpercent/100)
+      mpdarc_current_song_widget.markup = current_song
     else
       icon.image = STOP_ICON_NAME
       widget.colors = { beautiful.widget_red }
+      mpdarc_current_song_widget.markup = ""
     end
 end
 
@@ -98,4 +107,9 @@ mpdarc:connect_signal("mouse::leave", function() naughty.destroy(notification) e
 
 watch(GET_MPD_CMD, 1, update_graphic, mpdarc)
 
+local mpdarc_widget = {
+    mpdarc_icon_widget,
+    mpdarc_current_song_widget,
+    layout = wibox.layout.align.horizontal,
+    }
 return mpdarc_widget
