@@ -28,10 +28,8 @@ RES=$(xrandr --current | grep '*' | uniq | awk '{print $1}')
 RNDM=$(uuidgen)
 IMAGE="/tmp/i3lock$RNDM.png"
 
-if [[ $1 != "" ]]; then
-    TEXT=$1
-fi
 
-ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -grab_y 20 -y -i $DISPLAY -filter_complex "boxblur=5" -vframes 1 $IMAGE
+ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -grab_y 20 -y -i :0.0+0,20 -filter_complex "boxblur=9" -vframes 1 $IMAGE
+#ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -grab_y 20 -y -i :0.0+0,20 -filter_complex "boxblur=9" -vframes 1 "/tmp/i3lock$(uuidgen).png"
 
 echo $RNDM

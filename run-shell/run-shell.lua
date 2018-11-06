@@ -15,9 +15,9 @@ local gears = require("gears")
 local naughty = require("naughty")
 local completion = require("awful.completion")
 
-local spotify_shell = awful.widget.prompt()
+local run_shell = awful.widget.prompt()
 
-local w = wibox{
+local w = wibox {
     --    bg = '#1e252c55',
     --    bgimage = '/home/pmakhov/.config/awesome/themes/awesome-darkspace/somecity.jpg',
     visible = false,
@@ -37,23 +37,37 @@ local w = wibox{
 w:setup {
     {
         {
-            text = '',
-            font = 'Play 20',
-            widget = wibox.widget.textbox,
+            {
+                {
+                    text = '',
+                    font = 'Play 18',
+                    widget = wibox.widget.textbox,
+                },
+                id = 'icon',
+                top = 9,
+                left = 10,
+                layout = wibox.container.margin
+            },
+            {
+                --        {
+                layout = wibox.container.margin,
+                left = 10,
+                run_shell,
+            },
+            id = 'left',
+            layout = wibox.layout.fixed.horizontal
         },
-        id = 'icon',
-        top = 9,
-        left = 10,
-        layout = wibox.container.margin
+        widget = wibox.container.background,
+        bg = '#333333',
+        shape = function(cr, width, height)
+            gears.shape.rounded_rect(cr, width, height, 3)
+        end,
+        shape_border_color = '#74aeab',
+        shape_border_width = 1,
+        forced_width = 200,
+        forced_height = 50
     },
-    {
-        --        {
-        layout = wibox.container.margin,
-        left = 10,
-        spotify_shell,
-    },
-    id = 'left',
-    layout = wibox.layout.fixed.horizontal
+    layout = wibox.container.place
 }
 
 local function launch(s)
@@ -61,22 +75,21 @@ local function launch(s)
     awful.spawn.with_line_callback(os.getenv("HOME") .. "/.config/awesome/awesome-wm-widgets/run-shell/scratch_6.sh", {
         stdout = function(line)
             w.visible = true
---            naughty.notify { text = "LINE:" .. line }
-            w.bgimage = '/tmp/i3lock' .. line.. '.png'
+            w.bgimage = '/tmp/i3lock' .. line .. '.png'
             awful.placement.top(w, { margins = { top = 20 }, parent = awful.screen.focused() })
             awful.prompt.run {
                 prompt = "<b>Run</b>: ",
                 bg_cursor = '#74aeab',
-                textbox = spotify_shell.widget,
+                textbox = run_shell.widget,
                 completion_callback = completion.shell,
                 exe_callback = function(...)
-                    spotify_shell:spawn_and_handle_error(...)
+                    run_shell:spawn_and_handle_error(...)
                 end,
                 history_path = gfs.get_cache_dir() .. "/history",
                 done_callback = function()
-                    w.bgimage=''
+                    --                    w.bgimage=''
                     w.visible = false
-                    awful.spawn(os.getenv("HOME") .. '/.IntelliJIdea2018.2/config/scratches/scratch_7.sh')
+                    awful.spawn([[bash -c 'rm -f /tmp/i3lock*']])
                 end
             }
         end,
@@ -84,25 +97,6 @@ local function launch(s)
             naughty.notify { text = "ERR:" .. line }
         end,
     })
-
-    --    w.bgimage = '/home/pmakhov/.config/awesome/themes/awesome-darkspace/somecity.jpg'
-    --    w.bg = '#333333',
-
-    --    w.visible = true
-    --    awful.placement.top(w, { margins = { top = 400 }, parent = awful.screen.focused() })
-    --    awful.prompt.run {
-    --        prompt = "<b>Run</b>: ",
-    --        bg_cursor = '#74aeab',
-    --        textbox = spotify_shell.widget,
-    --        completion_callback = completion.shell,
-    --        exe_callback = function(...)
-    --            spotify_shell:spawn_and_handle_error(...)
-    --        end,
-    --        history_path = gfs.get_cache_dir() .. "/history",
-    --        done_callback = function()
-    --            w.visible = false
-    --        end
-    --    }
 end
 
 return {
