@@ -70,8 +70,12 @@ local update_graphic = function(widget, stdout, _, _, _)
       mpdarc_current_song_widget.markup = current_song
     else
       icon.image = STOP_ICON_NAME
-      widget.colors = { beautiful.widget_red }
-      mpdarc_current_song_widget.markup = ""
+      if string.len(stdout) == 0 then -- MPD is not running
+        mpdarc_current_song_widget.markup = "MPD is not running"
+      else
+        widget.colors = { beautiful.widget_red }
+        mpdarc_current_song_widget.markup = ""
+      end
     end
 end
 
