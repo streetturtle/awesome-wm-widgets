@@ -31,18 +31,17 @@ function wallpaper.choose_wallpaper()
 
     D.log(D.debug, "Choosing wallpapers")
     local wallpapers = {}
-    async.spawn_and_get_lines({"find", wallpapers_dir, "-type", "f"},
-        function(line)
+    async.spawn_and_get_lines({"find", wallpapers_dir, "-type", "f"}, {
+        line=function(line)
             table.insert(wallpapers, line)
         end,
-        function() end,
-        function()
+        done=function()
             beautiful.wallpaper = wallpapers[math.random(#wallpapers)]
             D.log(D.debug, "Chosen wallpaper: " .. beautiful.wallpaper)
             for s in screen do
                 wallpaper.set_wallpaper(s)
             end
-        end)
+        end})
 end
 
 function wallpaper.set_wallpaper(s)

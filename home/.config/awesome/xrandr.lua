@@ -63,8 +63,8 @@ function xrandr.get_outputs(callback)
     local minx = nil
     local miny = nil
     async.spawn_and_get_lines(
-            "xrandr -q --current",
-            function(line)
+            "xrandr -q --current", {
+            line=function(line)
                 -- D.log("-> " .. line)
                 local output, primary, active, width, height, dx, dy, orientation =
                         rex.match(line,
@@ -102,8 +102,7 @@ function xrandr.get_outputs(callback)
                     end
                 end
             end,
-            nil,
-            function()
+            done=function()
                 -- debug_util.log("xrandr finished")
                 for _, layout in pairs(result) do
                     if layout.dx then
@@ -117,7 +116,7 @@ function xrandr.get_outputs(callback)
                     outputs=result,
                     arguments=get_xrandr_argument(result),
                     key=get_output_configuration(result)})
-            end)
+            end})
 end
 
 return xrandr

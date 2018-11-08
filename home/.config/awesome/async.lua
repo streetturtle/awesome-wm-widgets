@@ -47,29 +47,28 @@ function async.spawn_and_get_output(command, callback)
     end)
 end
 
-function async.spawn_and_get_lines(command, callback, finish_callback,
-        done_callback)
+function async.spawn_and_get_lines(command, callbacks)
     local log = {stderr=""}
     local done = nil
-    if done_callback then
+    if callbacks.done then
         done =
             function(line)
-                async.safe_call(function() done_callback(line) end)
+                async.safe_call(function() callbacks.done(line) end)
             end
     end
     local command_str = D.to_string_recursive(command)
     return handle_start_command(command_str, function()
         return awful.spawn.with_line_callback(command, {
                 stdout=function(line)
-                    async.safe_call(function() callback(line) end)
+                    async.safe_call(function() callbacks.line(line) end)
                 end,
                 stderr=function(line)
                     log.stderr = log.stderr .. line .. "\n"
                 end,
                 exit=function(reason, code)
                     local result = nil
-                    if finish_callback then
-                        result = finish_callback(code, log)
+                    if callbacks.finish then
+                        result = callbacks.finish(code, log)
                     end
                     if not result and code ~= 0 then
                         naughty.notify({
@@ -119,14 +118,15 @@ function async.run_command_continuously(command, line_callback, start_callback,
     async.run_continuously(
             function(callback)
                 D.log(D.debug, "Running command: " .. command_str)
-                local pid = async.spawn_and_get_lines(command, line_callback,
-                        function()
+                local pid = async.spawn_and_get_lines(command, {
+                        line=line_callback,
+                        finish=function()
                             D.log(D.debug, "Command stopped: " .. command_str)
                             if not finish_callback() then
                                 return callback()
                             end
                             return true
-                        end)
+                        end})
                 if type(pid) == "string" then
                     naughty.notify({
                         preset=naughty.config.presets.critical,

@@ -17,14 +17,14 @@ local tresorit_command = command.get_available_command({
 local function call_tresorit_cli(command, callback)
     local result = {lines={}, has_error=false}
     D.log(D.debug, "Call tresorit-cli " .. command)
-    async.spawn_and_get_lines(tresorit_command .. " --porcelain " .. command,
-        function(line)
+    async.spawn_and_get_lines(tresorit_command .. " --porcelain " .. command, {
+        line=function(line)
             table.insert(result.lines, gears.string.split(line, "\t"))
         end,
-        function()
+        finish=function()
             return has_error
         end,
-        function()
+        done=function()
             local error_code = nil
             local description = nil
             local error_string = nil
@@ -44,7 +44,7 @@ local function call_tresorit_cli(command, callback)
             if callback then
                 callback(result.lines, error_string)
             end
-        end)
+        end})
 end
 
 local menu_widget = awful.widget.launcher{

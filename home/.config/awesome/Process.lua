@@ -264,11 +264,11 @@ function actions.start(args)
     local command_name = tables.concatenate(command)
 
     D.log(D.info, "Running command: " .. command_name)
-    local pid = async.spawn_and_get_lines(command,
-        function(line)
+    local pid = async.spawn_and_get_lines(command, {
+        line=function(line)
             self:emit_signal("line", line)
         end,
-        function(code, log)
+        finish=function(code, log)
             D.log(D.warning, "Command stopped: " .. command_name)
             D.log(D.debug, log.stderr)
             self.pid = nil
@@ -277,9 +277,9 @@ function actions.start(args)
             args.state_machine:postpone_event("stopped")
             return true
         end,
-        function()
+        done=function()
             self:emit_signal("output_done")
-        end)
+        end})
     if pid and type(pid) == "number" then
         self.pid = pid
         running_pids[state_machine.name] = pid
