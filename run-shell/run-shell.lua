@@ -1,8 +1,7 @@
 -------------------------------------------------
--- Spotify Shell for Awesome Window Manager
--- Simplifies interaction with Spotify for Linux
+-- Run Shell for Awesome Window Manager
 -- More details could be found here:
--- https://github.com/streetturtle/awesome-wm-widgets/tree/master/spotify-shell
+-- https://github.com/streetturtle/awesome-wm-widgets/tree/master/run-shell
 
 -- @author Pavel Makhov
 -- @copyright 2018 Pavel Makhov
@@ -18,20 +17,10 @@ local completion = require("awful.completion")
 local run_shell = awful.widget.prompt()
 
 local w = wibox {
-    --    bg = '#1e252c55',
-    --    bgimage = '/home/pmakhov/.config/awesome/themes/awesome-darkspace/somecity.jpg',
     visible = false,
-    border_width = 1,
-    border_color = '#333333',
-    max_widget_size = 500,
     ontop = true,
-    --    height = 50,
-    --    width = 250,
     height = 1060,
-    width = 1920,
-    shape = function(cr, width, height)
-        gears.shape.rounded_rect(cr, width, height, 3)
-    end
+    width = 1920
 }
 
 w:setup {
@@ -49,10 +38,9 @@ w:setup {
                 layout = wibox.container.margin
             },
             {
-                --        {
-                layout = wibox.container.margin,
-                left = 10,
                 run_shell,
+                left = 10,
+                layout = wibox.container.margin,
             },
             id = 'left',
             layout = wibox.layout.fixed.horizontal
@@ -71,11 +59,10 @@ w:setup {
 }
 
 local function launch(s)
-
-    awful.spawn.with_line_callback(os.getenv("HOME") .. "/.config/awesome/awesome-wm-widgets/run-shell/scratch_6.sh", {
+    awful.spawn.with_line_callback(os.getenv("HOME") .. "/.config/awesome/awesome-wm-widgets/run-shell/scratch_6.sh " .. tostring(awful.screen.focused().geometry.x), {
         stdout = function(line)
             w.visible = true
-            w.bgimage = '/tmp/i3lock' .. line .. '.png'
+            w.bgimage = '/tmp/i3lock-' .. line .. '.png'
             awful.placement.top(w, { margins = { top = 20 }, parent = awful.screen.focused() })
             awful.prompt.run {
                 prompt = "<b>Run</b>: ",

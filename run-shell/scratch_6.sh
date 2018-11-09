@@ -24,12 +24,17 @@
 
 # --------------------------
 
-RES=$(xrandr --current | grep '*' | uniq | awk '{print $1}')
+#RES=$(xrandr --current | grep '*' | uniq | awk '{print $1}')
 RNDM=$(uuidgen)
-IMAGE="/tmp/i3lock$RNDM.png"
+IMAGE="/tmp/i3lock-$RNDM.png"
 
 
-ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -grab_y 20 -y -i :0.0+0,20 -filter_complex "boxblur=9" -vframes 1 $IMAGE
-#ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -grab_y 20 -y -i :0.0+0,20 -filter_complex "boxblur=9" -vframes 1 "/tmp/i3lock$(uuidgen).png"
+#ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -y -i :0.0+0,20 -filter_complex "boxblur=9" -vframes 1 $IMAGE
+#ffmpeg  -loglevel panic -f x11grab -video_size 1920x1060 -y -i :0.0+0,20 -vf frei0r=pixeliz0r -vframes 1 $IMAGE
+ffmpeg  -loglevel panic -f x11grab -video_size 1920x1060 -y -i :0.0+$1,20 -vf frei0r=pixeliz0r -vframes 1 $IMAGE
+#ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -y -i :0.0+0,20 -filter_complex "boxblur=9" -vframes 1 "/tmp/i3lock$(uuidgen).png"
 
 echo $RNDM
+
+#lock screen
+#ffmpeg  -loglevel panic -f x11grab -video_size $(xdpyinfo | grep dimensions | sed -r 's/^[^0-9]*([0-9]+x[0-9]+).*$/\1/') -y -i :0.0+$1,20 -vf frei0r=pixeliz0r -vframes 1 /tmp/test.png ; i3lock -i /tmp/test.png
