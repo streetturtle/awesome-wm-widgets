@@ -14,7 +14,29 @@ local tresorit_command = command.get_available_command({
     {command="tresorit-cli", test="tresorit-cli status"}
 })
 
-local function call_tresorit_cli(command, callback)
+local function on_command_finished(result, callback)
+    local error_code = nil
+    local description = nil
+    local error_string = nil
+    for _, line in ipairs(result.lines) do
+        if line[1] == "Error code:" then
+            error_code = line[2]
+        elseif line[1] == "Description:" then
+            description = line[2]
+        end
+    end
+    if error_code then
+        result.has_error = true
+        error_string = error_code .. ": " .. description
+        D.log(D.debug, "Tresorit: error running command: " .. command)
+        D.log(D.debug, error_string)
+    end
+    if callback then
+        callback(result.lines, error_string)
+    end
+end
+
+local function call_tresorit_cli(command, callback, error_handler)
     local result = {lines={}, has_error=false}
     D.log(D.debug, "Call tresorit-cli " .. command)
     async.spawn_and_get_lines(tresorit_command .. " --porcelain " .. command, {
@@ -25,24 +47,19 @@ local function call_tresorit_cli(command, callback)
             return has_error
         end,
         done=function()
-            local error_code = nil
-            local description = nil
-            local error_string = nil
-            for _, line in ipairs(result.lines) do
-                if line[1] == "Error code:" then
-                    error_code = line[2]
-                elseif line[1] == "Description:" then
-                    description = line[2]
+            local res, err = xpcall(
+                function() on_command_finished(result, callback) end,
+                debug.traceback)
+            if not res then
+                local handled = nil
+                if error_handler then
+                    handled = error_handler(err)
                 end
-            end
-            if error_code then
-                result.has_error = true
-                error_string = error_code .. ": " .. description
-                D.log(D.debug, "Tresorit: error running command: " .. command)
-                D.log(D.debug, error_string)
-            end
-            if callback then
-                callback(result.lines, error_string)
+                if not handled then
+                    naughty.notify({
+                        preset=naughty.config.presets.critical,
+                        title="Error", text=err})
+                end
             end
         end})
 end
@@ -176,7 +193,7 @@ local function on_transfers(result, error_string)
     sync_error_widget.visible = not has_sync and has_error
     append_tooltip_text(status_text)
     if has_sync or has_error then
-        call_tresorit_cli("transfers --files", on_files)
+        call_tresorit_cli("transfers --files", on_files, commit)
     else
         commit()
     end
@@ -208,7 +225,7 @@ local function on_status(result, error_string)
     logout_widget.visible = running and not logged_in
     error_widget.visible = error_string ~= nil
     if logged_in then
-        call_tresorit_cli("transfers", on_transfers)
+        call_tresorit_cli("transfers", on_transfers, commit)
     else
         sync_widget.visible = false
         sync_error_widget.visible = false
@@ -224,7 +241,7 @@ if tresorit_command ~= nil then
         call_now=true,
         autostart=true,
         callback=function()
-            call_tresorit_cli("status", on_status)
+            call_tresorit_cli("status", on_status, commit)
         end}
 
     call_tresorit_cli("start")
