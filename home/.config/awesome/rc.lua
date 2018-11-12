@@ -415,6 +415,15 @@ local globalkeys = awful.util.table.join(root.keys(),
             {description="focus last started client", group="client"})
 )
 
+local function has_no_transient(target)
+    for _, c in pairs(client.get()) do
+        if c.transient_for == target then
+            return false
+        end
+    end
+    return true
+end
+
 local clientkeys = awful.util.table.join(
     awful.key({ modkey,           }, "f",
         function (c)
@@ -458,14 +467,14 @@ local clientkeys = awful.util.table.join(
     awful.key({ "Mod1",         }, "Tab", function(c)
         cyclefocus.cycle(1, {
                 modifier="Alt_L",
-                cycle_filters={cyclefocus.filters.same_screen},
+                cycle_filters={cyclefocus.filters.same_screen, has_no_transient},
                 initiating_client=c
             })
     end),
     awful.key({ "Mod1", "Shift" }, "Tab", function(c)
         cyclefocus.cycle(-1, {
                 modifier="Alt_L",
-                cycle_filters={cyclefocus.filters.same_screen},
+                cycle_filters={cyclefocus.filters.same_screen, has_no_transient},
                 initiating_client=c
             })
     end),

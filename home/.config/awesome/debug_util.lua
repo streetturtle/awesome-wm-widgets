@@ -54,7 +54,9 @@ function D.get_client_debug_info(c)
     local class = c.class or ""
     local name = c.name or ""
     local instance = c.instance or ""
-    return c.window .. " - " .. class .. " [" .. instance .. "] - " .. name
+    local pid = c.pid or ""
+    return c.window .. "[" .. pid .. "] - " .. class
+        .. " [" .. instance .. "] - " .. name
 end
 
 local log_file = io.open("awesome.log", "a")
