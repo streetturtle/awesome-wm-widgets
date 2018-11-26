@@ -14,7 +14,7 @@ local tresorit_command = command.get_available_command({
     {command="tresorit-cli", test="tresorit-cli status"}
 })
 
-local function on_command_finished(result, callback)
+local function on_command_finished(command, result, callback)
     local error_code = nil
     local description = nil
     local error_string = nil
@@ -44,11 +44,11 @@ local function call_tresorit_cli(command, callback, error_handler)
             table.insert(result.lines, gears.string.split(line, "\t"))
         end,
         finish=function()
-            return has_error
+            return result.has_error
         end,
         done=function()
             local res, err = xpcall(
-                function() on_command_finished(result, callback) end,
+                function() on_command_finished(command, result, callback) end,
                 debug.traceback)
             if not res then
                 local handled = nil
