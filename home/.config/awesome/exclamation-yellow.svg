@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   sodipodi:docname="exclamation-yellow.svg"
+   viewBox="0 0 135.79465 141.2264"
+   sodipodi:version="0.32"
+   version="1.0"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
+   width="135.79465"
+   height="141.22639">
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     guidetolerance="10.0"
+     pagecolor="#ffffff"
+     gridtolerance="10.0"
+     width="700px"
+     inkscape:zoom="1.0132605"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     inkscape:current-layer="svg2"
+     inkscape:cx="335.79981"
+     inkscape:cy="154.65535"
+     inkscape:window-y="0"
+     inkscape:window-x="1920"
+     inkscape:window-height="1038"
+     height="200px"
+     inkscape:pageopacity="0.0"
+     inkscape:window-width="1918"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="1" />
+  <defs
+     id="defs5">
+    <radialGradient
+       id="radialGradient2257"
+       gradientUnits="userSpaceOnUse"
+       cy="191.78999"
+       cx="191.85001"
+       gradientTransform="matrix(-0.053101,0.87269,-0.60077,-0.036556,599.44,-35.24)"
+       r="109.16"
+       inkscape:collect="always">
+      <stop
+         id="stop8442"
+         style="stop-color:#faed21"
+         offset="0" />
+      <stop
+         id="stop8444"
+         style="stop-color:#faed21;stop-opacity:0"
+         offset="1" />
+    </radialGradient>
+    <linearGradient
+       id="linearGradient2259"
+       y2="593.92999"
+       gradientUnits="userSpaceOnUse"
+       x2="324.76001"
+       gradientTransform="matrix(0.27544,0,0,0.27544,366.17,-0.75118)"
+       y1="230.75"
+       x1="355.04999"
+       inkscape:collect="always">
+      <stop
+         id="stop3197"
+         style="stop-color:#ffffff;stop-opacity:.37441"
+         offset="0" />
+      <stop
+         id="stop3199"
+         style="stop-color:#ffffff;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+  </defs>
+  <g
+     id="g1984"
+     transform="translate(-399.3317,-47.434202)">
+    <path
+       id="path2256"
+       sodipodi:nodetypes="csccccss"
+       style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.55087"
+       d="m 476.05,54.802 c -5,-7.182 -17,-9.496 -20.89,-4.197 -20.42,27.807 -54.53,107.3 -52.6,107.52 -1.44,4.15 -4.67,12.97 -1.8,18.2 9.26,10.56 16.66,14.43 30.47,10.64 l 95.66,-24.65 c 9.05,-3.36 9.55,-13.74 5.64,-20.04 -14.86,-23.98 -38.43,-61.524 -56.48,-87.468 z"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path2258"
+       sodipodi:nodetypes="ccsccsccsc"
+       style="fill:url(#radialGradient2257);fill-rule:evenodd"
+       d="m 467.08,65.408 c -18.59,33.512 -31.91,67.022 -46.07,100.53 -1.3,2.6 -1.63,6.89 -0.39,8.61 1.23,1.72 5.75,2.08 9.83,1.22 l 90.58,-21.66 c 3.1,-0.74 6.26,-1.78 7.01,-3.57 0.75,-1.8 -1.1,-4.79 -2.51,-7.18 -15.37,-24.97 -31.15,-50.366 -49.27,-78.091 -1.52,-2.414 -3.35,-3.891 -4.97,-3.815 -1.61,0.076 -3.14,1.852 -4.21,3.954 z"
+       inkscape:connector-curvature="0" />
+    <g
+       id="g2260"
+       style="fill:#7b751a"
+       transform="matrix(0.4982,0,0,0.4982,369.49,24.397)">
+      <path
+         id="path2262"
+         sodipodi:nodetypes="ccccc"
+         style="fill:#7b751a;fill-rule:evenodd"
+         d="m 220.84,118.51 c -8.09,2.99 -18.85,4.21 -32.53,3.48 9.04,31.26 14.02,65.31 15.69,96.57 6.98,0.94 13.01,0 18.12,-2.78 2.31,-31.26 3.84,-64.17 -1.28,-97.27 z"
+         inkscape:connector-curvature="0" />
+      <path
+         id="path2264"
+         style="fill:#7b751a;fill-rule:evenodd"
+         d="m 216.89,229.93 c -7.01,-1.13 -13.77,4.33 -15.06,12.15 -1.3,7.83 3.35,15.09 10.37,16.21 7.01,1.13 13.74,-4.3 15.03,-12.13 1.3,-7.82 -3.32,-15.1 -10.34,-16.23 z"
+         inkscape:connector-curvature="0" />
+    </g>
+    <path
+       id="path2266"
+       sodipodi:nodetypes="ccccc"
+       style="fill:#ffffff;fill-rule:evenodd"
+       d="m 481.51,85.432 c -4.03,1.49 -9.39,2.097 -16.21,1.733 4.51,15.575 6.99,32.535 7.82,48.115 3.48,0.47 6.48,0 9.03,-1.39 1.15,-15.57 1.91,-31.97 -0.64,-48.458 z"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path2268"
+       style="fill:#ffffff;fill-rule:evenodd"
+       d="m 479.54,140.94 c -3.49,-0.56 -6.86,2.16 -7.5,6.06 -0.65,3.89 1.67,7.51 5.16,8.07 3.5,0.56 6.85,-2.14 7.49,-6.04 0.65,-3.9 -1.65,-7.53 -5.15,-8.09 z"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path2270"
+       sodipodi:nodetypes="ccsccccsc"
+       style="fill:url(#linearGradient2259);fill-rule:evenodd"
+       d="m 468.7,71.534 c -15.89,30.836 -28.73,61.676 -41.95,92.506 -1.07,2.15 -2.74,5.57 -1.72,6.99 1.02,1.42 1.95,1.09 5.33,0.37 l 28.54,-7.18 c -3.59,-26.54 -1.93,-65.247 27.62,-76.024 L 476.3,71.419 c -1.26,-1.997 -2.78,-3.218 -4.11,-3.155 -1.34,0.063 -2.6,1.532 -3.49,3.27 z"
+       inkscape:connector-curvature="0" />
+  </g>
+  <metadata
+     id="metadata101">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Exclamation icons</dc:title>
+        <dc:date>2006-11-29T15:22:33</dc:date>
+        <dc:description>a series of exclamation icons</dc:description>
+        <dc:source>https://openclipart.org/detail/2484/exclamation-icons-by-molumen-2484</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>molumen</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>aqua</rdf:li>
+            <rdf:li>attention</rdf:li>
+            <rdf:li>black</rdf:li>
+            <rdf:li>exclamation</rdf:li>
+            <rdf:li>glossy</rdf:li>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>series</rdf:li>
+            <rdf:li>sign</rdf:li>
+            <rdf:li>triangle</rdf:li>
+            <rdf:li>yellow</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

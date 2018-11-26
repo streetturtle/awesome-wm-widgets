@@ -87,6 +87,12 @@ local logout_widget = wibox.widget{
     widget=wibox.widget.imagebox,
 }
 
+local restricted_widget = wibox.widget{
+    image=variables.config_dir .. "/exclamation-yellow.svg",
+    resize=true,
+    widget=wibox.widget.imagebox,
+}
+
 local error_widget = wibox.widget{
     image=variables.config_dir .. "/exclamation-red.svg",
     resize=true,
@@ -111,6 +117,7 @@ tresorit.widget = wibox.widget{
     menu_widget,
     logout_widget,
     stopped_widget,
+    restricted_widget,
     error_widget,
     sync_widget,
     sync_error_widget,
@@ -206,6 +213,7 @@ local function on_status(result, error_string)
     local logged_in = false
     local error_code = nil
     local description = nil
+    local restriction_state = nil
     if error_string then
         set_tooltip_text(error_string)
     else
@@ -216,6 +224,8 @@ local function on_status(result, error_string)
             elseif line[1] == "Logged in as:" then
                 logged_in = line[2] ~= "-"
                 set_tooltip_text(line[2])
+            elseif line[1] == "Restriction state:" then
+                restriction_state = line[2]
             end
         end
     end
@@ -225,9 +235,14 @@ local function on_status(result, error_string)
     stopped_widget.visible = not error_string and not running
     logout_widget.visible = running and not logged_in
     error_widget.visible = error_string ~= nil
-    if logged_in then
+    restricted_widget.visible = restriction_state ~= nil
+
+    if logged_in and not restriction_state then
         call_tresorit_cli("transfers", on_transfers, commit)
     else
+        if restriction_state then
+            append_tooltip_text('\n' .. restriction_state)
+        end
         sync_widget.visible = false
         sync_error_widget.visible = false
         commit()
