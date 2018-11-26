@@ -180,27 +180,32 @@ local function on_transfers(result, error_string)
         return
     end
     local has_sync = false
-    local has_error = false
+    local has_tresor_error = false
+    local has_file_error = false
     local status_text = ""
     for _, line in ipairs(result) do
         tresor = line[1]
         status = line[2]
         remaining = line[3]
         errors = tonumber(line[4])
-        if status ~= "idle" then
+        if status == "syncing" then
             has_sync = true
             status_text = status_text .. "\n" .. tresor
                 .. ": Files remaining: " .. remaining
+        elseif status ~= "idle" then
+            status_text = status_text .. "\n" .. tresor .. ": " .. status
+            has_tresor_error = true
         end
         if errors ~= 0 then
-            has_error = true
+            has_file_error = true
         end
     end
 
     sync_widget.visible = has_sync
-    sync_error_widget.visible = not has_sync and has_error
+    sync_error_widget.visible = not has_sync and
+        (has_tresor_error or has_file_error)
     append_tooltip_text(status_text)
-    if has_sync or has_error then
+    if has_sync or has_file_error then
         call_tresorit_cli("transfers --files", on_files, commit)
     else
         commit()
