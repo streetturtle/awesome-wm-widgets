@@ -29,7 +29,7 @@ which means that you need to copy the code above and paste it in your **theme.lu
 Clone repo, include widget and use it in **rc.lua**:
 
 ```lua
-require("volumearc")
+local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
 ...
 s.mytasklist, -- Middle widget
 	{ -- Right widgets

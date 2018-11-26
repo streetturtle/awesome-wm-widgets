@@ -100,7 +100,7 @@ watch("acpi -i", 10,
 
             charge = charge + batt.charge * capacities[i]
         end
-        charge = charge // capacity
+        charge = charge / capacity
 
         if (charge >= 0 and charge < 15) then
             batteryType = "battery-empty%s-symbolic"

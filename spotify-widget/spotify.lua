@@ -28,11 +28,9 @@ local spotify_widget = wibox.widget {
     },
     layout = wibox.layout.align.horizontal,
     set_status = function(self, is_playing)
-        if (is_playing) then
-            self.icon.image = PATH_TO_ICONS .. "/actions/24/player_play.png"
-        else
-            self.icon.image = PATH_TO_ICONS .. "/actions/24/player_pause.png"
-        end
+        self.icon.image = PATH_TO_ICONS ..
+                (is_playing and "/actions/24/player_play.png"
+                            or "/actions/24/player_pause.png")
     end,
     set_text = function(self, path)
         self.current_song.markup = path
@@ -41,11 +39,7 @@ local spotify_widget = wibox.widget {
 
 local update_widget_icon = function(widget, stdout, _, _, _)
     stdout = string.gsub(stdout, "\n", "")
-    if (stdout == 'Playing') then
-        widget:set_status(true)
-    else
-        widget:set_status(false)
-    end
+    widget:set_status(stdout == 'Playing' and true or false)
 end
 
 local update_widget_text = function(widget, stdout, _, _, _)

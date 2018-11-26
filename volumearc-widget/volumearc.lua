@@ -5,7 +5,7 @@
 -- https://github.com/streetturtle/awesome-wm-widgets/tree/master/volumearc-widget
 
 -- @author Pavel Makhov
--- @copyright 2017 Pavel Makhov
+-- @copyright 2018 Pavel Makhov
 -------------------------------------------------
 
 local awful = require("awful")
@@ -38,11 +38,9 @@ local update_graphic = function(widget, stdout, _, _, _)
     volume = tonumber(string.format("% 3d", volume))
 
     widget.value = volume / 100;
-    if mute == "off" then
-        widget.colors = { beautiful.widget_red }
-    else
-        widget.colors = { beautiful.widget_main_color }
-    end
+    widget.colors = mute == 'off' and { beautiful.widget_red }
+                                   or { beautiful.widget_main_color }
+
 end
 
 volumearc:connect_signal("button::press", function(_, _, _, button)

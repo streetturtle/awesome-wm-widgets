@@ -10,10 +10,10 @@
 
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
+local beautiful = require("beautiful")
 
 local cpugraph_widget = wibox.widget {
     max_value = 100,
-    color = '#74aeab',
     background_color = "#00000000",
     forced_width = 50,
     step_width = 2,
@@ -21,13 +21,13 @@ local cpugraph_widget = wibox.widget {
     widget = wibox.widget.graph
 }
 
--- mirros and pushs up a bit
+--- By default graph widget goes from left to right, so we mirror it and push up a bit
 local cpu_widget = wibox.container.margin(wibox.container.mirror(cpugraph_widget, { horizontal = true }), 0, 0, 0, 2)
 
 local total_prev = 0
 local idle_prev = 0
 
-watch("cat /proc/stat | grep '^cpu '", 1,
+watch([[bash -c "cat /proc/stat | grep '^cpu '"]], 1,
     function(widget, stdout, stderr, exitreason, exitcode)
         local user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice =
         stdout:match('(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s')
@@ -38,11 +38,8 @@ watch("cat /proc/stat | grep '^cpu '", 1,
         local diff_total = total - total_prev
         local diff_usage = (1000 * (diff_total - diff_idle) / diff_total + 5) / 10
 
-        if diff_usage > 80 then
-            widget:set_color('#ff4136')
-        else
-            widget:set_color('#74aeab')
-        end
+        widget:set_color(diff_usage > 80 and beautiful.widget_red
+                                          or beautiful.widget_main_color)
 
         widget:add_value(diff_usage)
 

@@ -18,7 +18,6 @@ local w = wibox {
     height = 200,
     width = 400,
     ontop = true,
-    screen = mouse.screen,
     expand = true,
     bg = '#1e252c',
     max_widget_size = 500
@@ -64,7 +63,7 @@ watch('bash -c "free | grep -z Mem.*Swap.*"', 1,
 ramgraph_widget:buttons(
     awful.util.table.join(
         awful.button({}, 1, function()
-            awful.placement.top_right(w, { margins = {top = 25, right = 10}})
+            awful.placement.top_right(w, { margins = {top = 25, right = 10}, parent = awful.screen.focused() })
             w.pie.data_list = {
                 {'used ' .. getPercentage(used + used_swap), used + used_swap},
                 {'free ' .. getPercentage(free + free_swap), free + free_swap},
