@@ -40,14 +40,25 @@ local batteryarc_widget = wibox.container.mirror(batteryarc, { horizontal = true
 
 local last_battery_check = os.time()
 
-watch("acpi", 10,
+watch("acpi -i", 10,
     function(widget, stdout, stderr, exitreason, exitcode)
         local batteryType
 
         local battery_info = {}
+        local capacities = {}
         for s in stdout:gmatch("[^\r\n]+") do
-            local _, status, charge_str, time = string.match(s, '(.+): (%a+), (%d?%d?%d)%%,? ?.*')
-            table.insert(battery_info, {status = status, charge = tonumber(charge_str)})
+            local status, charge_str, time = string.match(s, '.+: (%a+), (%d?%d?%d)%%,?.*')
+            if status ~= nil then
+                table.insert(battery_info, {status = status, charge = tonumber(charge_str)})
+            else
+                local cap_str = string.match(s, '.+:.+last full capacity (%d+)')
+                table.insert(capacities, tonumber(cap_str))
+            end
+        end
+
+        local capacity = 0
+        for i, cap in ipairs(capacities) do
+            capacity = capacity + cap
         end
 
         local charge = 0
@@ -58,9 +69,9 @@ watch("acpi", 10,
                 -- this is arbitrary, and maybe another metric should be used
             end
 
-            charge = charge + batt.charge
+            charge = charge + batt.charge * capacities[i]
         end
-        charge = charge // #battery_info -- use average charge for battery icon
+        charge = charge // capacity
 
         widget.value = charge / 100
         if status == 'Charging' then
@@ -70,6 +81,8 @@ watch("acpi", 10,
             mirrored_text_with_background.bg = beautiful.widget_transparent
             mirrored_text_with_background.fg = beautiful.widget_main_color
         end
+
+        text.text = charge
 
         if charge < 15 then
             batteryarc.colors = { beautiful.widget_red }
@@ -84,7 +97,6 @@ watch("acpi", 10,
         else
             batteryarc.colors = { beautiful.widget_main_color }
         end
-        text.text = charge
     end,
     batteryarc)
 
