@@ -225,7 +225,7 @@ local function on_status(result, error_string)
                 logged_in = line[2] ~= "-"
                 set_tooltip_text(line[2])
             elseif line[1] == "Restriction state:" then
-                if line[2] ~= "-" then
+                if line[2] ~= "-" and line[2] ~= "Normal" then
                     restriction_state = line[2]
                 end
             end
