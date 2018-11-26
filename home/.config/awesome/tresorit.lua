@@ -57,9 +57,7 @@ local function call_tresorit_cli(command, callback, error_handler)
                     handled = error_handler(err)
                 end
                 if not handled then
-                    naughty.notify({
-                        preset=naughty.config.presets.critical,
-                        title="Error", text=err})
+                    D.notify_error({title="Error", text=err})
                 end
             end
         end})

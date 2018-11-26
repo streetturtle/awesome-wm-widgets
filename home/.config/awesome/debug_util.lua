@@ -1,3 +1,4 @@
+local naughty = require("naughty")
 local serialize = require("serialize")
 local variables = require("variables_base")
 
@@ -86,6 +87,22 @@ function D.toggle_debug()
     end
     D.log(D.info, "Log level is now " .. severities[config.log_level])
     serialize.save_to_file(config_file, config)
+end
+
+function D.notify_error(args)
+    if not args.preset then
+        args.preset = naughty.config.presets.critical
+    end
+    args.destroy = function(reason)
+        if reason == naughty.notificationClosedReason.
+                dismissedByUser then
+            local stream = io.popen("xsel --input --clipboard", "w")
+            stream:write(tostring(args.text))
+            stream:close()
+        end
+    end
+
+    naughty.notify(args)
 end
 
 if gears.filesystem.file_readable(config_file) then

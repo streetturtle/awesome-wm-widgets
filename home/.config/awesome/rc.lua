@@ -21,8 +21,7 @@ math.randomseed(os.time())
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
-    naughty.notify({ preset = naughty.config.presets.critical,
-                     title = "Oops, there were errors during startup!",
+    D.notify_error({ title = "Oops, there were errors during startup!",
                      text = awesome.startup_errors })
 end
 
@@ -34,18 +33,17 @@ do
         if in_error then return end
         in_error = true
 
-        naughty.notify({
-                preset = naughty.config.presets.critical,
-                title = "Oops, an error happened!",
-                text = tostring(err),
-                destroy = function(reason)
-                    if reason == naughty.notificationClosedReason.
-                            dismissedByUser then
-                        local stream = io.popen("xsel --input --clipboard", "w")
-                        stream:write(tostring(err))
-                        stream:close()
-                    end
-                end})
+        D.notify_error({
+            title = "Oops, an error happened!",
+            text = tostring(err),
+            destroy = function(reason)
+                if reason == naughty.notificationClosedReason.
+                        dismissedByUser then
+                    local stream = io.popen("xsel --input --clipboard", "w")
+                    stream:write(tostring(err))
+                    stream:close()
+                end
+            end})
         in_error = false
     end)
 end

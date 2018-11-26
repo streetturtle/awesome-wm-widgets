@@ -9,17 +9,14 @@ local async = {}
 function async.safe_call(action)
     local result, err = xpcall(action, debug.traceback)
     if not result then
-        naughty.notify({
-                preset=naughty.config.presets.critical,
-                title="Error", text=err})
+        D.notify_error({title="Error", text=err})
     end
 end
 
 local function handle_start_command(command, action)
     local result = action()
     if type(action) == "string" then
-        naughty.notify({
-                preset=naughty.config.presets.critical,
+        D.notify_error({
                 title="Error starting command: " .. command,
                 text=result})
     else
@@ -38,8 +35,7 @@ function async.spawn_and_get_output(command, callback)
                                 result = callback(stdout, exit_code)
                             end)
                     if not result and exit_code ~= 0 then
-                        naughty.notify({
-                                preset=naughty.config.presets.critical,
+                        D.notify_error({
                                 title="Error running command: " .. command_str,
                                 text=stderr})
                     end
@@ -71,8 +67,7 @@ function async.spawn_and_get_lines(command, callbacks)
                         result = callbacks.finish(code, log)
                     end
                     if not result and code ~= 0 then
-                        naughty.notify({
-                                preset=naughty.config.presets.critical,
+                        D.notify_error({
                                 title="Error running command: " .. command_str,
                                 text=log.stderr})
                     end
@@ -128,8 +123,7 @@ function async.run_command_continuously(command, line_callback, start_callback,
                             return true
                         end})
                 if type(pid) == "string" then
-                    naughty.notify({
-                        preset=naughty.config.presets.critical,
+                    D.notify_error({
                         title="Failed to start command",
                         text=pid
                     })

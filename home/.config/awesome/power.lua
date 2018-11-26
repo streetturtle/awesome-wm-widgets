@@ -17,7 +17,7 @@ local function call_power_command(name)
     else
         local message = "No command found for " .. name
         D.log(D.error, message)
-        naughty.notify({preset=naughty.config.presets.critical, text=message})
+        D.notify_error({text=message})
     end
 end
 

@@ -173,9 +173,7 @@ function actions.disable_screensaver()
 end
 
 function actions.print_not_running()
-    naughty.notify({ preset = naughty.config.presets.critical,
-                     title = "Locker",
-                     text = "Locker is not running." })
+    D.notify_error({title="Locker", text="Locker is not running."})
 end
 
 function actions.is_enabled()
