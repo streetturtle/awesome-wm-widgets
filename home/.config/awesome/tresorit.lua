@@ -57,7 +57,7 @@ local function call_tresorit_cli(command, callback, error_handler)
                     handled = error_handler(err)
                 end
                 if not handled then
-                    D.notify_error({title="Error", text=err})
+                    D.notify_error({itle="Error", text=err})
                 end
             end
         end})
@@ -254,6 +254,8 @@ local function on_status(result, error_string)
     end
 end
 
+local last_call
+
 if tresorit_command ~= nil then
     D.log(D.debug, "Has tresorit-cli")
     timer = gears.timer{
@@ -262,10 +264,20 @@ if tresorit_command ~= nil then
         call_now=true,
         autostart=true,
         callback=function()
+            last_call = os.time()
             call_tresorit_cli("status", on_status, commit)
         end}
 
     call_tresorit_cli("start")
+
+    gears.timer.start_new(60, function()
+        local now = os.time()
+        if now - last_call > 60 then
+            D.log(D.error, "Tresorit-cli not called since "
+                .. os.date("%c", last_call))
+            error_widget.visible = true
+        end
+    end)
 else
     D.log(D.debug, "No tresorit-cli")
 end
