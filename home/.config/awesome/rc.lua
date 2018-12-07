@@ -247,9 +247,6 @@ local globalkeys = awful.util.table.join(root.keys(),
         end,
         {description = "Force paste", group = "input"}
     ),
-    awful.key({ modkey, "Control", "Shift"}, "d", D.toggle_debug,
-        {description = "Toggle debug", group = "awesome"}
-    ),
     awful.key({ modkey, "Shift"}, "k",
         function ()
             awful.client.focus.byidx(1)

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -e
+
+log_file="$1"
+
+if [[ -z "$log_file"  ]]; then
+    echo "Usage: $0 log_file" >&2
+    exit 1
+fi
+
+archive_file="${log_file}.$(date "+%Y%m%d-%H%M%S")"
+cp "$log_file" "$rotate_file"

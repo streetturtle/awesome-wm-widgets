@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -e
+
+log_file="$1"
+max_lines="$2"
+
+if [[ -z "$log_file" || -z "$max_lines" ]]; then
+    echo "Usage: $0 log_file max_lines" >&2
+    exit 1
+fi
+
+lines=$(wc -l <"$log_file")
+
+if [[ "$lines" -gt "$max_lines" ]]; then
+    rotate_file="${log_file}.1"
+    mv "$log_file" "$rotate_file"
+fi

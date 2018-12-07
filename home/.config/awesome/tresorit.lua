@@ -273,10 +273,12 @@ if tresorit_command ~= nil then
     gears.timer.start_new(60, function()
         local now = os.time()
         if now - last_call > 60 then
-            D.log(D.error, "Tresorit-cli not called since "
+            D.log(D.critical, "Tresorit-cli not called since "
                 .. os.date("%c", last_call))
             error_widget.visible = true
+            return false
         end
+        return true
     end)
 else
     D.log(D.debug, "No tresorit-cli")

@@ -1,3 +1,4 @@
+local awful = require("awful")
 local naughty = require("naughty")
 local serialize = require("serialize")
 local variables = require("variables_base")
@@ -38,6 +39,7 @@ local D = {
     info = 2,
     warning = 3,
     error = 4,
+    critical = 5,
 }
 
 function D.to_string_recursive(object)
@@ -60,36 +62,34 @@ function D.get_client_debug_info(c)
         .. " [" .. instance .. "] - " .. name
 end
 
-local log_file = io.open("awesome.log", "a")
-local severities = {"D", "I", "W", "E"}
-local config = {}
+log_file_name = "awesome.log"
+debug_file_name = "awesome.debug.log"
+local severities = {"D", "I", "W", "E", "C"}
+local cleanup_script = variables.config_dir .. "/logfile-cleanup"
+local archive_script = variables.config_dir .. "/logfile-archive"
 
 function D.log(severity, message)
     local severity_name = severities[severity]
     if not severity_name then
         return
     end
-    if config.log_level > severity then
-        return
+    local log_str = os.date("%F %T: ") .. "[" .. severities[severity] .. "] "
+        .. tostring(message) .. "\n"
+    if severity >= D.info then
+        local log_file = io.open(log_file_name, "a")
+        log_file:write(log_str)
     end
-    log_file:write(os.date("%F %T: ") .. "[" .. severities[severity] .. "] "
-        .. tostring(message) .. "\n")
-    log_file:flush()
-end
-
-local config_file = variables.config_dir .. '/debug.json'
-
-function D.toggle_debug()
-    if config.log_level == D.debug then
-        config.log_level = D.info
-    else
-        config.log_level = D.debug
+    local debug_file = io.open(debug_file_name, "a")
+    debug_file:write(log_str)
+    if severity >= D.critical then
+        awful.spawn(archive_script)
     end
-    D.log(D.info, "Log level is now " .. severities[config.log_level])
-    serialize.save_to_file(config_file, config)
+    awful.spawn({cleanup_script, debug_file_name, "10000"})
+    awful.spawn({cleanup_script, log_file_name, "10000"})
 end
 
 function D.notify_error(args)
+    D.log(D.error, args.text)
     if not args.preset then
         args.preset = naughty.config.presets.critical
     end
@@ -103,13 +103,6 @@ function D.notify_error(args)
     end
 
     naughty.notify(args)
-end
-
-if gears.filesystem.file_readable(config_file) then
-    config = serialize.load_from_file(config_file)
-end
-if config.log_level == nil then
-    config.log_level = D.info
 end
 
 return D
