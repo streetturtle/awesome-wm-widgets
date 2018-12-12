@@ -45,9 +45,11 @@ local function call_tresorit_cli(command, callback, error_handler)
             table.insert(result.lines, gears.string.split(line, "\t"))
         end,
         finish=function()
+            D.log(D.debug, "tresorit-cli finished")
             return result.has_error == nil or result.has_error
         end,
         done=function()
+            D.log(D.debug, "tresorit-cli input done")
             local res, err = xpcall(
                 function() on_command_finished(command, result, callback) end,
                 debug.traceback)

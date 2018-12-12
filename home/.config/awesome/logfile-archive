@@ -10,4 +10,4 @@ if [[ -z "$log_file"  ]]; then
 fi
 
 archive_file="${log_file}.$(date "+%Y%m%d-%H%M%S")"
-cp "$log_file" "$rotate_file"
+cp "$log_file" "$archive_file"
