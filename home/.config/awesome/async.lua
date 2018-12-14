@@ -15,7 +15,7 @@ end
 
 local function handle_start_command(command, action)
     local result = action()
-    if type(action) == "string" then
+    if type(result) == "string" then
         D.notify_error({
                 title="Error starting command: " .. command,
                 text=result})

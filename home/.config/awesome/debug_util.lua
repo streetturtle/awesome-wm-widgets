@@ -78,11 +78,11 @@ function D.log(severity, message)
     if severity >= D.info then
         local log_file = io.open(log_file_name, "a")
         log_file:write(log_str)
-        log_file:flush()
+        log_file:close()
     end
     local debug_file = io.open(debug_file_name, "a")
     debug_file:write(log_str)
-    debug_file:flush()
+    debug_file:close()
     if severity >= D.critical then
         awful.spawn({archive_script, debug_file_name})
     end

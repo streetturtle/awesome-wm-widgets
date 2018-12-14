@@ -40,16 +40,15 @@ end
 local function call_tresorit_cli(command, callback, error_handler)
     local result = {lines={}, has_error=nil}
     D.log(D.debug, "Call tresorit-cli " .. command)
-    async.spawn_and_get_lines(tresorit_command .. " --porcelain " .. command, {
+    local result = async.spawn_and_get_lines(
+            tresorit_command .. " --porcelain " .. command, {
         line=function(line)
             table.insert(result.lines, gears.string.split(line, "\t"))
         end,
         finish=function()
-            D.log(D.debug, "tresorit-cli finished")
             return result.has_error == nil or result.has_error
         end,
         done=function()
-            D.log(D.debug, "tresorit-cli input done")
             local res, err = xpcall(
                 function() on_command_finished(command, result, callback) end,
                 debug.traceback)
@@ -59,10 +58,13 @@ local function call_tresorit_cli(command, callback, error_handler)
                     handled = error_handler(err)
                 end
                 if not handled then
-                    D.notify_error({itle="Error", text=err})
+                    D.notify_error({title="Error", text=err})
                 end
             end
         end})
+    if type(result) == "string" and error_handler then
+        error_handler(result)
+    end
 end
 
 local menu_widget = awful.widget.launcher{
