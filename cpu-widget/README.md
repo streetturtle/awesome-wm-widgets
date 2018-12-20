@@ -23,7 +23,7 @@ and calculates the percentage.
 Clone/download repo and use widget in **rc.lua**:
 
 ```lua
-require("awesome-wm-widgets.cpu-widget.cpu-widget")
+local cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
 ...
 s.mytasklist, -- Middle widget
 	{ -- Right widgets
