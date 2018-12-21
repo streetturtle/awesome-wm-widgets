@@ -13,6 +13,11 @@ function shutdown.clean_shutdown(message, timeout, callback)
     D.log(D.info, 'Stopping all clients')
     local clients_to_close = client.get()
     D.log(D.debug, 'Number of clients to stop: ' .. tostring(#clients_to_close))
+    if #clients_to_close == 0 then
+        callback()
+        return
+    end
+
 
     local finish = nil
 
