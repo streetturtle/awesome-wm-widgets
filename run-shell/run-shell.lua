@@ -80,10 +80,9 @@ function widget.new()
     end
 
     function widget_instance:launch(s, c)
---        c = c or capi.client.focus
---        s = s or (c and c.screen or awful.screen.focused())
-        s = 1
-        naughty.notify{text = 'screen ' .. s}
+        c = c or capi.client.focus
+        s = s or (c and c.screen or awful.screen.focused())
+        naughty.notify{text = 'screen ' .. s.index}
         if not self._cached_wiboxes[s] then
             self._cached_wiboxes[s] = {}
             naughty.notify{text = 'nope'}
