@@ -20,12 +20,6 @@ local completion = require("awful.completion")
 
 local run_shell = awful.widget.prompt()
 
-
-local function get_screen(s)
-    return s and capi.screen[s]
-end
-
-
 local widget = {}
 
 function widget.new()
@@ -98,7 +92,7 @@ function widget.new()
                 w.bgimage = '/tmp/i3lock-' .. line .. '.png'
                 awful.placement.top(w, { margins = { top = 20 }, parent = awful.screen.focused() })
                 awful.prompt.run {
-                    prompt = "<b>Run</b>: ",
+                    prompt = 'Run: ',
                     bg_cursor = '#74aeab',
                     textbox = run_shell.widget,
                     completion_callback = completion.shell,
@@ -107,7 +101,6 @@ function widget.new()
                     end,
                     history_path = gfs.get_cache_dir() .. "/history",
                     done_callback = function()
-                        --                    w.bgimage=''
                         w.visible = false
                         w.bgimage = ''
                         awful.spawn([[bash -c 'rm -f /tmp/i3lock*']])
