@@ -33,7 +33,7 @@ local function reset_state_machine()
             Enabled={
             },
             Disabled={
-                enter="disable",
+                enter={"disable", "disable_screensaver"},
                 exit="enable",
             },
             Locking={
