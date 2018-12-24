@@ -25,8 +25,9 @@ local widget = {}
 function widget.new()
     local widget_instance = {
         _cached_wiboxes = {},
+        _cmd_pixelate = [[bash -c 'ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -y -i :0.0+%s,20 -vf frei0r=pixeliz0r -vframes 1 /tmp/i3lock-%s.png ; echo done']],
+        _cmd_blur = [[bash -c 'ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -y -i :0.0+%s,20 -filter_complex "boxblur=9" -vframes 1 /tmp/i3lock-%s.png ; echo done']]
     }
-
 
     function widget_instance:_create_wibox()
         local w = wibox {
@@ -41,8 +42,7 @@ function widget.new()
                 {
                     {
                         {
-                            text = 'a',
-                            font = 'awesomewm-font 13',
+                            markup = '<span font="awesomewm-font 14" color="#ffffff">a</span>',
                             widget = wibox.widget.textbox,
                         },
                         id = 'icon',
@@ -75,21 +75,22 @@ function widget.new()
 
     function widget_instance:launch(s, c)
         c = c or capi.client.focus
-        s = s or (c and c.screen or awful.screen.focused())
-        naughty.notify{text = 'screen ' .. s.index}
+        s = s or (c and c.screen or mouse.screen)
+        naughty.notify { text = 'screen ' .. s.index }
         if not self._cached_wiboxes[s] then
             self._cached_wiboxes[s] = {}
-            naughty.notify{text = 'nope'}
+            naughty.notify { text = 'nope' }
         end
         if not self._cached_wiboxes[s][1] then
             self._cached_wiboxes[s][1] = self:_create_wibox()
-            naughty.notify{text = 'nope'}
+            naughty.notify { text = 'nope' }
         end
         local w = self._cached_wiboxes[s][1]
-        awful.spawn.with_line_callback(os.getenv("HOME") .. "/.config/awesome/awesome-wm-widgets/run-shell/scratch_6.sh " .. tostring(awful.screen.focused().geometry.x), {
+        local rnd = math.random()
+        awful.spawn.with_line_callback(string.format(self._cmd_pixelate, tostring(awful.screen.focused().geometry.x), rnd), {
             stdout = function(line)
                 w.visible = true
-                w.bgimage = '/tmp/i3lock-' .. line .. '.png'
+                w.bgimage = '/tmp/i3lock-' .. rnd ..'.png'
                 awful.placement.top(w, { margins = { top = 20 }, parent = awful.screen.focused() })
                 awful.prompt.run {
                     prompt = 'Run: ',
@@ -115,7 +116,7 @@ function widget.new()
     end
 
     return widget_instance
- end
+end
 
 local function get_default_widget()
     if not widget.default_widget then
@@ -127,6 +128,5 @@ end
 function widget.launch(...)
     return get_default_widget():launch(...)
 end
-
 
 return widget
