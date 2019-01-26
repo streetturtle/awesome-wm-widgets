@@ -14,8 +14,8 @@ local naughty = require("naughty")
 local wibox = require("wibox")
 local gears = require("gears")
 local gfs = require("gears.filesystem")
+local secrets = require("awesome-wm-widgets.secrets")
 
-local API_KEY = '<your api key>'
 local BASE_URL = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 local ICON = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg'
 
@@ -88,7 +88,7 @@ w:setup {
 --- Main function - takes the user input and shows the widget with translation
 -- @param request_string - user input (dog enfr)
 local function translate(to_translate, lang)
-    local urll = BASE_URL .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. API_KEY
+    local urll = BASE_URL .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. secrets.translate_widget_api_key
 
     local resp_json, code = https.request(urll)
     if (code == 200 and resp_json ~= nil) then

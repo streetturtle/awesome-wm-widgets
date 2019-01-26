@@ -10,9 +10,10 @@ local http = require("socket.http")
 local json = require("json")
 local naughty = require("naughty")
 local wibox = require("wibox")
+local gears = require("gears")
 
-local city = os.getenv("AWW_WEATHER_CITY") or "Montreal,ca"
-local open_map_key = os.getenv("AWW_WEATHER_API_KEY") or 'c3d7320b359da4e48c2d682a04076576'
+local secrets = require("awesome-wm-widgets.secrets")
+
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 
 local icon_widget = wibox.widget {
@@ -93,11 +94,11 @@ function to_direction(degrees)
     return directions[math.floor((degrees % 360) / 22.5) + 1]
 end
 
-local weather_timer = timer({ timeout = 60 })
+local weather_timer = gears.timer({ timeout = 60 })
 local resp
 
 weather_timer:connect_signal("timeout", function ()
-    local resp_json = http.request("https://api.openweathermap.org/data/2.5/weather?q=" .. city .."&appid=" .. open_map_key)
+    local resp_json = http.request("https://api.openweathermap.org/data/2.5/weather?q=" .. secrets.weather_widget_city .."&appid=" .. secrets.weather_widget_api_key)
     if (resp_json ~= nil) then
         resp = json.decode(resp_json)
         icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
