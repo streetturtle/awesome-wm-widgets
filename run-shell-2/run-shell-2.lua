@@ -14,6 +14,8 @@ local wibox = require("wibox")
 local gears = require("gears")
 local completion = require("awful.completion")
 
+local run = require("awesome-wm-widgets.run-shell-2.run")
+
 local run_shell = awful.widget.prompt()
 
 local w = wibox {
@@ -26,21 +28,11 @@ local w = wibox {
     width = 250,
     shape = function(cr, width, height)
         gears.shape.rounded_rect(cr, width, height, 3)
---     `   gears.shape.infobubble(cr, width, height)
+        --     `   gears.shape.infobubble(cr, width, height)
     end
 }
 
-w:setup {
-    {
-        {
-            markup = '<span font="awesomewm-font 14" color="#ffffff">a</span>',
-            widget = wibox.widget.textbox,
-        },
-        id = 'icon',
-        top = 2,
-        left = 10,
-        layout = wibox.container.margin
-    },
+local g = {
     {
         layout = wibox.container.margin,
         left = 10,
@@ -50,23 +42,59 @@ w:setup {
     layout = wibox.layout.fixed.horizontal
 }
 
-local function launch()
-    w.visible = true
 
-    awful.placement.top(w, { margins = {top = 40}, parent = awful.screen.focused()})
-    awful.prompt.run {
-        prompt = 'Run: ',
-        bg_cursor = '#74aeab',
-        textbox = run_shell.widget,
-        completion_callback = completion.shell,
-        exe_callback = function(...)
-            run_shell:spawn_and_handle_error(...)
-        end,
-        history_path = gfs.get_cache_dir() .. "/history",
-        done_callback = function()
-            w.visible = false
-        end
-    }
+local function launch(type)
+
+    if type == 'run' then
+        table.insert(g, 1, run.icon)
+        w:setup(g)
+        awful.placement.top(w, { margins = { top = 40 }, parent = awful.screen.focused() })
+        w.visible = true
+        awful.prompt.run {
+            prompt = run.text,
+            bg_cursor = run.cursor_color,
+            textbox = run_shell.widget,
+            completion_callback = completion.shell,
+            exe_callback = function(...)
+                run_shell:spawn_and_handle_error(...)
+            end,
+            history_path = gfs.get_cache_dir() .. run.history,
+            done_callback = function()
+                w.visible = false
+                table.remove(g, 1)
+            end
+        }
+    elseif type == 'spotify' then
+        table.insert(g, 1, {
+            {
+                image = '/usr/share/icons/Papirus-Light/32x32/apps/spotify-linux-48x48.svg',
+                widget = wibox.widget.imagebox,
+                resize = false
+            },
+            id = 'icon',
+            top = 9,
+            left = 10,
+            layout = wibox.container.margin
+        })
+        w:setup(g)
+        awful.placement.top(w, { margins = { top = 40 }, parent = awful.screen.focused() })
+        w.visible = true
+
+        awful.prompt.run {
+            prompt = "<b>Spotify Shell</b>: ",
+            bg_cursor = '#84bd00',
+            textbox = run_shell.widget,
+            history_path = gfs.get_dir('cache') .. '/spotify_history',
+            exe_callback = function(input_text)
+                if not input_text or #input_text == 0 then return end
+                awful.spawn("sp " .. input_text)
+            end,
+            done_callback = function()
+                w.visible = false
+                table.remove(g, 1)
+            end
+        }
+    end
 end
 
 return {
