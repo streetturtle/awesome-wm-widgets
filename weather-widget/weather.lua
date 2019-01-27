@@ -98,8 +98,15 @@ local weather_timer = gears.timer({ timeout = 60 })
 local resp
 
 weather_timer:connect_signal("timeout", function ()
-    local resp_json = http.request("https://api.openweathermap.org/data/2.5/weather?q=" .. secrets.weather_widget_city .."&appid=" .. secrets.weather_widget_api_key)
-    if (resp_json ~= nil) then
+    local resp_json, status = http.request("https://api.openweathermap.org/data/2.5/weather?q=" .. secrets.weather_widget_city .."&appid=" .. secrets.weather_widget_api_key)
+    if (status ~= 200) then
+        local err_resp = json.decode(resp_json)
+        naughty.notify{
+            title = 'Weather Widget Error',
+            text = err_resp.message,
+            preset = naughty.config.presets.critical,
+        }
+    elseif (resp_json ~= nil) then
         resp = json.decode(resp_json)
         icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
         temp_widget:set_text(to_celcius(resp.main.temp) .. "°C")
