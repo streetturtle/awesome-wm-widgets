@@ -84,7 +84,7 @@ watch("acpi -i", 10,
             mirrored_text_with_background.fg = beautiful.widget_main_color
         end
 
-        text.text = charge
+        text.text = string.format('%d', charge)
 
         if charge < 15 then
             batteryarc.colors = { beautiful.widget_red }
