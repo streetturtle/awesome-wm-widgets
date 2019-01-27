@@ -21,13 +21,13 @@ Note that widget uses the Arc icon theme, so it should be [installed](https://gi
     wget -P ~/.config/awesome/ https://raw.githubusercontent.com/rxi/json.lua/master/json.lua
     ```
 
-1.  Get Open Weather Map app id here: [openweathermap.org/appid](https://openweathermap.org/appid) and place it in the widget's header.
-
 1. Clone this repo under **~/.config/awesome/**:
 
     ```bash
     git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
     ```
+
+1.  Get Open Weather Map app id here: [openweathermap.org/appid](https://openweathermap.org/appid) and place it in  **~/.config/awesome/awesome-wm-widgets/secrets.lua**, or directly in the widget. Don't forget to set also your city.
 
 1. Require weather widget at the beginning of **rc.lua**:
 
