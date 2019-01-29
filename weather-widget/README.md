@@ -1,6 +1,6 @@
 # Weather widget
 
-![Weather Widget]({{'/assets/img/screenshots/weather-widget.png' | relative_url }}){:.center-image}
+![Weather Widget](./weather-widget.png')
 
 Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
 
