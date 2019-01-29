@@ -11,7 +11,8 @@ local secrets = {
 
     -- OpenWeatherMap API key - https://openweathermap.org/appid
     weather_widget_api_key = 'API_KEY',
-    weather_widget_city = 'Montreal,ca'
+    weather_widget_city = 'Montreal,ca',
+    weather_widget_units = 'metric' -- for celsius, or 'imperial' for fahrenheit
 }
 
 return secrets

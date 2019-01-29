@@ -61,13 +61,8 @@ local icon_map = {
     ["50n"] = "weather-fog-symbolic.svg"
 }
 
---- handy function to convert temperature from Kelvin to Celcius
-function to_celcius(kelvin)
-    return math.floor(tonumber(kelvin) - 273.15)
-end
-
 --- Return wind direction as a string.
-function to_direction(degrees)
+local function to_direction(degrees)
     -- Ref: https://www.campbellsci.eu/blog/convert-wind-directions
     if degrees == nil then
         return "Unknown dir"
@@ -98,7 +93,10 @@ local weather_timer = gears.timer({ timeout = 60 })
 local resp
 
 weather_timer:connect_signal("timeout", function ()
-    local resp_json, status = http.request("https://api.openweathermap.org/data/2.5/weather?q=" .. secrets.weather_widget_city .."&appid=" .. secrets.weather_widget_api_key)
+    local resp_json, status = http.request('https://api.openweathermap.org/data/2.5/weather?q='
+            .. secrets.weather_widget_city
+            .. '&appid=' .. secrets.weather_widget_api_key
+            .. '&units=' .. secrets.weather_widget_units)
     if (status ~= 200) then
         local err_resp = json.decode(resp_json)
         naughty.notify{
@@ -109,7 +107,9 @@ weather_timer:connect_signal("timeout", function ()
     elseif (resp_json ~= nil) then
         resp = json.decode(resp_json)
         icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
-        temp_widget:set_text(to_celcius(resp.main.temp) .. "°C")
+        temp_widget:set_text(string.gsub(resp.main.temp, "%.%d+", "")
+                .. '°'
+                .. (secrets.weather_widget_units == 'metric' and 'C' or 'F'))
     end
 end)
 weather_timer:start()
@@ -124,10 +124,11 @@ weather_widget:connect_signal("mouse::enter", function()
         text =
             '<big>' .. resp.weather[1].main .. ' (' .. resp.weather[1].description .. ')</big><br>' ..
             '<b>Humidity:</b> ' .. resp.main.humidity .. '%<br>' ..
-            '<b>Temperature: </b>' .. to_celcius(resp.main.temp) .. '<br>' ..
-            '<b>Pressure: </b>' .. resp.main.pressure .. 'hPa<br>' ..
-            '<b>Clouds: </b>' .. resp.clouds.all .. '%<br>' ..
-            '<b>Wind: </b>' .. resp.wind.speed .. 'm/s (' .. to_direction(resp.wind.deg) .. ')',
+            '<b>Temperature:</b> ' .. resp.main.temp .. '°'
+                    .. (secrets.weather_widget_units == 'metric' and 'C' or 'F') .. '<br>' ..
+            '<b>Pressure:</b> ' .. resp.main.pressure .. 'hPa<br>' ..
+            '<b>Clouds:</b> ' .. resp.clouds.all .. '%<br>' ..
+            '<b>Wind:</b> ' .. resp.wind.speed .. 'm/s (' .. to_direction(resp.wind.deg) .. ')',
         timeout = 5, hover_timeout = 10,
         width = 200
     }
