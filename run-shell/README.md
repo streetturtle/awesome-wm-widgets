@@ -1,10 +1,10 @@
 # Run Shell
 
-Blurs background and shows widget with run prompts:
+Blurs background and shows widget with run prompt:
 
 ![screenshot](./screenshot.png)
 
-## Install
+## Installation
 
 1. Clone this repo under **~/.config/awesome/**:
 
@@ -23,3 +23,4 @@ Blurs background and shows widget with run prompts:
     ```lua
     awful.key({modkey}, "r", function () run_shell.launch() end),
     ```
+:warning: I am not 100% sure but it may (memory) leak. If awesome uses lots of RAM just reload config (Ctrl + Mod4 + r).
