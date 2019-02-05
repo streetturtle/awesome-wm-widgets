@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import imaplib
-import email
+import re
 
 M=imaplib.IMAP4_SSL("mail.teenagemutantninjaturtles.com", 993)
 M.login("mickey@tmnt.com","cowabunga")
@@ -9,8 +9,8 @@ M.login("mickey@tmnt.com","cowabunga")
 status, counts = M.status("INBOX","(MESSAGES UNSEEN)")
 
 if status == "OK":
-	unread = counts[0].split()[4][:-1]
+	unread = re.search(r'UNSEEN\s(\d+)', counts[0].decode('utf-8')).group(1)
 else:
-	unread = "N/A" 
+	unread = "N/A"
 
 print(unread)
