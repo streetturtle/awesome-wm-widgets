@@ -2,7 +2,9 @@
 
 Blurs / pixelates background and shows widget with run prompt:
 
-![screenshot](./screenshot.png)
+![screenshot](./blur.png)
+
+![screenshot](./pixelate.png)
 
 ## Installation
 
