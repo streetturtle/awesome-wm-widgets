@@ -4,7 +4,7 @@
 -- https://github.com/streetturtle/awesome-wm-widgets/tree/master/run-shell
 
 -- @author Pavel Makhov
--- @copyright 2018 Pavel Makhov
+-- @copyright 2019 Pavel Makhov
 -------------------------------------------------
 
 local capi = {
