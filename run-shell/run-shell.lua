@@ -76,18 +76,18 @@ function widget.new()
     function widget_instance:launch(s, c)
         c = c or capi.client.focus
         s = mouse.screen
-        naughty.notify { text = 'screen ' .. s.index }
+--        naughty.notify { text = 'screen ' .. s.index }
         if not self._cached_wiboxes[s] then
             self._cached_wiboxes[s] = {}
-            naughty.notify { text = 'nope' }
+--            naughty.notify { text = 'nope' }
         end
         if not self._cached_wiboxes[s][1] then
             self._cached_wiboxes[s][1] = self:_create_wibox()
-            naughty.notify { text = 'nope' }
+--            naughty.notify { text = 'nope' }
         end
         local w = self._cached_wiboxes[s][1]
         local rnd = math.random()
-        awful.spawn.with_line_callback(string.format(self._cmd_pixelate, tostring(awful.screen.focused().geometry.x), rnd), {
+        awful.spawn.with_line_callback(string.format(self._cmd_blur, tostring(awful.screen.focused().geometry.x), rnd), {
             stdout = function(line)
                 w.visible = true
                 w.bgimage = '/tmp/i3lock-' .. rnd ..'.png'
