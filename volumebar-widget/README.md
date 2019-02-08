@@ -14,7 +14,7 @@ Supports
  Clone repo, include widget and use it in **rc.lua**:
  
  ```lua
- require("volumebar")
+local volumebar_widget = require("awesome-wm-widgets.volumebar-widget.volumebar")
 ...
 s.mytasklist, -- Middle widget
 	{ -- Right widgets
