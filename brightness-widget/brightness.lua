@@ -14,8 +14,8 @@ local spawn = require("awful.spawn")
 
 local PATH_TO_ICON = "/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg"
 local GET_BRIGHTNESS_CMD = "light -G"   -- "xbacklight -get"
-local INC_BRIGHTNESS_CMD = "light -A 1" -- "xbacklight -inc 5"
-local DEC_BRIGHTNESS_CMD = "light -U 1" -- "xbacklight -dec 5"
+local INC_BRIGHTNESS_CMD = "light -A 5" -- "xbacklight -inc 5"
+local DEC_BRIGHTNESS_CMD = "light -U 5" -- "xbacklight -dec 5"
 
 local brightness_text = wibox.widget.textbox()
 brightness_text:set_font('Play 9')
@@ -45,10 +45,6 @@ brightness_widget:connect_signal("button::press", function(_,_,_,button)
     if (button == 4)     then spawn(INC_BRIGHTNESS_CMD, false)
     elseif (button == 5) then spawn(DEC_BRIGHTNESS_CMD, false)
     end
-
-    spawn.easy_async(GET_BRIGHTNESS_CMD, function(stdout, stderr, exitreason, exitcode)
-        update_widget(brightness_widget, stdout, stderr, exitreason, exitcode)
-    end)
 end)
 
 watch(GET_BRIGHTNESS_CMD, 1, update_widget, brightness_text)
