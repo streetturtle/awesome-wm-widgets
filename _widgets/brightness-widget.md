@@ -58,19 +58,6 @@ s.mytasklist, -- Middle widget
         ...
 ```
 
-Then in **rc.lua** add the import on top of the file and then add widget to the wibox:
-
-```lua
-require("awesome-wm-widgets.brightness-widget.brightness")
-...
--- Add widgets to the wibox
-s.mywibox:setup {
-...
-{ -- Right widgets
-...
-brightness_widget
-```
-
 ## Controls
 
 In order to change brightness by shortcuts you can add them to the `globalkeys` table in the **rc.lua**:
