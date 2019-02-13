@@ -1,12 +1,10 @@
 # Brightness widget
 
-![Brightness widget](./br-wid-1.png)
-
-This widget represents current brightness level.
+This widget represents current brightness level: ![Brightness widget](./br-wid-1.png)
 
 ## Installation
 
-Firstly you need to get the current brightness level. There are two options:
+First you need to get the current brightness level. There are two options:
 
  - using `xbacklight` command (depending on your video card (I guess) it may or may not work)
  
@@ -30,19 +28,30 @@ Firstly you need to get the current brightness level. There are two options:
     light -G
     49.18
     ```
+
 Depending on the chosen option change `GET_BRIGHTNESS_CMD` variable in **brightness.lua**.
 
-Then in **rc.lua** add the import on top of the file and then add widget to the wibox:
+Then clone this repo under **~/.config/awesome/**:
+
+```bash
+git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
+```
+
+Require widget at the beginning of **rc.lua**:
 
 ```lua
-require("awesome-wm-widgets.brightness-widget.brightness")
-...
--- Add widgets to the wibox
-s.mywibox:setup {
-...
-{ -- Right widgets
-...
-brightness_widget
+local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
+```
+
+Add widget to the tasklist:
+
+```lua
+s.mytasklist, -- Middle widget
+    { -- Right widgets
+        layout = wibox.layout.fixed.horizontal,
+        ...
+        brightness_widget,
+        ...
 ```
 
 ## Controls
