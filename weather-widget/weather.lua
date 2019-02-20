@@ -97,7 +97,7 @@ weather_timer:connect_signal("timeout", function ()
             .. secrets.weather_widget_city
             .. '&appid=' .. secrets.weather_widget_api_key
             .. '&units=' .. secrets.weather_widget_units)
-    if (status ~= 200) then
+    if (status ~= 200 and resp_json ~= nil) then
         local err_resp = json.decode(resp_json)
         naughty.notify{
             title = 'Weather Widget Error',
