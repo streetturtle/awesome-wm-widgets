@@ -1,5 +1,8 @@
 # Awesome WM widgets
- 
+
+![stars](https://img.shields.io/github/stars/streetturtle/awesome-wm-widgets.svg)
+![forks](https://img.shields.io/github/forks/streetturtle/awesome-wm-widgets.svg)
+
 Set of super simple widgets compatible with Awesome Window Manager v.4+. 
 
 ![screenshot](./screenshot.png)
