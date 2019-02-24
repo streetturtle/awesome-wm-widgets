@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/awesome.png" alt="logo" style="max-width:100%;">
+ <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/awesome-o.png" alt="logo" style="max-width:100%;">
 </p>
 
 <p align="center">
