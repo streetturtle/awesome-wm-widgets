@@ -1,4 +1,5 @@
 # Awesome WM widgets
+![logo](./awesome.png)
 
 ![stars](https://img.shields.io/github/stars/streetturtle/awesome-wm-widgets.svg)
 ![forks](https://img.shields.io/github/forks/streetturtle/awesome-wm-widgets.svg)
