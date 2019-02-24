@@ -1,10 +1,18 @@
 # Run Shell
 
-Blurs background and shows widget with run prompt:
+Blurs / pixelates background and shows widget with run prompt:
 
-![screenshot](./screenshot.png)
+![screenshot](./blur.png)
+
+![screenshot](./pixelate.png)
 
 ## Installation
+
+1. To blur / pixelate the background this widget used [ffmpeg](https://www.ffmpeg.org/) and [frei0r](https://frei0r.dyne.org/) plugins (if you want to pixelate the background), which you need to install. Installation of those depends on your distribution, for ffmpeg just follow the installation section of the site, for frei0r I was able to install it by simply running
+
+    ```
+    sudo apt-get install frei0r-plugins
+    ```
 
 1. Clone this repo under **~/.config/awesome/**:
 

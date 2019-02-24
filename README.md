@@ -1,5 +1,8 @@
 # Awesome WM widgets
- 
+
+![stars](https://img.shields.io/github/stars/streetturtle/awesome-wm-widgets.svg)
+![forks](https://img.shields.io/github/forks/streetturtle/awesome-wm-widgets.svg)
+
 Set of super simple widgets compatible with Awesome Window Manager v.4+. 
 
 ![screenshot](./screenshot.png)
@@ -24,7 +27,8 @@ From left to right:
 - [battery-widget](https://github.com/streetturtle/AwesomeWM/tree/master/battery-widget)
 - [ram-widget](https://github.com/streetturtle/AwesomeWM/tree/master/ram-widget)
 - [translate-widget](https://github.com/streetturtle/AwesomeWM/tree/master/translate-widget) (not on the screenshot)
-- [spotify-shell](https://github.com/streetturtle/AwesomeWM/tree/master/spotify-shell)
+- [spotify-shell](https://github.com/streetturtle/AwesomeWM/tree/master/spotify-shell) (not on the screenshot)
+- [run-shell](https://github.com/streetturtle/AwesomeWM/tree/master/run-shell) (not on the screenshot)
 
 Some of these widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily 
 changed to any other icon theme or custom icons. If you want to have separators between widgets like on the screenshot create text widget with ` : ` and place it between widgets:

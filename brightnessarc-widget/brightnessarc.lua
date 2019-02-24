@@ -11,42 +11,47 @@
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
+local naughty = require("naughty")
 
 local PATH_TO_ICON = "/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg"
 local GET_BRIGHTNESS_CMD = "light -G"   -- "xbacklight -get"
 local INC_BRIGHTNESS_CMD = "light -A 5" -- "xbacklight -inc 5"
 local DEC_BRIGHTNESS_CMD = "light -U 5" -- "xbacklight -dec 5"
 
-local brightness_text = wibox.widget.textbox()
-brightness_text:set_font('Play 9')
-
-local brightness_icon = wibox.widget {
-    {
-    	image = PATH_TO_ICON,
-    	resize = false,
-        widget = wibox.widget.imagebox,
-    },
-    top = 3,
-    widget = wibox.container.margin
+local icon = {
+    id = "icon",
+    image = PATH_TO_ICON,
+    resize = true,
+    widget = wibox.widget.imagebox,
 }
 
-local brightness_widget = wibox.widget {
-    brightness_icon,
-    brightness_text,
-    layout = wibox.layout.fixed.horizontal,
+local brightnessarc = wibox.widget {
+    icon,
+    max_value = 1,
+    thickness = 2,
+    start_angle = 4.71238898, -- 2pi*3/4
+    forced_height = 18,
+    forced_width = 18,
+    bg = "#ffffff11",
+    paddings = 2,
+    widget = wibox.container.arcchart
 }
+
+local brightnessarc_widget = wibox.container.mirror(brightnessarc, { horizontal = true })
 
 local update_widget = function(widget, stdout, stderr, exitreason, exitcode)
-    local brightness_level = tonumber(string.format("%.0f", stdout))
-    widget:set_text(" " .. brightness_level .. "%")
+    local brightness_level = string.match(stdout, "(%d?%d?)")
+    brightness_level = tonumber(string.format("% 3d", brightness_level))
+
+    widget.value = brightness_level / 100;
 end,
 
-brightness_widget:connect_signal("button::press", function(_,_,_,button)
+brightnessarc:connect_signal("button::press", function(_,_,_,button)
     if (button == 4)     then spawn(INC_BRIGHTNESS_CMD, false)
     elseif (button == 5) then spawn(DEC_BRIGHTNESS_CMD, false)
     end
 end)
 
-watch(GET_BRIGHTNESS_CMD, 1, update_widget, brightness_text)
+watch(GET_BRIGHTNESS_CMD, 1, update_widget, brightnessarc)
 
-return brightness_widget
+return brightnessarc_widget
