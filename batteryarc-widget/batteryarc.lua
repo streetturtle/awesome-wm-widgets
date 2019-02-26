@@ -1,3 +1,13 @@
+-------------------------------------------------
+-- Battery Arc Widget for Awesome Window Manager
+-- Shows the battery level of the laptop
+-- More details could be found here:
+-- https://github.com/streetturtle/awesome-wm-widgets/tree/master/batteryarc-widget
+
+-- @author Pavel Makhov
+-- @copyright 2019 Pavel Makhov
+-------------------------------------------------
+
 local awful = require("awful")
 local beautiful = require("beautiful")
 local naughty = require("naughty")
@@ -6,27 +16,22 @@ local watch = require("awful.widget.watch")
 
 local HOME = os.getenv("HOME")
 
--- only text
 local text = wibox.widget {
     id = "txt",
-    font = "Play 5",
+    font = "Play 6",
     widget = wibox.widget.textbox
 }
 
--- mirror the text, because the whole widget will be mirrored after
-local mirrored_text = wibox.container.mirror(text, { horizontal = true })
-
--- mirrored text with background
-local mirrored_text_with_background = wibox.container.background(mirrored_text)
+local text_with_background = wibox.container.background(text)
 
 local batteryarc = wibox.widget {
-    mirrored_text_with_background,
+    text_with_background,
     max_value = 1,
     rounded_edge = true,
     thickness = 2,
     start_angle = 4.71238898, -- 2pi*3/4
-    forced_height = 17,
-    forced_width = 17,
+    forced_height = 18,
+    forced_width = 18,
     bg = "#ffffff11",
     paddings = 2,
     widget = wibox.container.arcchart,
@@ -35,13 +40,10 @@ local batteryarc = wibox.widget {
     end,
 }
 
--- mirror the widget, so that chart value increases clockwise
-local batteryarc_widget = wibox.container.mirror(batteryarc, { horizontal = true })
-
 local last_battery_check = os.time()
 
 watch("acpi -i", 10,
-    function(widget, stdout, stderr, exitreason, exitcode)
+    function(widget, stdout)
         local batteryType
 
         local battery_info = {}
@@ -77,11 +79,11 @@ watch("acpi -i", 10,
 
         widget.value = charge / 100
         if status == 'Charging' then
-            mirrored_text_with_background.bg = beautiful.widget_green
-            mirrored_text_with_background.fg = beautiful.widget_black
+            text_with_background.bg = beautiful.widget_green
+            text_with_background.fg = beautiful.widget_black
         else
-            mirrored_text_with_background.bg = beautiful.widget_transparent
-            mirrored_text_with_background.fg = beautiful.widget_main_color
+            text_with_background.bg = beautiful.widget_transparent
+            text_with_background.fg = beautiful.widget_main_color
         end
 
         text.text = string.format('%d', charge)
@@ -146,4 +148,4 @@ function show_battery_warning()
     }
 end
 
-return batteryarc_widget
+return batteryarc
