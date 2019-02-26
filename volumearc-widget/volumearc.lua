@@ -19,18 +19,26 @@ local INC_VOLUME_CMD = 'amixer -D pulse sset Master 5%+'
 local DEC_VOLUME_CMD = 'amixer -D pulse sset Master 5%-'
 local TOG_VOLUME_CMD = 'amixer -D pulse sset Master toggle'
 
+local PATH_TO_ICON = "/usr/share/icons/Arc/status/symbolic/audio-volume-muted-symbolic.svg"
+
+local icon = {
+    id = "icon",
+    image = PATH_TO_ICON,
+    resize = true,
+    widget = wibox.widget.imagebox,
+}
+
 local volumearc = wibox.widget {
+    icon,
     max_value = 1,
     thickness = 2,
     start_angle = 4.71238898, -- 2pi*3/4
-    forced_height = 17,
-    forced_width = 17,
+    forced_height = 18,
+    forced_width = 18,
     bg = "#ffffff11",
     paddings = 2,
     widget = wibox.container.arcchart
 }
-
-local volumearc_widget = wibox.container.mirror(volumearc, { horizontal = true })
 
 local update_graphic = function(widget, stdout, _, _, _)
     local mute = string.match(stdout, "%[(o%D%D?)%]")
@@ -56,4 +64,4 @@ end)
 
 watch(GET_VOLUME_CMD, 1, update_graphic, volumearc)
 
-return volumearc_widget
+return volumearc
