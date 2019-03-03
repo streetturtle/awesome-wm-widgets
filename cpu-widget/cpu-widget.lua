@@ -11,6 +11,7 @@
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 local beautiful = require("beautiful")
+local gears = require("gears")
 
 local cpugraph_widget = wibox.widget {
     max_value = 100,
@@ -38,8 +39,7 @@ watch([[bash -c "cat /proc/stat | grep '^cpu '"]], 1,
         local diff_total = total - total_prev
         local diff_usage = (1000 * (diff_total - diff_idle) / diff_total + 5) / 10
 
-        widget:set_color(diff_usage > 80 and beautiful.widget_red
-                                          or beautiful.widget_main_color)
+        widget.color = diff_usage > 80 and gears.color("red") or beautiful.get().bg_focus
 
         widget:add_value(diff_usage)
 
