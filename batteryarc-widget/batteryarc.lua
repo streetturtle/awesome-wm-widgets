@@ -75,7 +75,9 @@ watch("acpi -i", 10,
 
             charge = charge + batt.charge * capacities[i]
         end
-        charge = charge / capacity
+        if capacity > 0 then
+            charge = charge / capacity
+        end
 
         widget.value = charge / 100
         if status == 'Charging' then
