@@ -17,6 +17,12 @@ Spotify, CPU, RAM, brightness-arc, volume-arc and battery-arc widgets:
  <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/Screenshot%20from%202019-03-01%2014-28-18.png">
 </p>
 
+Brightness, volume and battery widgets:
+
+<p align="center">
+ <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/widgets-icons.png">
+</p>
+
 ![screenshot](./screenshot.png)
 
 or with separators
