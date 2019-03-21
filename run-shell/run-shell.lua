@@ -7,10 +7,6 @@
 -- @copyright 2019 Pavel Makhov
 -------------------------------------------------
 
-local capi = {
-    screen = screen,
-    client = client,
-}
 local awful = require("awful")
 local gfs = require("gears.filesystem")
 local wibox = require("wibox")
@@ -22,6 +18,7 @@ local run_shell = awful.widget.prompt()
 local widget = {}
 
 function widget.new()
+
     local widget_instance = {
         _cached_wiboxes = {}
     }
@@ -32,8 +29,8 @@ function widget.new()
             ontop = true,
             height = 1060,
             width = 1920,
-            opacity = 0.6,
-            bg = '#000002'
+            opacity = 0.9,
+            bg = 'radial:960,540,20:960,540,700:0,#00000022:0.2,#33333388:1,#000000ff'
         }
 
         w:setup {
