@@ -125,6 +125,7 @@ watch("acpi -i", 10,
         local bat_high   = 75
         local bat_low    = 30 
 
+--        if charge_perc <= bat_low then
         if charge_perc <= bat_low then
             batteryarc.colors = { beautiful.widget_red }
             if status ~= 'Charging' and os.difftime(os.time(), last_battery_check) > 300 then
@@ -172,7 +173,7 @@ batteryarc:connect_signal("mouse::leave", function() naughty.destroy(notificatio
 --[[ Show warning notification ]]
 function show_battery_warning()
     naughty.notify {
-        icon = HOME .. "/.config/awesome/awesome-wm-widgets/fig/spaceman.jpg",  -- new fig
+        icon = HOME .. "/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg",
         icon_size = 100,
         text = "Battery is dying", -- switch text and title 
         title = "Huston, we have a problem",
