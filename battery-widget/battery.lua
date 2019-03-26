@@ -35,6 +35,7 @@ local notification
 local function show_battery_status()
     awful.spawn.easy_async([[bash -c 'acpi']],
         function(stdout, _, _, _)
+            naughty.destroy(notification)
             notification = naughty.notify{
                 text =  stdout,
                 title = "Battery status",
