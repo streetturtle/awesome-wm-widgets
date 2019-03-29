@@ -12,6 +12,7 @@ local gfs = require("gears.filesystem")
 local wibox = require("wibox")
 local gears = require("gears")
 local completion = require("awful.completion")
+local naughty = require("naughty")
 
 local run_shell = awful.widget.prompt()
 
@@ -33,37 +34,78 @@ function widget.new()
             bg = 'radial:960,540,20:960,540,700:0,#00000022:0.2,#33333388:1,#000000ff'
         }
 
+        local suspend_button = wibox.widget {
+            image  = '/usr/share/icons/Arc/actions/symbolic/system-shutdown-symbolic.svg',
+            widget = wibox.widget.imagebox,
+            resize = false,
+            set_hover = function(self, opacity)
+                naughty.notify{text = tostring(self.opacity)}
+                self.opacity = opacity
+                self.image = '/usr/share/icons/Arc/actions/symbolic/system-shutdown-symbolic.svg'
+            end
+        }
+
+        suspend_button:connect_signal("mouse::enter", function()
+            suspend_button:set_hover(1)
+        end)
+
+        suspend_button:connect_signal("mouse::leave", function()
+            suspend_button:set_hover(0.2)
+        end)
+
         w:setup {
             {
                 {
                     {
                         {
-                            markup = '<span font="awesomewm-font 14" color="#ffffff">a</span>',
-                            widget = wibox.widget.textbox,
+                            {
+                                markup = '<span font="awesomewm-font 14" color="#ffffff">a</span>',
+                                widget = wibox.widget.textbox,
+                            },
+                            id = 'icon',
+                            left = 10,
+                            layout = wibox.container.margin
                         },
-                        id = 'icon',
-                        left = 10,
-                        layout = wibox.container.margin
+                        {
+                            run_shell,
+                            left = 10,
+                            layout = wibox.container.margin,
+                        },
+                        id = 'left',
+                        layout = wibox.layout.fixed.horizontal
+                    },
+                    bg = '#333333',
+                    shape = function(cr, width, height)
+                        gears.shape.rounded_rect(cr, width, height, 3)
+                    end,
+                    shape_border_color = '#74aeab',
+                    shape_border_width = 1,
+                    forced_width = 200,
+                    forced_height = 50,
+                    widget = wibox.container.background
+                },
+                valign = 'center',
+                layout = wibox.container.place
+            },
+            {
+                {
+                    suspend_button,
+                    {
+                        image  = '/usr/share/icons/Arc/actions/symbolic/application-exit-symbolic.svg',
+                        resize = false,
+                        widget = wibox.widget.imagebox,
                     },
                     {
-                        run_shell,
-                        left = 10,
-                        layout = wibox.container.margin,
+                        image  = '/usr/share/icons/Arc/actions/symbolic/application-exit-symbolic.svg',
+                        resize = false,
+                        widget = wibox.widget.imagebox
                     },
-                    id = 'left',
                     layout = wibox.layout.fixed.horizontal
                 },
-                widget = wibox.container.background,
-                bg = '#333333',
-                shape = function(cr, width, height)
-                    gears.shape.rounded_rect(cr, width, height, 3)
-                end,
-                shape_border_color = '#74aeab',
-                shape_border_width = 1,
-                forced_width = 200,
-                forced_height = 50
+                valign = 'bottom',
+                layout = wibox.container.place,
             },
-            layout = wibox.container.place
+            layout = wibox.layout.stack
         }
 
         return w
