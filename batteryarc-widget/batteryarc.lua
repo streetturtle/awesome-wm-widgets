@@ -20,7 +20,7 @@ local text = wibox.widget {
     id = "txt",
     font = "Play 6",
     align  = 'center',  -- align the text
-    valign = 'center', 
+    valign = 'center',
     widget = wibox.widget.textbox
 }
 
@@ -45,118 +45,94 @@ local batteryarc = wibox.widget {
 local last_battery_check = os.time()
 
 watch("acpi -i", 10,
-    function(widget, stdout)
-        local batteryType
+        function(widget, stdout)
+            local batteryType
 
-        local battery_info = {}
-        local capacities = {}
-        
-        -- Change the logic of processing battery information from 'acpi -i'
-        for s in stdout:gmatch("[^\r\n]+") do
-            local status, charge_str = string.match(s, '.+: (%a+), (%d?%d?%d)%%,?.*')
-            if charge_str ~= nil then
-                table.insert(battery_info, {status = status, charge = tonumber(charge_str)})
-            else
-                local cap_str = string.match(s, '.+:.+last full capacity (%d+)')
-                if cap_str ~= nil then
+            local battery_info = {}
+            local capacities = {}
+            for s in stdout:gmatch("[^\r\n]+") do
+                local status, charge_str, time = string.match(s, '.+: (%a+), (%d?%d?%d)%%,?.*')
+                if string.match(s, 'rate information') then
+                    -- ignore such line
+                elseif status ~= nil then
+                    table.insert(battery_info, {status = status, charge = tonumber(charge_str)})
+                else
+                    local cap_str = string.match(s, '.+:.+last full capacity (%d+)')
                     table.insert(capacities, tonumber(cap_str))
                 end
             end
-            
-        end
-        
-        -- total battery capacity
-        local total_capacity = 0
-        for i, cap in ipairs(capacities) do
-            total_capacity = total_capacity + cap
-        end
 
-        -- capacity charged into all batteries
-        local charge_cap = 0
-        -- battery charge percentage 0~100
-        local charge_perc = 0
-        
-        for i, batt in ipairs(battery_info) do
-            -- BUG: batt.charge ranges from 0 to 100, should be divided by 100
-            charge_cap = charge_cap + batt.charge/100 * capacities[i]
-        end
-        
-        
-        local status
-        
-        -- new logic to determine status
-        status = 'Full'
-        for i, batt in ipairs(battery_info) do
-            if batt.status == 'Charging' then
-                status = 'Charging'
-                break
+            local capacity = 0
+            for i, cap in ipairs(capacities) do
+                capacity = capacity + cap
             end
-            if batt.status == 'Discharging' then
-                status = 'Discharging'
-                break
-            end            
-        end
-        
 
-        if total_capacity > 0 then
-            charge_perc = charge_cap / total_capacity * 100
-        end
+            local charge = 0
+            local status
+            for i, batt in ipairs(battery_info) do
+                if batt.charge >= charge then
+                    -- use most charged battery status. This is arbitrary, and maybe another metric should be used
+                    status = batt.status
+                end
 
-        -- when widget.value is < 0.04, the widget shows a full circle (as widget.value=1)
-        -- so the charge_perc value is checked first
-        if charge_perc >= 5 then
-            widget.value = charge_perc / 100
-        else
-            widget.value = 0.05
-        end
-         
-        
-        if status == 'Charging' then
-            text_with_background.bg = beautiful.widget_green
-            text_with_background.fg = beautiful.widget_black
-        else
-            text_with_background.bg = beautiful.widget_transparent
-            text_with_background.fg = beautiful.widget_main_color
-        end
-
-        text.text = string.format('%d', charge_perc)
-
-        -- add variables to make it easy to change settings
-        local bat_high   = 75
-        local bat_low    = 30 
-
---        if charge_perc <= bat_low then
-        if charge_perc <= bat_low then
-            batteryarc.colors = { beautiful.widget_red }
-            if status ~= 'Charging' and os.difftime(os.time(), last_battery_check) > 300 then
-                -- if 5 minutes have elapsed since the last warning
-                last_battery_check = os.time()
-
-                show_battery_warning()
+                charge = charge + batt.charge * capacities[i]
             end
-        elseif charge_perc > bat_low and charge_perc < bat_high then
-            batteryarc.colors = { beautiful.widget_yellow }
-        else
-            batteryarc.colors = { beautiful.widget_main_color }
-        end
-    end,
-    batteryarc)
+
+            local charge_percentage
+            if capacity > 5 then
+                charge = charge / capacity
+                charge_percentage = charge / 100
+            else
+                -- when widget.value is < 0.04, the widget shows a full circle (as widget.value=1)
+                charge_percentage = 0.05
+            end
+
+            widget.value = charge / 100
+
+            if status == 'Charging' then
+                text_with_background.bg = beautiful.widget_green
+                text_with_background.fg = beautiful.widget_black
+            else
+                text_with_background.bg = beautiful.widget_transparent
+                text_with_background.fg = beautiful.widget_main_color
+            end
+
+            --- if battery is fully charged (100) there is not enough place for three digits, so we don't show any text
+            text.text = charge == 100
+                    and ''
+                    or string.format('%d', charge)
+
+            if charge < 15 then
+                batteryarc.colors = { beautiful.widget_red }
+                if status ~= 'Charging' and os.difftime(os.time(), last_battery_check) > 300 then
+                    -- if 5 minutes have elapsed since the last warning
+                    last_battery_check = os.time()
+
+                    show_battery_warning()
+                end
+            elseif charge > 15 and charge < 40 then
+                batteryarc.colors = { beautiful.widget_yellow }
+            else
+                batteryarc.colors = { beautiful.widget_main_color }
+            end
+        end,
+        batteryarc)
 
 -- Popup with battery info
 -- One way of creating a pop-up notification - naughty.notify
 local notification
 function show_battery_status()
     awful.spawn.easy_async([[bash -c 'acpi']],
-        function(stdout, _, _, _)
-            naughty.destroy(notification)
-            notification = naughty.notify {
-                text = stdout,
-                title = "Battery status",
-                timeout = 5,
-                hover_timeout = 0.5,
-                width = 200,
-            }
-        end)
+            function(stdout, _, _, _)
+                naughty.destroy(notification)
+                notification = naughty.notify {
+                    text = stdout,
+                    title = "Battery status",
+                    timeout = 5,
+                    hover_timeout = 0.5,
+                    width = 200,
+                }
+            end)
 end
 
 batteryarc:connect_signal("mouse::enter", function() show_battery_status() end)
@@ -176,7 +152,7 @@ function show_battery_warning()
     naughty.notify {
         icon = HOME .. "/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg",
         icon_size = 100,
-        text = "Battery is dying", -- switch text and title 
+        text = "Battery is dying", -- switch text and title
         title = "Huston, we have a problem",
         timeout = 25,   -- show the warning for a longer time
         hover_timeout = 0.5,
