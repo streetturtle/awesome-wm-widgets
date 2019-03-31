@@ -2,7 +2,7 @@
 
 Run prompt which is put inside a widget:
 
-![video](https://imgur.com/a/BU9cTnj)
+![video](https://imgur.com/ohjAuCQ)
 
 ## Installation
 
