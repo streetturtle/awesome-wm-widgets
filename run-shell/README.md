@@ -2,7 +2,7 @@
 
 Run prompt which is put inside a widget:
 
-![video](./out.mp4)
+![video](https://imgur.com/a/BU9cTnj)
 
 ## Installation
 
