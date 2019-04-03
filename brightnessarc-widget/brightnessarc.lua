@@ -37,7 +37,7 @@ local brightnessarc = wibox.widget {
 }
 
 local update_widget = function(widget, stdout)
-    local brightness_level = string.match(stdout, "(%d?%d?)")
+    local brightness_level = string.match(stdout, "(%d?%d?%d?)")
     brightness_level = tonumber(string.format("% 3d", brightness_level))
 
     widget.value = brightness_level / 100;
