@@ -14,6 +14,8 @@ local gears = require("gears")
 local completion = require("awful.completion")
 local naughty = require("naughty")
 
+local HOME = os.getenv("HOME")
+
 local run_shell = awful.widget.prompt()
 
 local widget = {}
@@ -38,19 +40,39 @@ function widget.new()
             image  = '/usr/share/icons/Arc/actions/symbolic/system-shutdown-symbolic.svg',
             widget = wibox.widget.imagebox,
             resize = false,
+            opacity = 0.2,
             set_hover = function(self, opacity)
-                naughty.notify{text = tostring(self.opacity)}
                 self.opacity = opacity
                 self.image = '/usr/share/icons/Arc/actions/symbolic/system-shutdown-symbolic.svg'
             end
         }
 
+        local turnoff_notification
+
         suspend_button:connect_signal("mouse::enter", function()
+            turnoff_notification = naughty.notify{
+            icon = HOME .. "/.config/awesome/nichosi.png",
+            icon_size=100,
+            title = "Huston, we have a problem",
+            text = "You're about to turn off your computer",
+            timeout = 5, hover_timeout = 0.5,
+            position = "bottom_right",
+            bg = "#F06060",
+            fg = "#EEE9EF",
+            width = 300,
+        }
             suspend_button:set_hover(1)
         end)
 
         suspend_button:connect_signal("mouse::leave", function()
+            naughty.destroy(turnoff_notification)
             suspend_button:set_hover(0.2)
+        end)
+
+        suspend_button:connect_signal("button::press", function(_,_,_,button)
+            if (button == 1) then
+                awful.spawn("shutdown now")
+            end
         end)
 
         w:setup {
@@ -90,16 +112,6 @@ function widget.new()
             {
                 {
                     suspend_button,
-                    {
-                        image  = '/usr/share/icons/Arc/actions/symbolic/application-exit-symbolic.svg',
-                        resize = false,
-                        widget = wibox.widget.imagebox,
-                    },
-                    {
-                        image  = '/usr/share/icons/Arc/actions/symbolic/application-exit-symbolic.svg',
-                        resize = false,
-                        widget = wibox.widget.imagebox
-                    },
                     layout = wibox.layout.fixed.horizontal
                 },
                 valign = 'bottom',

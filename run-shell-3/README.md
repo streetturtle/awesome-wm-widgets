@@ -20,7 +20,7 @@ Blurs / pixelates background and shows widget with run prompt:
     git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
     ```
 
-1. Require weather widget at the beginning of **rc.lua**:
+1. Require widget at the beginning of **rc.lua**:
 
     ```lua
     local run_shell = require("awesome-wm-widgets.run_shell.run_shell")
