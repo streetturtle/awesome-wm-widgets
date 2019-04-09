@@ -111,7 +111,7 @@ mpdarc:connect_signal("mouse::leave", function() naughty.destroy(notification) e
 
 watch(GET_MPD_CMD, 1, update_graphic, mpdarc)
 
-local mpdarc_widget = {
+local mpdarc_widget = wibox.widget{
     mpdarc_icon_widget,
     mpdarc_current_song_widget,
     layout = wibox.layout.align.horizontal,
