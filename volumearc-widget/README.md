@@ -2,7 +2,7 @@
 
 Almost the same as [volumebar widget](https://github.com/streetturtle/awesome-wm-widgets/tree/master/volumebar-widget), but using arcchart:
 
-![screenshot]({{'/assets/img/screenshots/volumearc-widget.gif' | relative_url }}){:.center-image}
+![screenshot](out.gif)
 
 ## Customization
 
