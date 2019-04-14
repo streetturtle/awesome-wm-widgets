@@ -4,6 +4,24 @@ Almost the same as [volumebar widget](https://github.com/streetturtle/awesome-wm
 
 ![screenshot]({{'/assets/img/screenshots/volumearc-widget.gif' | relative_url }}){:.center-image}
 
+## Customization
+
+It is possible to customize widget by providing a table with all or some of the following config parameters:
+
+```lua
+volumearc_widget({
+    main_color = '#af13f7',
+    mute_color = '#ff0000',
+    path_to_icon = '/usr/share/icons/Papirus-Dark/symbolic/status/audio-volume-high-symbolic.svg',
+    thickness = 5,
+    height = 25
+})
+```
+
+Above config results in following widget:
+
+![custom](./custom.png) 
+
 ## Installation
 
 1. Clone this repo under **~/.config/awesome/**
@@ -29,9 +47,9 @@ Almost the same as [volumebar widget](https://github.com/streetturtle/awesome-wm
             volumearc_widget(),
             --[[or customized]]
             volumearc_widget({
-                main_color = '#0000ff',
+                main_color = '#af13f7',
                 mute_color = '#ff0000',
-                path_to_icon = '/usr/share/icons/Arc/actions/symbolic/view-grid-symbolic.svg',
+                path_to_icon = '/usr/share/icons/Papirus-Dark/symbolic/status/audio-volume-high-symbolic.svg',
                 thickness = 5,
                 height = 25
             }),

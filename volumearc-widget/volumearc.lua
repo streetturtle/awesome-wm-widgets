@@ -59,8 +59,8 @@ local function worker(args)
     }
 
     local update_graphic = function(widget, stdout, _, _, _)
-        local mute = string.match(stdout, "%[(o%D%D?)%]")
-        local volume = string.match(stdout, "(%d?%d?%d)%%")
+        local mute = string.match(stdout, "%[(o%D%D?)%]")   -- \[(o\D\D?)\] - [on] or [off]
+        local volume = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
         volume = tonumber(string.format("% 3d", volume))
 
         widget.value = volume / 100;
