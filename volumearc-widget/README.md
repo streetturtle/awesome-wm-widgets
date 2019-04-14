@@ -4,6 +4,11 @@ Almost the same as [volumebar widget](https://github.com/streetturtle/awesome-wm
 
 ![screenshot](out.gif)
 
+Supports 
+ - scroll up - increase volume, 
+ - scroll down - decrease volume, 
+ - left click - mute/unmute.
+
 ## Customization
 
 It is possible to customize widget by providing a table with all or some of the following config parameters:
