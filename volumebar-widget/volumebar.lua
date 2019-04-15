@@ -26,11 +26,16 @@ local function worker(args)
 
     local args = args or {}
 
-    local main_color = args.main_color or beautiful.widget_main_color
-    local mute_color = args.mute_color or beautiful.widget_red
+    local main_color = args.main_color or beautiful.fg_normal
+    local mute_color = args.mute_color or beautiful.fg_urgent
     local width = args.width or 50
     local shape = args.shape or 'bar'
     local margins = args.margins or 10
+
+    local get_volume_cmd = args.get_volume_cmd or GET_VOLUME_CMD
+    local inc_volume_cmd = args.inc_volume_cmd or INC_VOLUME_CMD
+    local dec_volume_cmd = args.dec_volume_cmd or DEC_VOLUME_CMD
+    local tog_volume_cmd = args.tog_volume_cmd or TOG_VOLUME_CMD
 
     local volumebar_widget = wibox.widget {
         max_value = 1,
@@ -59,19 +64,19 @@ local function worker(args)
 
     volumebar_widget:connect_signal("button::press", function(_, _, _, button)
         if (button == 4) then
-            awful.spawn(INC_VOLUME_CMD)
+            awful.spawn(inc_volume_cmd)
         elseif (button == 5) then
-            awful.spawn(DEC_VOLUME_CMD)
+            awful.spawn(dec_volume_cmd)
         elseif (button == 1) then
-            awful.spawn(TOG_VOLUME_CMD)
+            awful.spawn(tog_volume_cmd)
         end
 
-        spawn.easy_async(GET_VOLUME_CMD, function(stdout, stderr, exitreason, exitcode)
+        spawn.easy_async(get_volume_cmd, function(stdout, stderr, exitreason, exitcode)
             update_graphic(volumebar_widget, stdout, stderr, exitreason, exitcode)
         end)
     end)
 
-    watch(GET_VOLUME_CMD, 1, update_graphic, volumebar_widget)
+    watch(get_volume_cmd, 1, update_graphic, volumebar_widget)
 
     return volumebar_widget
 end

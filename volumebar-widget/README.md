@@ -9,17 +9,30 @@ Supports
  - scroll down - decrease volume, 
  - left click - mute/unmute.
  
- ## Customization
+## Customization
  
- It is possible to customize widget by providing a table with all or some of the following config parameters:
- 
+It is possible to customize widget by providing a table with all or some of the following config parameters:
+
+| Name | Default | Description |
+|---|---|---|
+| `main_color` | `beautiful.fg_normal` | Color of the bar |
+| `mute_color` | `beautiful.fg_urgent` | Color of the bar when mute |
+| `width` | 50 | The bar width |
+| `shape` | `bar` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
+| `margin` | `10` | Top and bottom margin (if your wibar is 22 px high, bar will be 2 px (22 - 2*10)) |
+| `get_volume_cmd` | `amixer -D pulse sget Master` | Get current volume level |
+| `inc_volume_cmd` | `amixer -D pulse sset Master 5%+` | Increase volume level |
+| `dec_volume_cmd` | `amixer -D pulse sset Master 5%-` | Descrease volume level |
+| `tog_volume_cmd` | `amixer -D pulse sset Master toggle` | Mute / unmute |
+
+### Example:
+
  ```lua
  volumebar_widget({
     main_color = '#af13f7',
     mute_color = '#ff0000',
     width = 80,
-    shape = 'rounded_bar', -- octogon, hexagon, powerline, etc
-    -- bar's height = wibar's height minus 2x margins
+    shape = 'rounded_bar',
     margins = 8
 })
  ```
@@ -29,7 +42,7 @@ Above config results in following widget:
 ![custom](./custom.png) 
 
 
- ## Installation
+## Installation
  
 1. Clone this repo under **~/.config/awesome/**
 
