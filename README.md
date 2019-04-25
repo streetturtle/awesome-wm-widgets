@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/github/forks/streetturtle/awesome-wm-widgets.svg">
 </p>
 
-Set of super simple widgets compatible with Awesome Window Manager v.4+. 
+Set of super simple widgets compatible with Awesome Window Manager v.4+.  
 
 ## Screenshots 
 
@@ -66,6 +66,7 @@ sprtr,
 
 # Installation
 
+For Awesome v4.2 checkout branch **4.2-human-after-all**, changes for v.4.3 is in master and still in progress.
 Clone the repo under **~/.config/awesome/**, then in **rc.lua** add the import of the widget you'd like to use in "require" section on the top of the file:
 
 ```lua
