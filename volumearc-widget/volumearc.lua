@@ -27,8 +27,8 @@ local function worker(args)
 
     local args = args or {}
 
-    local main_color = args.main_color or beautiful.widget_main_color
-    local mute_color = args.mute_color or beautiful.widget_red
+    local main_color = args.main_color or beautiful.fg_color
+    local mute_color = args.mute_color or beautiful.fg_urgent
     local path_to_icon = args.path_to_icon or PATH_TO_ICON
     local thickness = args.thickness or 2
     local height = args.height or 18
@@ -37,7 +37,6 @@ local function worker(args)
     local inc_volume_cmd = args.inc_volume_cmd or INC_VOLUME_CMD
     local dec_volume_cmd = args.dec_volume_cmd or DEC_VOLUME_CMD
     local tog_volume_cmd = args.tog_volume_cmd or TOG_VOLUME_CMD
-
 
     local icon = {
         id = "icon",
@@ -59,8 +58,8 @@ local function worker(args)
     }
 
     local update_graphic = function(widget, stdout, _, _, _)
-        local mute = string.match(stdout, "%[(o%D%D?)%]")
-        local volume = string.match(stdout, "(%d?%d?%d)%%")
+        local mute = string.match(stdout, "%[(o%D%D?)%]")   -- \[(o\D\D?)\] - [on] or [off]
+        local volume = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
         volume = tonumber(string.format("% 3d", volume))
 
         widget.value = volume / 100;

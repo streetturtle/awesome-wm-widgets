@@ -9,6 +9,7 @@
 -------------------------------------------------
 
 local awful = require("awful")
+local beautiful = require("beautiful")
 local gears = require("gears")
 local spawn = require("awful.spawn")
 local watch = require("awful.widget.watch")
@@ -19,48 +20,66 @@ local INC_VOLUME_CMD = 'amixer -D pulse sset Master 5%+'
 local DEC_VOLUME_CMD = 'amixer -D pulse sset Master 5%-'
 local TOG_VOLUME_CMD = 'amixer -D pulse sset Master toggle'
 
-local bar_color = "#74aeab"
-local mute_color = "#ff0000"
-local background_color = "#3a3a3a"
+local widget = {}
 
-local volumebar_widget = wibox.widget {
-    max_value = 1,
-    forced_width = 50,
-    paddings = 0,
-    border_width = 0.5,
-    color = bar_color,
-    background_color = background_color,
-    shape = gears.shape.bar,
-    clip = true,
-    margins       = {
-        top = 10,
-        bottom = 10,
-    },
-    widget = wibox.widget.progressbar
-}
+local function worker(args)
 
-local update_graphic = function(widget, stdout, _, _, _)
-    local mute = string.match(stdout, "%[(o%D%D?)%]")
-    local volume = string.match(stdout, "(%d?%d?%d)%%")
-    volume = tonumber(string.format("% 3d", volume))
+    local args = args or {}
 
-    widget.value = volume / 100;
-    widget.color = mute == "off" and mute_color
-                                  or bar_color
+    local main_color = args.main_color or beautiful.fg_normal
+    local mute_color = args.mute_color or beautiful.fg_urgent
+    local width = args.width or 50
+    local shape = args.shape or 'bar'
+    local margins = args.margins or 10
 
-end
+    local get_volume_cmd = args.get_volume_cmd or GET_VOLUME_CMD
+    local inc_volume_cmd = args.inc_volume_cmd or INC_VOLUME_CMD
+    local dec_volume_cmd = args.dec_volume_cmd or DEC_VOLUME_CMD
+    local tog_volume_cmd = args.tog_volume_cmd or TOG_VOLUME_CMD
 
-volumebar_widget:connect_signal("button::press", function(_,_,_,button)
-    if (button == 4)     then awful.spawn(INC_VOLUME_CMD)
-    elseif (button == 5) then awful.spawn(DEC_VOLUME_CMD)
-    elseif (button == 1) then awful.spawn(TOG_VOLUME_CMD)
+    local volumebar_widget = wibox.widget {
+        max_value = 1,
+        forced_width = width,
+        color = main_color,
+        background_color = '#ffffff11',
+        shape = gears.shape[shape],
+        margins = {
+            top = margins,
+            bottom = margins,
+        },
+        widget = wibox.widget.progressbar
+    }
+
+    local update_graphic = function(widget, stdout, _, _, _)
+        local mute = string.match(stdout, "%[(o%D%D?)%]")    -- \[(o\D\D?)\] - [on] or [off]
+        local volume = string.match(stdout, "(%d?%d?%d)%%")  -- (\d?\d?\d)\%)
+        volume = tonumber(string.format("% 3d", volume))
+
+        widget.value = volume / 100;
+        widget.color = mute == "off"
+                and mute_color
+                or main_color
+
     end
 
-    spawn.easy_async(GET_VOLUME_CMD, function(stdout, stderr, exitreason, exitcode)
-        update_graphic(volumebar_widget, stdout, stderr, exitreason, exitcode)
+    volumebar_widget:connect_signal("button::press", function(_, _, _, button)
+        if (button == 4) then
+            awful.spawn(inc_volume_cmd)
+        elseif (button == 5) then
+            awful.spawn(dec_volume_cmd)
+        elseif (button == 1) then
+            awful.spawn(tog_volume_cmd)
+        end
+
+        spawn.easy_async(get_volume_cmd, function(stdout, stderr, exitreason, exitcode)
+            update_graphic(volumebar_widget, stdout, stderr, exitreason, exitcode)
+        end)
     end)
-end)
 
-watch(GET_VOLUME_CMD, 1, update_graphic, volumebar_widget)
+    watch(get_volume_cmd, 1, update_graphic, volumebar_widget)
 
-return volumebar_widget
+    return volumebar_widget
+end
+
+return setmetatable(widget, { __call = function(_, ...) return worker(...) end })
+

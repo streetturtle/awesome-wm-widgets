@@ -2,6 +2,29 @@
 
 This widget represents current brightness level: ![Brightness widget](./br-wid-1.png)
 
+## Customization
+
+It is possible to customize widget by providing a table with all or some of the following config parameters:
+
+| Name | Default | Description |
+|---|---|---|
+| `get_brightness_cmd` | `light -G` | Get current screen brightness |
+| `inc_brightness_cmd` | `light -A 5` | Increase brightness |
+| `dec_brightness_cmd` | `light -U 5`| Decrease brightness |
+| `path_to_icon` | `/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg` | Path to the icon |
+| `font` | `Play 9` | Font |
+
+### Example:
+
+```lua
+brightness_widget({
+    get_brightness_cmd = 'xbacklight -get',
+    inc_brightness_cmd = 'xbacklight -inc 5',
+    dec_brightness_cmd = 'xbacklight -dec 5'
+})
+```
+
+
 ## Installation
 
 First you need to get the current brightness level. There are two options:
@@ -29,8 +52,6 @@ First you need to get the current brightness level. There are two options:
     49.18
     ```
 
-Depending on the chosen option change `GET_BRIGHTNESS_CMD` variable in **brightness.lua**.
-
 Then clone this repo under **~/.config/awesome/**:
 
 ```bash
@@ -50,7 +71,15 @@ s.mytasklist, -- Middle widget
     { -- Right widgets
         layout = wibox.layout.fixed.horizontal,
         ...
-        brightness_widget,
+        -- default
+        brightness_widget(),
+        -- or customized
+        brightness_widget({
+          get_brightness_cmd = 'xbacklight -get',
+          inc_brightness_cmd = 'xbacklight -inc 5',
+          dec_brightness_cmd = 'xbacklight -dec 5'
+        })      
+    }
         ...
 ```
 

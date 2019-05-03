@@ -2,7 +2,43 @@
 
 Almost the same as [volumebar widget](https://github.com/streetturtle/awesome-wm-widgets/tree/master/volumebar-widget), but using arcchart:
 
-![screenshot]({{'/assets/img/screenshots/volumearc-widget.gif' | relative_url }}){:.center-image}
+![screenshot](out.gif)
+
+Supports 
+ - scroll up - increase volume, 
+ - scroll down - decrease volume, 
+ - left click - mute/unmute.
+
+## Customization
+
+It is possible to customize widget by providing a table with all or some of the following config parameters:
+
+| Name | Default | Description |
+|---|---|---|
+| `main_color` | `beautiful.fg_normal` | Color of the arc |
+| `mute_color` | `beautiful.fg_urgent` | Color of the arc when mute |
+| `path_to_icon` | /usr/share/icons/Arc/status/symbolic/audio-volume-muted-symbolic.svg | Path to the icon |
+| `thickness` | 2 | The arc thickness |
+| `height` | `beautiful.fg_normal` | Widget height |
+| `get_volume_cmd` | `amixer -D pulse sget Master` | Get current volume level |
+| `inc_volume_cmd` | `amixer -D pulse sset Master 5%+` | Increase volume level |
+| `dec_volume_cmd` | `amixer -D pulse sset Master 5%-` | Descrease volume level |
+| `tog_volume_cmd` | `amixer -D pulse sset Master toggle` | Mute / unmute |
+
+### Example:
+
+```lua
+volumearc_widget({
+    main_color = '#af13f7',
+    mute_color = '#ff0000',
+    thickness = 5,
+    height = 25
+})
+```
+
+Above config results in following widget:
+
+![custom](./custom.png) 
 
 ## Installation
 
@@ -14,27 +50,13 @@ Almost the same as [volumebar widget](https://github.com/streetturtle/awesome-wm
 
 1. Require volumearc widget at the beginning of **rc.lua**:
 
-    ```lua
-    local volumearc_widget = require("awesome-wm-widgets.volumearc-widget.volumearc")
-    ```
-
-1. Add widget to the tasklist:
-
-    ```lua
-    s.mytasklist, -- Middle widget
-        { -- Right widgets
-            layout = wibox.layout.fixed.horizontal,
-            ...
-            --[[default]]
-            volumearc_widget(),
-            --[[or customized]]
-            volumearc_widget({
-                main_color = '#0000ff',
-                mute_color = '#ff0000',
-                path_to_icon = '/usr/share/icons/Arc/actions/symbolic/view-grid-symbolic.svg',
-                thickness = 5,
-                height = 25
-            }),
-
-            ...
-    ```
+```lua
+require("volumearc")
+...
+s.mytasklist, -- Middle widget
+	{ -- Right widgets
+    	layout = wibox.layout.fixed.horizontal,
+		...
+		volumearc_widget,
+		...
+```
