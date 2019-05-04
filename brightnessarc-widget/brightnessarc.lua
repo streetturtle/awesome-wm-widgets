@@ -11,6 +11,7 @@
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
+local beautiful = require("beautiful")
 
 local PATH_TO_ICON = "/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg"
 local GET_BRIGHTNESS_CMD = "light -G" -- "xbacklight -get"
@@ -26,6 +27,7 @@ local function worker(args)
     local get_brightness_cmd = args.get_brightness_cmd or GET_BRIGHTNESS_CMD
     local inc_brightness_cmd = args.inc_brightness_cmd or INC_BRIGHTNESS_CMD
     local dec_brightness_cmd = args.dec_brightness_cmd or DEC_BRIGHTNESS_CMD
+    local color = args.color or beautiful.fg_color
     local path_to_icon = args.path_to_icon or PATH_TO_ICON
 
     local icon = {
@@ -44,6 +46,7 @@ local function worker(args)
         forced_width = 18,
         bg = "#ffffff11",
         paddings = 2,
+        colors = {color},
         widget = wibox.container.arcchart
     }
 
