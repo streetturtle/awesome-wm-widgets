@@ -23,10 +23,11 @@ It is possible to customize widget by providing a table with all or some of the 
 |---|---|---|
 | `font` | Font | Play 6 |
 | `arc_thickness` | Thickness of the arc | 2 |
-| `text_color` | Color of text with the current charge | `beautiful.fg_color` |
+| `show_current_level`| Show current charge level | false |
+| `main_color` | Color of the text with the current charge level and the arc| `beautiful.fg_color` |
 | `low_level_color` | Arc color when battery charge is less that 15%| #e53935 |
 | `medium_level_color` | Arc color when battery charge is between 15% and 40% | #c0ca33 |
-| `full_level_color` | Arc color when battery charge is above 40% | `beautiful.fg_color` |
+| `charging` | Color of the circle inside the arc when charging | `beautiful.fg_color` |
 | `warning_msg_title` | Title of the warning popup | _Huston, we have a problem_ |
 | `warning_msg_text` | Text of the warning popup | _Battery is dying_ |
 | `warning_msg_position` | Position of the warning popup | `bottom_right` |
@@ -44,8 +45,15 @@ s.mytasklist, -- Middle widget
 	{ -- Right widgets
     	layout = wibox.layout.fixed.horizontal,
 		...
-		batteryarc_widget(),
-		...
+        --[[default]]
+		batteryarc_widget(),		
+        --[[or customized]]
+        batteryarc_widget({
+            show_current_level = true,
+            thickness = '1',
+        }),
+	}
+	...
 ```
 
 ## Troubleshooting

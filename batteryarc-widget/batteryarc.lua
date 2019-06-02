@@ -24,11 +24,12 @@ local function worker(args)
 
     local font = args.font or 'Play 6'
     local arc_thickness = args.thickness or 2
+    local show_current_level = args.show_current_level or false
 
-    local text_color = args.text_color or beautiful.fg_color
+    local main_color = args.main_color or beautiful.fg_color
     local low_level_color = args.low_level_color or '#e53935'
     local medium_level_color = args.medium_level_color or '#c0ca33'
-    local full_level_color = args.full_level_color or beautiful.fg_color
+    local charging_color = args.charging_color or '#43a047'
 
     local warning_msg_title = args.warning_msg_title or 'Huston, we have a problem'
     local warning_msg_text = args.warning_msg_text or 'Battery is dying'
@@ -109,17 +110,21 @@ local function worker(args)
                 widget.value = charge / 100
 
                 if status == 'Charging' then
-                    text_with_background.bg = full_level_color
+                    text_with_background.bg = charging_color
                     text_with_background.fg = '#000000'
                 else
                     text_with_background.bg = '#00000000'
-                    text_with_background.fg = text_color
+                    text_with_background.fg = main_color
                 end
 
-                --- if battery is fully charged (100) there is not enough place for three digits, so we don't show any text
-                text.text = charge == 100
-                        and ''
-                        or string.format('%d', charge)
+                if show_current_level == true then
+                    --- if battery is fully charged (100) there is not enough place for three digits, so we don't show any text
+                    text.text = charge == 100
+                            and ''
+                            or string.format('%d', charge)
+                else
+                    text.text = ''
+                end
 
                 if charge < 15 then
                     widget.colors = { low_level_color }
@@ -132,7 +137,7 @@ local function worker(args)
                 elseif charge > 15 and charge < 40 then
                     widget.colors = { medium_level_color }
                 else
-                    widget.colors = { full_level_color }
+                    widget.colors = { main_color }
                 end
             end,
             widget)
