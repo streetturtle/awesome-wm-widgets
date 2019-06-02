@@ -11,18 +11,27 @@ Depending of the battery status it could look following ways:
  - ![80_d](./80_d.png) - more than 40 percent
  - ![80_c](./80_c.png) - more than 40 percent, charging
 
-Widget uses following beautiful variables with values:
+If a battery level is low then warning popup will show up:
 
-```lua
-theme.widget_main_color = "#74aeab"
-theme.widget_red = "#e53935"
-theme.widget_yellow = "#c0ca33"
-theme.widget_green = "#43a047"
-theme.widget_black = "#000000"
-theme.widget_transparent = "#00000000"
-```
+![warning](./warning.png)
 
-which means that you need to copy the code above and paste it in your **theme.lua**. Otherwise you can change colors directly in the widget.
+## Customization
+
+It is possible to customize widget by providing a table with all or some of the following config parameters:
+
+| Name | Default | Description |
+|---|---|---|
+| `font` | Font | Play 6 |
+| `arc_thickness` | Thickness of the arc | 2 |
+| `text_color` | Color of text with the current charge | `beautiful.fg_color` |
+| `low_level_color` | Arc color when battery charge is less that 15%| #e53935 |
+| `medium_level_color` | Arc color when battery charge is between 15% and 40% | #c0ca33 |
+| `full_level_color` | Arc color when battery charge is above 40% | `beautiful.fg_color` |
+| `warning_msg_title` | Title of the warning popup | _Huston, we have a problem_ |
+| `warning_msg_text` | Text of the warning popup | _Battery is dying_ |
+| `warning_msg_position` | Position of the warning popup | `bottom_right` |
+| `warning_msg_icon` | Icon of the warning popup| ~/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg |
+
 
 ## Installation
 
@@ -35,11 +44,10 @@ s.mytasklist, -- Middle widget
 	{ -- Right widgets
     	layout = wibox.layout.fixed.horizontal,
 		...
-		batteryarc_widget,
+		batteryarc_widget(),
 		...
 ```
-You can get the icon for warning popup [here](https://vk.com/images/stickers/1933/512.png)
 
 ## Troubleshooting
 
-In case of any doubts or questions don't hesitate to raise an [issue](https://github.com/streetturtle/awesome-wm-widgets/issues/new).
+In case of any doubts or questions please raise an [issue](https://github.com/streetturtle/awesome-wm-widgets/issues/new).
