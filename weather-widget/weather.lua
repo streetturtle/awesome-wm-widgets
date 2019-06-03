@@ -6,8 +6,8 @@
 -- @copyright 2018 Pavel Makhov
 -------------------------------------------------
 
-local http = require("socket.http")
 local socket = require("socket")
+local http = require("socket.http")
 local ltn12 = require("ltn12")
 local json = require("json")
 local naughty = require("naughty")
@@ -109,47 +109,47 @@ local function worker(args)
         return directions[math.floor((degrees % 360) / 22.5) + 1]
     end
 
-    local weather_timer = gears.timer({ timeout = 60 })
-    local resp
+local weather_timer = gears.timer({ timeout = 60 })
+local resp
 
-    weather_timer:connect_signal("timeout", function()
-        local resp_json = {}
-        local res, status = http.request{
-            url=weather_api_url,
-            sink=ltn12.sink.table(resp_json),
-            -- ref:
-            -- http://w3.impa.br/~diego/software/luasocket/old/luasocket-2.0/http.html
-            create=function()
-                -- ref: https://stackoverflow.com/a/6021774/595220
-                local req_sock = socket.tcp()
-                -- 't' — overall timeout
-                req_sock:settimeout(0.2, 't')
-                -- 'b' — block timeout
-                req_sock:settimeout(0.001, 'b')
-                return req_sock
-            end
+weather_timer:connect_signal("timeout", function ()
+    local resp_json = {}
+    local res, status = http.request{
+        url=weather_api_url,
+        sink=ltn12.sink.table(resp_json),
+        -- ref:
+        -- http://w3.impa.br/~diego/software/luasocket/old/luasocket-2.0/http.html
+        create=function()
+            -- ref: https://stackoverflow.com/a/6021774/595220
+            local req_sock = socket.tcp()
+            -- 't' — overall timeout
+            req_sock:settimeout(0.2, 't')
+            -- 'b' — block timeout
+            req_sock:settimeout(0.001, 'b')
+            return req_sock
+        end
+    }
+    if (resp_json ~= nil) then
+        resp_json = table.concat(resp_json)
+    end
+
+    if (status ~= 200 and resp_json ~= nil and resp_json ~= '') then
+        local err_resp = json.decode(resp_json)
+        naughty.notify{
+            title = 'Weather Widget Error',
+            text = err_resp.message,
+            preset = naughty.config.presets.critical,
         }
-        if (resp_json ~= nil) then
-            resp_json = table.concat(resp_json)
-        end
-
-        if (status ~= 200 and resp_json ~= nil) then
-            local err_resp = json.decode(resp_json)
-            naughty.notify {
-                title = 'Weather Widget Error',
-                text = err_resp.message,
-                preset = naughty.config.presets.critical,
-            }
-        elseif (resp_json ~= nil and resp_json ~= '') then
-            resp = json.decode(resp_json)
-            icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
-            temp_widget:set_text(string.gsub(resp.main.temp, "%.%d+", "")
-                    .. '°'
-                    .. (units == 'metric' and 'C' or 'F'))
-        end
-    end)
-    weather_timer:start()
-    weather_timer:emit_signal("timeout")
+    elseif (resp_json ~= nil and resp_json ~= '') then
+        resp = json.decode(resp_json)
+        icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
+        temp_widget:set_text(string.gsub(resp.main.temp, "%.%d+", "")
+                .. '°'
+                .. (secrets.weather_widget_units == 'metric' and 'C' or 'F'))
+    end
+end)
+weather_timer:start()
+weather_timer:emit_signal("timeout")
 
     --- Notification with weather information. Popups when mouse hovers over the icon
     local notification
