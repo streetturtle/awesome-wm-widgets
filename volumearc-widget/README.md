@@ -36,7 +36,7 @@ volumearc_widget({
 })
 ```
 
-Above config results in following widget:
+The config above results in the following widget:
 
 ![custom](./custom.png) 
 
