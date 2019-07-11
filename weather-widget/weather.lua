@@ -7,6 +7,8 @@
 -------------------------------------------------
 
 local http = require("socket.http")
+local socket = require("socket")
+local ltn12 = require("ltn12")
 local json = require("json")
 local naughty = require("naughty")
 local wibox = require("wibox")
@@ -26,6 +28,13 @@ local function worker(args)
     local city = args.city or 'Montreal,ca'
     local api_key = args.api_key or naughty.notify{preset = naughty.config.presets.critical, text = 'OpenweatherMap API key is not set'}
     local units = args.units or 'metric'
+
+    local weather_api_url = (
+            'https://api.openweathermap.org/data/2.5/weather'
+                    .. '?q='     .. city
+                    .. '&appid=' .. api_key
+                    .. '&units=' .. units
+    )
 
     local icon_widget = wibox.widget {
         {
@@ -104,10 +113,26 @@ local function worker(args)
     local resp
 
     weather_timer:connect_signal("timeout", function()
-        local resp_json, status = http.request('https://api.openweathermap.org/data/2.5/weather?q='
-                .. city
-                .. '&appid=' .. api_key
-                .. '&units=' .. units)
+        local resp_json = {}
+        local res, status = http.request{
+            url=weather_api_url,
+            sink=ltn12.sink.table(resp_json),
+            -- ref:
+            -- http://w3.impa.br/~diego/software/luasocket/old/luasocket-2.0/http.html
+            create=function()
+                -- ref: https://stackoverflow.com/a/6021774/595220
+                local req_sock = socket.tcp()
+                -- 't' — overall timeout
+                req_sock:settimeout(0.2, 't')
+                -- 'b' — block timeout
+                req_sock:settimeout(0.001, 'b')
+                return req_sock
+            end
+        }
+        if (resp_json ~= nil) then
+            resp_json = table.concat(resp_json)
+        end
+
         if (status ~= 200 and resp_json ~= nil) then
             local err_resp = json.decode(resp_json)
             naughty.notify {
@@ -115,7 +140,7 @@ local function worker(args)
                 text = err_resp.message,
                 preset = naughty.config.presets.critical,
             }
-        elseif (resp_json ~= nil) then
+        elseif (resp_json ~= nil and resp_json ~= '') then
             resp = json.decode(resp_json)
             icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
             temp_widget:set_text(string.gsub(resp.main.temp, "%.%d+", "")

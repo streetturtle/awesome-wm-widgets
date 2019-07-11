@@ -7,12 +7,12 @@
 
 local secrets = {
     -- Yandex.Translate API key - https://tech.yandex.com/translate/
-    translate_widget_api_key = 'API_KEY',
+    translate_widget_api_key = os.getenv('AWW_TRANSLATE_API_KEY') or 'API_KEY',
 
     -- OpenWeatherMap API key - https://openweathermap.org/appid
-    weather_widget_api_key = 'API_KEY',
-    weather_widget_city = 'Montreal,ca',
-    weather_widget_units = 'metric' -- for celsius, or 'imperial' for fahrenheit
+    weather_widget_api_key = os.getenv('AWW_WEATHER_API_KEY') or 'c3d7320b359da4e48c2d682a04076576',
+    weather_widget_city = os.getenv('AWW_WEATHER_CITY') or 'Montreal,ca',
+    weather_widget_units = os.getenv('AWW_WEATHER_UNITS') or 'metric' -- for celsius, or 'imperial' for fahrenheit
 }
 
 return secrets
