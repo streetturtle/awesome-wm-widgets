@@ -8,6 +8,7 @@
 -- @copyright 2018 Pavel Makhov
 -------------------------------------------------
 
+local naughty = require("naughty")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
@@ -42,6 +43,30 @@ local volume_widget = wibox.widget {
     end
 }
 
+local notification
+local function get_notification_text(txt)
+    local mute = string.match(txt, "%[(o%a%a?)%]")
+    local volume = string.match(txt, "(%d?%d?%d)%%")
+    volume = tonumber(string.format("% 3d", volume))
+    if mute == "off" then
+        return volume.."% <span color=\"red\"><b>Mute</b></span>"
+    else
+        return volume .."%"
+    end
+end
+local function show_volume()
+    spawn.easy_async(GET_VOLUME_CMD,
+        function(stdout, _, _, _)
+            notification = naughty.notify{
+                text =  get_notification_text(stdout),
+                title = "Volume",
+                timeout = 5, hover_timeout = 0.5,
+                width = 200,
+            }
+        end
+    )
+end
+
 local update_graphic = function(widget, stdout, _, _, _)
     local mute = string.match(stdout, "%[(o%D%D?)%]")
     local volume = string.match(stdout, "(%d?%d?%d)%%")
@@ -54,6 +79,10 @@ local update_graphic = function(widget, stdout, _, _, _)
     elseif (volume <= 100) then volume_icon_name="audio-volume-high-symbolic"
     end
     widget.image = path_to_icons .. volume_icon_name .. ".svg"
+    if notification then
+        naughty.replace_text(notification, "Volume", get_notification_text(stdout))
+    end
+
 end
 
 --[[ allows control volume level by:
@@ -68,9 +97,12 @@ volume_widget:connect_signal("button::press", function(_,_,_,button)
 
     spawn.easy_async(GET_VOLUME_CMD, function(stdout, stderr, exitreason, exitcode)
         update_graphic(volume_widget, stdout, stderr, exitreason, exitcode)
+        naughty.reset_timeout(notification, 5)
     end)
 end)
 
 watch(GET_VOLUME_CMD, 1, update_graphic, volume_widget)
+volume_widget:connect_signal("mouse::enter", function() show_volume() end)
+volume_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
 
 return volume_widget
