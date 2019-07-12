@@ -8,7 +8,6 @@
 -- @copyright 2018 Pavel Makhov
 -------------------------------------------------
 
-local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
@@ -62,9 +61,9 @@ end
 - scrolling when cursor is over the widget
 ]]
 volume_widget:connect_signal("button::press", function(_,_,_,button)
-    if (button == 4)     then awful.spawn(INC_VOLUME_CMD, false)
-    elseif (button == 5) then awful.spawn(DEC_VOLUME_CMD, false)
-    elseif (button == 1) then awful.spawn(TOG_VOLUME_CMD, false)
+    if (button == 4)     then spawn(INC_VOLUME_CMD, false)
+    elseif (button == 5) then spawn(DEC_VOLUME_CMD, false)
+    elseif (button == 1) then spawn(TOG_VOLUME_CMD, false)
     end
 
     spawn.easy_async(GET_VOLUME_CMD, function(stdout, stderr, exitreason, exitcode)
