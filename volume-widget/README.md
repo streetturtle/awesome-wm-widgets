@@ -31,6 +31,31 @@ s.mytasklist, -- Middle widget
  sudo sed -i 's/bebebe/ed4737/g' ./audio-volume-muted-symbolic_red.svg 
  ```
 
+### Pulse or ALSA only
+
+Try running this command:
+
+```amixer -D pulse sget Master```
+
+If that prints something like this, then the default setting of 'pulse' is probably fine:
+```
+Simple mixer control 'Master',0
+  Capabilities: pvolume pvolume-joined pswitch pswitch-joined
+  Playback channels: Mono
+  Limits: Playback 0 - 64
+  Mono: Playback 64 [100%] [0.00dB] [on]
+
+```
+
+If it prints something like this:
+```
+$ amixer -D pulse sget Master
+ALSA lib pulse.c:243:(pulse_connect) PulseAudio: Unable to connect: Connection refused
+
+amixer: Mixer attach pulse error: Connection refused
+```
+then try setting the environment variable `AWW_VOLUME_CONTROLLER` to `alsa_only`.
+
 ## Control volume
 
 To mute/unmute click on the widget. To increase/decrease volume scroll up or down when mouse cursor is over the widget.

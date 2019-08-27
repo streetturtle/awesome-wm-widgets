@@ -15,6 +15,9 @@ local function getenv_bool(var_name, default_val)
 end
 
 local secrets = {
+    -- See volume-widget/README.md
+    volume_audio_controller = os.getenv('AWW_VOLUME_CONTROLLER') or 'pulse', -- 'pulse' or 'alsa_only'
+
     -- Yandex.Translate API key - https://tech.yandex.com/translate/
     translate_widget_api_key = os.getenv('AWW_TRANSLATE_API_KEY') or 'API_KEY',
 
