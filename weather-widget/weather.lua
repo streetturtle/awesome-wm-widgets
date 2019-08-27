@@ -98,8 +98,38 @@ local function to_direction(degrees)
     return directions[math.floor((degrees % 360) / 22.5) + 1]
 end
 
+-- Convert degrees Celsius to Fahrenheit
+local function celsius_to_fahrenheit(c)
+    return c*9/5+32
+end
+
+-- Convert degrees Fahrenheit to Celsius
+local function fahrenheit_to_celsius(f)
+    return (f-32)*5/9
+end
+
 local weather_timer = gears.timer({ timeout = 60 })
 local resp
+
+local function gen_temperature_str(temp, fmt_str, show_other_units)
+    local temp_str = string.format(fmt_str, temp)
+    local s =  temp_str .. '°' .. (secrets.weather_widget_units == 'metric' and 'C' or 'F')
+
+    if (show_other_units) then
+        local temp_conv, units_conv
+        if (secrets.weather_widget_units == 'metric') then
+            temp_conv = celsius_to_fahrenheit(temp)
+            units_conv = 'F'
+        else
+            temp_conv = fahrenheit_to_celsius(temp)
+            units_conv = 'C'
+        end
+
+        local temp_conv_str = string.format(fmt_str, temp_conv)
+        s = s .. ' ' ..  '('.. temp_conv_str .. '°' .. units_conv .. ')'
+    end
+    return s
+end
 
 weather_timer:connect_signal("timeout", function ()
     local resp_json = {}
@@ -132,9 +162,8 @@ weather_timer:connect_signal("timeout", function ()
     elseif (resp_json ~= nil and resp_json ~= '') then
         resp = json.decode(resp_json)
         icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
-        temp_widget:set_text(string.gsub(resp.main.temp, "%.%d+", "")
-                .. '°'
-                .. (secrets.weather_widget_units == 'metric' and 'C' or 'F'))
+        temp_widget:set_text(gen_temperature_str(resp.main.temp, '%.0f',
+                                 secrets.weather_both_temp_units_widget))
     end
 end)
 weather_timer:start()
@@ -149,13 +178,13 @@ weather_widget:connect_signal("mouse::enter", function()
         text =
             '<big>' .. resp.weather[1].main .. ' (' .. resp.weather[1].description .. ')</big><br>' ..
             '<b>Humidity:</b> ' .. resp.main.humidity .. '%<br>' ..
-            '<b>Temperature:</b> ' .. resp.main.temp .. '°'
-                    .. (secrets.weather_widget_units == 'metric' and 'C' or 'F') .. '<br>' ..
+            '<b>Temperature:</b> ' .. gen_temperature_str(resp.main.temp, '%.1f',
+                                          secrets.weather_both_temp_units_popup) .. '<br>' ..
             '<b>Pressure:</b> ' .. resp.main.pressure .. 'hPa<br>' ..
             '<b>Clouds:</b> ' .. resp.clouds.all .. '%<br>' ..
             '<b>Wind:</b> ' .. resp.wind.speed .. 'm/s (' .. to_direction(resp.wind.deg) .. ')',
         timeout = 5, hover_timeout = 10,
-        width = 200
+        width = (secrets.weather_both_temp_units_popup == true and 210 or 200)
     }
 end)
 
