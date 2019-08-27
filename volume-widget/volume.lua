@@ -17,6 +17,7 @@ local secrets = require("awesome-wm-widgets.secrets")
 
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 
+local device_arg
 if secrets.volume_audio_controller == 'pulse' then
 	device_arg = '-D pulse'
 else
