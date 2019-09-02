@@ -13,12 +13,22 @@ local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
 
+local secrets = require("awesome-wm-widgets.secrets")
+
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 
-local GET_VOLUME_CMD = 'amixer -D pulse sget Master'
-local INC_VOLUME_CMD = 'amixer -D pulse sset Master 5%+'
-local DEC_VOLUME_CMD = 'amixer -D pulse sset Master 5%-'
-local TOG_VOLUME_CMD = 'amixer -D pulse sset Master toggle'
+local device_arg
+if secrets.volume_audio_controller == 'pulse' then
+	device_arg = '-D pulse'
+else
+	device_arg = ''
+end
+
+local GET_VOLUME_CMD = 'amixer ' .. device_arg .. ' sget Master'
+local INC_VOLUME_CMD = 'amixer ' .. device_arg .. ' sset Master 5%+'
+local DEC_VOLUME_CMD = 'amixer ' .. device_arg .. ' sset Master 5%-'
+local TOG_VOLUME_CMD = 'amixer ' .. device_arg .. ' sset Master toggle'
+
 
 local volume_widget = wibox.widget {
     {
