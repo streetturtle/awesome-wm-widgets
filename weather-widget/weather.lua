@@ -142,6 +142,15 @@ local function worker(args)
         return s
     end
 
+    local function error_display(resp_json)
+        local  err_resp = json.decode(resp_json)
+        naughty.notify{
+            title = 'Weather Widget Error',
+            text = err_resp.message,
+            preset = naughty.config.presets.critical,
+        }
+    end
+
     weather_timer:connect_signal("timeout", function ()
         local resp_json = {}
         local res, status = http.request{
@@ -164,12 +173,13 @@ local function worker(args)
         end
 
         if (status ~= 200 and resp_json ~= nil and resp_json ~= '') then
-            local err_resp = json.decode(resp_json)
-            naughty.notify{
-                title = 'Weather Widget Error',
-                text = err_resp.message,
-                preset = naughty.config.presets.critical,
-            }
+            if (not pcall(error_display, resp_json)) then
+                naughty.notify{
+                    title = 'Weather Widget Error',
+                    text = 'Cannot parse answer',
+                    preset = naughty.config.presets.critical,
+                }
+            end
         elseif (resp_json ~= nil and resp_json ~= '') then
             resp = json.decode(resp_json)
             icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
