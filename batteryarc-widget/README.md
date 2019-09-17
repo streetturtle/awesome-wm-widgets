@@ -11,18 +11,27 @@ Depending of the battery status it could look following ways:
  - ![80_d](./80_d.png) - more than 40 percent
  - ![80_c](./80_c.png) - more than 40 percent, charging
 
-Widget uses following beautiful variables with values:
+If a battery level is low then warning popup will show up:
 
-```lua
-theme.widget_main_color = "#74aeab"
-theme.widget_red = "#e53935"
-theme.widget_yellow = "#c0ca33"
-theme.widget_green = "#43a047"
-theme.widget_black = "#000000"
-theme.widget_transparent = "#00000000"
-```
+![warning](./warning.png)
 
-which means that you need to copy the code above and paste it in your **theme.lua**. Otherwise you can change colors directly in the widget.
+## Customization
+
+It is possible to customize widget by providing a table with all or some of the following config parameters:
+
+| Name | Default | Description |
+|---|---|---|
+| `font` | Font | Play 6 |
+| `arc_thickness` | 2 | Thickness of the arc |
+| `show_current_level`| false | Show current charge level |
+| `main_color` | `beautiful.fg_color` | Color of the text with the current charge level and the arc |
+| `low_level_color` | #e53935 | Arc color when battery charge is less that 15% |
+| `medium_level_color` | #c0ca33 |  Arc color when battery charge is between 15% and 40% |
+| `charging` | `beautiful.fg_color` |  Color of the circle inside the arc when charging  |
+| `warning_msg_title` | _Huston, we have a problem_ | Title of the warning popup |
+| `warning_msg_text` | _Battery is dying_ | Text of the warning popup |
+| `warning_msg_position` | `bottom_right` | Position of the warning popup |
+| `warning_msg_icon` | ~/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg | Icon of the warning popup |
 
 ## Installation
 
@@ -35,11 +44,17 @@ s.mytasklist, -- Middle widget
 	{ -- Right widgets
     	layout = wibox.layout.fixed.horizontal,
 		...
-		batteryarc_widget,
-		...
+        --[[default]]
+		batteryarc_widget(),		
+        --[[or customized]]
+        batteryarc_widget({
+            show_current_level = true,
+            thickness = '1',
+        }),
+	}
+	...
 ```
-You can get the icon for warning popup [here](https://vk.com/images/stickers/1933/512.png)
 
 ## Troubleshooting
 
-In case of any doubts or questions don't hesitate to raise an [issue](https://github.com/streetturtle/awesome-wm-widgets/issues/new).
+In case of any doubts or questions please raise an [issue](https://github.com/streetturtle/awesome-wm-widgets/issues/new).

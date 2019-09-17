@@ -1,12 +1,34 @@
 # Brightness widget
 
-![Brightness widget](./br-wid-1.png)
+This widget represents current brightness level: ![Brightness widget](./br-wid-1.png)
 
-This widget represents current brightness level.
+## Customization
+
+It is possible to customize widget by providing a table with all or some of the following config parameters:
+
+| Name | Default | Description |
+|---|---|---|
+| `get_brightness_cmd` | `light -G` | Get current screen brightness |
+| `inc_brightness_cmd` | `light -A 5` | Increase brightness |
+| `dec_brightness_cmd` | `light -U 5`| Decrease brightness |
+| `color` | `beautiful.fg_color` | Color of the arc |
+| `path_to_icon` | `/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg` | Path to the icon |
+
+### Example:
+
+```lua
+brightnessarc_widget({
+    get_brightness_cmd = 'xbacklight -get',
+    inc_brightness_cmd = 'xbacklight -inc 5',
+    dec_brightness_cmd = 'xbacklight -dec 5'
+    color = '/usr/share/icons/Arc/status/symbolic/brightness-display-symbolic.svg'
+})
+```
+
 
 ## Installation
 
-Firstly you need to get the current brightness level. There are two options:
+First you need to get the current brightness level. There are two options:
 
  - using `xbacklight` command (depending on your video card (I guess) it may or may not work)
  
@@ -30,19 +52,36 @@ Firstly you need to get the current brightness level. There are two options:
     light -G
     49.18
     ```
-Depending on the chosen option change `GET_BRIGHTNESS_CMD` variable in **brightness.lua**.
 
-Then in **rc.lua** add the import on top of the file and then add widget to the wibox:
+Then clone this repo under **~/.config/awesome/**:
+
+```bash
+git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
+```
+
+Require widget at the beginning of **rc.lua**:
 
 ```lua
-require("awesome-wm-widgets.brightness-widget.brightness")
-...
--- Add widgets to the wibox
-s.mywibox:setup {
-...
-{ -- Right widgets
-...
-brightness_widget
+local brightnessarc_widget = require("awesome-wm-widgets.brightnessarc-widget.brightnessarc")
+```
+
+Add widget to the tasklist:
+
+```lua
+s.mytasklist, -- Middle widget
+    { -- Right widgets
+        layout = wibox.layout.fixed.horizontal,
+        ...
+        -- default
+        brightnessarc_widget(),
+        -- or customized
+        brightnessarc_widget({
+          get_brightness_cmd = 'xbacklight -get',
+          inc_brightness_cmd = 'xbacklight -inc 5',
+          dec_brightness_cmd = 'xbacklight -dec 5'
+        })      
+    }
+        ...
 ```
 
 ## Controls

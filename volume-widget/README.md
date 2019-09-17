@@ -1,9 +1,17 @@
 # Volume widget
 
-Simple and easy-to-install widget for Awesome Window Manager which represents the sound level: ![Volume Widget](
+Simple and easy-to-install widget for Awesome Window Manager which shows the sound level: ![Volume Widget](
 ./vol-widget-1.png)
 
 Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
+
+## Customization
+
+It is possible to customize widget by providing a table with all or some of the following config parameters:
+
+| Name | Default | Description |
+|---|---|---|
+| `volume_audio_controller` | `pulse` | audio device |
 
 ## Installation
 
@@ -18,7 +26,7 @@ s.mytasklist, -- Middle widget
 	{ -- Right widgets
     	layout = wibox.layout.fixed.horizontal,
 		...
-		volume_widget,
+		volume_widget(),
 		...      
 ```
 
@@ -30,6 +38,43 @@ s.mytasklist, -- Middle widget
  sudo cp audio-volume-muted-symbolic.svg audio-volume-muted-symbolic_red.svg && 
  sudo sed -i 's/bebebe/ed4737/g' ./audio-volume-muted-symbolic_red.svg 
  ```
+
+### Pulse or ALSA only
+
+Try running this command:
+
+```bash
+amixer -D pulse sget Master
+```
+
+If that prints something like this, then the default setting of 'pulse' is probably fine:
+
+```
+Simple mixer control 'Master',0
+  Capabilities: pvolume pvolume-joined pswitch pswitch-joined
+  Playback channels: Mono
+  Limits: Playback 0 - 64
+  Mono: Playback 64 [100%] [0.00dB] [on]
+
+```
+
+If it prints something like this:
+
+```bash
+$ amixer -D pulse sget Master
+ALSA lib pulse.c:243:(pulse_connect) PulseAudio: Unable to connect: Connection refused
+
+amixer: Mixer attach pulse error: Connection refused
+```
+then set `volume_audio_controller` to `alsa_only` in widget constructor:
+
+```lua
+volume_widget({
+    volume_audio_controller = 'alsa_only'
+})
+```
+
+.
 
 ## Control volume
 
