@@ -16,6 +16,8 @@ It is possible to customize widget by providing a table with all or some of the 
 | `units` | `metric` | `metric` for celsius, `imperial` for fahrenheit |
 | `both_units_widget` | `false` | show temperature in both units (15°C (59°F)) or in one (15°C) |
 | `both_units_popup` | `false` | same as above but for popup |
+| `notification_position` | `top_right` | The notification position |
+
 
 ### Example:
 

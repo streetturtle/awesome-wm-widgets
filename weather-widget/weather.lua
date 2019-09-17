@@ -28,6 +28,7 @@ local function worker(args)
     local units = args.units or 'metric'
     local both_units_widget = args.both_units_widget or false
     local both_units_popup = args.both_units_popup or false
+    local position = args.notification_position or "top_right"
 
     local weather_api_url = (
             'https://api.openweathermap.org/data/2.5/weather'
@@ -204,6 +205,7 @@ local function worker(args)
                 '<b>Clouds:</b> ' .. resp.clouds.all .. '%<br>' ..
                 '<b>Wind:</b> ' .. resp.wind.speed .. 'm/s (' .. to_direction(resp.wind.deg) .. ')',
             timeout = 5, hover_timeout = 10,
+            position = position,
             width = (both_units_popup == true and 210 or 200)
         }
     end)
