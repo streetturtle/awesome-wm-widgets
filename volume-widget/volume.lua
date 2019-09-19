@@ -8,10 +8,12 @@
 -- @copyright 2018 Pavel Makhov
 -------------------------------------------------
 
-local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
+local naughty = require("naughty")
+local dpi = require('beautiful').xresources.apply_dpi
+
 
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
 
@@ -22,7 +24,8 @@ local function worker(args)
     local args = args or {}
 
     local volume_audio_controller = args.volume_audio_controller or 'pulse'
-
+    local display_notification = args.notification or 'false'
+    local position = args.notification_position or "top_right"
     local device_arg = ''
     if volume_audio_controller == 'pulse' then
         device_arg = '-D pulse'
@@ -47,11 +50,41 @@ local function worker(args)
         end
     }
 
+    local notification = {}
+    local volume_icon_name="audio-volume-high-symbolic"
+
+    local function get_notification_text(txt)
+        local mute = string.match(txt, "%[(o%a%a?)%]")
+        local volume = string.match(txt, "(%d?%d?%d)%%")
+        volume = tonumber(string.format("% 3d", volume))
+        if mute == "off" then
+            return volume.."% <span color=\"red\"><b>Mute</b></span>"
+        else
+            return volume .."%"
+        end
+    end
+
+    local function show_volume(val)
+        spawn.easy_async(GET_VOLUME_CMD,
+        function(stdout, _, _, _)
+            notification = naughty.notify{
+                text =  get_notification_text(stdout),
+                icon=path_to_icons .. val .. ".svg",
+                icon_size = dpi(16),
+                title = "Volume",
+                position = position,
+                timeout = 0, hover_timeout = 0.5,
+                width = 200,
+            }
+        end
+        )
+    end
+
+
     local update_graphic = function(widget, stdout, _, _, _)
         local mute = string.match(stdout, "%[(o%D%D?)%]")
         local volume = string.match(stdout, "(%d?%d?%d)%%")
         volume = tonumber(string.format("% 3d", volume))
-        local volume_icon_name
         if mute == "off" then volume_icon_name="audio-volume-muted-symbolic_red"
         elseif (volume >= 0 and volume < 25) then volume_icon_name="audio-volume-muted-symbolic"
         elseif (volume < 50) then volume_icon_name="audio-volume-low-symbolic"
@@ -59,6 +92,10 @@ local function worker(args)
         elseif (volume <= 100) then volume_icon_name="audio-volume-high-symbolic"
         end
         widget.image = path_to_icons .. volume_icon_name .. ".svg"
+        if display_notification then
+            notification.iconbox.image = path_to_icons .. volume_icon_name .. ".svg"
+            naughty.replace_text(notification, "Volume", get_notification_text(stdout))
+        end
     end
 
     --[[ allows control volume level by:
@@ -66,9 +103,9 @@ local function worker(args)
     - scrolling when cursor is over the widget
     ]]
     volume_widget:connect_signal("button::press", function(_,_,_,button)
-        if (button == 4)     then awful.spawn(INC_VOLUME_CMD, false)
-        elseif (button == 5) then awful.spawn(DEC_VOLUME_CMD, false)
-        elseif (button == 1) then awful.spawn(TOG_VOLUME_CMD, false)
+        if (button == 4)     then spawn(INC_VOLUME_CMD, false)
+        elseif (button == 5) then spawn(DEC_VOLUME_CMD, false)
+        elseif (button == 1) then spawn(TOG_VOLUME_CMD, false)
         end
 
         spawn.easy_async(GET_VOLUME_CMD, function(stdout, stderr, exitreason, exitcode)
@@ -76,6 +113,10 @@ local function worker(args)
         end)
     end)
 
+    if display_notification then
+        volume_widget:connect_signal("mouse::enter", function() show_volume(volume_icon_name) end)
+        volume_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
+    end
     watch(GET_VOLUME_CMD, 1, update_graphic, volume_widget)
 
     return volume_widget

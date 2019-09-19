@@ -12,6 +12,8 @@ It is possible to customize widget by providing a table with all or some of the 
 | Name | Default | Description |
 |---|---|---|
 | `volume_audio_controller` | `pulse` | audio device |
+| `notification` | `false` | Display a notification on mouseover |
+| `notification_position` | `top_right` | The notification position |
 
 ## Installation
 
@@ -27,16 +29,16 @@ s.mytasklist, -- Middle widget
     	layout = wibox.layout.fixed.horizontal,
 		...
 		volume_widget(),
-		...      
+		...
 ```
 
 - _Optional step._ In Arc icon theme the muted audio level icon (![Volume-widget](./audio-volume-muted-symbolic.png)) looks like 0 level icon, which could be a bit misleading.
  So I decided to use original muted icon for low audio level, and the same icon, but colored in red for muted audio level. Fortunately icons are in svg format, so you can easily recolor them with `sed`, so it would look like this (![Volume Widget](./audio-volume-muted-symbolic_red.png)):
- 
+
  ```bash
- cd /usr/share/icons/Arc/status/symbolic && 
- sudo cp audio-volume-muted-symbolic.svg audio-volume-muted-symbolic_red.svg && 
- sudo sed -i 's/bebebe/ed4737/g' ./audio-volume-muted-symbolic_red.svg 
+ cd /usr/share/icons/Arc/status/symbolic &&
+ sudo cp audio-volume-muted-symbolic.svg audio-volume-muted-symbolic_red.svg &&
+ sudo sed -i 's/bebebe/ed4737/g' ./audio-volume-muted-symbolic_red.svg
  ```
 
 ### Pulse or ALSA only
