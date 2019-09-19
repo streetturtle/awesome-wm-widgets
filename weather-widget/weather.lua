@@ -28,6 +28,7 @@ local function worker(args)
     local units = args.units or 'metric'
     local both_units_widget = args.both_units_widget or false
     local both_units_popup = args.both_units_popup or false
+    local position = args.notification_position or "top_right"
 
     local weather_api_url = (
             'https://api.openweathermap.org/data/2.5/weather'
@@ -142,6 +143,15 @@ local function worker(args)
         return s
     end
 
+    local function error_display(resp_json)
+        local  err_resp = json.decode(resp_json)
+        naughty.notify{
+            title = 'Weather Widget Error',
+            text = err_resp.message,
+            preset = naughty.config.presets.critical,
+        }
+    end
+
     weather_timer:connect_signal("timeout", function ()
         local resp_json = {}
         local res, status = http.request{
@@ -164,12 +174,13 @@ local function worker(args)
         end
 
         if (status ~= 200 and resp_json ~= nil and resp_json ~= '') then
-            local err_resp = json.decode(resp_json)
-            naughty.notify{
-                title = 'Weather Widget Error',
-                text = err_resp.message,
-                preset = naughty.config.presets.critical,
-            }
+            if (not pcall(error_display, resp_json)) then
+                naughty.notify{
+                    title = 'Weather Widget Error',
+                    text = 'Cannot parse answer',
+                    preset = naughty.config.presets.critical,
+                }
+            end
         elseif (resp_json ~= nil and resp_json ~= '') then
             resp = json.decode(resp_json)
             icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
@@ -194,6 +205,7 @@ local function worker(args)
                 '<b>Clouds:</b> ' .. resp.clouds.all .. '%<br>' ..
                 '<b>Wind:</b> ' .. resp.wind.speed .. 'm/s (' .. to_direction(resp.wind.deg) .. ')',
             timeout = 5, hover_timeout = 10,
+            position = position,
             width = (both_units_popup == true and 210 or 200)
         }
     end)
