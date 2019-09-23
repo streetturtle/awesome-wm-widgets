@@ -144,7 +144,7 @@ local function worker(args)
     end
 
     local function error_display(resp_json)
-        local  err_resp = json.decode(resp_json)
+        local err_resp = json.decode(resp_json)
         naughty.notify{
             title = 'Weather Widget Error',
             text = err_resp.message,
