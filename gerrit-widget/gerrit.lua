@@ -31,6 +31,8 @@ local function worker(args)
 
     local reviews
     local notification_text
+    local current_number_of_reviews
+    local previous_number_of_reviews = 0
 
     gerrit_widget = wibox.widget{
         widget = wibox.widget.textbox
@@ -49,7 +51,20 @@ local function worker(args)
 
     local update_graphic = function(widget, stdout, _, _, _)
         reviews = json.decode(stdout)
-        widget.text = rawlen(reviews)
+
+        current_number_of_reviews = rawlen(reviews)
+
+        if current_number_of_reviews > previous_number_of_reviews then
+            naughty.notify{
+                icon = os.getenv("HOME") ..'/.config/awesome/awesome-wm-widgets/gerrit-widget/Gerrit_icon.svg',
+                title = 'New Incoming Review',
+                text = reviews[1].project .. '\n' .. get_name_by_id(reviews[1].owner._account_id) .. reviews[1].subject ..'\n',
+                run = function() spawn.with_shell("google-chrome https://" .. host .. '/' .. reviews[1]._number) end
+            }
+        end
+
+        previous_number_of_reviews = current_number_of_reviews
+        widget.text = current_number_of_reviews
 
         notification_text = ''
         for _, review in ipairs(reviews) do
