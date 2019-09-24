@@ -15,60 +15,53 @@ local spawn = require("awful.spawn")
 local naughty = require("naughty")
 
 local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
---local CMD = [[bash -c "curl  -s --request GET --netrc https://%s/a/changes/\\?q\\=%s | tail -n +2 | jq ' . | length'"]]
-local CMD = [[bash -c "curl  -s --request GET --netrc https://%s/a/changes/\\?q\\=%s | tail -n +2"]]
+
+local GET_CHANGES_CMD = [[bash -c "curl -s -X GET -n https://%s/a/changes/\\?q\\=%s | tail -n +2"]]
+local GET_USERNAME_CMD = [[bash -c "curl -s -X GET -n https://%s/accounts/%s/name | tail -n +2 | sed 's/\"//g'"]]
 
 local gerrit_widget = {}
+local name_dict = {}
 
 local function worker(args)
 
     local args = args or {}
 
     local host = args.host or naughty.notify{preset = naughty.config.presets.critical, text = 'Gerrit host is unknown'}
-    local query = args.query or 'status:open+AND+NOT+is:wip+AND+is:reviewer'
+    local query = args.query or 'is:reviewer AND status:open AND NOT is:wip'
 
     local reviews
-    local notification_text = ''
+    local notification_text
 
     gerrit_widget = wibox.widget{
-        --font = 'Play 12',
         widget = wibox.widget.textbox
     }
 
-    local get_size = function (T)
-        local count = 0
-        for _ in pairs(T) do count = count + 1 end
-        return count
+    local function get_name_by_id(id)
+        res = name_dict[id]
+        if res == nil then
+            res = ''
+            spawn.easy_async(string.format(GET_USERNAME_CMD, host, id), function(stdout, stderr, reason, exit_code)
+                name_dict[tonumber(id)] = stdout
+            end)
+        end
+        return res
     end
 
     local update_graphic = function(widget, stdout, _, _, _)
         reviews = json.decode(stdout)
-        widget.text = get_size(reviews)
+        widget.text = rawlen(reviews)
 
-
-        for i in pairs(reviews)do
-            notification_text = notification_text .. '\n' .. reviews[i].subject
-            i = i + 1
+        notification_text = ''
+        for _, review in ipairs(reviews) do
+            notification_text = notification_text .. "<b>" .. review.project ..'</b> / ' .. get_name_by_id(review.owner._account_id) .. review.subject ..'\n'
         end
-
     end
-
-    local function urlencode(url)
-        if url == nil then
-            return
-        end
-        url = url:gsub(" ", "+")
-        return url
-    end
-
-    query_escaped = urlencode(query)
-    watch(string.format(CMD, host, query_escaped), 10, update_graphic, gerrit_widget)
 
     local notification
     gerrit_widget:connect_signal("mouse::enter", function()
         notification = naughty.notify{
             text = notification_text,
-            timeout = 5, hover_timeout = 10,
+            timeout = 20,
             position = position,
             width = (500)
         }
@@ -78,6 +71,7 @@ local function worker(args)
         naughty.destroy(notification)
     end)
 
+    watch(string.format(GET_CHANGES_CMD, host, query:gsub(" ", "+")), 1, update_graphic, gerrit_widget)
     return gerrit_widget
 end
 
