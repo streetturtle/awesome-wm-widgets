@@ -49,7 +49,7 @@ s.mytasklist, -- Middle widget
         --[[or customized]]
         batteryarc_widget({
             show_current_level = true,
-            thickness = '1',
+            arc_thickness = '1',
         }),
 	}
 	...
