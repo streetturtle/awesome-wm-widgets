@@ -14,7 +14,7 @@ It is possible to customize widget by providing a table with all or some of the 
 ## Prerequisite
 
  - [curl](https://curl.haxx.se/) - is used to communicate with gerrit's [REST API](https://gerrit-review.googlesource.com/Documentation/rest-api.html)
- - setup [netrc](https://ec.haxx.se/usingcurl-netrc.html) it is used to store username and password in order to call API's endpoints.
+ - setup [netrc](https://ec.haxx.se/usingcurl-netrc.html) which is used to store username and password in order to call API's endpoints.
 
 ## Installation
 
@@ -30,7 +30,7 @@ It is possible to customize widget by providing a table with all or some of the 
     git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
     ```
 
-1. Require weather widget at the top of the **rc.lua**:
+1. Require widget at the top of the **rc.lua**:
 
     ```lua
     local gerrit_widget = require("awesome-wm-widgets.gerrit-widget.gerrit")
