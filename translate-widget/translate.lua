@@ -106,7 +106,7 @@ local function translate(to_translate, lang)
 
         -- calculate height of the widget
         w.height = h1 + h2 + h3 + 20
-        -- try to vetrtically align the icon
+        -- try to vertically align the icon
         w.left.img:set_top((h1 + h2 + h3 + 20 - 48)/2)
 
         w.visible = true

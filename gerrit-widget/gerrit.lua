@@ -129,6 +129,19 @@ local function worker(args)
                 c:set_bg(beautiful.bg_normal)
             end)
 
+            row:buttons(
+                awful.util.table.join(
+                    awful.button({}, 1, function()
+                        spawn.with_shell("google-chrome https://" .. host .. '/' .. review._number)
+                        popup.visible = false
+                    end),
+                    awful.button({}, 3, function()
+                        spawn.with_shell("echo 'git-review -d " .. review._number .."' | xclip -selection clipboard")
+                        popup.visible = false
+                    end)
+                )
+            )
+
             table.insert(rows, row)
         end
 
@@ -138,12 +151,8 @@ local function worker(args)
     gerrit_widget:buttons(
         awful.util.table.join(
             awful.button({}, 1, function()
-                --awful.placement.top_right(w, { margins = {top = 25, right = 10}, parent = awful.screen.focused() })
-                --w.visible = not w.visible
                 awful.placement.top_right(popup, { margins = { top = 25, right = 10}, parent = awful.screen.focused() })
                 popup.visible = not popup.visible
-                --ww:move_next_to(gerrit_widget)
-                --awful.placement.next_to(ww, gerrit_widget)
             end)
         )
     )
