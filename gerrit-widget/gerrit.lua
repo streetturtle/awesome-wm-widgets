@@ -39,7 +39,6 @@ local function worker(args)
 
     local rows = {
         {
-            text = 'asdR',
             widget = wibox.widget.textbox
         },
         layout = wibox.layout.fixed.vertical,
@@ -56,15 +55,33 @@ local function worker(args)
     }
 
     gerrit_widget = wibox.widget {
-        --{
-            id = txt,
+        {
+            {
+                image = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
+                widget = wibox.widget.imagebox
+            },
+            margins = 4,
+            layout = wibox.container.margin
+        },
+        {
+            id = "txt",
             widget = wibox.widget.textbox
-        --},
-        --{
-        --    image = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/gerrit-widget/Gerrit_icon.svg',
-        --    widget = wibox.widget.imagebox
-        --},
-        --layout = wibox.layout.fixed.horizontal,
+        },
+        {
+            id = "new_rev",
+            widget = wibox.widget.textbox
+        },
+        layout = wibox.layout.fixed.horizontal,
+        set_text = function(self, new_value)
+            self.txt.text = new_value
+        end,
+        set_unseen_review = function(self, is_new_review)
+            if is_new_review then
+                self.new_rev.text = '*'
+            else
+                self.new_rev.text = ''
+            end
+        end
     }
 
     local function get_name_by_id(id)
@@ -84,8 +101,9 @@ local function worker(args)
         current_number_of_reviews = rawlen(reviews)
 
         if current_number_of_reviews > previous_number_of_reviews then
+            widget:set_unseen_review(true)
             naughty.notify{
-                icon = os.getenv("HOME") ..'/.config/awesome/awesome-wm-widgets/gerrit-widget/Gerrit_icon.svg',
+                icon = os.getenv("HOME") ..'/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
                 title = 'New Incoming Review',
                 text = reviews[1].project .. '\n' .. get_name_by_id(reviews[1].owner._account_id) .. reviews[1].subject ..'\n',
                 run = function() spawn.with_shell("google-chrome https://" .. host .. '/' .. reviews[1]._number) end
@@ -93,7 +111,7 @@ local function worker(args)
         end
 
         previous_number_of_reviews = current_number_of_reviews
-        widget.text = current_number_of_reviews
+        widget:set_text(current_number_of_reviews)
 
         count = #rows
         for i=0, count do rows[i]=nil end
@@ -151,6 +169,7 @@ local function worker(args)
     gerrit_widget:buttons(
         awful.util.table.join(
             awful.button({}, 1, function()
+                gerrit_widget:set_unseen_review(false)
                 awful.placement.top_right(popup, { margins = { top = 25, right = 10}, parent = awful.screen.focused() })
                 popup.visible = not popup.visible
             end)
