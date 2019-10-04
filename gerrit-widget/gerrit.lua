@@ -170,8 +170,11 @@ local function worker(args)
         awful.util.table.join(
             awful.button({}, 1, function()
                 gerrit_widget:set_unseen_review(false)
-                awful.placement.top_right(popup, { margins = { top = 25, right = 10}, parent = awful.screen.focused() })
-                popup.visible = not popup.visible
+                if popup.visible then
+                    popup.visible = not popup.visible
+                else
+                    popup:move_next_to(mouse.current_widget_geometry)
+                end
             end)
         )
     )
