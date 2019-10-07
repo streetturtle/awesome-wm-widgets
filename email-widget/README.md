@@ -9,7 +9,7 @@ Note that widget uses the Arc icon theme, so it should be [installed](https://gi
 
 To install it put **email.lua** and **email-widget** folder under **~/.config/awesome**. Then 
 
- - in **email.lua** cahnge path to python scripts;
+ - in **email.lua** change path to python scripts;
  - in python scripts add your credentials (note that password should be encrypted using pgp for example);
  - add widget to awesome:
 

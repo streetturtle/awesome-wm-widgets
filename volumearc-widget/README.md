@@ -22,7 +22,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `height` | `beautiful.fg_normal` | Widget height |
 | `get_volume_cmd` | `amixer -D pulse sget Master` | Get current volume level |
 | `inc_volume_cmd` | `amixer -D pulse sset Master 5%+` | Increase volume level |
-| `dec_volume_cmd` | `amixer -D pulse sset Master 5%-` | Descrease volume level |
+| `dec_volume_cmd` | `amixer -D pulse sset Master 5%-` | Decrease volume level |
 | `tog_volume_cmd` | `amixer -D pulse sset Master toggle` | Mute / unmute |
 
 ### Example:
