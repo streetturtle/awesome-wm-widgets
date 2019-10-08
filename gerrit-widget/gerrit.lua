@@ -18,13 +18,10 @@ local gears = require("gears")
 local beautiful = require("beautiful")
 
 
-local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
-
 local GET_CHANGES_CMD = [[bash -c "curl -s -X GET -n https://%s/a/changes/\\?q\\=%s | tail -n +2"]]
 local GET_USERNAME_CMD = [[bash -c "curl -s -X GET -n https://%s/accounts/%s/name | tail -n +2 | sed 's/\"//g'"]]
 
 local gerrit_widget = {}
-local name_dict = {}
 
 local function worker(args)
 
@@ -36,6 +33,7 @@ local function worker(args)
     local reviews
     local current_number_of_reviews
     local previous_number_of_reviews = 0
+    local name_dict = {}
 
     local rows = {
         {
@@ -50,7 +48,12 @@ local function worker(args)
         visible = false,
         shape = gears.shape.rounded_rect,
         border_width = 1,
+        border_color = beautiful.bg_focus,
+        maximum_width = 400,
         preferred_positions = top,
+        offset = {
+            y = 5,
+        },
         widget = {}
     }
 
@@ -95,7 +98,7 @@ local function worker(args)
         return res
     end
 
-    local update_graphic = function(widget, stdout, _, _, _)
+    local update_widget = function(widget, stdout, _, _, _)
         reviews = json.decode(stdout)
 
         current_number_of_reviews = rawlen(reviews)
@@ -120,16 +123,21 @@ local function worker(args)
                 {
                     {
                         {
-                            text = review.project .. ' / ' .. get_name_by_id(review.owner._account_id),
+                            markup = '<b>' .. review.project .. '</b>',
+                            align = 'center',
                             widget = wibox.widget.textbox
                         },
                         {
-                            text = review.subject,
+                            text = '  ' .. get_name_by_id(review.owner._account_id),
+                            widget = wibox.widget.textbox
+                        },
+                        {
+                            text = '  ' .. review.subject,
                             widget = wibox.widget.textbox
                         },
                         layout = wibox.layout.align.vertical
                     },
-                    margins = 5,
+                    margins = 8,
                     layout = wibox.container.margin
                 },
                 widget = wibox.container.background
@@ -179,7 +187,7 @@ local function worker(args)
         )
     )
 
-    watch(string.format(GET_CHANGES_CMD, host, query:gsub(" ", "+")), 5, update_graphic, gerrit_widget)
+    watch(string.format(GET_CHANGES_CMD, host, query:gsub(" ", "+")), 5, update_widget, gerrit_widget)
     return gerrit_widget
 end
 
