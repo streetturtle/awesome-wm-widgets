@@ -17,9 +17,11 @@ local naughty = require("naughty")
 local gears = require("gears")
 local beautiful = require("beautiful")
 
+local HOME_DIR = os.getenv("HOME")
 
 local GET_CHANGES_CMD = [[bash -c "curl -s -X GET -n https://%s/a/changes/\\?q\\=%s | tail -n +2"]]
-local GET_USERNAME_CMD = [[bash -c "curl -s -X GET -n https://%s/accounts/%s/name | tail -n +2 | sed 's/\"//g'"]]
+local GET_USER_CMD = [[bash -c "curl -s -X GET -n https://%s/accounts/%s/ | tail -n +2"]]
+local DOWNLOAD_AVATAR_CMD = [[bash -c "curl --create-dirs -o  %s/.cache/awmw/gerrit-widget/avatars/%s %s"]]
 
 local gerrit_widget = {}
 
@@ -30,15 +32,12 @@ local function worker(args)
     local host = args.host or naughty.notify{preset = naughty.config.presets.critical, text = 'Gerrit host is unknown'}
     local query = args.query or 'is:reviewer AND status:open AND NOT is:wip'
 
-    local reviews
     local current_number_of_reviews
     local previous_number_of_reviews = 0
     local name_dict = {}
 
     local rows = {
-        {
-            widget = wibox.widget.textbox
-        },
+        { widget = wibox.widget.textbox },
         layout = wibox.layout.fixed.vertical,
     }
 
@@ -51,16 +50,14 @@ local function worker(args)
         border_color = beautiful.bg_focus,
         maximum_width = 400,
         preferred_positions = top,
-        offset = {
-            y = 5,
-        },
+        offset = { y = 5 },
         widget = {}
     }
 
     gerrit_widget = wibox.widget {
         {
             {
-                image = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
+                image = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
                 widget = wibox.widget.imagebox
             },
             margins = 4,
@@ -79,36 +76,41 @@ local function worker(args)
             self.txt.text = new_value
         end,
         set_unseen_review = function(self, is_new_review)
-            if is_new_review then
-                self.new_rev.text = '*'
-            else
-                self.new_rev.text = ''
-            end
+            self.new_rev.text = is_new_review and '*' or ''
         end
     }
 
     local function get_name_by_id(id)
-        res = name_dict[id]
-        if res == nil then
-            res = ''
-            spawn.easy_async(string.format(GET_USERNAME_CMD, host, id), function(stdout, stderr, reason, exit_code)
-                name_dict[tonumber(id)] = string.gsub(stdout, "\n", "")
-            end)
+        if name_dict[id] == null then
+            name_dict[id] = {}
         end
-        return res
+
+        if name_dict[id].username == nil then
+            name_dict[id].username = ''
+            spawn.easy_async(string.format(GET_USER_CMD, host, id), function(stdout, stderr, reason, exit_code)
+                local user = json.decode(stdout)
+                name_dict[tonumber(id)].username = user.name
+                spawn.easy_async(string.format(DOWNLOAD_AVATAR_CMD, HOME_DIR, id, user.avatars[1].url), function(stdout1, ...)
+
+                end)
+            end)
+            return name_dict[id].username
+        end
+
+        return name_dict[id].username
     end
 
     local update_widget = function(widget, stdout, _, _, _)
-        reviews = json.decode(stdout)
+        local reviews = json.decode(stdout)
 
         current_number_of_reviews = rawlen(reviews)
 
         if current_number_of_reviews > previous_number_of_reviews then
             widget:set_unseen_review(true)
             naughty.notify{
-                icon = os.getenv("HOME") ..'/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
+                icon = HOME_DIR ..'/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
                 title = 'New Incoming Review',
-                text = reviews[1].project .. '\n' .. get_name_by_id(reviews[1].owner._account_id) .. reviews[1].subject ..'\n',
+                text = reviews[1].project .. '\n' .. get_name_by_id(reviews[1].owner._account_id) .. reviews[1].subject .. '\n',
                 run = function() spawn.with_shell("google-chrome https://" .. host .. '/' .. reviews[1]._number) end
             }
         end
@@ -116,26 +118,40 @@ local function worker(args)
         previous_number_of_reviews = current_number_of_reviews
         widget:set_text(current_number_of_reviews)
 
-        count = #rows
-        for i=0, count do rows[i]=nil end
+        for i = 0, #rows do rows[i]=nil end
         for _, review in ipairs(reviews) do
             local row = wibox.widget {
                 {
                     {
                         {
-                            markup = '<b>' .. review.project .. '</b>',
-                            align = 'center',
-                            widget = wibox.widget.textbox
+                            {
+                                resize = true,
+                                image = os.getenv("HOME") ..'/.cache/awmw/gerrit-widget/avatars/' .. review.owner._account_id,
+                                forced_width = 40,
+                                forced_height = 40,
+                                widget = wibox.widget.imagebox
+                            },
+                            margins = 8,
+                            layout = wibox.container.margin
                         },
                         {
-                            text = '  ' .. get_name_by_id(review.owner._account_id),
-                            widget = wibox.widget.textbox
+                            {
+                                markup = '<b>' .. review.project .. '</b>',
+                                align = 'center',
+                                widget = wibox.widget.textbox
+                            },
+                            {
+                                text = '  ' .. get_name_by_id(review.owner._account_id),
+                                widget = wibox.widget.textbox
+                            },
+                            {
+                                text = '  ' .. review.subject,
+                                widget = wibox.widget.textbox
+                            },
+                            layout = wibox.layout.align.vertical
                         },
-                        {
-                            text = '  ' .. review.subject,
-                            widget = wibox.widget.textbox
-                        },
-                        layout = wibox.layout.align.vertical
+                        spacing = 8,
+                        layout = wibox.layout.fixed.horizontal
                     },
                     margins = 8,
                     layout = wibox.container.margin
@@ -147,13 +163,8 @@ local function worker(args)
                 spawn.with_shell("google-chrome https://" .. host .. '/' .. review._number)
             end)
 
-            row:connect_signal("mouse::enter", function(c)
-                c:set_bg(beautiful.bg_focus)
-            end)
-
-            row:connect_signal("mouse::leave", function(c)
-                c:set_bg(beautiful.bg_normal)
-            end)
+            row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
+            row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
 
             row:buttons(
                 awful.util.table.join(
@@ -187,7 +198,7 @@ local function worker(args)
         )
     )
 
-    watch(string.format(GET_CHANGES_CMD, host, query:gsub(" ", "+")), 5, update_widget, gerrit_widget)
+    watch(string.format(GET_CHANGES_CMD, host, query:gsub(" ", "+")), 10, update_widget, gerrit_widget)
     return gerrit_widget
 end
 
