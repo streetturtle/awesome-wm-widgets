@@ -100,3 +100,7 @@ Or create your own icons with the same name.
 In case of any questions/suggestions don't hesitate to contact me, I would be happy to help :)
 
 PRs/issues and st★rs are welcome!
+
+# Stargazers
+
+[![Stargazers over time](https://starchart.cc/streetturtle/awesome-wm-widgets.svg)](https://starchart.cc/streetturtle/awesome-wm-widgets)
