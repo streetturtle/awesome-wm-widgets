@@ -16,12 +16,14 @@ local spawn = require("awful.spawn")
 local naughty = require("naughty")
 local gears = require("gears")
 local beautiful = require("beautiful")
+local gfs = require("gears.filesystem")
 
 local HOME_DIR = os.getenv("HOME")
+local PATH_TO_AVATARS = HOME_DIR .. '/.cache/awmw/gerrit-widget/avatars/'
 
 local GET_CHANGES_CMD = [[bash -c "curl -s -X GET -n https://%s/a/changes/\\?q\\=%s | tail -n +2"]]
 local GET_USER_CMD = [[bash -c "curl -s -X GET -n https://%s/accounts/%s/ | tail -n +2"]]
-local DOWNLOAD_AVATAR_CMD = [[bash -c "curl --create-dirs -o  %s/.cache/awmw/gerrit-widget/avatars/%s %s"]]
+local DOWNLOAD_AVATAR_CMD = [[bash -c "curl --create-dirs -o %s %s"]]
 
 local gerrit_widget = {}
 
@@ -29,6 +31,7 @@ local function worker(args)
 
     local args = args or {}
 
+    local icon = args.icons or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg'
     local host = args.host or naughty.notify{preset = naughty.config.presets.critical, text = 'Gerrit host is unknown'}
     local query = args.query or 'is:reviewer AND status:open AND NOT is:wip'
 
@@ -57,7 +60,7 @@ local function worker(args)
     gerrit_widget = wibox.widget {
         {
             {
-                image = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
+                image = icon,
                 widget = wibox.widget.imagebox
             },
             margins = 4,
@@ -80,24 +83,24 @@ local function worker(args)
         end
     }
 
-    local function get_name_by_id(id)
-        if name_dict[id] == null then
-            name_dict[id] = {}
+    local function get_name_by_user_id(user_id)
+        if name_dict[user_id] == null then
+            name_dict[user_id] = {}
         end
 
-        if name_dict[id].username == nil then
-            name_dict[id].username = ''
-            spawn.easy_async(string.format(GET_USER_CMD, host, id), function(stdout, stderr, reason, exit_code)
+        if name_dict[user_id].username == nil then
+            name_dict[user_id].username = ''
+            spawn.easy_async(string.format(GET_USER_CMD, host, user_id), function(stdout, stderr, reason, exit_code)
                 local user = json.decode(stdout)
-                name_dict[tonumber(id)].username = user.name
-                spawn.easy_async(string.format(DOWNLOAD_AVATAR_CMD, HOME_DIR, id, user.avatars[1].url), function(stdout1, ...)
-
-                end)
+                name_dict[tonumber(user_id)].username = user.name
+                if not gfs.file_readable(PATH_TO_AVATARS .. '/id') then
+                    spawn.easy_async(string.format(DOWNLOAD_AVATAR_CMD, PATH_TO_AVATARS .. user_id, user.avatars[1].url))
+                end
             end)
-            return name_dict[id].username
+            return name_dict[user_id].username
         end
 
-        return name_dict[id].username
+        return name_dict[user_id].username
     end
 
     local update_widget = function(widget, stdout, _, _, _)
@@ -110,7 +113,7 @@ local function worker(args)
             naughty.notify{
                 icon = HOME_DIR ..'/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
                 title = 'New Incoming Review',
-                text = reviews[1].project .. '\n' .. get_name_by_id(reviews[1].owner._account_id) .. reviews[1].subject .. '\n',
+                text = reviews[1].project .. '\n' .. get_name_by_user_id(reviews[1].owner._account_id) .. reviews[1].subject .. '\n',
                 run = function() spawn.with_shell("google-chrome https://" .. host .. '/' .. reviews[1]._number) end
             }
         end
@@ -120,13 +123,14 @@ local function worker(args)
 
         for i = 0, #rows do rows[i]=nil end
         for _, review in ipairs(reviews) do
+
             local row = wibox.widget {
                 {
                     {
                         {
                             {
                                 resize = true,
-                                image = os.getenv("HOME") ..'/.cache/awmw/gerrit-widget/avatars/' .. review.owner._account_id,
+                                image = path_to_avatar,
                                 forced_width = 40,
                                 forced_height = 40,
                                 widget = wibox.widget.imagebox
@@ -141,11 +145,11 @@ local function worker(args)
                                 widget = wibox.widget.textbox
                             },
                             {
-                                text = '  ' .. get_name_by_id(review.owner._account_id),
+                                text = '  ' .. review.subject,
                                 widget = wibox.widget.textbox
                             },
                             {
-                                text = '  ' .. review.subject,
+                                text = '  ' .. get_name_by_user_id(review.owner._account_id),
                                 widget = wibox.widget.textbox
                             },
                             layout = wibox.layout.align.vertical
