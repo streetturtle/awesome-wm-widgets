@@ -8,6 +8,7 @@ It is possible to customize widget by providing a table with all or some of the 
 
 | Name | Default | Description |
 |---|---|---|
+| `icon`| `/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg| Path to the icon|
 | `host` | Required | Ex https://gerrit.tmnt.com |
 | `query` | `is:reviewer AND status:open AND NOT is:wip` | Query to retrieve reviews |
 
@@ -17,6 +18,8 @@ It is possible to customize widget by providing a table with all or some of the 
  - setup [netrc](https://ec.haxx.se/usingcurl-netrc.html) which is used to store username and password in order to call API's endpoints.
 
 ## Installation
+
+1. This widget relies on Gerrit [REST API](https://gerrit-review.googlesource.com/Documentation/rest-api.html), so you need to have a permission to access it. You also need to setup [netrc](https://ec.haxx.se/usingcurl-netrc.html), as widget uses curl to communicate with API and you have to be authenticated. 
 
 1. Download json parser for lua from [github.com/rxi/json.lua](https://github.com/rxi/json.lua) and place it under **~/.config/awesome/** (don't forget to star a repo):
 
