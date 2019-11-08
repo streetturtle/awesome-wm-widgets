@@ -21,7 +21,7 @@ local gs = require("gears.string")
 
 local HOME_DIR = os.getenv("HOME")
 
-local GET_ISSUES_CMD = [[bash -c "curl -s -X GET -n %s/rest/api/2/search?%s"]]
+local GET_ISSUES_CMD = [[bash -c "curl -s -X GET -n '%s/rest/api/2/search?%s'"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o  %s/.cache/awmw/jira-widget/avatars/%s %s"]]
 
 local jira_widget = {}
@@ -31,8 +31,8 @@ local function worker(args)
     local args = args or {}
 
     local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/jira-widget/jira-mark-gradient-blue.svg'
-    local host = args.host or naughty.notify{preset = naughty.config.presets.critical, text = 'Gerrit host is unknown'}
-    local query = args.query or 'jql=assignee=currentuser()+AND+resolution=Unresolved'
+    local host = args.host or naughty.notify{preset = naughty.config.presets.critical, text = 'Jira host is unknown'}
+    local query = args.query or 'jql=assignee=currentuser() AND resolution=Unresolved'
 
     local current_number_of_reviews
     local previous_number_of_reviews = 0
@@ -192,9 +192,7 @@ local function worker(args)
     --    text = string.format(GET_ISSUES_CMD, host, query:gsub(" ", "+")),
     --    run = function() spawn.with_shell("echo '" .. string.format(GET_ISSUES_CMD, host, query:gsub(" ", "+")) .. "' | xclip -selection clipboard") end
     --}
-    watch(string.format(GET_ISSUES_CMD, host, query:gsub(' ', '+')
-            :gsub('%(', '\\(')
-            :gsub('%)', '\\)')),
+    watch(string.format(GET_ISSUES_CMD, host, query:gsub(' ', '+')),
             10, update_widget, jira_widget)
     return jira_widget
 end
