@@ -93,7 +93,7 @@ local function worker(args)
             spawn.easy_async(string.format(GET_USER_CMD, host, user_id), function(stdout, stderr, reason, exit_code)
                 local user = json.decode(stdout)
                 name_dict[tonumber(user_id)].username = user.name
-                if not gfs.file_readable(PATH_TO_AVATARS .. '/id') then
+                if not gfs.file_readable(PATH_TO_AVATARS .. user_id) then
                     spawn.easy_async(string.format(DOWNLOAD_AVATAR_CMD, PATH_TO_AVATARS .. user_id, user.avatars[1].url))
                 end
             end)
@@ -130,7 +130,7 @@ local function worker(args)
                         {
                             {
                                 resize = true,
-                                image = path_to_avatar,
+                                image = PATH_TO_AVATARS .. review.owner._account_id,
                                 forced_width = 40,
                                 forced_height = 40,
                                 widget = wibox.widget.imagebox
