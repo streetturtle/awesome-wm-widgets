@@ -92,7 +92,7 @@ local function worker(args)
             }
 
             row:connect_signal("button::release", function(_, _, _, button)
-                spawn.with_shell("google-chrome " .. item.link)
+                spawn.with_shell("xdg-open " .. item.link)
                 popup.visible = false
             end)
 
