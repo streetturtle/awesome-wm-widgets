@@ -4,9 +4,11 @@ It shows number of currently assigned reviews in [Gerrit](https://www.gerritcode
  
  ![gerrit_widget](./gerrit_widget.png)
  
- when clicked it shows reviews in a list, if an item of a list is clicked, the review will be opened in the default browser:
+ when clicked it shows reviews in a list:, if an item of a list is clicked, the review will be opened in the default browser:
  
  ![popup](./popup.png)
+ 
+ left click on an item will open review in the default browser, right click will copy the review number, which you can use to checkout this review by running `git-review -d <review number>`.
  
  Also, if a new review is assigned to the user, there will be a pop-up:
  

@@ -177,7 +177,7 @@ local function worker(args)
                         popup.visible = false
                     end),
                     awful.button({}, 3, function()
-                        spawn.with_shell("echo 'git-review -d " .. review._number .."' | xclip -selection clipboard")
+                        spawn.with_shell("echo '" .. review._number .."' | xclip -selection clipboard")
                         popup.visible = false
                     end)
                 )
