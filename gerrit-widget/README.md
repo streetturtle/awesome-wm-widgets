@@ -4,7 +4,7 @@ It shows number of currently assigned reviews in [Gerrit](https://www.gerritcode
  
  ![gerrit_widget](./gerrit_widget.png)
  
- when clicked it shows reviews in a list:, if an item of a list is clicked, the review will be opened in the default browser:
+ when clicked it shows reviews in a list:
  
  ![popup](./popup.png)
  
