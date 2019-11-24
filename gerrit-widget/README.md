@@ -1,10 +1,10 @@
 # Gerrit widget
 
-This widget adds support for [Gerrit](https://www.gerritcodereview.com/). It shows number of currently assigned reviews to the user (by default) 
+It shows number of currently assigned reviews in [Gerrit](https://www.gerritcodereview.com/) to the user (by default) :
  
  ![gerrit_widget](./gerrit_widget.png)
  
- when clicked it shows the reviews in a list, if item of a list is clicked, the review will be opened in the default browser:
+ when clicked it shows reviews in a list, if an item of a list is clicked, the review will be opened in the default browser:
  
  ![popup](./popup.png)
  
