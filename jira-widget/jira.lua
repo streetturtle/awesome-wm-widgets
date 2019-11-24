@@ -86,19 +86,8 @@ local function worker(args)
 
         current_number_of_reviews = rawlen(result.issues)
 
-        --if current_number_of_reviews > previous_number_of_reviews then
-        --    widget:set_unseen_review(true)
-        --    naughty.notify{
-        --        icon = HOME_DIR ..'/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
-        --        title = 'New Incoming Review',
-        --        text = reviews[1].project .. '\n' .. get_name_by_id(reviews[1].owner._account_id) .. reviews[1].subject .. '\n',
-        --        run = function() spawn.with_shell("google-chrome https://" .. host .. '/' .. reviews[1]._number) end
-        --    }
-        ----end
-        --
-        --previous_number_of_reviews = current_number_of_reviews
         widget:set_text(current_number_of_reviews)
-        --
+
         for i = 0, #rows do rows[i]=nil end
         for _, issue in ipairs(result.issues) do
             local path_to_avatar = os.getenv("HOME") ..'/.cache/awmw/jira-widget/avatars/' .. issue.fields.assignee.key
@@ -179,7 +168,6 @@ local function worker(args)
     jira_widget:buttons(
             awful.util.table.join(
                     awful.button({}, 1, function()
-                        --jira_widget:set_unseen_review(false)
                         if popup.visible then
                             popup.visible = not popup.visible
                         else
