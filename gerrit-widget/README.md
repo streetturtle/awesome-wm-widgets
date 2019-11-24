@@ -1,6 +1,16 @@
 # Gerrit widget
 
-This widget adds support for [Gerrit](https://www.gerritcodereview.com/). It shows number of currently assigned reviews to the user and shows a notification when new review is assigned. 
+This widget adds support for [Gerrit](https://www.gerritcodereview.com/). It shows number of currently assigned reviews to the user (by default) 
+ 
+ ![gerrit_widget](./gerrit_widget.png)
+ 
+ when clicked it shows the reviews in a list, if item of a list is clicked, the review will be opened in the default browser:
+ 
+ ![popup](./popup.png)
+ 
+ Also, if a new review is assigned to the user, there will be a pop-up:
+ 
+ ![new_review](./new_review.png)
 
 ## Customization
 
@@ -8,7 +18,7 @@ It is possible to customize widget by providing a table with all or some of the 
 
 | Name | Default | Description |
 |---|---|---|
-| `icon`| `/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg| Path to the icon|
+| `icon`| `/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg`| Path to the icon |
 | `host` | Required | Ex https://gerrit.tmnt.com |
 | `query` | `is:reviewer AND status:open AND NOT is:wip` | Query to retrieve reviews |
 
