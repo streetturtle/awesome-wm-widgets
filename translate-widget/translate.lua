@@ -14,7 +14,6 @@ local naughty = require("naughty")
 local wibox = require("wibox")
 local gears = require("gears")
 local gfs = require("gears.filesystem")
-local secrets = require("awesome-wm-widgets.secrets")
 
 local BASE_URL = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 local ICON = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg'
@@ -87,8 +86,8 @@ w:setup {
 
 --- Main function - takes the user input and shows the widget with translation
 -- @param request_string - user input (dog enfr)
-local function translate(to_translate, lang)
-    local urll = BASE_URL .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. secrets.translate_widget_api_key
+local function translate(to_translate, lang, api_key)
+    local urll = BASE_URL .. '?lang=' .. lang .. '&text=' .. urlencode(to_translate) .. '&key=' .. api_key
 
     local resp_json, code = https.request(urll)
     if (code == 200 and resp_json ~= nil) then
@@ -162,7 +161,7 @@ input_widget:setup {
     left = 10
 }
 
-local function show_translate_prompt()
+local function show_translate_prompt(api_key)
     awful.placement.top(input_widget, { margins = {top = 40}, parent = awful.screen.focused()})
     input_widget.height = 40
     input_widget.visible = true
@@ -183,7 +182,7 @@ local function show_translate_prompt()
                 })
                 return
             end
-            translate(to_translate, lang)
+            translate(to_translate, lang, api_key)
         end,
         done_callback = function()
             input_widget.visible = false
