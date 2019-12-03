@@ -21,8 +21,8 @@ local gfs = require("gears.filesystem")
 local HOME_DIR = os.getenv("HOME")
 local PATH_TO_AVATARS = HOME_DIR .. '/.cache/awmw/gerrit-widget/avatars/'
 
-local GET_CHANGES_CMD = [[bash -c "curl -s -X GET -n https://%s/a/changes/\\?q\\=%s | tail -n +2"]]
-local GET_USER_CMD = [[bash -c "curl -s -X GET -n https://%s/accounts/%s/ | tail -n +2"]]
+local GET_CHANGES_CMD = [[bash -c "curl -s -X GET -n %s/a/changes/\\?q\\=%s | tail -n +2"]]
+local GET_USER_CMD = [[bash -c "curl -s -X GET -n %s/accounts/%s/ | tail -n +2"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl --create-dirs -o %s %s"]]
 
 local gerrit_widget = {}
@@ -108,13 +108,21 @@ local function worker(args)
 
         current_number_of_reviews = rawlen(reviews)
 
+        if current_number_of_reviews == 0 then
+            widget:set_visible(false)
+            return
+        else
+            widget:set_visible(true)
+        end
+
+        widget:set_visible(true)
         if current_number_of_reviews > previous_number_of_reviews then
             widget:set_unseen_review(true)
             naughty.notify{
                 icon = HOME_DIR ..'/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg',
                 title = 'New Incoming Review',
                 text = reviews[1].project .. '\n' .. get_name_by_user_id(reviews[1].owner._account_id) .. reviews[1].subject .. '\n',
-                run = function() spawn.with_shell("google-chrome https://" .. host .. '/' .. reviews[1]._number) end
+                run = function() spawn.with_shell("xdg-open https://" .. host .. '/' .. reviews[1]._number) end
             }
         end
 
@@ -164,7 +172,7 @@ local function worker(args)
             }
 
             row:connect_signal("button::release", function(_, _, _, button)
-                spawn.with_shell("google-chrome https://" .. host .. '/' .. review._number)
+                spawn.with_shell("xdg-open " .. host .. '/' .. review._number)
             end)
 
             row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
@@ -173,7 +181,7 @@ local function worker(args)
             row:buttons(
                 awful.util.table.join(
                     awful.button({}, 1, function()
-                        spawn.with_shell("google-chrome https://" .. host .. '/' .. review._number)
+                        spawn.with_shell("xdg-open " .. host .. '/' .. review._number)
                         popup.visible = false
                     end),
                     awful.button({}, 3, function()
