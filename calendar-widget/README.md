@@ -14,7 +14,7 @@ The placement is setup in theme.lua by `calendar_placement` variable, currently 
 
 # How to use
 
-This widget need an 'anchor' - another widget which triggers visibility of the calendar. Default `mytextclock` is the perfect candidate!
+This widget needs an 'anchor' - another widget which triggers visibility of the calendar. Default `mytextclock` is the perfect candidate!
 
 ```lua
 local calendar_widget = require("awesome-wm-widgets.calendar-widget.calendar")
