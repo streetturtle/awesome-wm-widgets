@@ -204,6 +204,14 @@ local function worker(args)
                 if popup.visible then
                     popup.visible = not popup.visible
                 else
+                    --local geo = mouse.current_widget_geometry
+                    --if theme.calendar_placement == 'center' then
+                    --    local x = geo.x + (geo.width / 2) - (popup:geometry().width / 2) -- align two widgets
+                    --    popup:move_next_to({x = x, y = geo.y + 22, width = 0, height = geo.height})
+                    --else
+                    --    popup:move_next_to(geo)
+                    --end
+
                     popup:move_next_to(mouse.current_widget_geometry)
                 end
             end)
