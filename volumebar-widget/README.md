@@ -2,7 +2,7 @@
 
 Almost the same as volume widget, but more minimalistic:
 
-![screenshot](out.gif)
+![screenshot](./out.gif)
 
 Supports 
  - scroll up - increase volume, 

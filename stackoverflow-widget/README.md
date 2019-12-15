@@ -10,8 +10,8 @@ It is possible to customize widget by providing a table with all or some of the 
 
 | Name | Default | Description |
 |---|---|---|
-| `icon`| `/.config/awesome/awesome-wm-widgets/stackoverflow-widget/so-icon.svg| Path to the icon|
-| `limit` | 5 | Number of items to show in the widget
+| `icon`| `/.config/awesome/awesome-wm-widgets/stackoverflow-widget/so-icon.svg` | Path to the icon |
+| `limit` | 5 | Number of items to show in the widget |
 | `tagged` | awesome-wm | Tag, or comma-separated tags |
 
 ## Installation

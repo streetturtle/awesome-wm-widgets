@@ -2,8 +2,6 @@
 
 The widget shows the number of assigned tickets to the user  and when clicked shows them in the list with some additional information. When item in the list is clicked - it opens the issue in browser 
 
-2![screenshot](cpu.gif)
-
 ## How it works
 
 Widget users cURL to query JIRA's REST API. In order to be authenticated, widget uses netrc feature of the cURL, which is basically to store basic auth credentials in a .netrc file in home folder. 
