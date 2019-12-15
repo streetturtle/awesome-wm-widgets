@@ -171,6 +171,20 @@ header, main, footer {
   animation-duration: 0.4s;
 }
 
+table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  border-style: hidden;
+  background-color: #333333;
+  margin: 0 auto 10px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  td {
+    border: 1px solid #5e5e5e;
+  }
+}
+
 @keyframes fadeInOpacity {
   0% {
     opacity: 0;
@@ -201,6 +215,14 @@ header, main, footer {
   background: #202020;
 }
 
+p{
+  img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 img {
   max-width: 100%;
   height: auto;
@@ -221,7 +243,6 @@ img.center-image {
   color: lightgrey;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
-  margin: 0;
   font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
   border-left: 0;
   bottom: -2px;
