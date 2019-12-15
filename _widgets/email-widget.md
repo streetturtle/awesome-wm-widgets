@@ -3,16 +3,16 @@ layout: page
 ---
 # Email widget
 
-This widget consists of an icon with counter which shows number of unread emails: ![email icon]({{'/assets/img/screenshots/email-widget-1.png' | relative_url }})
-and a popup message which appears when mouse hovers over an icon: ![email popup]({{'/assets/img/screenshots/email-widget-2.png' | relative_url }})
+This widget consists of an icon with counter which shows number of unread emails: ![email icon](../awesome-wm-widgets/assets/img/screenshots/email-widget/em-wid-1.png)
+and a popup message which appears when mouse hovers over an icon: ![email popup](../awesome-wm-widgets/assets/img/screenshots/email-widget/em-wid-2.png)
 
-Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
+Note that widget uses the Arc icon theme, so it should be [installed](../awesome-wm-widgets/assets/img/screenshots/email-widgetttps://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
 
 ## Installation
 
 To install it put **email.lua** and **email-widget** folder under **~/.config/awesome**. Then 
 
- - in **email.lua** cahnge path to python scripts;
+ - in **email.lua** change path to python scripts;
  - in python scripts add your credentials (note that password should be encrypted using pgp for example);
  - add widget to awesome:
 

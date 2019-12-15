@@ -5,22 +5,55 @@ layout: page
 
 Almost the same as volume widget, but more minimalistic:
 
-![screenshot]({{'/assets/img/screenshots/volumebar-widget.gif' | relative_url }}){:.center-image}
+![screenshot](../awesome-wm-widgets/assets/img/screenshots/volumebar-widget/out.gif)
 
 Supports 
  - scroll up - increase volume, 
  - scroll down - decrease volume, 
  - left click - mute/unmute.
  
-## Installation
+## Customization
+ 
+It is possible to customize widget by providing a table with all or some of the following config parameters:
 
+| Name | Default | Description |
+|---|---|---|
+| `main_color` | `beautiful.fg_normal` | Color of the bar |
+| `mute_color` | `beautiful.fg_urgent` | Color of the bar when mute |
+| `width` | 50 | The bar width |
+| `shape` | `bar` | [gears.shape](../awesome-wm-widgets/assets/img/screenshots/volumebar-widgetttps://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
+| `margin` | `10` | Top and bottom margin (if your wibar is 22 px high, bar will be 2 px (22 - 2*10)) |
+| `get_volume_cmd` | `amixer -D pulse sget Master` | Get current volume level |
+| `inc_volume_cmd` | `amixer -D pulse sset Master 5%+` | Increase volume level |
+| `dec_volume_cmd` | `amixer -D pulse sset Master 5%-` | Decrease volume level |
+| `tog_volume_cmd` | `amixer -D pulse sset Master toggle` | Mute / unmute |
+
+### Example:
+
+ ```lua
+ volumebar_widget({
+    main_color = '#af13f7',
+    mute_color = '#ff0000',
+    width = 80,
+    shape = 'rounded_bar',
+    margins = 8
+})
+ ```
+
+Above config results in following widget:
+
+![custom](../awesome-wm-widgets/assets/img/screenshots/volumebar-widget/custom.png) 
+
+
+## Installation
+ 
 1. Clone this repo under **~/.config/awesome/**
 
     ```bash
     git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
     ```
 
-1. Require volumearc widget at the beginning of **rc.lua**:
+1. Require volumebar widget at the beginning of **rc.lua**:
 
     ```lua
     local volumebar_widget = require("awesome-wm-widgets.volumebar-widget.volumebar")
@@ -33,21 +66,20 @@ Supports
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             ...
-            volumebar_widget,
+            --[[default]]
+            volumebar_widget(),
+            --[[or customized]]
+            volumebar_widget({
+                main_color = '#af13f7',
+                mute_color = '#ff0000',
+                width = 80,
+                shape = 'rounded_bar', -- octogon, hexagon, powerline, etc
+                -- bar's height = wibar's height minus 2x margins
+                margins = 8
+            }),
+
             ...
     ```
-
-## Control volume
-
-To mute/unmute click on the widget. To increase/decrease volume scroll up or down when mouse cursor is over the widget.
-
-If you want to control volume level by keyboard shortcuts add following lines in shortcut section of the **rc.lua** (the commands could be slightly different depending on your PC configuration):
-
-```lua
-awful.key({ modkey}, "[", function () awful.spawn("amixer -D pulse sset Master 5%-") end, {description = "increase volume", group = "custom"}),
-awful.key({ modkey}, "]", function () awful.spawn("amixer -D pulse sset Master 5%+") end, {description = "decrease volume", group = "custom"}),
-awful.key({ modkey}, "\", function () awful.spawn("amixer -D pulse set Master +1 toggle") end, {description = "mute volume", group = "custom"}),
-```
 
 ## Troubleshooting
 

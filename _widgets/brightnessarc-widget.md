@@ -3,7 +3,7 @@ layout: page
 ---
 # Brightness widget
 
-This widget represents current brightness level: ![Brightness widget](../awesome-wm-widgets/assets/img/screenshots/brightness-widget/br-wid-1.png)
+This widget represents current brightness level: ![Brightness widget](../awesome-wm-widgets/assets/img/screenshots/brightnessarc-widget/br-wid-1.png)
 
 ## Customization
 
@@ -14,16 +14,17 @@ It is possible to customize widget by providing a table with all or some of the 
 | `get_brightness_cmd` | `light -G` | Get current screen brightness |
 | `inc_brightness_cmd` | `light -A 5` | Increase brightness |
 | `dec_brightness_cmd` | `light -U 5`| Decrease brightness |
+| `color` | `beautiful.fg_color` | Color of the arc |
 | `path_to_icon` | `/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg` | Path to the icon |
-| `font` | `Play 9` | Font |
 
 ### Example:
 
 ```lua
-brightness_widget({
+brightnessarc_widget({
     get_brightness_cmd = 'xbacklight -get',
     inc_brightness_cmd = 'xbacklight -inc 5',
     dec_brightness_cmd = 'xbacklight -dec 5'
+    color = '/usr/share/icons/Arc/status/symbolic/brightness-display-symbolic.svg'
 })
 ```
 
@@ -45,7 +46,7 @@ First you need to get the current brightness level. There are two options:
 
  - using `light` command
  
-    Install it from this git repo: [github.com/haikarainen/light](../awesome-wm-widgets/assets/img/screenshots/brightness-widgetttps://github.com/haikarainen/light) and check if it works but running
+    Install it from this git repo: [github.com/haikarainen/light](../awesome-wm-widgets/assets/img/screenshots/brightnessarc-widgetttps://github.com/haikarainen/light) and check if it works but running
 
     ```bash
     git clone https://github.com/haikarainen/light.git && \
@@ -64,7 +65,7 @@ git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/aweso
 Require widget at the beginning of **rc.lua**:
 
 ```lua
-local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
+local brightnessarc_widget = require("awesome-wm-widgets.brightnessarc-widget.brightnessarc")
 ```
 
 Add widget to the tasklist:
@@ -75,9 +76,9 @@ s.mytasklist, -- Middle widget
         layout = wibox.layout.fixed.horizontal,
         ...
         -- default
-        brightness_widget(),
+        brightnessarc_widget(),
         -- or customized
-        brightness_widget({
+        brightnessarc_widget({
           get_brightness_cmd = 'xbacklight -get',
           inc_brightness_cmd = 'xbacklight -inc 5',
           dec_brightness_cmd = 'xbacklight -dec 5'
