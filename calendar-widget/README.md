@@ -29,18 +29,18 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
 
 ## How to use
 
-This widget needs an 'anchor' - another widget which triggers visibility of the calendar. Default `mytextclock` is the perfect candidate!
+This widget needs an 'anchor' - another widget which triggers visibility of the calendar. Default `mytextclock` is the perfect candidate!  
+Just after mytextclock is instantiated, create the widget and add the mouse listener to it.
 
 ```lua
 local calendar_widget = require("awesome-wm-widgets.calendar-widget.calendar")
 -- ...
--- {{{ Wibar
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
 -- default
-cw = calendar_widget()
+local cw = calendar_widget()
 -- or customized
-cw = calendar_widget({
+local cw = calendar_widget({
     theme = 'outrun',
     placement = 'bottom_right'
 })
