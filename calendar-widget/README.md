@@ -7,14 +7,11 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
  - mouse support: scroll up - shows next month, scroll down - previous
  - themes:
   
-  nord (default):
-
-  ![nord_theme](./nord.png)
-
-  outrun:
-
-  ![outrun_theme](./outrun.png)
-
+    | Name | Screenshot |
+    |---|---|
+    |nord (default) | ![nord_theme](./nord.png) |
+    | outrun | ![outrun_theme](./outrun.png) |
+  
  - setup widget placement
   
   top center - in case you clock is centered:
