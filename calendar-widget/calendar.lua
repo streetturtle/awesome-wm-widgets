@@ -137,7 +137,6 @@ local function worker(args)
         ontop = true,
         visible = false,
         shape = gears.shape.rounded_rect,
-        preferred_positions = top,
         offset = { y = 5 },
         border_width = 1,
         border_color = calendar_themes[theme].border,

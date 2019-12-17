@@ -45,14 +45,12 @@ local function worker(args)
     }
 
     local popup = awful.popup{
-        visible = true,
         ontop = true,
         visible = false,
         shape = gears.shape.rounded_rect,
         border_width = 1,
         border_color = beautiful.bg_focus,
         maximum_width = 400,
-        preferred_positions = top,
         offset = { y = 5 },
         widget = {}
     }
@@ -84,7 +82,7 @@ local function worker(args)
     }
 
     local function get_name_by_user_id(user_id)
-        if name_dict[user_id] == null then
+        if name_dict[user_id] == nil then
             name_dict[user_id] = {}
         end
 

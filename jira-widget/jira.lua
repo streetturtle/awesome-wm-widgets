@@ -43,14 +43,12 @@ local function worker(args)
     }
 
     local popup = awful.popup{
-        visible = true,
         ontop = true,
         visible = false,
         shape = gears.shape.rounded_rect,
         border_width = 1,
         border_color = beautiful.bg_focus,
         maximum_width = 400,
-        preferred_positions = top,
         offset = { y = 5 },
         widget = {}
     }
@@ -86,6 +84,12 @@ local function worker(args)
 
         current_number_of_reviews = rawlen(result.issues)
 
+        if current_number_of_reviews == 0 then
+            widget:set_visible(false)
+            return
+        end
+
+        widget:set_visible(true)
         widget:set_text(current_number_of_reviews)
 
         for i = 0, #rows do rows[i]=nil end
@@ -149,11 +153,7 @@ local function worker(args)
             row:buttons(
                     awful.util.table.join(
                             awful.button({}, 1, function()
-                                spawn.with_shell("google-chrome " .. host .. '/browse/' .. issue.key)
-                                popup.visible = false
-                            end),
-                            awful.button({}, 3, function()
-                                spawn.with_shell("echo 'git-review -d " .. issue._number .."' | xclip -selection clipboard")
+                                spawn.with_shell("xdg-open " .. host .. '/browse/' .. issue.key)
                                 popup.visible = false
                             end)
                     )
@@ -171,15 +171,11 @@ local function worker(args)
                         if popup.visible then
                             popup.visible = not popup.visible
                         else
-                            --local geo = mouse.current_widget_geometry
-                            --if theme.calendar_placement == 'center' then
-                            --    local x = geo.x + (geo.width / 2) - (popup:geometry().width / 2) -- align two widgets
-                            --    popup:move_next_to({x = x, y = geo.y + 22, width = 0, height = geo.height})
-                            --else
-                            --    popup:move_next_to(geo)
-                            --end
+                            local geo = mouse.current_widget_geometry
+                            local x = geo.x + (geo.width / 2) - (popup:geometry().width / 2)
+                            popup:move_next_to({x = x, y = geo.y + 22, width = 0, height = geo.height})
 
-                            popup:move_next_to(mouse.current_widget_geometry)
+                            -- popup:move_next_to(mouse.current_widget_geometry)
                         end
                     end)
             )
