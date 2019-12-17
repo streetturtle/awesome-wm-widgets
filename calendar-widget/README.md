@@ -11,6 +11,8 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
     |---|---|
     |nord (default) | ![nord_theme](./nord.png) |
     | outrun | ![outrun_theme](./outrun.png) |
+    | light | ![outrun_theme](./light.png) |
+    | dark | ![outrun_theme](./dark.png) |
   
  - setup widget placement
   

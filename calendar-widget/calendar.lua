@@ -37,13 +37,32 @@ local function worker(args)
             weekday_fg = '#2de6e2',
             header_fg = '#f6019d',
             border = '#261447'
+        },
+        dark = {
+            bg = '#000000',
+            fg = '#ffffff',
+            focus_date_bg = '#ffffff',
+            focus_date_fg = '#000000',
+            weekend_day_bg = '#444444',
+            weekday_fg = '#ffffff',
+            header_fg = '#ffffff',
+            border = '#333333'
+        },
+        light = {
+            bg = '#ffffff',
+            fg = '#000000',
+            focus_date_bg = '#000000',
+            focus_date_fg = '#ffffff',
+            weekend_day_bg = '#AAAAAA',
+            weekday_fg = '#000000',
+            header_fg = '#000000',
+            border = '#CCCCCC'
         }
     }
-    
 
     local args = args or {}
 
-    local theme = args.theme or 'nord'
+    local theme = args.theme or 'light'
     local placement = args.placement or 'top'
 
     local styles = {}
