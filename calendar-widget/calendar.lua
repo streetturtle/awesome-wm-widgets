@@ -58,6 +58,16 @@ local function worker(args)
             weekday_fg = '#000000',
             header_fg = '#000000',
             border = '#CCCCCC'
+        },
+        monokai = {
+            bg = '#272822',
+            fg = '#F8F8F2',
+            focus_date_bg = '#AE81FF',
+            focus_date_fg = '#ffffff',
+            weekend_day_bg = '#75715E',
+            weekday_fg = '#FD971F',
+            header_fg = '#F92672',
+            border = '#75715E'
         }
     }
 
