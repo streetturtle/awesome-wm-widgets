@@ -32,7 +32,11 @@ local function worker(args)
     local args = args or {}
 
     local icon = args.icons or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg'
-    local host = args.host or naughty.notify{preset = naughty.config.presets.critical, text = 'Gerrit host is unknown'}
+    local host = args.host or naughty.notify{
+        preset = naughty.config.presets.critical, 
+        title = 'Gerrit Widget',
+        text = 'Gerrit host is unknown'
+    }
     local query = args.query or 'is:reviewer AND status:open AND NOT is:wip'
 
     local current_number_of_reviews

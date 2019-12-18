@@ -31,7 +31,10 @@ local function worker(args)
     local args = args or {}
 
     local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/jira-widget/jira-mark-gradient-blue.svg'
-    local host = args.host or naughty.notify{preset = naughty.config.presets.critical, text = 'Jira host is unknown'}
+    local host = args.host or naughty.notify{
+        preset = naughty.config.presets.critical, 
+        title = 'Jira Widget',
+        text = 'Jira host is unknown'}
     local query = args.query or 'jql=assignee=currentuser() AND resolution=Unresolved'
 
     local current_number_of_reviews
