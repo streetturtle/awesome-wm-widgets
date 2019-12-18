@@ -12,6 +12,7 @@ local awful = require("awful")
 local beautiful = require("beautiful")
 local wibox = require("wibox")
 local gears = require("gears")
+local naughty = require("naughty")
 
 local calendar_widget = {}
 
@@ -62,8 +63,17 @@ local function worker(args)
 
     local args = args or {}
 
-    local theme = args.theme or 'light'
+    if args.theme ~= nil and calendar_themes[args.theme] == nil then
+        naughty.notify({
+            preset = naughty.config.presets.critical, 
+            title = 'Calendar Widget',
+            text = 'Theme "' .. args.theme .. '" not found, fallback to default'})
+        args.theme = 'nord'
+    end
+
+    local theme = args.theme or 'nord'
     local placement = args.placement or 'top'
+
 
     local styles = {}
     local function rounded_shape(size)
