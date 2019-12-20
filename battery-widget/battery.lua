@@ -12,6 +12,7 @@ local awful = require("awful")
 local naughty = require("naughty")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
+local dpi = require('beautiful').xresources.apply_dpi
 
 -- acpi sample outputs
 -- Battery 0: Discharging, 75%, 01:51:38 remaining
@@ -20,60 +21,67 @@ local wibox = require("wibox")
 local PATH_TO_ICONS = "/usr/share/icons/Arc/status/symbolic/"
 local HOME = os.getenv("HOME")
 
-local battery_widget = wibox.widget {
-    {
-        id = "icon",
-        widget = wibox.widget.imagebox,
-        resize = false
-    },
-    layout = wibox.container.margin(_, 0, 0, 3)
-}
+local battery_widget = {}
+local function worker(args)
+    local args = args or {}
+    local display_notification = args.notification or false
+    local position = args.notification_position or "top_right"
+    battery_widget = wibox.widget {
+        {
+            id = "icon",
+            widget = wibox.widget.imagebox,
+            resize = false
+        },
+        layout = wibox.container.margin(_, 0, 0, 3)
+    }
 
--- Popup with battery info
--- One way of creating a pop-up notification - naughty.notify
-local notification
-local function show_battery_status()
-    awful.spawn.easy_async([[bash -c 'acpi']],
+    -- Popup with battery info
+    -- One way of creating a pop-up notification - naughty.notify
+    local notification
+    local function show_battery_status(batteryType)
+        awful.spawn.easy_async([[bash -c 'acpi']],
         function(stdout, _, _, _)
             naughty.destroy(notification)
             notification = naughty.notify{
                 text =  stdout,
                 title = "Battery status",
+                icon = PATH_TO_ICONS .. batteryType .. ".svg",
+                icon_size = dpi(16),
+                position = position,
                 timeout = 5, hover_timeout = 0.5,
                 width = 200,
             }
         end
-    )
-end
+        )
+    end
 
--- Alternative to naughty.notify - tooltip. You can compare both and choose the preferred one
---battery_popup = awful.tooltip({objects = {battery_widget}})
+    -- Alternative to naughty.notify - tooltip. You can compare both and choose the preferred one
+    --battery_popup = awful.tooltip({objects = {battery_widget}})
 
--- To use colors from beautiful theme put
--- following lines in rc.lua before require("battery"):
--- beautiful.tooltip_fg = beautiful.fg_normal
--- beautiful.tooltip_bg = beautiful.bg_normal
+    -- To use colors from beautiful theme put
+    -- following lines in rc.lua before require("battery"):
+    -- beautiful.tooltip_fg = beautiful.fg_normal
+    -- beautiful.tooltip_bg = beautiful.bg_normal
 
-local function show_battery_warning()
-    naughty.notify{
-        icon = HOME .. "/.config/awesome/nichosi.png",
-        icon_size=100,
-        text = "Huston, we have a problem",
-        title = "Battery is dying",
-        timeout = 5, hover_timeout = 0.5,
-        position = "bottom_right",
-        bg = "#F06060",
-        fg = "#EEE9EF",
-        width = 300,
-    }
-end
+    local function show_battery_warning()
+        naughty.notify{
+            icon = HOME .. "/.config/awesome/nichosi.png",
+            icon_size=100,
+            text = "Huston, we have a problem",
+            title = "Battery is dying",
+            timeout = 5, hover_timeout = 0.5,
+            position = "bottom_right",
+            bg = "#F06060",
+            fg = "#EEE9EF",
+            width = 300,
+        }
+    end
 
-local last_battery_check = os.time()
+    local last_battery_check = os.time()
+    local batteryType = "battery-good-symbolic"
 
-watch("acpi -i", 10,
+    watch("acpi -i", 10,
     function(widget, stdout, stderr, exitreason, exitcode)
-        local batteryType
-
         local battery_info = {}
         local capacities = {}
         for s in stdout:gmatch("[^\r\n]+") do
@@ -132,7 +140,11 @@ watch("acpi -i", 10,
     end,
     battery_widget)
 
-battery_widget:connect_signal("mouse::enter", function() show_battery_status() end)
-battery_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
+    if display_notification then
+        battery_widget:connect_signal("mouse::enter", function() show_battery_status(batteryType) end)
+        battery_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
+    end
+    return battery_widget
+end
 
-return battery_widget
+return setmetatable(battery_widget, { __call = function(_, ...) return worker(...) end })
