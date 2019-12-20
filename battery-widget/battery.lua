@@ -24,9 +24,21 @@ local HOME = os.getenv("HOME")
 local battery_widget = {}
 local function worker(args)
     local args = args or {}
+
+    local font = args.font or 'Play 8'
+    local show_current_level = args.show_current_level or false
+    local margin_left = args.margin_left or 0
+    local margin_right = args.margin_right or 0
+
     local display_notification = args.notification or false
     local position = args.notification_position or "top_right"
-    battery_widget = wibox.widget {
+
+    local warning_msg_title = args.warning_msg_title or 'Huston, we have a problem'
+    local warning_msg_text = args.warning_msg_text or 'Battery is dying'
+    local warning_msg_position = args.warning_msg_position or 'bottom_right'
+    local warning_msg_icon = args.warning_msg_icon or HOME .. '/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg'
+
+    icon_widget = wibox.widget {
         {
             id = "icon",
             widget = wibox.widget.imagebox,
@@ -34,7 +46,16 @@ local function worker(args)
         },
         layout = wibox.container.margin(_, 0, 0, 3)
     }
+    local level_widget = wibox.widget {
+        font = font,
+        widget = wibox.widget.textbox
+    }
 
+    battery_widget = wibox.widget {
+        icon_widget,
+        level_widget,
+        layout = wibox.layout.fixed.horizontal,
+    }
     -- Popup with battery info
     -- One way of creating a pop-up notification - naughty.notify
     local notification
@@ -64,19 +85,19 @@ local function worker(args)
     -- beautiful.tooltip_bg = beautiful.bg_normal
 
     local function show_battery_warning()
-        naughty.notify{
-            icon = HOME .. "/.config/awesome/nichosi.png",
-            icon_size=100,
-            text = "Huston, we have a problem",
-            title = "Battery is dying",
-            timeout = 5, hover_timeout = 0.5,
-            position = "bottom_right",
+        naughty.notify {
+            icon = warning_msg_icon,
+            icon_size = 100,
+            text = warning_msg_text,
+            title = warning_msg_title,
+            timeout = 25, -- show the warning for a longer time
+            hover_timeout = 0.5,
+            position = warning_msg_position,
             bg = "#F06060",
             fg = "#EEE9EF",
             width = 300,
         }
     end
-
     local last_battery_check = os.time()
     local batteryType = "battery-good-symbolic"
 
@@ -113,6 +134,8 @@ local function worker(args)
         end
         charge = charge / capacity
 
+        level_widget.text = string.format('%d%%', charge)
+
         if (charge >= 0 and charge < 15) then
             batteryType = "battery-empty%s-symbolic"
             if status ~= 'Charging' and os.difftime(os.time(), last_battery_check) > 300 then
@@ -138,13 +161,13 @@ local function worker(args)
         -- Update popup text
         -- battery_popup.text = string.gsub(stdout, "\n$", "")
     end,
-    battery_widget)
+    icon_widget)
 
     if display_notification then
         battery_widget:connect_signal("mouse::enter", function() show_battery_status(batteryType) end)
         battery_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
     end
-    return battery_widget
+    return wibox.container.margin(battery_widget, margin_left, margin_right)
 end
 
 return setmetatable(battery_widget, { __call = function(_, ...) return worker(...) end })
