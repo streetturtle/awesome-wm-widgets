@@ -67,6 +67,7 @@ local function worker(args)
     local function show_volume(val)
         spawn.easy_async(GET_VOLUME_CMD,
         function(stdout, _, _, _)
+            naughty.destroy(notification)
             notification = naughty.notify{
                 text =  get_notification_text(stdout),
                 icon=path_to_icons .. val .. ".svg",
