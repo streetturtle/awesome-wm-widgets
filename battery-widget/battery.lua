@@ -12,6 +12,7 @@ local awful = require("awful")
 local naughty = require("naughty")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
+local gfs = require("gears.filesystem")
 local dpi = require('beautiful').xresources.apply_dpi
 
 -- acpi sample outputs
@@ -38,7 +39,15 @@ local function worker(args)
     local warning_msg_position = args.warning_msg_position or 'bottom_right'
     local warning_msg_icon = args.warning_msg_icon or HOME .. '/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg'
 
-    icon_widget = wibox.widget {
+    if not gfs.dir_readable(PATH_TO_ICONS) then
+        naughty.notify{
+            title = "Battery Widget",
+            text = "Folder with icons doesn't exist: " .. PATH_TO_ICONS,
+            preset = naughty.config.presets.critical
+        }
+    end
+
+    local icon_widget = wibox.widget {
         {
             id = "icon",
             widget = wibox.widget.imagebox,
@@ -134,7 +143,9 @@ local function worker(args)
         end
         charge = charge / capacity
 
-        level_widget.text = string.format('%d%%', charge)
+        if show_current_level then
+            level_widget.text = string.format('%d%%', charge)
+        end
 
         if (charge >= 0 and charge < 15) then
             batteryType = "battery-empty%s-symbolic"
