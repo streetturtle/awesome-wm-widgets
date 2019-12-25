@@ -56,10 +56,7 @@ local function worker(args)
         forced_width = 18,
         bg = "#ffffff11",
         paddings = 2,
-        widget = wibox.container.arcchart,
-        set_value = function(self, value)
-            self.value = value
-        end,
+        widget = wibox.container.arcchart
     }
 
     local last_battery_check = os.time()
