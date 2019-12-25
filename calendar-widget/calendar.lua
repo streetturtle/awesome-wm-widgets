@@ -75,7 +75,7 @@ local function worker(args)
 
     if args.theme ~= nil and calendar_themes[args.theme] == nil then
         naughty.notify({
-            preset = naughty.config.presets.critical, 
+            preset = naughty.config.presets.critical,
             title = 'Calendar Widget',
             text = 'Theme "' .. args.theme .. '" not found, fallback to default'})
         args.theme = 'nord'
