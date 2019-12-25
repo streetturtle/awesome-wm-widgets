@@ -12,10 +12,10 @@ local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
 local naughty = require("naughty")
+local gfs = require("gears.filesystem")
 local dpi = require('beautiful').xresources.apply_dpi
 
-
-local path_to_icons = "/usr/share/icons/Arc/status/symbolic/"
+local PATH_TO_ICONS = "/usr/share/icons/Arc/status/symbolic/"
 
 local volume_widget = {}
 
@@ -36,11 +36,18 @@ local function worker(args)
     local DEC_VOLUME_CMD = 'amixer ' .. device_arg .. ' sset Master 5%-'
     local TOG_VOLUME_CMD = 'amixer ' .. device_arg .. ' sset Master toggle'
 
+    if not gfs.dir_readable(PATH_TO_ICONS) then
+        naughty.notify{
+            title = "Volume Widget",
+            text = "Folder with icons doesn't exist: " .. PATH_TO_ICONS,
+            preset = naughty.config.presets.critical
+        }
+    end
 
     volume_widget = wibox.widget {
         {
             id = "icon",
-            image = path_to_icons .. "audio-volume-muted-symbolic.svg",
+            image = PATH_TO_ICONS .. "audio-volume-muted-symbolic.svg",
             resize = false,
             widget = wibox.widget.imagebox,
         },
@@ -70,7 +77,7 @@ local function worker(args)
             naughty.destroy(notification)
             notification = naughty.notify{
                 text =  get_notification_text(stdout),
-                icon=path_to_icons .. val .. ".svg",
+                icon=PATH_TO_ICONS .. val .. ".svg",
                 icon_size = dpi(16),
                 title = "Volume",
                 position = position,
@@ -92,9 +99,9 @@ local function worker(args)
         elseif (volume < 75) then volume_icon_name="audio-volume-medium-symbolic"
         elseif (volume <= 100) then volume_icon_name="audio-volume-high-symbolic"
         end
-        widget.image = path_to_icons .. volume_icon_name .. ".svg"
+        widget.image = PATH_TO_ICONS .. volume_icon_name .. ".svg"
         if display_notification then
-            notification.iconbox.image = path_to_icons .. volume_icon_name .. ".svg"
+            notification.iconbox.image = PATH_TO_ICONS .. volume_icon_name .. ".svg"
             naughty.replace_text(notification, "Volume", get_notification_text(stdout))
         end
     end
