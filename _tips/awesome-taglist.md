@@ -10,7 +10,7 @@ To do it you need to install a font which was generated from the svg images of t
 awful.tag({ "A", "W", "E", "S", "O", "M", "E", "W", "M"},
 ```
 
-![awesome-taglist]({{ "/assets/img/screenshots/awesome-taglist-1.png" | relative_url }}){:.center-image}
+![awesome-taglist]({{ "/assets/img/tips/awesome-taglist-1.png" | relative_url }}){:.center-image}
 
 and lowercase for the outline characters:
 
@@ -18,7 +18,7 @@ and lowercase for the outline characters:
 awful.tag({ "a", "w", "e", "s", "o", "m", "e", "w", "m"},
 ```
 
-![awesome-taglist]({{ "/assets/img/screenshots/awesome-taglist-2.png" | relative_url }}){:.center-image}
+![awesome-taglist]({{ "/assets/img/tips/awesome-taglist-2.png" | relative_url }}){:.center-image}
 
 To have same colors as on the screenshots, use following configuration:
 

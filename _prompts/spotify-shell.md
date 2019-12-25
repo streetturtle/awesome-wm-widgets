@@ -4,7 +4,7 @@ layout: page
 # Spotify Shell
 
 
-![demo]({{'/assets/img/screenshots/spotify-shell.gif' | relative_url }}){:.center-image}
+![demo]({{'/assets/img/prompts/spotify-shell.gif' | relative_url }}){:.center-image}
 
 ## Features
 

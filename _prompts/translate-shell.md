@@ -5,7 +5,7 @@ layout: page
 
 This widget allows quickly translate words or phrases without opening a browser - just using Awesome. To provide direction of the translation add the 2 letters code of the source and target languages at the end of the phrase, for example _hello enfr_ will translate _hello_ from English to French. This widget is based on [Yandex.Translate API](https://tech.yandex.com/translate/).
 
-![demo]({{'/assets/img/screenshots/translate-shell.gif' | relative_url }}){:.center-image}
+![demo]({{'/assets/img/prompts/translate-shell.gif' | relative_url }}){:.center-image}
 
 ## Controls
 
