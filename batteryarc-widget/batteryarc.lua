@@ -23,7 +23,7 @@ local function worker(args)
     local args = args or {}
 
     local font = args.font or 'Play 6'
-    local arc_thickness = args.thickness or 2
+    local arc_thickness = args.arc_thickness or 2
     local show_current_level = args.show_current_level or false
 
     local main_color = args.main_color or beautiful.fg_color
