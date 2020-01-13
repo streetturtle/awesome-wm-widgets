@@ -68,10 +68,8 @@ local function worker(args)
                 local battery_info = {}
                 local capacities = {}
                 for s in stdout:gmatch("[^\r\n]+") do
-                    local status, charge_str, time = string.match(s, '.+: (%a+), (%d?%d?%d)%%,?.*')
-                    if string.match(s, 'rate information') then
-                        -- ignore such line
-                    elseif status ~= nil then
+                    local status, charge_str, time = string.match(s, '.+: (%a+), (%d?%d?%d)%%,?(.*)')
+                    if status ~= nil then
                         table.insert(battery_info, { status = status, charge = tonumber(charge_str) })
                     else
                         local cap_str = string.match(s, '.+:.+last full capacity (%d+)')
