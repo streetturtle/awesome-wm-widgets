@@ -7,6 +7,8 @@
   <img src="https://img.shields.io/github/forks/streetturtle/awesome-wm-widgets.svg">
 </p>
 
+[![HitCount](http://hits.dwyl.io/Streetturtle/Awesome-wm-widgets.svg)](http://hits.dwyl.io/Streetturtle/Awesome-wm-widgets)
+
 Set of super simple widgets compatible with Awesome Window Manager v.4+. 
 
 ## Screenshots 
