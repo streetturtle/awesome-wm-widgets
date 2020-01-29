@@ -4,7 +4,9 @@ The widget shows the number of assigned tickets to the user  and when clicked sh
 
 ## How it works
 
-Widget users cURL to query JIRA's REST API. In order to be authenticated, widget uses netrc feature of the cURL, which is basically to store basic auth credentials in a .netrc file in home folder. 
+Widget users cURL to query JIRA's REST API. In order to be authenticated, widget uses netrc [feature](https://ec.haxx.se/usingcurl/usingcurl-netrc) of the cURL, which is basically to store basic auth credentials in a .netrc file in home folder. Don't forget to set file permission to 600.
+
+If you are on Attlassian Cloud, then instead of providing a password in netrc file you can set an [API token](https://confluence.atlassian.com/cloud/api-tokens-938839638.html) which is a safer option, as you can revoke/change the token at any time.
 
 ## Customization
 
