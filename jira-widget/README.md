@@ -33,6 +33,11 @@ Then change file's permissions to 600 (so only you can read/write it):
 ```bash
 chmod 600 ~/.netrc
 ```
+And test if it works by calling the API:
+
+```bash
+curl -s -n 'https://turtleninja.com/rest/api/2/search?jql=assignee=currentuser()+AND+resolution=Unresolved'
+```
 
 Clone/download repo and use widget in **rc.lua**:
 
