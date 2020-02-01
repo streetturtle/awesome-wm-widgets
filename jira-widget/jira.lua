@@ -21,7 +21,7 @@ local gs = require("gears.string")
 
 local HOME_DIR = os.getenv("HOME")
 
-local GET_ISSUES_CMD = [[bash -c "curl -s -X GET -n '%s/rest/api/2/search?%s'"]]
+local GET_ISSUES_CMD = [[bash -c "curl -s -X GET -n '%s/rest/api/2/search?%s&fields=id,assignee,summary,status'"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o  %s/.cache/awmw/jira-widget/avatars/%s %s"]]
 
 local jira_widget = {}
@@ -146,10 +146,6 @@ local function worker(args)
                 widget = wibox.container.background
             }
 
-            row:connect_signal("button::release", function(_, _, _, button)
-                spawn.with_shell("google-chrome https://" .. host .. '/' .. issue._number)
-            end)
-
             row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
             row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
 
@@ -174,11 +170,7 @@ local function worker(args)
                         if popup.visible then
                             popup.visible = not popup.visible
                         else
-                            local geo = mouse.current_widget_geometry
-                            local x = geo.x + (geo.width / 2) - (popup:geometry().width / 2)
-                            popup:move_next_to({x = x, y = geo.y + 22, width = 0, height = geo.height})
-
-                            -- popup:move_next_to(mouse.current_widget_geometry)
+                            popup:move_next_to(mouse.current_widget_geometry)
                         end
                     end)
             )
