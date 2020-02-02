@@ -10,7 +10,7 @@ Here is a trick to toggle system tray visibility in Awesome using keyboard short
 
  - Colors of the apps are very different from theme colors which makes systray look flashy and disturbing:
 
-![systray screenshot]({{ "/assets/img/screenshots/systray.png" | relative_url }})
+![systray screenshot]({{ "/assets/img/tips/systray.png" | relative_url }})
 
 On the other hand not showing it at all will make interaction with some apps pretty difficult. So having a keyboard shortcut which toggles its visibility sounds like a good solution for the problems mentioned above.
 
