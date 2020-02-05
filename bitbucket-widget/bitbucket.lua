@@ -20,7 +20,7 @@ local gfs = require("gears.filesystem")
 
 local HOME_DIR = os.getenv("HOME")
 
-local GET_PRS_CMD= [[bash -c "curl -s -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.account_id,values.author.links.avatar&q=reviewers.account_id+%%3D+%%22%s%%22'"]]
+local GET_PRS_CMD= [[bash -c "curl -s -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.account_id,values.author.links.avatar&q=reviewers.account_id+%%3D+%%22%s%%22+AND+state+%%3D+%%22OPEN%%22'"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o %s/.cache/awmw/bitbucket-widget/avatars/%s %s"]]
 
 local bitbucket_widget = {}
