@@ -141,7 +141,7 @@ local function worker(args)
                         cpu_rows[i] = row
                         i = i + 1
                     else
-                        local pid, cmd, cpu, mem, cmd = line:match('(%d+)%s+(%w+)%s+([%d.]+)%s+([%d.]+)')
+                        local pid, cmd, cpu, mem = line:match('(%d+)%s+(%w+)%s+([%d.]+)%s+([%d.]+)')
 
                         if pid == nil then
                             pid = 'PID'
