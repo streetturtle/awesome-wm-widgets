@@ -27,6 +27,7 @@ local function worker(args)
     local show_current_level = args.show_current_level or false
 
     local main_color = args.main_color or beautiful.fg_color
+    local bg_color = args.bg_color or '#ffffff11'
     local low_level_color = args.low_level_color or '#e53935'
     local medium_level_color = args.medium_level_color or '#c0ca33'
     local charging_color = args.charging_color or '#43a047'
@@ -54,7 +55,7 @@ local function worker(args)
         start_angle = 4.71238898, -- 2pi*3/4
         forced_height = 18,
         forced_width = 18,
-        bg = "#ffffff11",
+        bg = bg_color,
         paddings = 2,
         widget = wibox.container.arcchart
     }

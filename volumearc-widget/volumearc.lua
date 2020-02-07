@@ -28,6 +28,7 @@ local function worker(args)
     local args = args or {}
 
     local main_color = args.main_color or beautiful.fg_color
+    local bg_color = args.bg_color or '#ffffff11'
     local mute_color = args.mute_color or beautiful.fg_urgent
     local path_to_icon = args.path_to_icon or PATH_TO_ICON
     local thickness = args.thickness or 2
@@ -52,7 +53,7 @@ local function worker(args)
         start_angle = 4.71238898, -- 2pi*3/4
         forced_height = height,
         forced_width = height,
-        bg = "#ffffff11",
+        bg = bg_color,
         paddings = 2,
         widget = wibox.container.arcchart
     }
