@@ -39,14 +39,44 @@ local function worker(args)
         { widget = wibox.widget.textbox },
         spacing = 4,
         layout = wibox.layout.fixed.vertical,
+    }
+
+    local is_update = true
+    local process_rows = {
+        --{ widget = wibox.widget.textbox },
+        spacing = 8,
+        layout = wibox.layout.fixed.vertical,
 
     }
 
-    local process_rows = {
-        { widget = wibox.widget.textbox },
-        spacing = 4,
-        layout = wibox.layout.fixed.vertical,
-
+    local process_header =                         {
+        --{
+            {
+                markup = '<b>PID</b>',
+                forced_width = 40,
+                widget = wibox.widget.textbox
+            },
+            {
+                markup = '<b>Name</b>',
+                forced_width = 40,
+                widget = wibox.widget.textbox
+            },
+            {
+                {
+                    markup = '<b>%CPU</b>',
+                    forced_width = 40,
+                    widget = wibox.widget.textbox
+                },
+                {
+                    markup = '<b>%MEM</b>',
+                    forced_width = 40,
+                    widget = wibox.widget.textbox
+                },
+                layout = wibox.layout.fixed.horizontal
+            },
+                layout = wibox.layout.align.horizontal
+        --},
+        --widget = wibox.container.background
     }
 
     local popup = awful.popup{
@@ -59,6 +89,8 @@ local function worker(args)
         offset = { y = 5 },
         widget = {}
     }
+    popup:connect_signal("mouse::enter", function(c) is_update = false end)
+    popup:connect_signal("mouse::leave", function(c) is_update = true end)
 
     cpugraph_widget:buttons(
             awful.util.table.join(
@@ -82,7 +114,7 @@ local function worker(args)
     end
 
     local cpus = {}
-    watch([[bash -c "cat /proc/stat | grep '^cpu.' ; ps -eo pid,comm,%cpu,%mem --sort=-%cpu | head"]], 1,
+    watch([[bash -c "cat /proc/stat | grep '^cpu.' ; ps -eo pid=,comm=,%cpu=,%mem=,cmd= --sort=-%cpu | head"]], 1,
             function(widget, stdout)
                 local i = 1
                 local j = 1
@@ -141,56 +173,67 @@ local function worker(args)
                         cpu_rows[i] = row
                         i = i + 1
                     else
-                        local pid, cmd, cpu, mem = line:match('(%d+)%s+(%w+)%s+([%d.]+)%s+([%d.]+)')
+                        if is_update == true then
 
-                        if pid == nil then
-                            pid = 'PID'
-                            cmd = 'Name'
-                            cpu = '%CPU'
-                            mem = '%MEM'
+                            local pid, comm, cpu, mem, cmd = line:match('(%d+)%s+(%w+)%s+([%d.]+)%s+([%d.]+)%s+(.+)')
+                            cmd = string.sub(cmd,0, 300)
+                            cmd = cmd .. '...'
+                            if pid == nil then
+                                pid = 'PID'
+                                comm = 'Name'
+                                cpu = '%CPU'
+                                mem = '%MEM'
 
-                        end
+                            end
 
-
-                        local row = wibox.widget {
-                            {
-                                {
-                                    text = pid,
-                                    forced_width = 40,
-                                    widget = wibox.widget.textbox
-                                },
-                                {
-                                    text = cmd,
-                                    forced_width = 40,
-                                    widget = wibox.widget.textbox
-                                },
+                            local row = wibox.widget {
                                 {
                                     {
-                                        text = cpu,
+                                        text = pid,
                                         forced_width = 40,
                                         widget = wibox.widget.textbox
                                     },
                                     {
-                                        text = mem,
+                                        text = comm,
                                         forced_width = 40,
                                         widget = wibox.widget.textbox
+                                    },
+                                    {
+                                        {
+                                            text = cpu,
+                                            forced_width = 40,
+                                            widget = wibox.widget.textbox
+                                        },
+                                        {
+                                            text = mem,
+                                            forced_width = 40,
+                                            widget = wibox.widget.textbox
+                                        },
+                                        layout = wibox.layout.align.horizontal
                                     },
                                     layout = wibox.layout.align.horizontal
                                 },
-                                layout = wibox.layout.align.horizontal
-                            },
-                            widget = wibox.container.background
-                        }
+                                widget = wibox.container.background
+                            }
 
-                        row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
-                        row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
+                            row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
+                            row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
 
+                            awful.tooltip {
+                                objects        = { row },
+                                mode = 'outside',
+                                preferred_positions = {'bottom'},
+                                timer_function = function()
+                                    return cmd:gsub('%s', '\n\t')
+                                end,
+                            }
 
-                        process_rows[j] = row
+                            process_rows[j] = row
 
-                        j = j + 1
+                            j = j + 1
+                        end
+
                     end
-
                 end
                 popup:setup {
                     {
@@ -201,6 +244,7 @@ local function worker(args)
                             color = beautiful.bg_focus,
                             widget = wibox.widget.separator
                         },
+                        process_header,
                         process_rows,
                         layout = wibox.layout.fixed.vertical,
                     },
