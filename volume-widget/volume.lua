@@ -57,7 +57,7 @@ local function worker(args)
         end
     }
 
-    local notification = {}
+    local notification
     local volume_icon_name="audio-volume-high-symbolic"
 
     local function get_notification_text(txt)
