@@ -175,16 +175,17 @@ local function worker(args)
                     else
                         if is_update == true then
 
-                            local pid, comm, cpu, mem, cmd = line:match('(%d+)%s+(%w+)%s+([%d.]+)%s+([%d.]+)%s+(.+)')
-                            cmd = string.sub(cmd,0, 300)
-                            cmd = cmd .. '...'
+                            local pid, comm, cpu, mem, cmd = line:match('(%d+)%s+(%w+%p*%w*)%s+([%d.]+)%s+([%d.]+)%s+(.+)')
                             if pid == nil then
                                 pid = 'PID'
                                 comm = 'Name'
                                 cpu = '%CPU'
                                 mem = '%MEM'
-
+                                cmd = 'CMD'
                             end
+
+                            cmd = string.sub(cmd,0, 300)
+                            cmd = cmd .. '...'
 
                             local row = wibox.widget {
                                 {
