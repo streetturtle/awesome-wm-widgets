@@ -144,6 +144,8 @@ local function worker(args)
     end
 
     local function error_display(resp_json)
+        weather_timer.timeout = math.min(15 * 60, weather_timer.timeout * 2)
+        weather_timer:again()
         local err_resp = json.decode(resp_json)
         naughty.notify{
             title = 'Weather Widget Error',
@@ -185,6 +187,8 @@ local function worker(args)
             resp = json.decode(resp_json)
             icon_widget.image = path_to_icons .. icon_map[resp.weather[1].icon]
             temp_widget:set_text(gen_temperature_str(resp.main.temp, '%.0f', both_units_widget))
+            weather_timer.timeout = 60
+            weather_timer:again()
         end
     end)
     weather_timer:start()
