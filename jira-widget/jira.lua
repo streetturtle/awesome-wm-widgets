@@ -97,13 +97,13 @@ local function worker(args)
 
         for i = 0, #rows do rows[i]=nil end
         for _, issue in ipairs(result.issues) do
-            local path_to_avatar = os.getenv("HOME") ..'/.cache/awmw/jira-widget/avatars/' .. issue.fields.assignee.key
+            local path_to_avatar = os.getenv("HOME") ..'/.cache/awmw/jira-widget/avatars/' .. issue.fields.assignee.accountId
 
             if not gfs.file_readable(path_to_avatar) then
                 spawn.easy_async(string.format(
                         DOWNLOAD_AVATAR_CMD,
                         HOME_DIR,
-                        issue.fields.assignee.key,
+                        issue.fields.assignee.accountId,
                         issue.fields.assignee.avatarUrls['48x48']))
             end
 
