@@ -16,6 +16,21 @@ local gears = require("gears")
 
 local widget = {}
 
+local function split(string_to_split, separator)
+    if separator == nil then separator = "%s" end
+    local t={}
+
+    for str in string.gmatch(string_to_split, "([^".. separator .."]+)") do
+        table.insert(t, str)
+    end
+
+    return t
+end
+
+local function starts_with(str, start)
+    return str:sub(1, #start) == start
+end
+
 local function worker(args)
 
     local args = args or {}
@@ -36,47 +51,41 @@ local function worker(args)
     }
 
     local cpu_rows = {
-        { widget = wibox.widget.textbox },
         spacing = 4,
         layout = wibox.layout.fixed.vertical,
     }
 
     local is_update = true
     local process_rows = {
-        --{ widget = wibox.widget.textbox },
         spacing = 8,
         layout = wibox.layout.fixed.vertical,
-
     }
 
-    local process_header =                         {
-        --{
+    local process_header = {
+        {
+            markup = '<b>PID</b>',
+            forced_width = 40,
+            widget = wibox.widget.textbox
+        },
+        {
+            markup = '<b>Name</b>',
+            forced_width = 40,
+            widget = wibox.widget.textbox
+        },
+        {
             {
-                markup = '<b>PID</b>',
+                markup = '<b>%CPU</b>',
                 forced_width = 40,
                 widget = wibox.widget.textbox
             },
             {
-                markup = '<b>Name</b>',
+                markup = '<b>%MEM</b>',
                 forced_width = 40,
                 widget = wibox.widget.textbox
             },
-            {
-                {
-                    markup = '<b>%CPU</b>',
-                    forced_width = 40,
-                    widget = wibox.widget.textbox
-                },
-                {
-                    markup = '<b>%MEM</b>',
-                    forced_width = 40,
-                    widget = wibox.widget.textbox
-                },
-                layout = wibox.layout.fixed.horizontal
-            },
-                layout = wibox.layout.align.horizontal
-        --},
-        --widget = wibox.container.background
+            layout = wibox.layout.fixed.horizontal
+        },
+        layout = wibox.layout.align.horizontal
     }
 
     local popup = awful.popup{
@@ -89,6 +98,7 @@ local function worker(args)
         offset = { y = 5 },
         widget = {}
     }
+
     popup:connect_signal("mouse::enter", function(c) is_update = false end)
     popup:connect_signal("mouse::leave", function(c) is_update = true end)
 
@@ -109,12 +119,8 @@ local function worker(args)
     --- By default graph widget goes from left to right, so we mirror it and push up a bit
     local cpu_widget = wibox.container.margin(wibox.container.mirror(cpugraph_widget, { horizontal = true }), 0, 0, 0, 2)
 
-    local function starts_with(str, start)
-        return str:sub(1, #start) == start
-    end
-
     local cpus = {}
-    watch([[bash -c "cat /proc/stat | grep '^cpu.' ; ps -eo pid=,comm=,%cpu=,%mem=,cmd= --sort=-%cpu | head"]], 1,
+    watch([[bash -c "cat /proc/stat | grep '^cpu.' ; ps -eo '%p|%c|%C|' -o "%mem" -o '|%a' --sort=-%cpu | head -11 | tail -n +2"]], 1,
             function(widget, stdout)
                 local i = 1
                 local j = 1
@@ -175,16 +181,13 @@ local function worker(args)
                     else
                         if is_update == true then
 
-                            local pid, comm, cpu, mem, cmd = line:match('(%d+)%s+(%w+)%s+([%d.]+)%s+([%d.]+)%s+(.+)')
-                            cmd = string.sub(cmd,0, 300)
-                            cmd = cmd .. '...'
-                            if pid == nil then
-                                pid = 'PID'
-                                comm = 'Name'
-                                cpu = '%CPU'
-                                mem = '%MEM'
+                            local columns = split(line, '|')
 
-                            end
+                            local pid = columns[1]
+                            local comm = columns[2]
+                            local cpu = columns[3]
+                            local mem = columns[4]
+                            local cmd = columns[5]
 
                             local row = wibox.widget {
                                 {
@@ -216,6 +219,7 @@ local function worker(args)
                                 widget = wibox.container.background
                             }
 
+                            -- Do not update process rows when mouse cursor is over the widget
                             row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
                             row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
 
@@ -224,7 +228,9 @@ local function worker(args)
                                 mode = 'outside',
                                 preferred_positions = {'bottom'},
                                 timer_function = function()
-                                    return cmd:gsub('%s', '\n\t')
+                                    return cmd
+                                            :gsub('%s%-', '\n\t-') -- put arguments on a new line
+                                            :gsub(':/', '\n\t\t:/') -- java classpath uses : to separate jars
                                 end,
                             }
 
