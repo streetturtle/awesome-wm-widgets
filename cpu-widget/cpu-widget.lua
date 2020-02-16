@@ -175,7 +175,7 @@ local function worker(args)
                     else
                         if is_update == true then
 
-                            local pid, comm, cpu, mem, cmd = line:match('(%d+)%s+(%w+%p*%w*)%s+([%d.]+)%s+([%d.]+)%s+(.+)')
+                            local pid, comm, cpu, mem, cmd = line:match('(%d+)%s+([%w%p?%s]+)%s+([%d.]+)%s+([%d.]+)%s+(.+)')
                             if pid == nil then
                                 pid = 'PID'
                                 comm = 'Name'
