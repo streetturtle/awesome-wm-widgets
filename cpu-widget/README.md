@@ -2,7 +2,7 @@
 
 This widget shows the average CPU load among all cores of the machine:
 
-![screenshot](./out.gif)
+![screenshot](./ou1.gif)
 
 ## How it works
 
