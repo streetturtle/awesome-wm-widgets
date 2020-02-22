@@ -24,7 +24,7 @@ local function worker(args)
     local args = args or {}
 
     local volume_audio_controller = args.volume_audio_controller or 'pulse'
-    local display_notification = args.notification or 'false'
+    local display_notification = args.display_notification or false
     local position = args.notification_position or "top_right"
     local device_arg = ''
     if volume_audio_controller == 'pulse' then
@@ -125,6 +125,7 @@ local function worker(args)
         volume_widget:connect_signal("mouse::enter", function() show_volume(volume_icon_name) end)
         volume_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
     end
+
     watch(GET_VOLUME_CMD, 1, update_graphic, volume_widget)
 
     return volume_widget
