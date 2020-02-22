@@ -21,16 +21,32 @@ It is possible to customize widget by providing a table with all or some of the 
 
 | Name | Default | Description |
 |---|---|---|
-| `font` | Font | Play 8 |
+| `font` | Play 8 | Fond |
+| `path_to_icons` | `/usr/share/icons/Arc/status/symbolic/` | Path to the folder with icons* |
 | `show_current_level`| false | Show current charge level |
-| `margin_right`|0| the right margin of the widget|
-| `margin_left`|0| the left margin of the widget|
+| `margin_right`|0| The right margin of the widget|
+| `margin_left`|0| The left margin of the widget|
 | `notification` | `false` | Display a notification on mouseover |
 | `notification_position` | `top_right` | The notification position |
 | `warning_msg_title` | _Huston, we have a problem_ | Title of the warning popup |
 | `warning_msg_text` | _Battery is dying_ | Text of the warning popup |
 | `warning_msg_position` | `bottom_right` | Position of the warning popup |
-| `warning_msg_icon` | ~/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg | Icon of the warning popup |
+| `warning_msg_icon` | ~/.config/awesome/awesome-wm-widgets/battery-widget/spaceman.jpg | Icon of the warning popup |
+
+*Note: the widget expects following icons be present in the folder:
+
+ - battery-caution-charging-symbolic.svg
+ - battery-empty-charging-symbolic.svg
+ - battery-full-charged-symbolic.svg
+ - battery-full-symbolic.svg
+ - battery-good-symbolic.svg
+ - battery-low-symbolic.svg
+ - battery-caution-symbolic.svg
+ - battery-empty-symbolic.svg
+ - battery-full-charging-symbolic.svg
+ - battery-good-charging-symbolic.svg
+ - battery-low-charging-symbolic.svg
+ - battery-missing-symbolic.svg
 
 ## Installation
 

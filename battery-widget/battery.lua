@@ -19,7 +19,6 @@ local dpi = require('beautiful').xresources.apply_dpi
 -- Battery 0: Discharging, 75%, 01:51:38 remaining
 -- Battery 0: Charging, 53%, 00:57:43 until charged
 
-local PATH_TO_ICONS = "/usr/share/icons/Arc/status/symbolic/"
 local HOME = os.getenv("HOME")
 
 local battery_widget = {}
@@ -27,6 +26,7 @@ local function worker(args)
     local args = args or {}
 
     local font = args.font or 'Play 8'
+    local path_to_icons = args.path_to_icons or "/usr/share/icons/Arc/status/symbolic/"
     local show_current_level = args.show_current_level or false
     local margin_left = args.margin_left or 0
     local margin_right = args.margin_right or 0
@@ -39,10 +39,10 @@ local function worker(args)
     local warning_msg_position = args.warning_msg_position or 'bottom_right'
     local warning_msg_icon = args.warning_msg_icon or HOME .. '/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg'
 
-    if not gfs.dir_readable(PATH_TO_ICONS) then
+    if not gfs.dir_readable(path_to_icons) then
         naughty.notify{
             title = "Battery Widget",
-            text = "Folder with icons doesn't exist: " .. PATH_TO_ICONS,
+            text = "Folder with icons doesn't exist: " .. path_to_icons,
             preset = naughty.config.presets.critical
         }
     end
@@ -75,7 +75,7 @@ local function worker(args)
             notification = naughty.notify{
                 text =  stdout,
                 title = "Battery status",
-                icon = PATH_TO_ICONS .. batteryType .. ".svg",
+                icon = path_to_icons .. batteryType .. ".svg",
                 icon_size = dpi(16),
                 position = position,
                 timeout = 5, hover_timeout = 0.5,
@@ -167,7 +167,7 @@ local function worker(args)
             batteryType = string.format(batteryType, '')
         end
 
-        widget.icon:set_image(PATH_TO_ICONS .. batteryType .. ".svg")
+        widget.icon:set_image(path_to_icons .. batteryType .. ".svg")
 
         -- Update popup text
         -- battery_popup.text = string.gsub(stdout, "\n$", "")
