@@ -4,13 +4,13 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 local gears = require("gears")
 
-local storage_graph_widget = {}
+local storage_bar_widget = {}
 
 local function worker(args)
     local args = args or {}
     local mounts = args.mounts or {'/'}
 
-    storage_graph_widget = wibox.widget {
+    storage_bar_widget = wibox.widget {
         max_value = 100,
         forced_height = 20,
         forced_width = 35,
@@ -63,7 +63,7 @@ local function worker(args)
     popup:connect_signal("mouse::enter", function(c) is_update = false end)
     popup:connect_signal("mouse::leave", function(c) is_update = true end)
 
-    storage_graph_widget:buttons(
+    storage_bar_widget:buttons(
       awful.util.table.join(
         awful.button({}, 1, function()
           if popup.visible then
@@ -75,7 +75,7 @@ local function worker(args)
         )
       )
 
-    local disk_widget = wibox.container.margin(wibox.container.mirror(storage_graph_widget, { horizontal = true }), 0, 0, 0, 2)
+    local disk_widget = wibox.container.margin(storage_bar_widget, 0, 0, 0, 0)
 
     local disks = {}
     watch([[bash -c "df | tail -n +2"]], 60,
@@ -145,12 +145,12 @@ local function worker(args)
               widget = wibox.container.margin
           }
         end,
-        storage_graph_widget
+        storage_bar_widget
     )
 
     return disk_widget
 end
 
-return setmetatable(storage_graph_widget, { __call = function(_, ...)
+return setmetatable(storage_bar_widget, { __call = function(_, ...)
     return worker(...)
 end })
