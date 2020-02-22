@@ -31,7 +31,7 @@ local function worker(args)
     local margin_left = args.margin_left or 0
     local margin_right = args.margin_right or 0
 
-    local display_notification = args.notification or false
+    local display_notification = args.display_notification or false
     local position = args.notification_position or "top_right"
 
     local warning_msg_title = args.warning_msg_title or 'Huston, we have a problem'
