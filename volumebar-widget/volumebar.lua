@@ -28,6 +28,7 @@ local function worker(args)
 
     local main_color = args.main_color or beautiful.fg_normal
     local mute_color = args.mute_color or beautiful.fg_urgent
+    local bg_color = args.bg_color or '#ffffff11'
     local width = args.width or 50
     local shape = args.shape or 'bar'
     local margins = args.margins or 10
@@ -41,7 +42,7 @@ local function worker(args)
         max_value = 1,
         forced_width = width,
         color = main_color,
-        background_color = '#ffffff11',
+        background_color = bg_color,
         shape = gears.shape[shape],
         margins = {
             top = margins,

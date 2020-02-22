@@ -28,6 +28,7 @@ local function worker(args)
     local inc_brightness_cmd = args.inc_brightness_cmd or INC_BRIGHTNESS_CMD
     local dec_brightness_cmd = args.dec_brightness_cmd or DEC_BRIGHTNESS_CMD
     local color = args.color or beautiful.fg_color
+    local bg_color = args.bg_color or '#ffffff11'
     local path_to_icon = args.path_to_icon or PATH_TO_ICON
 
     local icon = {
@@ -44,7 +45,7 @@ local function worker(args)
         start_angle = 4.71238898, -- 2pi*3/4
         forced_height = 18,
         forced_width = 18,
-        bg = "#ffffff11",
+        bg = bg_color,
         paddings = 2,
         colors = {color},
         widget = wibox.container.arcchart

@@ -16,6 +16,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | Name | Default | Description |
 |---|---|---|
 | `main_color` | `beautiful.fg_normal` | Color of the arc |
+| `bg_color` | `#ffffff11` | Color of the arc's background |
 | `mute_color` | `beautiful.fg_urgent` | Color of the arc when mute |
 | `path_to_icon` | /usr/share/icons/Arc/status/symbolic/audio-volume-muted-symbolic.svg | Path to the icon |
 | `thickness` | 2 | The arc thickness |

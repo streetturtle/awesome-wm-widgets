@@ -25,6 +25,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `arc_thickness` | 2 | Thickness of the arc |
 | `show_current_level`| false | Show current charge level |
 | `main_color` | `beautiful.fg_color` | Color of the text with the current charge level and the arc |
+| `bg_color` | `#ffffff11` | Color of the charge level background |
 | `low_level_color` | #e53935 | Arc color when battery charge is less that 15% |
 | `medium_level_color` | #c0ca33 |  Arc color when battery charge is between 15% and 40% |
 | `charging` | `#43a047` |  Color of the circle inside the arc when charging  |

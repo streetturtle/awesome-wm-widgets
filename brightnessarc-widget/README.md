@@ -12,6 +12,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `inc_brightness_cmd` | `light -A 5` | Increase brightness |
 | `dec_brightness_cmd` | `light -U 5`| Decrease brightness |
 | `color` | `beautiful.fg_color` | Color of the arc |
+| `bg_color` | `#ffffff11` | Color of the arc's background |
 | `path_to_icon` | `/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg` | Path to the icon |
 
 ### Example:
