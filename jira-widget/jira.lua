@@ -180,8 +180,7 @@ local function worker(args)
     --    text = string.format(GET_ISSUES_CMD, host, query:gsub(" ", "+")),
     --    run = function() spawn.with_shell("echo '" .. string.format(GET_ISSUES_CMD, host, query:gsub(" ", "+")) .. "' | xclip -selection clipboard") end
     --}
-    local screenshot = 'cat /home/pmakhov/.IntelliJIdea2019.3/config/scratches/scratch_3.json'
-    watch(string.format(screenshot, host, query:gsub(' ', '+')),
+    watch(string.format(GET_ISSUES_CMD, host, query:gsub(' ', '+')),
             10, update_widget, jira_widget)
     return jira_widget
 end
