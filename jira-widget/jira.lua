@@ -125,6 +125,7 @@ local function worker(args)
                             {
                                 markup = '<b>' .. issue.key .. '</b>',
                                 align = 'center',
+                                forced_width = 350, -- for horizontal alignment
                                 widget = wibox.widget.textbox
                             },
                             {
