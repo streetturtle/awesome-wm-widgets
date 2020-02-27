@@ -20,7 +20,7 @@ local gfs = require("gears.filesystem")
 
 local HOME_DIR = os.getenv("HOME")
 
-local GET_PRS_CMD= [[bash -c "curl -s -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.account_id,values.author.links.avatar&q=reviewers.account_id+%%3D+%%22%s%%22+AND+state+%%3D+%%22OPEN%%22'"]]
+local GET_PRS_CMD= [[bash -c "curl -s -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.account_id,values.author.links.avatar&q=%%28author.account_id+%%3D+%%22%s%%22+OR+reviewers.account_id+%%3D+%%22%s%%22+%%29+AND+state+%%3D+%%22OPEN%%22' | jq '.[] | unique'"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o %s/.cache/awmw/bitbucket-widget/avatars/%s %s"]]
 
 local bitbucket_widget = {}
@@ -44,10 +44,9 @@ local function worker(args)
 
     local current_number_of_prs
 
-    local rows = {
-        { widget = wibox.widget.textbox },
-        layout = wibox.layout.fixed.vertical,
-    }
+    local to_review_rows = {layout = wibox.layout.fixed.vertical}
+    local my_review_rows = {layout = wibox.layout.fixed.vertical}
+    local rows = {layout = wibox.layout.fixed.vertical}
 
     local popup = awful.popup{
         ontop = true,
@@ -88,7 +87,7 @@ local function worker(args)
 
         local result = json.decode(stdout)
 
-        current_number_of_prs = rawlen(result.values)
+        current_number_of_prs = rawlen(result)
 
         if current_number_of_prs == 0 then
             widget:set_visible(false)
@@ -99,7 +98,24 @@ local function worker(args)
         widget:set_text(current_number_of_prs)
 
         for i = 0, #rows do rows[i]=nil end
-        for _, pr in ipairs(result.values) do
+
+        for i = 0, #to_review_rows do to_review_rows[i]=nil end
+        table.insert(to_review_rows, {
+            text = "PRs to review",
+            align = 'center',
+            forced_height = 20,
+            widget = wibox.widget.textbox
+        })
+
+        for i = 0, #my_review_rows do my_review_rows[i]=nil end
+        table.insert(my_review_rows, {
+            text = "My PRs",
+            align = 'center',
+            forced_height = 20,
+            widget = wibox.widget.textbox
+        })
+
+        for _, pr in ipairs(result) do
             local path_to_avatar = os.getenv("HOME") ..'/.cache/awmw/bitbucket-widget/avatars/' .. pr.author.account_id
 
             if not gfs.file_readable(path_to_avatar) then
@@ -156,9 +172,17 @@ local function worker(args)
                     )
             )
 
-            table.insert(rows, row)
+            if (pr.author.account_id == account_id) then
+                table.insert(my_review_rows, row)
+            else
+                table.insert(to_review_rows, row)
+            end
         end
 
+        table.insert(rows, to_review_rows)
+        if (#my_review_rows > 1) then
+                table.insert(rows, my_review_rows)
+        end
         popup:setup(rows)
     end
 
@@ -174,7 +198,7 @@ local function worker(args)
             )
     )
 
-    watch(string.format(GET_PRS_CMD, host, workspace, repo_slug, account_id),
+    watch(string.format(GET_PRS_CMD, host, workspace, repo_slug, account_id, account_id),
             10, update_widget, bitbucket_widget)
     return bitbucket_widget
 end
