@@ -14,7 +14,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | Name | Default | Description |
 |---|---|---|
 | `volume_audio_controller` | `pulse` | audio device |
-| `notification` | `false` | Display a notification on mouseover |
+| `display_notification` | `false` | Display a notification on mouseover |
 | `notification_position` | `top_right` | The notification position |
 
 ## Installation

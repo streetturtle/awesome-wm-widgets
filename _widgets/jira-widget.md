@@ -5,6 +5,8 @@ layout: page
 
 The widget shows the number of tickets assigned  to the user and when clicked shows them in the list with some additional information. When item in the list is clicked - it opens the issue in browser.
 
+![git](../awesome-wm-widgets/assets/img/screenshots/jira-widget/out.gif)
+
 ## How it works
 
 Widget uses cURL to query Jira's [REST API](../awesome-wm-widgets/assets/img/screenshots/jira-widgetttps://developer.atlassian.com/server/jira/platform/rest-apis/). In order to be authenticated, widget uses a [netrc](../awesome-wm-widgets/assets/img/screenshots/jira-widgetttps://ec.haxx.se/usingcurl/usingcurl-netrc) feature of the cURL, which is basically to store basic auth credentials in a .netrc file in home folder.

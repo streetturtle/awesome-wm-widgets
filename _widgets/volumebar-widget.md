@@ -19,6 +19,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | Name | Default | Description |
 |---|---|---|
 | `main_color` | `beautiful.fg_normal` | Color of the bar |
+| `bg_color` | `#ffffff11` | Color of the bar's background |
 | `mute_color` | `beautiful.fg_urgent` | Color of the bar when mute |
 | `width` | 50 | The bar width |
 | `shape` | `bar` | [gears.shape](../awesome-wm-widgets/assets/img/screenshots/volumebar-widgetttps://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
