@@ -15,21 +15,23 @@ def process_mailbox(M):
         if rv != 'OK':
             print "ERROR getting message", num
             return
-
-        msg = email.message_from_string(data[0][1])
-        print 'From:', msg['From']
-        print 'Subject: %s' % (msg['Subject'])
-        date_tuple = email.utils.parsedate_tz(msg['Date'])
-        if date_tuple:
-            local_date = datetime.datetime.fromtimestamp(email.utils.mktime_tz(date_tuple))
-            print "Local Date:", local_date.strftime("%a, %d %b %Y %H:%M:%S")
-            # with code below you can process text of email
-            # if msg.is_multipart():
-            #     for payload in msg.get_payload():
-            #         if payload.get_content_maintype() == 'text':
-            #             print  payload.get_payload()
-            #         else:
-            #             print msg.get_payload()
+        msg = email.message_from_bytes(data[0][1])
+        for header in [ 'From', 'Subject', 'Date' ]:
+            hdr = email.header.make_header(email.header.decode_header(msg[header]))
+            if header == 'Date':
+                date_tuple = email.utils.parsedate_tz(str(hdr))
+                if date_tuple:
+                    local_date = datetime.datetime.fromtimestamp(email.utils.mktime_tz(date_tuple))
+                    print("{}: {}".format(header, local_date.strftime("%a, %d %b %Y %H:%M:%S")))
+            else:
+                print('{}: {}'.format(header, hdr)
+        # with code below you can process text of email
+        # if msg.is_multipart():
+        #     for payload in msg.get_payload():
+        #         if payload.get_content_maintype() == 'text':
+        #             print  payload.get_payload()
+        #         else:
+        #             print msg.get_payload()
 
 
 M=imaplib.IMAP4_SSL("mail.teenagemutantninjaturtles.com", 993)
