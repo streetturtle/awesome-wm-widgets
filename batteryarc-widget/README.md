@@ -34,6 +34,11 @@ It is possible to customize widget by providing a table with all or some of the 
 | `warning_msg_position` | `bottom_right` | Position of the warning popup |
 | `warning_msg_icon` | ~/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg | Icon of the warning popup |
 
+## Requirements
+
+This widget requires the `acpi` command to be available to retrieve battery and
+power information.
+
 ## Installation
 
 Clone repo, include widget and use it in **rc.lua**:
