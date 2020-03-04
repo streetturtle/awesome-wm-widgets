@@ -5,9 +5,10 @@
 <p align="center">
   <img src="https://img.shields.io/github/stars/streetturtle/awesome-wm-widgets.svg">
   <img src="https://img.shields.io/github/forks/streetturtle/awesome-wm-widgets.svg">
+  <a href="https://twitter.com/intent/tweet?text=Check%20out%20these%20awesome%20widgets%20for%20Awesome Window Manager%20&url=https://github.com/streetturtle/awesome-wm-widgets">
+ <img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social">
+   </a>
 </p>
-
-[![HitCount](http://hits.dwyl.io/Streetturtle/Awesome-wm-widgets.svg)](http://hits.dwyl.io/Streetturtle/Awesome-wm-widgets)
 
 Set of super simple widgets compatible with Awesome Window Manager v.4+. 
 
