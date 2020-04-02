@@ -38,6 +38,7 @@ local function worker(args)
     local warning_msg_text = args.warning_msg_text or 'Battery is dying'
     local warning_msg_position = args.warning_msg_position or 'bottom_right'
     local warning_msg_icon = args.warning_msg_icon or HOME .. '/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg'
+    local disable_battery_warning = args.disable_battery_warning or false
 
     if not gfs.dir_readable(path_to_icons) then
         naughty.notify{
@@ -149,7 +150,7 @@ local function worker(args)
 
         if (charge >= 0 and charge < 15) then
             batteryType = "battery-empty%s-symbolic"
-            if status ~= 'Charging' and os.difftime(os.time(), last_battery_check) > 300 then
+            if (not disable_battery_warning) and status ~= 'Charging' and os.difftime(os.time(), last_battery_check) > 300 then
                 -- if 5 minutes have elapsed since the last warning
                 last_battery_check = os.time()
 
