@@ -13,9 +13,9 @@ It is possible to customize widget by providing a table with all or some of the 
 
 | Name | Default | Description |
 |---|---|---|
-| `volume_audio_controller` | `pulse` | audio device |
-| `display_notification` | `false` | Display a notification on mouseover |
-| `notification_position` | `top_right` | The notification position |
+| `volume_audio_controller`| `pulse`    | audio device |
+| `display_notification`   | `false`    | Display a notification on mouseover and keypress |
+| `notification_position`  | `top_right`| The notification position |
 
 ## Installation
 
@@ -24,15 +24,46 @@ It is possible to customize widget by providing a table with all or some of the 
 - include `volume.lua` and add volume widget to your wibox in rc.lua:
 
 ```lua
-require("volume")
+local volume_widget = require("awesome-wm-widgets.volume-widget.volume")
 ...
-s.mytasklist, -- Middle widget
-	{ -- Right widgets
-    	layout = wibox.layout.fixed.horizontal,
-		...
-		volume_widget(),
-		...
+        s.mytasklist, -- Middle widget
+        { -- Right widgets
+           ...
+            volume_widget({display_notification = true}),
+           ...
+
 ```
+### Control volume
+
+To mute/unmute click on the widget. To increase/decrease volume scroll up or down when mouse cursor is over the widget.
+
+If you want to control volume level by keyboard shortcuts add following lines in shortcut section of the **rc.lua**:
+IF you have notification activated, a notification will pop-up on key press
+
+```lua
+--  Key bindings
+globalkeys = gears.table.join(
+  awful.key(
+    {},
+    'XF86AudioRaiseVolume',
+    volume_widget.raise,
+    {description = 'volume up', group = 'hotkeys'}
+  ),
+  awful.key(
+    {},
+    'XF86AudioLowerVolume',
+    volume_widget.lower,
+    {description = 'volume down', group = 'hotkeys'}
+  ),
+  awful.key(
+    {},
+    'XF86AudioMute',
+    volume_widget.toggle,
+    {description = 'toggle mute', group = 'hotkeys'}
+  ),
+```
+
+### Icons
 
 - _Optional step._ In Arc icon theme the muted audio level icon (![Volume-widget](../awesome-wm-widgets/assets/img/screenshots/volume-widget/audio-volume-muted-symbolic.png)) looks like 0 level icon, which could be a bit misleading.
  So I decided to use original muted icon for low audio level, and the same icon, but colored in red for muted audio level. Fortunately icons are in svg format, so you can easily recolor them with `sed`, so it would look like this (![Volume Widget](../awesome-wm-widgets/assets/img/screenshots/volume-widget/audio-volume-muted-symbolic_red.png)):
@@ -76,18 +107,4 @@ then set `volume_audio_controller` to `alsa_only` in widget constructor:
 volume_widget({
     volume_audio_controller = 'alsa_only'
 })
-```
-
-.
-
-## Control volume
-
-To mute/unmute click on the widget. To increase/decrease volume scroll up or down when mouse cursor is over the widget.
-
-If you want to control volume level by keyboard shortcuts add following lines in shortcut section of the **rc.lua** (the commands could be slightly different depending on your PC configuration):
-
-```lua
-awful.key({ modkey}, "[", function () awful.spawn("amixer -D pulse sset Master 5%+") end, {description = "increase volume", group = "custom"}),
-awful.key({ modkey}, "]", function () awful.spawn("amixer -D pulse sset Master 5%-") end, {description = "decrease volume", group = "custom"}),
-awful.key({ modkey}, "\", function () awful.spawn("amixer -D pulse set Master +1 toggle") end, {description = "mute volume", group = "custom"}),
 ```
