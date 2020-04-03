@@ -57,7 +57,7 @@ local function worker(args)
 
     local is_update = true
     local process_rows = {
-        spacing = 8,
+        -- spacing = 8,
         layout = wibox.layout.fixed.vertical,
     }
 
@@ -192,29 +192,34 @@ local function worker(args)
                             local row = wibox.widget {
                                 {
                                     {
-                                        text = pid,
-                                        forced_width = 40,
-                                        widget = wibox.widget.textbox
-                                    },
-                                    {
-                                        text = comm,
-                                        forced_width = 40,
-                                        widget = wibox.widget.textbox
-                                    },
-                                    {
                                         {
-                                            text = cpu,
+                                            text = pid,
                                             forced_width = 40,
                                             widget = wibox.widget.textbox
                                         },
                                         {
-                                            text = mem,
+                                            text = comm,
                                             forced_width = 40,
                                             widget = wibox.widget.textbox
+                                        },
+                                        {
+                                            {
+                                                text = cpu,
+                                                forced_width = 40,
+                                                widget = wibox.widget.textbox
+                                            },
+                                            {
+                                                text = mem,
+                                                forced_width = 40,
+                                                widget = wibox.widget.textbox
+                                            },
+                                            layout = wibox.layout.align.horizontal
                                         },
                                         layout = wibox.layout.align.horizontal
                                     },
-                                    layout = wibox.layout.align.horizontal
+                                    top = 4,
+                                    bottom = 4,
+                                    widget = wibox.container.margin
                                 },
                                 widget = wibox.container.background
                             }
