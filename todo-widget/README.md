@@ -1,12 +1,14 @@
 # ToDo Widget (in progress)
 
-This widgets displays a list of to do items and allows to mark item as done, delete item and create new ones:
+This widget displays a list of to do items and allows to mark item as done/undone, delete an item and create a new ones:
 
 ![screenshot](./todo.gif)
 
 # Installation
 
-Clone repo under **~/.config/awesome/** and add the widget in **rc.lua**:
+Put a **json.lua** from this repository: https://github.com/rxi/json.lua under ~/.config/awesone folder. And don't forget to start a repo :)
+
+Then clone this repo under **~/.config/awesome/** and add the widget in **rc.lua**:
 
 ```lua
 local todo_widget = require("awesome-wm-widgets.todo-widget.todo")
