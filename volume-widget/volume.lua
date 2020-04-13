@@ -92,7 +92,7 @@ local function worker(args)
     local args = args or {}
 
     local volume_audio_controller = args.volume_audio_controller or 'pulse'
-    volume.display_notification = args.display_notification or 'false'
+    volume.display_notification = args.display_notification or false
     volume.position = args.notification_position or "top_right"
     if volume_audio_controller == 'pulse' then
         volume.device = '-D pulse'
