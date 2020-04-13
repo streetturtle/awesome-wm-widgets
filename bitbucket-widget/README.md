@@ -16,7 +16,7 @@ It is possible to customize widget by providing a table with all or some of the 
 |---|---|---|
 | `icon` | `~/.config/awesome/awesome-wm-widgets/bitbucket-widget/bitbucket-icon-gradient-blue.svg` | Path to the icon |
 | `host` | Required | Ex: _http://api.bitbucket.org_ |
-| `account_id` | Required | Account ID |
+| `uuid` | Required | UUID |
 | `workspace` | Required | Workspace ID|
 | `repo_slug` | Required | Repository slug |
 
@@ -55,7 +55,7 @@ s.mytasklist, -- Middle widget
 		-- default
 		bitbucket_widget({
 		    host = 'https://api.bitbucket.org',
-            account_id = 'your-account-id',
+            uuid = 'your-uuid',
             workspace = 'workspace',
             repo_slug = 'slug'
 
