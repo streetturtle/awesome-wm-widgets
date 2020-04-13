@@ -6,7 +6,7 @@ The widget shows the number of pull requests assigned to the user and when click
 
 Widget uses cURL to query Bitbucket's [REST API](https://developer.atlassian.com/bitbucket/api/2/reference/). In order to be authenticated, widget uses a [netrc](https://ec.haxx.se/usingcurl/usingcurl-netrc) feature of the cURL, which is basically to store basic auth credentials in a .netrc file in home folder. 
 
-Bitbucket allows using App Passwords (available in the account settings) - simply generate one for the widget and use it as password in .netrc file.
+Bitbucket allows using [App Passwords](https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html) (available in the account settings) - simply generate one for the widget and use it as password in .netrc file.
 
 ## Customization
 
