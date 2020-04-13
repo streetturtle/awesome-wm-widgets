@@ -20,7 +20,7 @@ local gfs = require("gears.filesystem")
 
 local HOME_DIR = os.getenv("HOME")
 
-local GET_PRS_CMD= [[bash -c "curl -s -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.account_id,values.author.links.avatar&q=%%28author.account_id+%%3D+%%22%s%%22+OR+reviewers.account_id+%%3D+%%22%s%%22+%%29+AND+state+%%3D+%%22OPEN%%22' | jq '.[] | unique'"]]
+local GET_PRS_CMD= [[bash -c "curl -s -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.uuid,values.author.links.avatar&q=%%28author.uuid+%%3D+%%22%s%%22+OR+reviewers.uuid+%%3D+%%22%s%%22+%%29+AND+state+%%3D+%%22OPEN%%22' | jq '.[] | unique'"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o %s/.cache/awmw/bitbucket-widget/avatars/%s %s"]]
 
 local bitbucket_widget = {}
@@ -38,7 +38,7 @@ local function worker(args)
 
     local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/bitbucket-widget/bitbucket-icon-gradient-blue.svg'
     local host = args.host or show_warning('Bitbucket host is unknown')
-    local account_id = args.account_id or show_warning('Account Id is not set')
+    local uuid = args.uuid or show_warning('UUID is not set')
     local workspace = args.workspace or show_warning('Workspace is not set')
     local repo_slug = args.repo_slug or show_warning('Repo slug is not set')
 
@@ -101,7 +101,7 @@ local function worker(args)
 
         for i = 0, #to_review_rows do to_review_rows[i]=nil end
         table.insert(to_review_rows, {
-            text = "PRs to review",
+            markup = '<span size="large" color="#ffffff">PRs to review</span>',
             align = 'center',
             forced_height = 20,
             widget = wibox.widget.textbox
@@ -109,20 +109,20 @@ local function worker(args)
 
         for i = 0, #my_review_rows do my_review_rows[i]=nil end
         table.insert(my_review_rows, {
-            text = "My PRs",
+            markup = '<span size="large" color="#ffffff">My PRs</span>',
             align = 'center',
             forced_height = 20,
             widget = wibox.widget.textbox
         })
 
         for _, pr in ipairs(result) do
-            local path_to_avatar = os.getenv("HOME") ..'/.cache/awmw/bitbucket-widget/avatars/' .. pr.author.account_id
+            local path_to_avatar = os.getenv("HOME") ..'/.cache/awmw/bitbucket-widget/avatars/' .. pr.author.uuid
 
             if not gfs.file_readable(path_to_avatar) then
                 spawn.easy_async(string.format(
                         DOWNLOAD_AVATAR_CMD,
                         HOME_DIR,
-                        pr.author.account_id,
+                        pr.author.uuid,
                         pr.author.links.avatar.href))
             end
 
@@ -172,7 +172,7 @@ local function worker(args)
                     )
             )
 
-            if (pr.author.account_id == account_id) then
+            if (pr.author.uuid == '{' .. uuid .. '}') then
                 table.insert(my_review_rows, row)
             else
                 table.insert(to_review_rows, row)
@@ -198,7 +198,7 @@ local function worker(args)
             )
     )
 
-    watch(string.format(GET_PRS_CMD, host, workspace, repo_slug, account_id, account_id),
+    watch(string.format(GET_PRS_CMD, host, workspace, repo_slug, uuid, uuid),
             10, update_widget, bitbucket_widget)
     return bitbucket_widget
 end
