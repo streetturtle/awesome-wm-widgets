@@ -9,7 +9,7 @@ The widget shows the number of pull requests assigned to the user and when click
 
 Widget uses cURL to query Bitbucket's [REST API](../awesome-wm-widgets/assets/img/screenshots/bitbucket-widgetttps://developer.atlassian.com/bitbucket/api/2/reference/). In order to be authenticated, widget uses a [netrc](../awesome-wm-widgets/assets/img/screenshots/bitbucket-widgetttps://ec.haxx.se/usingcurl/usingcurl-netrc) feature of the cURL, which is basically to store basic auth credentials in a .netrc file in home folder. 
 
-Bitbucket allows using App Passwords (available in the account settings) - simply generate one for the widget and use it as password in .netrc file.
+Bitbucket allows using [App Passwords](../awesome-wm-widgets/assets/img/screenshots/bitbucket-widgetttps://confluence.atlassian.com/bitbucket/app-passwords-828781300.html) (available in the account settings) - simply generate one for the widget and use it as password in .netrc file.
 
 ## Customization
 
@@ -19,7 +19,7 @@ It is possible to customize widget by providing a table with all or some of the 
 |---|---|---|
 | `icon` | `~/.config/awesome/awesome-wm-widgets/bitbucket-widget/bitbucket-icon-gradient-blue.svg` | Path to the icon |
 | `host` | Required | Ex: _http://api.bitbucket.org_ |
-| `account_id` | Required | Account ID |
+| `uuid` | Required | UUID |
 | `workspace` | Required | Workspace ID|
 | `repo_slug` | Required | Repository slug |
 
@@ -58,7 +58,7 @@ s.mytasklist, -- Middle widget
 		-- default
 		bitbucket_widget({
 		    host = 'https://api.bitbucket.org',
-            account_id = 'your-account-id',
+            uuid = 'your-uuid',
             workspace = 'workspace',
             repo_slug = 'slug'
 

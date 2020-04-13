@@ -35,6 +35,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `warning_msg_text` | _Battery is dying_ | Text of the warning popup |
 | `warning_msg_position` | `bottom_right` | Position of the warning popup |
 | `warning_msg_icon` | ~/.config/awesome/awesome-wm-widgets/battery-widget/spaceman.jpg | Icon of the warning popup |
+| `enable_battery_warning` | `true` | Display low battery warning |
 
 *Note: the widget expects following icons be present in the folder:
 
