@@ -210,6 +210,7 @@ local function worker(args)
                 '<b>Wind:</b> ' .. resp.wind.speed .. 'm/s (' .. to_direction(resp.wind.deg) .. ')',
             timeout = 5, hover_timeout = 10,
             position = position,
+            screen = mouse.screen,
             width = (both_units_popup == true and 210 or 200)
         }
     end)

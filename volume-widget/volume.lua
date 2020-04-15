@@ -81,6 +81,7 @@ local function notif(msg, keep)
             position = volume.position,
             timeout = keep and 0 or 2, hover_timeout = 0.5,
             width = 200,
+            screen = mouse.screen
         }
     end
 end
