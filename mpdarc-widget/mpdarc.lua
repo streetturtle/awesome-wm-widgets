@@ -20,7 +20,7 @@ local STOP_MPD_CMD = "mpc stop"
 local NEXT_MPD_CMD = "mpc next"
 local PREV_MPD_CMD = "mpc prev"
 
-local PATH_TO_ICONS = "/usr/share/icons/Arc"
+local PATH_TO_ICONS = "/run/current-system/sw/share/icons/Arc"
 local PAUSE_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_pause.png"
 local PLAY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_play.png"
 local STOP_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_stop.png"
