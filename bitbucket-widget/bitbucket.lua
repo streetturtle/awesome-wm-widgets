@@ -20,7 +20,7 @@ local gfs = require("gears.filesystem")
 
 local HOME_DIR = os.getenv("HOME")
 
-local GET_PRS_CMD= [[bash -c "curl -s -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.uuid,values.author.links.avatar&q=%%28author.uuid+%%3D+%%22%s%%22+OR+reviewers.uuid+%%3D+%%22%s%%22+%%29+AND+state+%%3D+%%22OPEN%%22' | jq '.[] | unique'"]]
+local GET_PRS_CMD= [[bash -c "curl -s --show-error -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.uuid,values.author.links.avatar&q=%%28author.uuid+%%3D+%%22%s%%22+OR+reviewers.uuid+%%3D+%%22%s%%22+%%29+AND+state+%%3D+%%22OPEN%%22' | jq '.[] | unique'"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o %s/.cache/awmw/bitbucket-widget/avatars/%s %s"]]
 
 local bitbucket_widget = {}
@@ -83,7 +83,10 @@ local function worker(args)
     }
 
     local update_widget = function(widget, stdout, stderr, _, _)
-        if stderr ~= '' then show_warning(stderr) end
+        if stderr ~= '' then
+            show_warning(stderr)
+            return
+        end
 
         local result = json.decode(stdout)
 
