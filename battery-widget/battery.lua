@@ -84,6 +84,7 @@ local function worker(args)
                 position = position,
                 timeout = 5, hover_timeout = 0.5,
                 width = 200,
+                screen = mouse.screen
             }
         end
         )
@@ -109,6 +110,7 @@ local function worker(args)
             bg = "#F06060",
             fg = "#EEE9EF",
             width = 300,
+            screen = mouse.screen
         }
     end
     local last_battery_check = os.time()
