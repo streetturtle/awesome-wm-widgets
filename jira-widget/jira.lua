@@ -21,20 +21,24 @@ local gs = require("gears.string")
 
 local HOME_DIR = os.getenv("HOME")
 
-local GET_ISSUES_CMD = [[bash -c "curl -s -X GET -n '%s/rest/api/2/search?%s&fields=id,assignee,summary,status'"]]
+local GET_ISSUES_CMD = [[bash -c "curl -s --show-error -X GET -n '%s/rest/api/2/search?%s&fields=id,assignee,summary,status'"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o  %s/.cache/awmw/jira-widget/avatars/%s %s"]]
 
 local jira_widget = {}
+
+local function show_warning(message)
+    naughty.notify{
+        preset = naughty.config.presets.critical,
+        title = 'Jira Widget',
+        text = message}
+end
 
 local function worker(args)
 
     local args = args or {}
 
     local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/jira-widget/jira-mark-gradient-blue.svg'
-    local host = args.host or naughty.notify{
-        preset = naughty.config.presets.critical, 
-        title = 'Jira Widget',
-        text = 'Jira host is unknown'}
+    local host = args.host or show_warning('Jira host is unknown')
     local query = args.query or 'jql=assignee=currentuser() AND resolution=Unresolved'
 
     local current_number_of_reviews
@@ -83,6 +87,11 @@ local function worker(args)
     }
 
     local update_widget = function(widget, stdout, stderr, _, _)
+        if stderr ~= '' then
+            show_warning(stderr)
+            return
+        end
+
         local result = json.decode(stdout)
 
         current_number_of_reviews = rawlen(result.issues)
@@ -176,10 +185,6 @@ local function worker(args)
                     end)
             )
     )
-    --naughty.notify{
-    --    text = string.format(GET_ISSUES_CMD, host, query:gsub(" ", "+")),
-    --    run = function() spawn.with_shell("echo '" .. string.format(GET_ISSUES_CMD, host, query:gsub(" ", "+")) .. "' | xclip -selection clipboard") end
-    --}
     watch(string.format(GET_ISSUES_CMD, host, query:gsub(' ', '+')),
             10, update_widget, jira_widget)
     return jira_widget
