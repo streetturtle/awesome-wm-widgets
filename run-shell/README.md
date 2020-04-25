@@ -9,7 +9,7 @@ Run prompt which is put inside a widget:
 1. Clone this repo under **~/.config/awesome/**:
 
     ```bash
-    git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
+    git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/awesome-wm-widgets
     ```
 
 1. Require widget at the beginning of **rc.lua**:
