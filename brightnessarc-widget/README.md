@@ -57,7 +57,7 @@ First you need to get the current brightness level. There are two options:
 Then clone this repo under **~/.config/awesome/**:
 
 ```bash
-git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
+git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/awesome-wm-widgets
 ```
 
 Require widget at the beginning of **rc.lua**:
