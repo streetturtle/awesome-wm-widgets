@@ -17,13 +17,13 @@ Blurs / pixelates background and shows widget with run prompt:
 1. Clone this repo under **~/.config/awesome/**:
 
     ```bash
-    git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/
+    git clone https://github.com/streetturtle/awesome-wm-widgets.git ~/.config/awesome/awesome-wm-widgets
     ```
 
 1. Require widget at the beginning of **rc.lua**:
 
     ```lua
-    local run_shell = require("awesome-wm-widgets.run_shell.run_shell")
+    local run_shell = require("awesome-wm-widgets.run-shell-3.run-shell")
     ```
 
 1. Use it (don't forget to comment out the default prompt):
