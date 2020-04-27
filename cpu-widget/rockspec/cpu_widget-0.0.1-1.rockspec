@@ -1,7 +1,7 @@
 package = "cpu-widget"
 version = "0.0.1"
 source = {
-   url = "https://github.com/streetturtle/awesome-wm-widgets/tree/rocks/cpu-widget/cpu-widget-0.0.1.tar.gz"
+   url = "https://github.com/streetturtle/awesome-wm-widgets/tree/rocks/cpu-widget/cpu-widget-0.0.1.tar.gz",
 }
 description = {
    summary = "CPU widget for Awesome Window Manager",
@@ -20,6 +20,6 @@ dependencies = {
 build = {
    type = "builtin",
    modules = {
-      cpu-widget = "cpu-widget.lua"
+      cpu-wodget = "cpu-widget.lua"
    }
 }
