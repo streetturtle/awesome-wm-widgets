@@ -202,7 +202,7 @@ local function worker(args)
 
             trash_button:connect_signal("button::press", function(c)
                 table.remove(result.todo_items, i)
-                spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > /home/pmakhov/.cache/awmw/todo-widget/todos.json")
+                spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE)
                 spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
             end)
 
