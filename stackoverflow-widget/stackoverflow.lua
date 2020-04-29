@@ -36,7 +36,6 @@ local function worker(args)
     }
 
     local popup = awful.popup{
-        visible = true,
         ontop = true,
         visible = false,
         shape = gears.shape.rounded_rect,
