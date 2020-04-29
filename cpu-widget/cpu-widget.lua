@@ -57,7 +57,6 @@ local function worker(args)
 
     local is_update = true
     local process_rows = {
-        -- spacing = 8,
         layout = wibox.layout.fixed.vertical,
     }
 
