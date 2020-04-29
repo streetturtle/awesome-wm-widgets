@@ -15,7 +15,6 @@ local naughty = require("naughty")
 local gears = require("gears")
 local beautiful = require("beautiful")
 local gfs = require("gears.filesystem")
-local gs = require("gears.string")
 
 local HOME_DIR = os.getenv("HOME")
 
@@ -162,7 +161,6 @@ local function worker(args)
 
         table.insert(rows, first_row)
 
-
         for i, todo_item in ipairs(result.todo_items) do
 
             local checkbox = wibox.widget {
@@ -180,8 +178,9 @@ local function worker(args)
                 c:set_checked(not c.checked)
                 todo_item.status = not todo_item.status
                 result.todo_items[i] = todo_item
-                spawn.easy_async_with_shell("echo '" .. json.encode(result) .. "' > " .. STORAGE)
-                todo_widget:update_counter(result.todo_items)
+                spawn.easy_async_with_shell("echo '" .. json.encode(result) .. "' > " .. STORAGE, function ()
+                    todo_widget:update_counter(result.todo_items)
+                end)
             end)
 
             local trash_button = wibox.widget {
@@ -202,8 +201,9 @@ local function worker(args)
 
             trash_button:connect_signal("button::press", function(c)
                 table.remove(result.todo_items, i)
-                spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE)
-                spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE, function ()
+                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                end)
             end)
 
             local row = wibox.widget {
