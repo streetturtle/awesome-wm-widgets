@@ -50,11 +50,12 @@ local function worker(args)
     end
 
     local update_widget_text = function(widget, stdout, _, _, _)
+        local escaped = string.gsub(stdout, "&", '&amp;')
         if string.find(stdout, 'Error: Spotify is not running.') ~= nil then
             widget:set_text('')
             widget:set_visible(false)
         else
-            widget:set_text(stdout)
+            widget:set_text(escaped)
             widget:set_visible(true)
         end
     end
