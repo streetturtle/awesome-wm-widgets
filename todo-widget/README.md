@@ -6,9 +6,9 @@ This widget displays a list of to do items and allows to mark item as done/undon
 
 # Installation
 
-Put a **json.lua** from this repository: https://github.com/rxi/json.lua under ~/.config/awesone folder. And don't forget to start a repo :)
+Widget persists todo items as a JSON, so in order to simplify JSON serialisation/deserialisation download a **json.lua** from this repository: https://github.com/rxi/json.lua under `~/.config/awesone` folder. And don't forget to star a repo :)
 
-Then clone this repo under **~/.config/awesome/** and add the widget in **rc.lua**:
+Then clone this repository under **~/.config/awesome/** and add the widget in **rc.lua**:
 
 ```lua
 local todo_widget = require("awesome-wm-widgets.todo-widget.todo")
@@ -25,4 +25,4 @@ Also note that widget uses [Arc Icons](https://github.com/horst3180/arc-icon-the
 
 # Theming
 
-Widget uses your theme's colors. In case you want to have different colors, without changing your theme, please create an issue for it. I'll extract them in widget parameters.
+Widget uses your theme's colors. In case you want to have different colors, without changing your theme, please create an issue for it. I'll extract them as a widget parameters.
