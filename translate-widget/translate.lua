@@ -3,7 +3,7 @@
 -- https://tech.yandex.com/translate/
 
 -- @author Pavel Makhov
--- @copyright 2018 Pavel Makhov
+-- @copyright 2020 Pavel Makhov
 -------------------------------------------------
 
 local awful = require("awful")
@@ -25,7 +25,7 @@ local ICON = '/usr/share/icons/Papirus-Dark/48x48/apps/gnome-translate.svg'
 local function extract(input_string)
     local word, lang = input_string:match('^(.+)%s(%a%a%a%a)$')
 
-    if word ~= nill and lang ~= nill then
+    if word ~= nil and lang ~= nil then
         lang = lang:sub(1, 2) .. '-' .. lang:sub(3)
     end
     return word, lang
@@ -145,7 +145,6 @@ local input_widget = wibox {
     expand = true,
     bg = '#1e252c',
     max_widget_size = 500,
-    border_width = 1;
     border_width = 1,
     border_color = '#66ccff',
     shape = function(cr, width, height)
