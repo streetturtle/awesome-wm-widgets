@@ -123,7 +123,7 @@ local function worker(args)
 
   watch(GET_MPD_CMD, 1, update_graphic, mpdarc)
 
-  local mpdarc_widget = wibox.widget {q
+  local mpdarc_widget = wibox.widget {
       mpdarc_icon_widget,
       mpdarc_current_song_widget,
       layout = wibox.layout.align.horizontal,
