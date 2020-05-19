@@ -157,6 +157,14 @@ local function worker(args)
         volume.widget:connect_signal("mouse::leave", function() naughty.destroy(volume.notification) end)
     end
 --}}}
+
+--{{{ Set initial icon
+    spawn.easy_async(GET_VOLUME_CMD, function(stdout, stderr, exitreason, exitcode)
+        parse_output(stdout)
+        volume.widget.image = PATH_TO_ICONS .. volume_icon_name .. ".svg"
+    end)
+--}}}
+
     return volume.widget
 end
 
