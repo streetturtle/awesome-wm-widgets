@@ -17,12 +17,12 @@ local beautiful = require("beautiful")
 local gfs = require("gears.filesystem")
 
 local HOME_DIR = os.getenv("HOME")
-
+local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/todo-widget'
 local STORAGE = HOME_DIR .. '/.cache/awmw/todo-widget/todos.json'
+
 local GET_TODO_ITEMS = 'bash -c "cat ' .. STORAGE .. '"'
 
 local rows  = { layout = wibox.layout.fixed.vertical }
-
 local todo_widget = {}
 
 todo_widget.widget = wibox.widget {
@@ -74,7 +74,7 @@ local popup = awful.popup{
 local add_button = wibox.widget {
     {
         {
-            image = '/usr/share/icons/Arc/actions/symbolic/list-add-symbolic.svg',
+            image = WIDGET_DIR .. '/list-add-symbolic.svg',
             resize = false,
             widget = wibox.widget.imagebox
         },
@@ -130,7 +130,7 @@ local function worker(args)
 
     local args = args or {}
 
-    local icon = args.icon or '/usr/share/icons/Arc/status/symbolic/checkbox-checked-symbolic.svg'
+    local icon = args.icon or WIDGET_DIR .. '/checkbox-checked-symbolic.svg'
 
     todo_widget.widget:set_icon(icon)
 
@@ -185,7 +185,7 @@ local function worker(args)
 
             local trash_button = wibox.widget {
                 {
-                    {    image = '/usr/share/icons/Arc/actions/symbolic/window-close-symbolic.svg',
+                    {    image = WIDGET_DIR .. '/window-close-symbolic.svg',
                         resize = false,
                         widget = wibox.widget.imagebox
                     },
