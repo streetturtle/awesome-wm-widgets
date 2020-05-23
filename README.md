@@ -87,7 +87,7 @@ and then add widget to the wibox (you can search for **mytextclock** and add wid
          s.mytasklist, -- Middle widget
          { -- Right widgets
          ...
-             battery_widget,
+             battery_widget(),
              mytextclock
          ...
          }
