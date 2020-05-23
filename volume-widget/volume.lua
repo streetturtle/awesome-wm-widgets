@@ -19,17 +19,17 @@ local PATH_TO_ICONS = "/usr/share/icons/Arc/status/symbolic/"
 local volume_icon_name="audio-volume-high-symbolic"
 local GET_VOLUME_CMD = 'amixer sget Master'
 
-local volume = {device = '', display_notification = false, notification = nil}
+local volume = {device = '', display_notification = false, notification = nil, delta = 5}
 
 function volume:toggle()
     volume:_cmd('amixer ' .. volume.device .. ' sset Master toggle')
 end
 
 function volume:raise()
-    volume:_cmd('amixer ' .. volume.device .. ' sset Master 5%+')
+    volume:_cmd('amixer ' .. volume.device .. ' sset Master ' .. tostring(volume.delta) .. '%+')
 end
 function volume:lower()
-    volume:_cmd('amixer ' .. volume.device .. ' sset Master 5%-')
+    volume:_cmd('amixer ' .. volume.device .. ' sset Master ' .. tostring(volume.delta) .. '%-')
 end
 
 --{{{ Icon and notification update
@@ -98,6 +98,7 @@ local function worker(args)
     if volume_audio_controller == 'pulse' then
         volume.device = '-D pulse'
     end
+    volume.delta = args.delta or 5
     GET_VOLUME_CMD = 'amixer ' .. volume.device.. ' sget Master'
 --}}}
 --{{{ Check for icon path
