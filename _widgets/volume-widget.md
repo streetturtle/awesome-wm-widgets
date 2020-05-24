@@ -16,6 +16,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `volume_audio_controller`| `pulse`    | audio device |
 | `display_notification`   | `false`    | Display a notification on mouseover and keypress |
 | `notification_position`  | `top_right`| The notification position |
+| `delta`                  | 5          | The volume +/- percentage |
 
 ## Installation
 
