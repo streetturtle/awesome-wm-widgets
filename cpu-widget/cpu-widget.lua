@@ -14,11 +14,24 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 local gears = require("gears")
 
-local widget = {}
+local HOME_DIR = os.getenv("HOME")
+local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/cpu-widget'
 
+local widget = {}
+local cpu_rows = {
+    spacing = 4,
+    layout = wibox.layout.fixed.vertical,
+}
+local is_update = true
+local process_rows = {
+    layout = wibox.layout.fixed.vertical,
+}
+
+-- Splits the string by separator
+-- @return table with separated substrings
 local function split(string_to_split, separator)
     if separator == nil then separator = "%s" end
-    local t={}
+    local t = {}
 
     for str in string.gmatch(string_to_split, "([^".. separator .."]+)") do
         table.insert(t, str)
@@ -27,8 +40,47 @@ local function split(string_to_split, separator)
     return t
 end
 
+-- Checks if a string starts with a another string
 local function starts_with(str, start)
     return str:sub(1, #start) == start
+end
+
+
+local function create_textbox(args)
+    return wibox.widget{
+        text = args.text,
+        align = args.align or 'left',
+        markup = args.markup,
+        forced_width = args.forced_width or 40,
+        widget = wibox.widget.textbox
+    }
+end
+
+local function create_process_header(params)
+    return wibox.widget{
+        create_textbox{markup = '<b>PID</b>'},
+        create_textbox{markup = '<b>Name</b>'},
+        {
+            create_textbox{markup = '<b>%CPU</b>'},
+            create_textbox{markup = '<b>%MEM</b>'},
+            params.with_action_column and create_textbox{forced_width = 20} or nil,
+            layout = wibox.layout.align.horizontal
+        },
+        layout = wibox.layout.align.horizontal
+    }
+end
+
+local function create_kill_process_button()
+    return wibox.widget{
+        {
+            id = "icon",
+            image = WIDGET_DIR .. '/window-close-symbolic.svg',
+            resize = false,
+            opacity = 0.1,
+            widget = wibox.widget.imagebox
+        },
+        widget = wibox.container.background
+    }
 end
 
 local function worker(args)
@@ -38,7 +90,9 @@ local function worker(args)
     local width = args.width or 50
     local step_width = args.step_width or 2
     local step_spacing = args.step_spacing or 1
-    local color= args.color or beautiful.fg_normal
+    local color = args.color or beautiful.fg_normal
+    local enable_kill_button = args.enable_kill_button or false
+    local process_info_max_length = args.process_info_max_length or -1
 
     local cpugraph_widget = wibox.widget {
         max_value = 100,
@@ -48,43 +102,6 @@ local function worker(args)
         step_spacing = step_spacing,
         widget = wibox.widget.graph,
         color = "linear:0,0:0,20:0,#FF0000:0.3,#FFFF00:0.6," .. color
-    }
-
-    local cpu_rows = {
-        spacing = 4,
-        layout = wibox.layout.fixed.vertical,
-    }
-
-    local is_update = true
-    local process_rows = {
-        layout = wibox.layout.fixed.vertical,
-    }
-
-    local process_header = {
-        {
-            markup = '<b>PID</b>',
-            forced_width = 40,
-            widget = wibox.widget.textbox
-        },
-        {
-            markup = '<b>Name</b>',
-            forced_width = 40,
-            widget = wibox.widget.textbox
-        },
-        {
-            {
-                markup = '<b>%CPU</b>',
-                forced_width = 40,
-                widget = wibox.widget.textbox
-            },
-            {
-                markup = '<b>%MEM</b>',
-                forced_width = 40,
-                widget = wibox.widget.textbox
-            },
-            layout = wibox.layout.fixed.horizontal
-        },
-        layout = wibox.layout.align.horizontal
     }
 
     local popup = awful.popup{
@@ -98,6 +115,7 @@ local function worker(args)
         widget = {}
     }
 
+    -- Do not update process rows when mouse cursor is over the widget
     popup:connect_signal("mouse::enter", function(c) is_update = false end)
     popup:connect_signal("mouse::leave", function(c) is_update = true end)
 
@@ -105,10 +123,8 @@ local function worker(args)
             awful.util.table.join(
                     awful.button({}, 1, function()
                         if popup.visible then
-                            --rows = nil
                             popup.visible = not popup.visible
                         else
-                            --init_popup()
                             popup:move_next_to(mouse.current_widget_geometry)
                         end
                     end)
@@ -146,16 +162,8 @@ local function worker(args)
 
                         local row = wibox.widget
                         {
-                            {
-                                text = name,
-                                forced_width = 40,
-                                widget = wibox.widget.textbox
-                            },
-                            {
-                                text = math.floor(diff_usage) .. '%',
-                                forced_width = 40,
-                                widget = wibox.widget.textbox
-                            },
+                            create_textbox{text = name},
+                            create_textbox{text = math.floor(diff_usage) .. '%'},
                             {
                                 max_value = 100,
                                 value = diff_usage,
@@ -188,31 +196,18 @@ local function worker(args)
                             local mem = columns[4]
                             local cmd = columns[5]
 
+                            local kill_proccess_button = enable_kill_button and create_kill_process_button() or nil
+
                             local row = wibox.widget {
                                 {
                                     {
+                                        create_textbox{text = pid},
+                                        create_textbox{text = comm},
                                         {
-                                            text = pid,
-                                            forced_width = 40,
-                                            widget = wibox.widget.textbox
-                                        },
-                                        {
-                                            text = comm,
-                                            forced_width = 40,
-                                            widget = wibox.widget.textbox
-                                        },
-                                        {
-                                            {
-                                                text = cpu,
-                                                forced_width = 40,
-                                                widget = wibox.widget.textbox
-                                            },
-                                            {
-                                                text = mem,
-                                                forced_width = 40,
-                                                widget = wibox.widget.textbox
-                                            },
-                                            layout = wibox.layout.align.horizontal
+                                            create_textbox{text = cpu, align = 'center'},
+                                            create_textbox{text = mem, align = 'center'},
+                                            kill_proccess_button,
+                                            layout = wibox.layout.fixed.horizontal
                                         },
                                         layout = wibox.layout.align.horizontal
                                     },
@@ -223,16 +218,28 @@ local function worker(args)
                                 widget = wibox.container.background
                             }
 
-                            -- Do not update process rows when mouse cursor is over the widget
                             row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
                             row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
+                            
+                            if enable_kill_button then
+                                row:connect_signal("mouse::enter", function(c) kill_proccess_button.icon.opacity = 1 end)
+                                row:connect_signal("mouse::leave", function(c) kill_proccess_button.icon.opacity = 0.1 end)
+                                
+                                kill_proccess_button:buttons(
+                                    awful.util.table.join( awful.button({}, 1, function() awful.spawn.with_shell('kill -9 ' .. pid) end) ) )
+                            end
 
                             awful.tooltip {
-                                objects        = { row },
+                                objects = { row },
                                 mode = 'outside',
                                 preferred_positions = {'bottom'},
                                 timer_function = function()
-                                    return cmd
+                                    local text = cmd
+                                    if process_info_max_length > 0 and text:len() > process_info_max_length then
+                                        text = text:sub(0, process_info_max_length - 3) .. '...'
+                                    end
+
+                                    return text
                                             :gsub('%s%-', '\n\t-') -- put arguments on a new line
                                             :gsub(':/', '\n\t\t:/') -- java classpath uses : to separate jars
                                 end,
@@ -254,7 +261,7 @@ local function worker(args)
                             color = beautiful.bg_focus,
                             widget = wibox.widget.separator
                         },
-                        process_header,
+                        create_process_header{with_action_column = enable_kill_button},
                         process_rows,
                         layout = wibox.layout.fixed.vertical,
                     },
