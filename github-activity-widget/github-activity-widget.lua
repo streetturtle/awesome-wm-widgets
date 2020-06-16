@@ -17,15 +17,14 @@ local gears = require("gears")
 local beautiful = require("beautiful")
 local gfs = require("gears.filesystem")
 
-
 local HOME_DIR = os.getenv("HOME")
-local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/github-activity-widget/'
-local ICONS_DIR = WIDGET_DIR .. 'icons/'
-local CACHE_DIR = HOME_DIR .. '/.cache/awmw/github-activity-widget/'
+local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/github-activity-widget'
+local ICONS_DIR = WIDGET_DIR .. '/icons/'
+local CACHE_DIR = HOME_DIR .. '/.cache/awmw/github-activity-widget'
 
-local GET_ISSUES_CMD = [[bash -c "cat /home/pmakhov/.cache/awmw/github-activity-widget/activity.json | jq '.[:%d] | [.[] | {type: .type, actor: .actor, repo: .repo, action: .payload.action, issue_url: .payload.issue.html_url, pr_url: .payload.pull_request.html_url, created_at: .created_at}]'"]]
+local GET_EVENTS_CMD = [[bash -c "cat %s/activity.json | jq '.[:%d] | [.[] | {type: .type, actor: .actor, repo: .repo, action: .payload.action, issue_url: .payload.issue.html_url, pr_url: .payload.pull_request.html_url, created_at: .created_at}]'"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o  %s/avatars/%s %s"]]
-local UPDATE_EVENTS_CMD = [[bash -c "curl -s --show-error https://api.github.com/users/%s/received_events > ~/.cache/awmw/github-activity-widget/activity.json"]]
+local UPDATE_EVENTS_CMD = [[bash -c "curl -s --show-error https://api.github.com/users/%s/received_events > %s/activity.json"]]
 
 --- Utility function to show warning messages
 local function show_warning(message)
@@ -35,7 +34,7 @@ local function show_warning(message)
         text = message}
 end
 
---- Converts string representation of date to date
+--- Converts string representation of date (2020-06-02T11:25:27Z) to date
 local function parse_date(date_str)
     local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)%Z"
     local y, m, d, h, min, sec, mil = date_str:match(pattern)
@@ -53,7 +52,7 @@ local function to_time_ago(seconds)
 
     local hours = (seconds % 86400) / 3600
     if hours > 1 then
-        hours = math.floor(hours + 0.5) 
+        hours = math.floor(hours + 0.5)
         return hours .. (hours == 1 and ' hour' or ' hours') .. ' ago'
     end
 
@@ -76,26 +75,8 @@ local popup = awful.popup{
     widget = {}
 }
 
-local type_to_text_mapping = {
-    WatchEvent = 'starred',
-    CommitCommentEvent = '',
-    CreateEvent = 'created',
-    DeleteEvent = '',
-    ForkEvent = 'forked',
-    GollumEvent = '',
-    IssueCommentEvent = '',
-    IssuesEvent = '',
-    MemberEvent = '',
-    PublicEvent = '',
-    PullRequestEvent = '',
-    PullRequestReviewCommentEvent = '',
-    PushEvent = 'pushed',
-    ReleaseEvent = '',
-    SponsorshipEvent = ''
-}
-
 local function generate_action_string(event)
-    local action_string = type_to_text_mapping[event.type]
+    local action_string = event.type
     local icon = 'repo.svg'
     local link = 'http://github.com/' .. event.repo.name
 
@@ -138,19 +119,12 @@ local github_widget = wibox.widget {
         id = "txt",
         widget = wibox.widget.textbox
     },
-    {
-        id = "new_rev",
-        widget = wibox.widget.textbox
-    },
     layout = wibox.layout.fixed.horizontal,
     set_icon = function(self, new_icon)
         self.m.icon.image = new_icon
     end,
     set_text = function(self, new_value)
         self.txt.text = new_value
-    end,
-    set_unseen_review = function(self, is_new_review)
-        self.new_rev.text = is_new_review and '*' or ''
     end
 }
 
@@ -165,8 +139,6 @@ local function worker(args)
 
     github_widget:set_icon(icon)
 
-    local current_number_of_reviews
-    local previous_number_of_reviews = 0
 
     local rows = {
         { widget = wibox.widget.textbox },
@@ -181,73 +153,87 @@ local function worker(args)
 
         local current_time = os.time(os.date("!*t"))
 
-        local result = json.decode(stdout)
-
-        current_number_of_reviews = rawlen(result)
-
-        if current_number_of_reviews == 0 then
-            widget:set_visible(false)
-            return
-        end
-
-        widget:set_visible(true)
-        -- widget:set_text(current_number_of_reviews)
+        local events = json.decode(stdout)
 
         for i = 0, #rows do rows[i]=nil end
-        for _, issue in ipairs(result) do
-            local path_to_avatar = CACHE_DIR .. '/avatars/' .. issue.actor.id
+        for _, event in ipairs(events) do
+            local path_to_avatar = CACHE_DIR .. '/avatars/' .. event.actor.id
+
+            local avatar_img = wibox.widget {
+                resize = true,
+                forced_width = 40,
+                forced_height = 40,
+                widget = wibox.widget.imagebox
+            }
 
             if not gfs.file_readable(path_to_avatar) then
+                -- download it first
                 spawn.easy_async(string.format(
                         DOWNLOAD_AVATAR_CMD,
                         CACHE_DIR,
-                        issue.actor.id,
-                        issue.actor.avatar_url))
+                        event.actor.id,
+                        event.actor.avatar_url), function() avatar_img:set_image(path_to_avatar) end)
+            else
+                avatar_img:set_image(path_to_avatar)
             end
 
-            local action_and_link = generate_action_string(issue)
+            local action_and_link = generate_action_string(event)
+
+            local avatar = wibox.widget {
+                avatar_img,
+                margins = 8,
+                layout = wibox.container.margin
+            }
+            avatar:buttons(
+                awful.util.table.join(
+                        awful.button({}, 1, function()
+                            spawn.with_shell('xdg-open http://github.com/' .. event.actor.login)
+                            popup.visible = false
+                        end)
+                )
+            )
+
+            local repo_info = wibox.widget {
+                {
+                    markup = '<b> ' .. event.actor.display_login .. '</b> ' .. action_and_link.action_string .. ' <b>' .. event.repo.name .. '</b>',
+                    wrap = 'word',
+                    widget = wibox.widget.textbox
+                },
+                {
+                    {
+                        {
+                            image = ICONS_DIR .. action_and_link.icon,
+                            resize = true,
+                            forced_height = 16,
+                            forced_width = 16,
+                            widget = wibox.widget.imagebox
+                        },
+                        valign = 'center',
+                        layout = wibox.container.place
+                    },
+                    {
+                        markup = to_time_ago(os.difftime(current_time, parse_date(event.created_at))),
+                        widget = wibox.widget.textbox
+                    },
+                    spacing = 4,
+                    layout = wibox.layout.fixed.horizontal,
+                },
+                layout = wibox.layout.align.vertical
+            }
+            repo_info:buttons(
+                    awful.util.table.join(
+                            awful.button({}, 1, function()
+                                spawn.with_shell("xdg-open " .. action_and_link.link)
+                                popup.visible = false
+                            end)
+                    )
+            )
 
             local row = wibox.widget {
                 {
                     {
-                        {
-                            {
-                                resize = true,
-                                image = path_to_avatar,
-                                forced_width = 40,
-                                forced_height = 40,
-                                widget = wibox.widget.imagebox
-                            },
-                            margins = 8,
-                            layout = wibox.container.margin
-                        },
-                        {
-                            {
-                                markup = '<b> ' .. issue.actor.display_login .. '</b> ' .. action_and_link.action_string .. ' <b>' .. issue.repo.name .. '</b>',
-                                wrap = 'word',
-                                widget = wibox.widget.textbox
-                            },
-                            {
-                                {
-                                    {
-                                        image = ICONS_DIR .. action_and_link.icon,
-                                        resize = true,
-                                        forced_height = 16,
-                                        forced_width = 16,
-                                        widget = wibox.widget.imagebox
-                                    },
-                                    valign = 'center',
-                                    layout = wibox.container.place
-                                },
-                                {
-                                    markup = to_time_ago(os.difftime(current_time, parse_date(issue.created_at))),
-                                    widget = wibox.widget.textbox
-                                },
-                                spacing = 4,
-                                layout = wibox.layout.fixed.horizontal,
-                            },
-                            layout = wibox.layout.align.vertical
-                        },
+                        avatar,
+                        repo_info,
                         spacing = 4,
                         layout = wibox.layout.fixed.horizontal
                     },
@@ -261,15 +247,6 @@ local function worker(args)
             row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
             row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
 
-            row:buttons(
-                    awful.util.table.join(
-                            awful.button({}, 1, function()
-                                spawn.with_shell("xdg-open " .. action_and_link.link)
-                                popup.visible = false
-                            end)
-                    )
-            )
-
             table.insert(rows, row)
         end
 
@@ -282,7 +259,7 @@ local function worker(args)
                         if popup.visible then
                             popup.visible = not popup.visible
                         else
-                            spawn.easy_async(string.format(GET_ISSUES_CMD, number_of_events), function (stdout, stderr)
+                            spawn.easy_async(string.format(GET_EVENTS_CMD, CACHE_DIR, number_of_events), function (stdout, stderr)
                                 update_widget(github_widget, stdout, stderr)
                                 popup:move_next_to(mouse.current_widget_geometry)
                             end)
@@ -296,14 +273,12 @@ local function worker(args)
         call_now  = true,
         autostart = true,
         callback  = function()
-            spawn.easy_async(string.format(UPDATE_EVENTS_CMD, username), function(stdout, stderr)
-                if stderr ~= '' then
-                    show_warning(stderr)
-                    return
-                end
+            spawn.easy_async(string.format(UPDATE_EVENTS_CMD, username, CACHE_DIR), function(stdout, stderr)
+                if stderr ~= '' then show_warning(stderr) return end
             end)
         end
     }
+
     return github_widget
 end
 
