@@ -139,13 +139,12 @@ local function worker(args)
 
     github_widget:set_icon(icon)
 
-
     local rows = {
         { widget = wibox.widget.textbox },
         layout = wibox.layout.fixed.vertical,
     }
 
-    local update_widget = function(widget, stdout, stderr, _, _)
+    local rebuild_widget = function(widget, stdout, stderr, _, _)
         if stderr ~= '' then
             show_warning(stderr)
             return
@@ -260,7 +259,7 @@ local function worker(args)
                             popup.visible = not popup.visible
                         else
                             spawn.easy_async(string.format(GET_EVENTS_CMD, CACHE_DIR, number_of_events), function (stdout, stderr)
-                                update_widget(github_widget, stdout, stderr)
+                                rebuild_widget(github_widget, stdout, stderr)
                                 popup:move_next_to(mouse.current_widget_geometry)
                             end)
                         end
@@ -268,6 +267,7 @@ local function worker(args)
             )
     )
 
+    -- Calls GitHub event API and stores response in "cache" file
     gears.timer {
         timeout   = 600,
         call_now  = true,
