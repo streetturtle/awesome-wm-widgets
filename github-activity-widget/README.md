@@ -2,6 +2,9 @@
 
 Widget shows recent activities on GitHub. It is very similar to the GitHub's "All activity" feed on the main page:
 
+<p align="center">
+  <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/github-activity-widget/screenshot.png">
+</p>
 ![screenshot](./screenshot.png)
 
 Mouse click on the item opens repo/issue/pr depending on the type of the activity. Mouse click on user's avatar opens user GitHub profile.
