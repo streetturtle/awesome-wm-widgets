@@ -1,6 +1,6 @@
 -------------------------------------------------
 -- GitHub Widget for Awesome Window Manager
--- Shows the number of currently assigned issues
+-- Shows the recent activity from GitHub
 -- More details could be found here:
 -- https://github.com/streetturtle/awesome-wm-widgets/tree/master/github-activity-widget
 
