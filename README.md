@@ -51,22 +51,6 @@ From left to right:
 - [spotify-shell](https://github.com/streetturtle/AwesomeWM/tree/master/spotify-shell) (not on the screenshot)
 - [run-shell](https://github.com/streetturtle/AwesomeWM/tree/master/run-shell) (not on the screenshot)
 
-Some of these widgets use [Arc icon theme](https://github.com/horst3180/arc-icon-theme) by default but it could be easily 
-changed to any other icon theme or custom icons. If you want to have separators between widgets like on the screenshot create text widget with ` : ` and place it between widgets:
-
-```lua
-...
-sprtr = wibox.widget.textbox()
-sprtr:set_text(" : ")
-...
-sprtr,
-volume_icon,
-sprtr,
-battery_widget,
-sprtr,
-...
-```
-
 # Installation
 
 Clone the repo under **~/.config/awesome/**, then in **rc.lua** add the import of the widget you'd like to use in "require" section on the top of the file:
