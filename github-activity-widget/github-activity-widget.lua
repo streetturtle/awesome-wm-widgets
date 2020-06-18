@@ -131,6 +131,10 @@ local github_widget = wibox.widget {
 
 local function worker(args)
 
+    if not gfs.dir_readable(CACHE_DIR) then
+        gfs.make_directories(CACHE_DIR)
+    end
+
     local args = args or {}
 
     local icon = args.icon or ICONS_DIR .. 'github.png'
