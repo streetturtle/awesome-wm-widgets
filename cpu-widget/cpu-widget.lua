@@ -57,7 +57,7 @@ local function create_textbox(args)
 end
 
 local function create_process_header(params)
-    return wibox.widget{
+    local res = wibox.widget{
         create_textbox{markup = '<b>PID</b>'},
         create_textbox{markup = '<b>Name</b>'},
         {
@@ -66,8 +66,11 @@ local function create_process_header(params)
             params.with_action_column and create_textbox{forced_width = 20} or nil,
             layout = wibox.layout.align.horizontal
         },
-        layout = wibox.layout.align.horizontal
+        layout  = wibox.layout.ratio.horizontal
     }
+    res:ajust_ratio(2, 0.2, 0.47, 0.33)
+
+    return res
 end
 
 local function create_kill_process_button()
@@ -180,9 +183,9 @@ local function worker(args)
                                 widget = wibox.widget.progressbar,
 
                             },
-                            layout = wibox.layout.align.horizontal
+                            layout  = wibox.layout.ratio.horizontal
                         }
-
+                        row:ajust_ratio(2, 0.15, 0.15, 0.7)
                         cpu_rows[i] = row
                         i = i + 1
                     else
@@ -198,19 +201,22 @@ local function worker(args)
 
                             local kill_proccess_button = enable_kill_button and create_kill_process_button() or nil
 
+                            local pid_name_rest = wibox.widget{
+                                create_textbox{text = pid},
+                                create_textbox{text = comm},
+                                {
+                                    create_textbox{text = cpu, align = 'center'},
+                                    create_textbox{text = mem, align = 'center'},
+                                    kill_proccess_button,
+                                    layout = wibox.layout.fixed.horizontal
+                                },
+                                layout  = wibox.layout.ratio.horizontal
+                            }
+                            pid_name_rest:ajust_ratio(2, 0.2, 0.47, 0.33)
+
                             local row = wibox.widget {
                                 {
-                                    {
-                                        create_textbox{text = pid},
-                                        create_textbox{text = comm},
-                                        {
-                                            create_textbox{text = cpu, align = 'center'},
-                                            create_textbox{text = mem, align = 'center'},
-                                            kill_proccess_button,
-                                            layout = wibox.layout.fixed.horizontal
-                                        },
-                                        layout = wibox.layout.align.horizontal
-                                    },
+                                    pid_name_rest,
                                     top = 4,
                                     bottom = 4,
                                     widget = wibox.container.margin
@@ -226,7 +232,10 @@ local function worker(args)
                                 row:connect_signal("mouse::leave", function(c) kill_proccess_button.icon.opacity = 0.1 end)
                                 
                                 kill_proccess_button:buttons(
-                                    awful.util.table.join( awful.button({}, 1, function() awful.spawn.with_shell('kill -9 ' .. pid) end) ) )
+                                    awful.util.table.join( awful.button({}, 1, function() 
+                                        row:set_bg('#ff0000')
+                                        awful.spawn.with_shell('kill -9 ' .. pid)
+                                    end) ) )
                             end
 
                             awful.tooltip {
