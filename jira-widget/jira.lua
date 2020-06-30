@@ -18,6 +18,7 @@ local gears = require("gears")
 local beautiful = require("beautiful")
 local gfs = require("gears.filesystem")
 local gs = require("gears.string")
+local color = require("gears.color")
 
 local HOME_DIR = os.getenv("HOME")
 
@@ -44,6 +45,13 @@ local function worker(args)
     local current_number_of_reviews
     local previous_number_of_reviews = 0
 
+    local warning_shown = false
+    local tooltip = awful.tooltip {
+        mode = 'outside',
+        preferred_positions = {'bottom'},
+     }
+
+
     local rows = {
         { widget = wibox.widget.textbox },
         layout = wibox.layout.fixed.vertical,
@@ -63,9 +71,26 @@ local function worker(args)
     jira_widget = wibox.widget {
         {
             {
-                image = icon,
-                widget = wibox.widget.imagebox
+                {
+                    id = 'c',
+                    image = icon,
+                    widget = wibox.widget.imagebox
+                },
+                    {
+                        id = 'd',
+                        draw = function(self, context, cr, width, height)
+                            cr:set_source(color(beautiful.fg_urgent))
+                            cr:arc(height/4, height/4, height/4, 0, math.pi*2)
+                            cr:fill()
+                        end,
+                        visible = false,
+                        layout = wibox.widget.base.make_widget,
+                        
+                    },
+                id = 'b',
+                layout = wibox.layout.stack
             },
+            id = 'a',
             margins = 4,
             layout = wibox.container.margin
         },
@@ -73,24 +98,43 @@ local function worker(args)
             id = "txt",
             widget = wibox.widget.textbox
         },
-        {
-            id = "new_rev",
-            widget = wibox.widget.textbox
-        },
         layout = wibox.layout.fixed.horizontal,
         set_text = function(self, new_value)
             self.txt.text = new_value
         end,
-        set_unseen_review = function(self, is_new_review)
-            self.new_rev.text = is_new_review and '*' or ''
+        is_everything_ok = function(self, is_ok)
+            if is_ok then 
+                self.a.b.d:set_visible(false)
+                self.a.b.c:set_opacity(1)
+                self.a.b.c:emit_signal('widget:redraw_needed')
+            else
+                self.txt:set_text('')
+                self.a.b.d:set_visible(true)
+                self.a.b.c:set_opacity(0.2)
+                self.a.b.c:emit_signal('widget:redraw_needed')
+            end
         end
     }
 
     local update_widget = function(widget, stdout, stderr, _, _)
         if stderr ~= '' then
-            show_warning(stderr)
+            if not warning_shown then
+                show_warning(stderr)
+                warning_shown = true
+                widget:is_everything_ok(false)
+                tooltip:add_to_object(jira_widget)
+
+                widget:connect_signal('mouse::enter', function()
+                    tooltip.text = stderr
+                end)
+            end
             return
         end
+
+        warning_shown = false
+        tooltip:remove_from_object(jira_widget)
+        widget:is_everything_ok(true)
+
 
         local result = json.decode(stdout)
 
