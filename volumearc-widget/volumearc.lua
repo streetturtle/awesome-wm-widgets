@@ -69,7 +69,7 @@ local function worker(args)
                 or { main_color }
     end
 
-    volumearc:connect_signal("button::press", function(_, _, _, button)
+    local button_press = args.button_press or  function(_, _, _, button)
         if (button == 4) then awful.spawn(inc_volume_cmd, false)
         elseif (button == 5) then awful.spawn(dec_volume_cmd, false)
         elseif (button == 1) then awful.spawn(tog_volume_cmd, false)
@@ -78,7 +78,8 @@ local function worker(args)
         spawn.easy_async(get_volume_cmd, function(stdout, stderr, exitreason, exitcode)
             update_graphic(volumearc, stdout, stderr, exitreason, exitcode)
         end)
-    end)
+    end
+    volumearc:connect_signal("button::press", button_press)
 
     watch(get_volume_cmd, 1, update_graphic, volumearc)
 
