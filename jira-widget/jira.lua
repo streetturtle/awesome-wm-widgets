@@ -25,14 +25,81 @@ local HOME_DIR = os.getenv("HOME")
 local GET_ISSUES_CMD = [[bash -c "curl -s --show-error -X GET -n '%s/rest/api/2/search?%s&fields=id,assignee,summary,status'"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o  %s/.cache/awmw/jira-widget/avatars/%s %s"]]
 
-local jira_widget = {}
-
 local function show_warning(message)
     naughty.notify{
         preset = naughty.config.presets.critical,
         title = 'Jira Widget',
         text = message}
 end
+
+local jira_widget = wibox.widget {
+    {
+        {
+            {
+                id = 'c',
+                widget = wibox.widget.imagebox
+            },
+            {
+                id = 'd',
+                draw = function(self, context, cr, width, height)
+                    cr:set_source(color(beautiful.fg_urgent))
+                    cr:arc(height/4, height/4, height/4, 0, math.pi*2)
+                    cr:fill()
+                end,
+                visible = false,
+                layout = wibox.widget.base.make_widget,
+            },
+            id = 'b',
+            layout = wibox.layout.stack
+        },
+        id = 'a',
+        margins = 4,
+        layout = wibox.container.margin
+    },
+    {
+        id = "txt",
+        widget = wibox.widget.textbox
+    },
+    layout = wibox.layout.fixed.horizontal,
+    set_text = function(self, new_value)
+        self.txt.text = new_value
+    end,
+    set_icon = function(self, path)
+        self.a.b.c.image = path
+    end,
+    is_everything_ok = function(self, is_ok)
+        if is_ok then
+            self.a.b.d:set_visible(false)
+            self.a.b.c:set_opacity(1)
+            self.a.b.c:emit_signal('widget:redraw_needed')
+        else
+            self.txt:set_text('')
+            self.a.b.d:set_visible(true)
+            self.a.b.c:set_opacity(0.2)
+            self.a.b.c:emit_signal('widget:redraw_needed')
+        end
+    end
+}
+
+local popup = awful.popup{
+    ontop = true,
+    visible = false,
+    shape = gears.shape.rounded_rect,
+    border_width = 1,
+    border_color = beautiful.bg_focus,
+    maximum_width = 400,
+    offset = { y = 5 },
+    widget = {}
+}
+
+
+local number_of_issues
+
+local warning_shown = false
+local tooltip = awful.tooltip {
+    mode = 'outside',
+    preferred_positions = {'bottom'},
+ }
 
 local function worker(args)
 
@@ -42,79 +109,7 @@ local function worker(args)
     local host = args.host or show_warning('Jira host is unknown')
     local query = args.query or 'jql=assignee=currentuser() AND resolution=Unresolved'
 
-    local current_number_of_reviews
-    local previous_number_of_reviews = 0
-
-    local warning_shown = false
-    local tooltip = awful.tooltip {
-        mode = 'outside',
-        preferred_positions = {'bottom'},
-     }
-
-
-    local rows = {
-        { widget = wibox.widget.textbox },
-        layout = wibox.layout.fixed.vertical,
-    }
-
-    local popup = awful.popup{
-        ontop = true,
-        visible = false,
-        shape = gears.shape.rounded_rect,
-        border_width = 1,
-        border_color = beautiful.bg_focus,
-        maximum_width = 400,
-        offset = { y = 5 },
-        widget = {}
-    }
-
-    jira_widget = wibox.widget {
-        {
-            {
-                {
-                    id = 'c',
-                    image = icon,
-                    widget = wibox.widget.imagebox
-                },
-                    {
-                        id = 'd',
-                        draw = function(self, context, cr, width, height)
-                            cr:set_source(color(beautiful.fg_urgent))
-                            cr:arc(height/4, height/4, height/4, 0, math.pi*2)
-                            cr:fill()
-                        end,
-                        visible = false,
-                        layout = wibox.widget.base.make_widget,
-                        
-                    },
-                id = 'b',
-                layout = wibox.layout.stack
-            },
-            id = 'a',
-            margins = 4,
-            layout = wibox.container.margin
-        },
-        {
-            id = "txt",
-            widget = wibox.widget.textbox
-        },
-        layout = wibox.layout.fixed.horizontal,
-        set_text = function(self, new_value)
-            self.txt.text = new_value
-        end,
-        is_everything_ok = function(self, is_ok)
-            if is_ok then 
-                self.a.b.d:set_visible(false)
-                self.a.b.c:set_opacity(1)
-                self.a.b.c:emit_signal('widget:redraw_needed')
-            else
-                self.txt:set_text('')
-                self.a.b.d:set_visible(true)
-                self.a.b.c:set_opacity(0.2)
-                self.a.b.c:emit_signal('widget:redraw_needed')
-            end
-        end
-    }
+    jira_widget:set_icon(icon)
 
     local update_widget = function(widget, stdout, stderr, _, _)
         if stderr ~= '' then
@@ -135,18 +130,22 @@ local function worker(args)
         tooltip:remove_from_object(jira_widget)
         widget:is_everything_ok(true)
 
-
         local result = json.decode(stdout)
 
-        current_number_of_reviews = rawlen(result.issues)
+        number_of_issues = rawlen(result.issues)
 
-        if current_number_of_reviews == 0 then
+        if number_of_issues == 0 then
             widget:set_visible(false)
             return
         end
 
         widget:set_visible(true)
-        widget:set_text(current_number_of_reviews)
+        widget:set_text(number_of_issues)
+
+        local rows = {
+            { widget = wibox.widget.textbox },
+            layout = wibox.layout.fixed.vertical,
+        }
 
         for i = 0, #rows do rows[i]=nil end
         for _, issue in ipairs(result.issues) do
@@ -197,6 +196,7 @@ local function worker(args)
                     margins = 8,
                     layout = wibox.container.margin
                 },
+                bg = beautiful.bg_normal,
                 widget = wibox.container.background
             }
 
