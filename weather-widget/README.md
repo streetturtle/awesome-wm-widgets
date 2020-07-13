@@ -101,8 +101,8 @@ weather_curl_widget({
             ...
             --default
             weather_widget({
+                api_key='<your-key>',
                 coordinates = {45.5017, -73.5673},
-                api_key='c3d7320b359da4e48c2d682a04076576',
             }),
             ,
             --customized
