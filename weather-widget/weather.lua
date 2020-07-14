@@ -393,7 +393,9 @@ local function worker(args)
     local function update_widget(widget, stdout, stderr)
         if stderr ~= '' then
             if not warning_shown then
-                show_warning(stderr)
+                if stderr ~= 'curl: (52) Empty reply from server' then
+                    show_warning(stderr)
+                end
                 warning_shown = true
                 widget:is_ok(false)
                 tooltip:add_to_object(widget)
