@@ -393,7 +393,9 @@ local function worker(args)
     local function update_widget(widget, stdout, stderr)
         if stderr ~= '' then
             if not warning_shown then
-                show_warning(stderr)
+                if stderr ~= 'curl: (52) Empty reply from server' then
+                    show_warning(stderr)
+                end
                 warning_shown = true
                 widget:is_ok(false)
                 tooltip:add_to_object(widget)
@@ -450,7 +452,11 @@ local function worker(args)
         end)))
 
     -- watch('cat /home/pmakhov/.config/awesome/awesome-wm-widgets/weather-widget/weather.json', 5, update_widget, weather_widget)
-    watch(string.format(GET_FORECAST_CMD, owm_one_cal_api), 5, update_widget, weather_widget)
+    watch(
+        string.format(GET_FORECAST_CMD, owm_one_cal_api),
+        120,  -- API limit is 1k req/day; day has 1440 min; every 2 min is good
+        update_widget, weather_widget,
+    )
 
     return weather_widget
 end
