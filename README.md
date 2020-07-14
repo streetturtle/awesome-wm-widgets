@@ -49,40 +49,7 @@ From left to right:
 
 # Installation
 
-Clone the repo under **~/.config/awesome/**, then in **rc.lua** add the import of the widget you'd like to use in "require" section on the top of the file:
-
-```lua
-local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
-```
-
-and then add widget to the wibox (you can search for **mytextclock** and add widget before):
-
-```lua
- -- Add widgets to the wibox
-     s.mywibox:setup {
-         layout = wibox.layout.align.horizontal,
-         { -- Left widgets
-         ...
-         },
-         s.mytasklist, -- Middle widget
-         { -- Right widgets
-         ...
-             battery_widget(),
-             mytextclock
-         ...
-         }
-```
-
-You will also need to install [Arc icon theme](https://github.com/horst3180/arc-icon-theme) if widget uses icons. By default it should be installed under **/usr/share/icons/Arc**. If you prefer different installation folder then you'll have to change path to the icons in the source code of the widget you want to use.
-
-# Icons
-
-If you don't want to install Arc icon theme you can just download the icons which are used from the [Arc repository](https://github.com/horst3180/arc-theme).
-Or create your own icons with the same name.
-
-In case of any questions/suggestions don't hesitate to contact me, I would be happy to help :)
-
-PRs/issues and st★rs are welcome!
+Clone the repo under **~/.config/awesome/**, then follow an Installation section of widget's readme file.
 
 # Stargazers
 
