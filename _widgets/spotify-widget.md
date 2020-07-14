@@ -65,8 +65,8 @@ Paused:
 First you need to have spotify CLI installed, it uses dbus to communicate with spotify-client:
 
 ```bash 
-git clone https://gist.github.com/wandernauta/6800547.git
-cd ./6800547
+git clone https://gist.github.com/fa6258f3ff7b17747ee3.git
+cd ./fa6258f3ff7b17747ee3 
 chmod +x sp
 sudo cp ./sp /usr/local/bin/
 ```

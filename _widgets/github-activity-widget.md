@@ -21,6 +21,30 @@ It is possible to customize widget by providing a table with all or some of the 
 | `username` | your username | Required parameter |
 | `number_of_events` | 10 | Number of events to display in the list |
 
+## Installation
+
+Clone repo under **~/.config/awesome/** and add widget in **rc.lua**:
+
+```lua
+local github_activity_widget = require("awesome-wm-widgets.github-activity-widget.github-activity-widget")
+...
+s.mytasklist, -- Middle widget
+	{ -- Right widgets
+    	layout = wibox.layout.fixed.horizontal,
+        ...
+        -- default
+        github_activity_widget{
+            username = 'streetturtle',
+        },
+        -- customized
+        github_activity_widget{
+            username = 'streetturtle',
+            number_of_events = 5
+        },
+
+```
+
+
 ## How it works
 
 Everything starts with this timer, which gets recent activities by calling GitHub [Events API](../awesome-wm-widgets/assets/img/screenshots/github-activity-widgetttps://developer.github.com/v3/activity/events/) and stores the response under /.cache/awmw/github-activity-widget/activity.json directory:

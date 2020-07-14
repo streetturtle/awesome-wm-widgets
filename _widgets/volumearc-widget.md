@@ -28,6 +28,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `inc_volume_cmd` | `amixer -D pulse sset Master 5%+` | Increase volume level |
 | `dec_volume_cmd` | `amixer -D pulse sset Master 5%-` | Decrease volume level |
 | `tog_volume_cmd` | `amixer -D pulse sset Master toggle` | Mute / unmute |
+| `button_press` | `function(_, _, _, button) <sane default logic> end` | Overwrite the 'button\_press' signal for this widget |
 
 ### Example:
 
@@ -36,7 +37,11 @@ volumearc_widget({
     main_color = '#af13f7',
     mute_color = '#ff0000',
     thickness = 5,
-    height = 25
+    height = 25,
+    button_press = function(_, _, _, button)   -- Overwrites the button press behaviour to open pavucontrol when clicked
+        if (button == 1) then awful.spawn('pavucontrol --tab=3', false)
+        end
+    end
 })
 ```
 
