@@ -393,7 +393,10 @@ local function worker(args)
     local function update_widget(widget, stdout, stderr)
         if stderr ~= '' then
             if not warning_shown then
-                if stderr ~= 'curl: (52) Empty reply from server' then
+                if (
+                    stderr ~= 'curl: (52) Empty reply from server' and
+                    stderr ~= 'curl: (28) Failed to connect to api.openweathermap.org port 443: Connection timed out'
+                ) then
                     show_warning(stderr)
                 end
                 warning_shown = true
