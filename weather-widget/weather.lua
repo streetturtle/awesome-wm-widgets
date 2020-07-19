@@ -395,7 +395,10 @@ local function worker(args)
             if not warning_shown then
                 if (
                     stderr ~= 'curl: (52) Empty reply from server' and
-                    stderr ~= 'curl: (28) Failed to connect to api.openweathermap.org port 443: Connection timed out'
+                    stderr ~= 'curl: (28) Failed to connect to api.openweathermap.org port 443: Connection timed out' and
+                    stderr:find(
+                        '^curl: %(18%) transfer closed with %d+ bytes remaining to read$'
+                    ) ~= nil
                 ) then
                     show_warning(stderr)
                 end
