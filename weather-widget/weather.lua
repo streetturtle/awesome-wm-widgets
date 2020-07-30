@@ -203,7 +203,7 @@ local function worker(args)
             {
                 {
                     id = 'temp',
-                    font = font_name .. ' 48',
+                    font = font_name .. ' 36',
                     widget = wibox.widget.textbox
                 },
                 {
