@@ -94,12 +94,12 @@ local function generate_action_string(event)
         icon = 'comment.svg'
     elseif (event.type == "WatchEvent") then
         action_string = 'starred'
-        link = 'http://github.com/' .. event.repo.name
         icon = 'star.svg'
     elseif (event.type == "ForkEvent") then
         action_string = 'forked'
-        link = 'http://github.com/' .. event.repo.name
         icon = 'fork.svg'
+    elseif (event.type == "CreateEvent") then
+        action_string = 'created'
     end
 
     return { action_string = action_string, link = link, icon = icon }
