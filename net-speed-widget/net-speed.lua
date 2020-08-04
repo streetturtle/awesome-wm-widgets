@@ -95,25 +95,28 @@ local function worker(args)
 
     local args = args or {}
 
-    if args.interface == nil then
-        show_warning("Interface name is not specified")
-        return
-    end
-
-    local interface = args.interface
+    local interface = args.interface or '*'
 
     local update_widget = function(widget, stdout, stderr)
 
         local cur_vals = split(stdout, '\r\n')
 
-        local cur_rx = cur_vals[1]
-        local cur_tx = cur_vals[2]
+        local cur_rx = 0
+        local cur_tx = 0
+
+        for i, v in ipairs(cur_vals) do
+            if i%2 == 1 then cur_rx = cur_rx + cur_vals[i] end
+            if i%2 == 0 then cur_tx = cur_tx + cur_vals[i] end
+        end
+
+        print('cur_rx = ' .. cur_rx)
+        print('cur_tx = ' .. cur_tx)
 
         local speed_rx = cur_rx - prev_rx
         local speed_tx = cur_tx - prev_tx
 
-        net_speed_widget:set_rx_text(convert_to_h(speed_rx))
-        net_speed_widget:set_tx_text(convert_to_h(speed_tx))
+        widget:set_rx_text(convert_to_h(speed_rx))
+        widget:set_tx_text(convert_to_h(speed_tx))
 
         prev_rx = cur_rx
         prev_tx = cur_tx
