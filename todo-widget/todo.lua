@@ -183,6 +183,7 @@ local function worker(args)
                 end)
             end)
 
+
             local trash_button = wibox.widget {
                 {
                     {    image = WIDGET_DIR .. '/window-close-symbolic.svg',
@@ -206,11 +207,57 @@ local function worker(args)
                 end)
             end)
 
+
+            local move_up = wibox.widget {
+                image = WIDGET_DIR .. '/up.png',
+                resize = false,
+                widget = wibox.widget.imagebox
+            }
+
+            move_up:connect_signal("button::press", function(c)
+                local temp = result.todo_items[i]
+                result.todo_items[i] = result.todo_items[i-1]
+                result.todo_items[i-1] = temp
+                spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE, function ()
+                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                end)
+            end)
+
+            local move_down = wibox.widget {
+                image = WIDGET_DIR .. '/down.png',
+                resize = false,
+                widget = wibox.widget.imagebox
+            }
+
+            move_down:connect_signal("button::press", function(c)
+                local temp = result.todo_items[i]
+                result.todo_items[i] = result.todo_items[i+1]
+                result.todo_items[i+1] = temp
+                spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE, function ()
+                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                end)
+            end)
+
+
+            local move_buttons = {
+                layout = wibox.layout.fixed.vertical
+            }
+
+            if 1 == #result.todo_items then
+                -- one item, no need in arrows
+            elseif i == 1 then
+                table.insert(move_buttons, move_down)
+            elseif i == #result.todo_items then
+                table.insert(move_buttons, move_up)
+            else
+                table.insert(move_buttons, move_up)
+                table.insert(move_buttons, move_down)
+            end
+
             local row = wibox.widget {
                 {
                     {
                         {
-                            
                             checkbox,
                             valign = 'center',
                             layout = wibox.container.place,
@@ -225,9 +272,18 @@ local function worker(args)
                             layout = wibox.container.margin
                         },
                         {
-                            trash_button,
-                            valign = 'center',
-                            layout = wibox.container.place,
+                            {
+                                move_buttons,
+                                valign = 'center',
+                                layout = wibox.container.place,
+                            },
+                            {
+                                trash_button,
+                                valign = 'center',
+                                layout = wibox.container.place,
+                            },
+                            spacing = 8,
+                            layout = wibox.layout.align.horizontal
                         },
                         spacing = 8,
                         layout = wibox.layout.align.horizontal
