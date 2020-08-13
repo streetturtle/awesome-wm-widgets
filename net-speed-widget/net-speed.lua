@@ -109,9 +109,6 @@ local function worker(args)
             if i%2 == 0 then cur_tx = cur_tx + cur_vals[i] end
         end
 
-        print('cur_rx = ' .. cur_rx)
-        print('cur_tx = ' .. cur_tx)
-
         local speed_rx = cur_rx - prev_rx
         local speed_tx = cur_tx - prev_tx
 
