@@ -83,9 +83,9 @@ local parse_container = function(line)
 end
 
 local status_to_icon_name = {
-    Up = '/usr/share/icons/Arc/actions/16/media-playback-start.png',
-    Exited = '/usr/share/icons/Arc/actions/16/media-playback-stop.png',
-    Paused = '/usr/share/icons/Arc/actions/16/media-playback-pause.png'
+    Up = ICONS_DIR .. 'play.svg',
+    Exited = ICONS_DIR .. 'square.svg',
+    Paused = ICONS_DIR .. 'pause.svg'
 }
 
 local function worker(args)
@@ -119,65 +119,49 @@ local function worker(args)
             if status == 'Up' or 'Exited' then is_visible = true else is_visible = false end
 
             local start_stop_button = wibox.widget {
-                image = container:is_up() and '/usr/share/icons/Arc/actions/16/media-playback-stop.png' or '/usr/share/icons/Arc/actions/16/media-playback-start.png',
+                image = ICONS_DIR .. (container:is_up() and 'stop-btn.svg' or 'play-btn.svg'),
                 visible = is_visible,
+                opacity = 0.4,
                 resize = false,
                 widget = wibox.widget.imagebox
             }
+            start_stop_button:connect_signal("mouse::enter", function(c) c:set_opacity(1) c:emit_signal('widget::redraw_needed')  end)
+            start_stop_button:connect_signal("mouse::leave", function(c) c:set_opacity(0.4) c:emit_signal('widget::redraw_needed')  end)
 
             local pause_unpause_button = wibox.widget {
-                image = container:is_up() and '/usr/share/icons/Arc/actions/16/media-playback-pause.png' or '/usr/share/icons/Arc/actions/16/media-skip-forward.png',
+                image = ICONS_DIR .. (container:is_paused() and 'unpause-btn.svg' or 'pause-btn.svg'),
                 visible = container.is_up(),
+                opacity = 0.4,
                 resize = false,
                 widget = wibox.widget.imagebox
             }
+            pause_unpause_button:connect_signal("mouse::enter", function(c) c:set_opacity(1) c:emit_signal('widget::redraw_needed')  end)
+            pause_unpause_button:connect_signal("mouse::leave", function(c) c:set_opacity(0.4) c:emit_signal('widget::redraw_needed')  end)
 
-            start_stop_button:buttons(
-                awful.util.table.join( awful.button({}, 1, function()
-                    local command
-                    if container:is_up() then command = 'stop' else command = 'start' end
-
-                    awful.spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(stdout, stderr)
-                        if stderr ~= '' then show_warning(stderr) return end
-                        spawn.easy_async([[bash -c "docker container ls -a --format '{{.Names}}::{{.ID}}::{{.Image}}::{{.Status}}'"]], function(stdout, stderr)
-                            rebuild_widget(stdout, stderr) end)
-                        end)
-                end) ) )
-
-            pause_unpause_button:buttons(
-                awful.util.table.join( awful.button({}, 1, function()
-                    local command
-                    if container:is_paused() then command = 'unpause' else command = 'pause' end
-
-                    awful.spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(stdout, stderr)
-                        if stderr ~= '' then show_warning(stderr) return end
-                        spawn.easy_async([[bash -c "docker container ls -a --format '{{.Names}}::{{.ID}}::{{.Image}}::{{.Status}}'"]], function(stdout, stderr)
-                            rebuild_widget(stdout, stderr) end)
-                        end)
-                end) ) )
+            local status_icon = wibox.widget {
+                image = status_to_icon_name[container['status']],
+                resize = false,
+                widget = wibox.widget.imagebox
+            }
 
             local row = wibox.widget {
                 {
                     {
                         {
-                            {
-                                image = status_to_icon_name[container['status']],
-                                resize = false,
-                                widget = wibox.widget.imagebox
-                            },
+                            status_icon,
                             margins = 8,
                             layout = wibox.container.margin
                         },
                         {
                             {
-                                text = container['name'],
+                                markup = '<b>' .. container['name'] .. '</b>',
                                 widget = wibox.widget.textbox
                             },
                             {
                                 text = container['how_long'],
                                 widget = wibox.widget.textbox
                             },
-                            forced_width = 160,
+                            forced_width = 180,
                             layout = wibox.layout.fixed.vertical
                         },
                         {
@@ -200,6 +184,37 @@ local function worker(args)
                 bg = beautiful.bg_normal,
                 widget = wibox.container.background
             }
+
+
+            start_stop_button:buttons(
+                awful.util.table.join( awful.button({}, 1, function()
+                    local command
+                    if container:is_up() then command = 'stop' else command = 'start' end
+
+                    status_icon:set_opacity(0.2)
+                    status_icon:emit_signal('widget::redraw_needed')
+
+                    awful.spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(stdout, stderr)
+                        if stderr ~= '' then show_warning(stderr) return end
+                        spawn.easy_async([[bash -c "docker container ls -a --format '{{.Names}}::{{.ID}}::{{.Image}}::{{.Status}}'"]], function(stdout, stderr)
+                            rebuild_widget(stdout, stderr) end)
+                        end)
+                end) ) )
+
+            pause_unpause_button:buttons(
+                awful.util.table.join( awful.button({}, 1, function()
+                    local command
+                    if container:is_paused() then command = 'unpause' else command = 'pause' end
+
+                    status_icon:set_opacity(0.2)
+                    status_icon:emit_signal('widget::redraw_needed')
+
+                    awful.spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(stdout, stderr)
+                        if stderr ~= '' then show_warning(stderr) return end
+                        spawn.easy_async([[bash -c "docker container ls -a --format '{{.Names}}::{{.ID}}::{{.Image}}::{{.Status}}'"]], function(stdout, stderr)
+                            rebuild_widget(stdout, stderr) end)
+                        end)
+                end) ) )
 
             row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
             row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
