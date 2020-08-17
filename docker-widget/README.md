@@ -2,6 +2,10 @@
 
 The widget allows to manage containers, namely start/stop/pause/unpause:
 
+<p align="center">
+    <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/docker-widget/docker.gif"/>
+</p>
+
 ![screenshot](./docker.gif)
 
 ## Customization
