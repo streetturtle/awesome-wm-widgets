@@ -66,6 +66,6 @@ s.mytasklist, -- Middle widget
 	{ -- Right widgets
     	layout = wibox.layout.fixed.horizontal,
 		...
-		volumearc_widget,
+		volumearc_widget(),
 		...
 ```
