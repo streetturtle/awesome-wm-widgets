@@ -19,7 +19,7 @@ local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/docker-widget'
 local ICONS_DIR = WIDGET_DIR .. '/icons/'
 
-local LIST_CONTAINERS_CMD = [[bash -c "docker container ls -a --format '{{.Names}}::{{.ID}}::{{.Image}}::{{.Status}}'"]]
+local LIST_CONTAINERS_CMD = [[bash -c "docker container ls -a -s -n %s --format '{{.Names}}::{{.ID}}::{{.Image}}::{{.Status}}::{{.Size}}'"]]
 
 --- Utility function to show warning messages
 local function show_warning(message)
@@ -56,20 +56,23 @@ local docker_widget = wibox.widget {
 }
 
 local parse_container = function(line)
-    local name, id, image, status, how_long = line:match('(.*)::(.*)::(.*)::(%w*) (.*)')
+    local name, id, image, status, how_long, size = line:match('(.*)::(.*)::(.*)::(%w*) (.*)::(.*)')
     local actual_status
     if status == 'Up' and how_long:find('Paused') then actual_status = 'Paused'
-    else actual_status = status
-    end
+    else actual_status = status end
+
+    how_long = how_long:gsub('%s?%(.*%)%s?', '')
+    -- if how_long:find('seconds') then how_long = 'less than a minute ago' end
 
     local container = {
         name = name,
         id = id,
         image = image,
         status = actual_status,
-        how_long = how_long:gsub('%s?%(.*%)%s?', ''),
+        how_long = how_long,
+        size = size,
         is_up = function() return status == 'Up' end,
-        is_paused = function() return how_long:find('Paused') end,
+        is_paused = function() return actual_status:find('Paused') end,
         is_exited = function() return status == 'Exited' end
     }
     return container
@@ -86,6 +89,7 @@ local function worker(args)
     local args = args or {}
 
     local icon = args.icon or ICONS_DIR .. 'docker.svg'
+    local number_of_containers = args.num_of_containers or -1
 
     docker_widget:set_icon(icon)
 
@@ -201,14 +205,22 @@ local function worker(args)
                 {
                     {
                         {
-                            status_icon,
-                            margins = 8,
-                            layout = wibox.container.margin
+                            {
+                                status_icon,
+                                margins = 8,
+                                layout = wibox.container.margin
+                            },
+                            valigh = 'center',
+                            layout = wibox.container.place
                         },
                         {
                             {
                                 {
                                     markup = '<b>' .. container['name'] .. '</b>',
+                                    widget = wibox.widget.textbox
+                                },
+                                {
+                                    text = container['size'],
                                     widget = wibox.widget.textbox
                                 },
                                 {
@@ -258,7 +270,7 @@ local function worker(args)
                     if popup.visible then
                         popup.visible = not popup.visible
                     else
-                        spawn.easy_async(LIST_CONTAINERS_CMD, function(stdout, stderr)
+                        spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), function(stdout, stderr)
                             rebuild_widget(stdout, stderr)
                             popup:move_next_to(mouse.current_widget_geometry)
                         end)
