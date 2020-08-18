@@ -89,7 +89,7 @@ local function worker(args)
     local args = args or {}
 
     local icon = args.icon or ICONS_DIR .. 'docker.svg'
-    local number_of_containers = args.num_of_containers or -1
+    local number_of_containers = args.number_of_containers or -1
 
     docker_widget:set_icon(icon)
 
@@ -150,7 +150,7 @@ local function worker(args)
 
                         awful.spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(stdout, stderr)
                             if stderr ~= '' then show_warning(stderr) end
-                            spawn.easy_async(LIST_CONTAINERS_CMD, function(stdout, stderr)
+                            spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), function(stdout, stderr)
                                 rebuild_widget(stdout, stderr) end)
                             end)
                     end) ) )
@@ -192,7 +192,7 @@ local function worker(args)
 
                         awful.spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(stdout, stderr)
                             if stderr ~= '' then show_warning(stderr) end
-                            spawn.easy_async(LIST_CONTAINERS_CMD, function(stdout, stderr)
+                            spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), function(stdout, stderr)
                                 rebuild_widget(stdout, stderr) end)
                             end)
                     end) ) )
