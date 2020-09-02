@@ -8,79 +8,103 @@
 -------------------------------------------------
 
 local awful = require("awful")
-local gfs = require("gears.filesystem")
+local capi = {keygrabber = keygrabber }
 local wibox = require("wibox")
 local gears = require("gears")
+local beautiful = require("beautiful")
+local fancybuttons = require("awesome-buttons.awesome-buttons")
 
-local ICON = '/usr/share/icons/Papirus-Light/32x32/apps/spotify-linux-48x48.svg'
 
-local spotify_shell = awful.widget.prompt()
+local HOME_DIR = os.getenv("HOME")
+local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/experiments/logout-widget'
+local ICONS_DIR = WIDGET_DIR .. '/icons/'
+
 
 local w = wibox {
-    bg = '#1e252c',
-    border_width = 1,
-    border_color = '#84bd00',
+    bg = beautiful.fg_normal,
     max_widget_size = 500,
     ontop = true,
-    height = 400,
-    width = 250,
+    height = 200,
+    width = 400,
     shape = function(cr, width, height)
-        gears.shape.rounded_rect(cr, width, height, 3)
+        gears.shape.rounded_rect(cr, width, height, 8)
     end
 }
 
-w:setup {
-    {
-        {
-            {
-                image = ICON,
-                widget = wibox.widget.imagebox,
-                resize = false
-            },
-            id = 'icon',
-            top = 9,
-            left = 10,
-            layout = wibox.container.margin
-        },
-        {
-            layout = wibox.container.margin,
-            left = 10,
-            spotify_shell,
-        },
-        id = 'left',
-        layout = wibox.layout.fixed.horizontal
-    },
-    {
-        image  = '/usr/share/icons/Arc/actions/symbolic/system-shutdown-symbolic.svg',
-        widget = wibox.widget.imagebox,
-        resize = false,
-        opacity = 0.2,
-        set_hover = function(self, opacity)
-            self.opacity = opacity
-            self.image = '/usr/share/icons/Arc/actions/symbolic/system-shutdown-symbolic.svg'
-        end
-
-    },
-    layout = wibox.layout.fixed.vertical
+local action = wibox.widget {
+    text = ' ',
+    widget = wibox.widget.textbox
 }
 
-local function launch()
+
+local function create_button(icon_name, action_name, color, onclick)
+
+    local button = fancybuttons.with_icon{ type = 'basic', shape = 'circle', icon = ICONS_DIR .. icon_name, color = color, onclick = onclick }
+    button:connect_signal("mouse::enter", function(c) action:set_text(action_name) end)
+    button:connect_signal("mouse::leave", function(c) action:set_text(' ') end)
+    return button
+end
+
+local function launch(args)
+
+    local bg_color = args.bg_color or beautiful.bg_normal
+    local accent_color = args.accent_color or beautiful.bg_focus
+    local text_color = args.text_color or beautiful.fg_normal
+    local phrases = args.phrases or {'Goodbye!'}
+
+    local onlogout = args.onlogout or function () awesome.quit() end
+    local onlock = args.onlock
+    local onreboot = args.onreboot
+    local onsuspend = args.onsuspend
+    local onpoweroff = args.onpoweroff or function () awful.spawn.with_shell("shutdown now") end
+
+    w:set_bg(bg_color)
+
+    w:setup {
+        {
+            {
+                markup = '<span color="'.. text_color .. '" size="20000">' .. phrases[ math.random( #phrases ) ] .. '</span>',
+                align  = 'center',
+                widget = wibox.widget.textbox
+            },
+            {
+                {
+                    create_button('log-out.svg', 'Log Out', accent_color, onlogout),
+                    create_button('lock.svg', 'Lock', accent_color, onlock),
+                    create_button('refresh-cw.svg', 'Reboot', accent_color, onreboot),
+                    create_button('moon.svg', 'Suspend', accent_color, onsuspend),
+                    create_button('power.svg', 'Power Off', accent_color, onpoweroff),
+                    id = 'buttons',
+                    spacing = 8,
+                    layout = wibox.layout.fixed.horizontal
+                },
+                valigh = 'center',
+                layout = wibox.container.place
+            },
+            {
+                action,
+                haligh = 'center',
+                layout = wibox.container.place
+            },
+            spacing = 32,
+            layout = wibox.layout.fixed.vertical
+        },
+        id = 'a',
+        shape_border_width = 1,
+        valigh = 'center',
+        layout = wibox.container.place
+    }
+
     w.visible = true
 
-    awful.placement.top(w, { margins = {top = 40}, parent = awful.screen.focused()})
-    awful.prompt.run{
-        prompt = "<b>Spotify Shell</b>: ",
-        bg_cursor = '#84bd00',
-        textbox = spotify_shell.widget,
-        history_path = gfs.get_dir('cache') .. '/spotify_history',
-        exe_callback = function(input_text)
-            if not input_text or #input_text == 0 then return end
-            awful.spawn("sp " .. input_text)
-        end,
-        done_callback = function()
+    awful.placement.centered(w)
+    capi.keygrabber.run(function(_, key, event)
+        if event == "release" then return end
+        if key then
+            capi.keygrabber.stop()
             w.visible = false
         end
-    }
+    end)
 end
 
 return {
