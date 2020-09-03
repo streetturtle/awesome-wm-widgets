@@ -17,7 +17,6 @@ local fancybuttons = require("awesome-buttons.awesome-buttons")
 
 local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/experiments/logout-widget'
-local ICONS_DIR = WIDGET_DIR .. '/icons/'
 
 
 local w = wibox {
@@ -39,7 +38,7 @@ local action = wibox.widget {
 
 local function create_button(icon_name, action_name, color, onclick)
 
-    local button = fancybuttons.with_icon{ type = 'basic', shape = 'rectangle', icon = icon_name, color = color, onclick = onclick }
+    local button = fancybuttons.with_icon{ type = 'basic', icon = icon_name, color = color, onclick = onclick }
     button:connect_signal("mouse::enter", function(c) action:set_text(action_name) end)
     button:connect_signal("mouse::leave", function(c) action:set_text(' ') end)
     return button

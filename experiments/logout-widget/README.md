@@ -1,9 +1,12 @@
 # Logout widget
 
+Widget which allows to perform lock, reboot, log out, power off and sleep actions. If can be called either by a shortcut, or by clicking on a widget in wibar.
+
+![screenshot](./screenshot.png)
+
 # Installation
 
 Clone repo (if not cloned yet) under ~/.config/awesome, then
-
 
 - to show by shortcut:
 
