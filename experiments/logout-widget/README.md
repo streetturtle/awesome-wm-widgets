@@ -41,17 +41,15 @@ Clone repo (if not cloned yet) under ~/.config/awesome, then
 # Customisation
 
 
-## Phrase
+| Name | Default | Description |
+|---|---|---|
+| `bg_color` |  beautiful.bg_normal | The color the background of the |
+| `accent_color` |  beautiful.bg_focus | The color of the buttons |
+| `text_color` |  beautiful.fg_normal | The color of text |
+| `phrases` |  {'Goodbye!'} | The table with phrase(s) to show, if more than one provided, the phrase is chosen randomly |
+| `onlogout` |  function () awesome.quit() end | Function which is called when the logout button is pressed |
+| `onlock` |  | Function which is called when the lock button is pressed |
+| `onreboot` |  | Function which is called when the reboot button is pressed |
+| `onsuspend` |  function () awful.spawn.with_shell("systemctl suspend") end | Function which is called when the suspend button is pressed |
+| `onpoweroff` |  function () awful.spawn.with_shell("shutdown now") end | Function which is called when the poweroff button is pressed |
 
-
-
-    bg_color = args.bg_color or beautiful.bg_normal
-    accent_color = args.accent_color or beautiful.bg_focus
-    text_color = args.text_color or beautiful.fg_normal
-    phrases = args.phrases or {'Goodbye!'}
-
-    onlogout = args.onlogout or function () awesome.quit() end
-    onlock = args.onlock
-    onreboot = args.onreboot
-    onsuspend = args.onsuspend or function () awful.spawn.with_shell("systemctl suspend") end
-    onpoweroff = args.onpoweroff or function () awful.spawn.with_shell("shutdown now") end
