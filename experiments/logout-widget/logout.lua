@@ -39,7 +39,7 @@ local action = wibox.widget {
 
 local function create_button(icon_name, action_name, color, onclick)
 
-    local button = fancybuttons.with_icon{ type = 'basic', shape = 'circle', icon = ICONS_DIR .. icon_name, color = color, onclick = onclick }
+    local button = fancybuttons.with_icon{ type = 'basic', shape = 'rectangle', icon = icon_name, color = color, onclick = onclick }
     button:connect_signal("mouse::enter", function(c) action:set_text(action_name) end)
     button:connect_signal("mouse::leave", function(c) action:set_text(' ') end)
     return button
@@ -55,25 +55,27 @@ local function launch(args)
     local onlogout = args.onlogout or function () awesome.quit() end
     local onlock = args.onlock
     local onreboot = args.onreboot
-    local onsuspend = args.onsuspend
+    local onsuspend = args.onsuspend or function () awful.spawn.with_shell("systemctl suspend") end
     local onpoweroff = args.onpoweroff or function () awful.spawn.with_shell("shutdown now") end
 
     w:set_bg(bg_color)
 
+    local phrase_widget = wibox.widget{
+        markup = '<span color="'.. text_color .. '" size="20000">' .. phrases[ math.random( #phrases ) ] .. '</span>',
+        align  = 'center',
+        widget = wibox.widget.textbox
+    }
+
     w:setup {
         {
-            {
-                markup = '<span color="'.. text_color .. '" size="20000">' .. phrases[ math.random( #phrases ) ] .. '</span>',
-                align  = 'center',
-                widget = wibox.widget.textbox
-            },
+            phrase_widget,
             {
                 {
-                    create_button('log-out.svg', 'Log Out', accent_color, onlogout),
-                    create_button('lock.svg', 'Lock', accent_color, onlock),
-                    create_button('refresh-cw.svg', 'Reboot', accent_color, onreboot),
-                    create_button('moon.svg', 'Suspend', accent_color, onsuspend),
-                    create_button('power.svg', 'Power Off', accent_color, onpoweroff),
+                    create_button('log-out', 'Log Out', accent_color, onlogout),
+                    create_button('lock', 'Lock', accent_color, onlock),
+                    create_button('refresh-cw', 'Reboot', accent_color, onreboot),
+                    create_button('moon', 'Suspend', accent_color, onsuspend),
+                    create_button('power', 'Power Off', accent_color, onpoweroff),
                     id = 'buttons',
                     spacing = 8,
                     layout = wibox.layout.fixed.horizontal
@@ -101,12 +103,38 @@ local function launch(args)
     capi.keygrabber.run(function(_, key, event)
         if event == "release" then return end
         if key then
+            phrase_widget:set_text('')
             capi.keygrabber.stop()
             w.visible = false
         end
     end)
 end
 
+local function widget(args)
+    local res = wibox.widget {
+        {
+            {
+                image = WIDGET_DIR .. '/power.svg',
+                widget = wibox.widget.imagebox
+            },
+            margins = 4,
+            layout = wibox.container.margin
+        },
+        layout = wibox.layout.fixed.horizontal,
+    }
+
+    res:buttons(
+        awful.util.table.join(
+            awful.button({}, 1, function()
+                launch(args)
+            end)
+        ))
+
+    return res
+
+end
+
 return {
-    launch = launch
+    launch = launch,
+    widget = widget
 }
