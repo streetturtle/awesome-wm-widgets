@@ -6,7 +6,14 @@ Widget which allows to perform lock, reboot, log out, power off and sleep action
 
 # Installation
 
-Clone repo (if not cloned yet) under ~/.config/awesome, then
+Clone this (if not cloned yet) and the Awesome-buttons repos under **./.config/awesome/**
+
+```bash
+cd ./.config/awesome/
+git clone https://github.com/streetturtle/awesome-wm-widgets
+git clone https://github.com/streetturtle/awesome-buttons
+```
+Then 
 
 - to show by shortcut:
 
