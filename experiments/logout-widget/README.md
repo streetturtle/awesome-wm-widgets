@@ -47,9 +47,9 @@ Clone repo (if not cloned yet) under ~/.config/awesome, then
 | `accent_color` |  `beautiful.bg_focus` | The color of the buttons |
 | `text_color` |  `beautiful.fg_normal` | The color of text |
 | `phrases` |  `{'Goodbye!'}` | The table with phrase(s) to show, if more than one provided, the phrase is chosen randomly |
-| `onlogout` |  function () awesome.quit() end | Function which is called when the logout button is pressed |
+| `onlogout` | `function() awesome.quit() end` | Function which is called when the logout button is pressed |
 | `onlock` |  | Function which is called when the lock button is pressed |
 | `onreboot` |  | Function which is called when the reboot button is pressed |
-| `onsuspend` | `function () awful.spawn.with_shell("systemctl suspend") end` | Function which is called when the suspend button is pressed |
-| `onpoweroff` | `function () awful.spawn.with_shell("shutdown now") end` | Function which is called when the poweroff button is pressed |
+| `onsuspend` | `function() awful.spawn.with_shell("systemctl suspend") end` | Function which is called when the suspend button is pressed |
+| `onpoweroff` | `function() awful.spawn.with_shell("shutdown now") end` | Function which is called when the poweroff button is pressed |
 
