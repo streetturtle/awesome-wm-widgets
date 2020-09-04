@@ -20,10 +20,34 @@ local gfs = require("gears.filesystem")
 
 local HOME_DIR = os.getenv("HOME")
 
-local GET_PRS_CMD= [[bash -c "curl -s --show-error -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.uuid,values.author.links.avatar&q=%%28author.uuid+%%3D+%%22%s%%22+OR+reviewers.uuid+%%3D+%%22%s%%22+%%29+AND+state+%%3D+%%22OPEN%%22' | jq '.[] | unique'"]]
-local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o %s/.cache/awmw/bitbucket-widget/avatars/%s %s"]]
+local GET_PRS_CMD= [[bash -c "curl -s --show-error -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.uuid,values.author.links.avatar,values.source.branch,values.destination.branch&q=%%28author.uuid+%%3D+%%22%s%%22+OR+reviewers.uuid+%%3D+%%22%s%%22+%%29+AND+state+%%3D+%%22OPEN%%22' | jq '.[] | unique'"]]
+local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -L -n --create-dirs -o %s/.cache/awmw/bitbucket-widget/avatars/%s %s"]]
 
-local bitbucket_widget = {}
+local bitbucket_widget = wibox.widget {
+    {
+        {
+            id = 'icon',
+            widget = wibox.widget.imagebox
+        },
+        margins = 4,
+        layout = wibox.container.margin
+    },
+    {
+        id = "txt",
+        widget = wibox.widget.textbox
+    },
+    {
+        id = "new_pr",
+        widget = wibox.widget.textbox
+    },
+    layout = wibox.layout.fixed.horizontal,
+    set_text = function(self, new_value)
+        self.txt.text = new_value
+    end,
+    set_icon = function(self, new_value)
+        self:get_children_by_id('icon')[1]:set_image(new_value)
+    end
+}
 
 local function show_warning(message)
     naughty.notify{
@@ -32,12 +56,23 @@ local function show_warning(message)
         text = message}
 end
 
+local popup = awful.popup{
+    ontop = true,
+    visible = false,
+    shape = gears.shape.rounded_rect,
+    border_width = 1,
+    border_color = beautiful.bg_focus,
+    maximum_width = 400,
+    offset = { y = 5 },
+    widget = {}
+}
+
 local function worker(args)
 
     local args = args or {}
 
     local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/bitbucket-widget/bitbucket-icon-gradient-blue.svg'
-    local host = args.host or show_warning('Bitbucket host is unknown')
+    local host = args.host or show_warning('Bitbucket host is not set')
     local uuid = args.uuid or show_warning('UUID is not set')
     local workspace = args.workspace or show_warning('Workspace is not set')
     local repo_slug = args.repo_slug or show_warning('Repo slug is not set')
@@ -48,39 +83,7 @@ local function worker(args)
     local my_review_rows = {layout = wibox.layout.fixed.vertical}
     local rows = {layout = wibox.layout.fixed.vertical}
 
-    local popup = awful.popup{
-        ontop = true,
-        visible = false,
-        shape = gears.shape.rounded_rect,
-        border_width = 1,
-        border_color = beautiful.bg_focus,
-        maximum_width = 400,
-        offset = { y = 5 },
-        widget = {}
-    }
-
-    bitbucket_widget = wibox.widget {
-        {
-            {
-                image = icon,
-                widget = wibox.widget.imagebox
-            },
-            margins = 4,
-            layout = wibox.container.margin
-        },
-        {
-            id = "txt",
-            widget = wibox.widget.textbox
-        },
-        {
-            id = "new_pr",
-            widget = wibox.widget.textbox
-        },
-        layout = wibox.layout.fixed.horizontal,
-        set_text = function(self, new_value)
-            self.txt.text = new_value
-        end
-    }
+    bitbucket_widget:set_icon(icon)
 
     local update_widget = function(widget, stdout, stderr, _, _)
         if stderr ~= '' then
@@ -104,30 +107,30 @@ local function worker(args)
 
         for i = 0, #to_review_rows do to_review_rows[i]=nil end
         table.insert(to_review_rows, {
-            markup = '<span size="large" color="#ffffff">PRs to review</span>',
-            align = 'center',
-            forced_height = 20,
-            widget = wibox.widget.textbox
+            {
+                markup = '<span size="large" color="#ffffff">PRs to review</span>',
+                align = 'center',
+                forced_height = 20,
+                widget = wibox.widget.textbox
+            },
+            bg = beautiful.bg_normal,
+            widget = wibox.container.background
         })
 
         for i = 0, #my_review_rows do my_review_rows[i]=nil end
         table.insert(my_review_rows, {
-            markup = '<span size="large" color="#ffffff">My PRs</span>',
-            align = 'center',
-            forced_height = 20,
-            widget = wibox.widget.textbox
+            {
+                markup = '<span size="large" color="#ffffff">My PRs</span>',
+                align = 'center',
+                forced_height = 20,
+                widget = wibox.widget.textbox
+            },
+            bg = beautiful.bg_normal,
+            widget = wibox.container.background
         })
 
         for _, pr in ipairs(result) do
             local path_to_avatar = os.getenv("HOME") ..'/.cache/awmw/bitbucket-widget/avatars/' .. pr.author.uuid
-
-            if not gfs.file_readable(path_to_avatar) then
-                spawn.easy_async(string.format(
-                        DOWNLOAD_AVATAR_CMD,
-                        HOME_DIR,
-                        pr.author.uuid,
-                        pr.author.links.avatar.href))
-            end
 
             local row = wibox.widget {
                 {
@@ -140,13 +143,31 @@ local function worker(args)
                                 forced_height = 40,
                                 widget = wibox.widget.imagebox
                             },
+                            id = 'avatar',
                             margins = 8,
                             layout = wibox.container.margin
                         },
                         {
                             {
+                                id = 'title',
                                 markup = '<b>' .. pr.title .. '</b>',
                                 widget = wibox.widget.textbox
+                            },
+                            {
+                                {
+                                    text = pr.source.branch.name,
+                                    widget = wibox.widget.textbox
+                                },
+                                {
+                                    text = '->',
+                                    widget = wibox.widget.textbox
+                                },
+                                {
+                                    text = pr.destination.branch.name,
+                                    widget = wibox.widget.textbox
+                                },
+                                spacing = 8,
+                                layout = wibox.layout.fixed.horizontal
                             },
                             {
                                 text = pr.author.display_name,
@@ -160,13 +181,23 @@ local function worker(args)
                     margins = 8,
                     layout = wibox.container.margin
                 },
+                bg = beautiful.bg_normal,
                 widget = wibox.container.background
             }
+
+            if not gfs.file_readable(path_to_avatar) then
+                spawn.easy_async(string.format(
+                        DOWNLOAD_AVATAR_CMD,
+                        HOME_DIR,
+                        pr.author.uuid,
+                        pr.author.links.avatar.href), function() row:get_children_by_id('avatar')[1]:set_image(path_to_avatar) end)
+            end
+
 
             row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
             row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
 
-            row:buttons(
+            row:get_children_by_id('title')[1]:buttons(
                     awful.util.table.join(
                             awful.button({}, 1, function()
                                 spawn.with_shell("xdg-open " .. pr.links.html.href)
@@ -174,6 +205,40 @@ local function worker(args)
                             end)
                     )
             )
+            row:get_children_by_id('avatar')[1]:buttons(
+                    awful.util.table.join(
+                            awful.button({}, 1, function()
+                                spawn.with_shell(string.format('xdg-open "https://bitbucket.org/%s/%s/pull-requests?state=OPEN&author=%s"', workspace, repo_slug, pr.author.uuid))
+                                popup.visible = false
+                            end)
+                    )
+            )
+
+            local old_cursor, old_wibox
+            row:get_children_by_id('title')[1]:connect_signal("mouse::enter", function(c)
+                local wb = mouse.current_wibox
+                old_cursor, old_wibox = wb.cursor, wb
+                wb.cursor = "hand1"
+            end)
+            row:get_children_by_id('title')[1]:connect_signal("mouse::leave", function(c)
+                if old_wibox then
+                    old_wibox.cursor = old_cursor
+                    old_wibox = nil
+                end
+            end)
+
+            local old_cursor, old_wibox
+            row:get_children_by_id('avatar')[1]:connect_signal("mouse::enter", function(c)
+                local wb = mouse.current_wibox
+                old_cursor, old_wibox = wb.cursor, wb
+                wb.cursor = "hand1"
+            end)
+            row:get_children_by_id('avatar')[1]:connect_signal("mouse::leave", function(c)
+                if old_wibox then
+                    old_wibox.cursor = old_cursor
+                    old_wibox = nil
+                end
+            end)
 
             if (pr.author.uuid == '{' .. uuid .. '}') then
                 table.insert(my_review_rows, row)
@@ -202,7 +267,7 @@ local function worker(args)
     )
 
     watch(string.format(GET_PRS_CMD, host, workspace, repo_slug, uuid, uuid),
-            10, update_widget, bitbucket_widget)
+            60, update_widget, bitbucket_widget)
     return bitbucket_widget
 end
 
