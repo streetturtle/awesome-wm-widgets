@@ -65,18 +65,18 @@ local jira_widget = wibox.widget {
         self.txt.text = new_value
     end,
     set_icon = function(self, path)
-        self.a.b.c.image = path
+        self:get_children_by_id('c')[1]:set_image(path)
     end,
     is_everything_ok = function(self, is_ok)
         if is_ok then
-            self.a.b.d:set_visible(false)
-            self.a.b.c:set_opacity(1)
-            self.a.b.c:emit_signal('widget:redraw_needed')
+            self:get_children_by_id('d')[1]:set_visible(false)
+            self:get_children_by_id('c')[1]:set_opacity(1)
+            self:get_children_by_id('c')[1]:emit_signal('widget:redraw_needed')
         else
             self.txt:set_text('')
-            self.a.b.d:set_visible(true)
-            self.a.b.c:set_opacity(0.2)
-            self.a.b.c:emit_signal('widget:redraw_needed')
+            self:get_children_by_id('d')[1]:set_visible(true)
+            self:get_children_by_id('c')[1]:set_opacity(0.2)
+            self:get_children_by_id('c')[1]:emit_signal('widget:redraw_needed')
         end
     end
 }
@@ -91,7 +91,6 @@ local popup = awful.popup{
     offset = { y = 5 },
     widget = {}
 }
-
 
 local number_of_issues
 
@@ -117,7 +116,7 @@ local function worker(args)
                 show_warning(stderr)
                 warning_shown = true
                 widget:is_everything_ok(false)
-                tooltip:add_to_object(jira_widget)
+                tooltip:add_to_object(widget)
 
                 widget:connect_signal('mouse::enter', function()
                     tooltip.text = stderr
@@ -127,7 +126,7 @@ local function worker(args)
         end
 
         warning_shown = false
-        tooltip:remove_from_object(jira_widget)
+        tooltip:remove_from_object(widget)
         widget:is_everything_ok(true)
 
         local result = json.decode(stdout)
