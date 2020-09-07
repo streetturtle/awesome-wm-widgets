@@ -80,7 +80,7 @@ For the image button replace the textbox by the imagebox. For the icon and text 
 }
 ```
 
-Next step is to add some margins and a background. For background we use `wibox.container.background`, it allows to set the background itself (`bg = '#4C566A'`). By using alpha channel it's possible to make background transparent (`bg = '#00000000'`) which will be useful in the next step when adding hover effect. Apart from background, it also sets shape and borders, which allows to create 'outline' buttons (`shape_border_width = 1, shape_border_color = '#4C566A'`). So these three types are shown in the example below:
+Next step is to add some margins and a background. For background we'll use `wibox.container.background`, it allows to set the background itself (`bg = '#4C566A'`). By using alpha channel it's possible to make a transparent background (`bg = '#00000000'`) which will be useful in the next step when adding hover effect. Apart from a background, it also sets shape and borders, which allows to create 'outline' buttons (`shape_border_width = 1, shape_border_color = '#4C566A'`). These three types are shown in the example below:
 
 <div class="row">
   <div class="col s6">
@@ -113,7 +113,7 @@ local button = wibox.widget{
 
 ## Hover effects
 
-Now the button look like a button, but doesn't behave like one. First thing is to change colors when mouse hovers over the button. To do it we can leverage the signals: `mouse::enter` and `mouse::leave`. When using signals, we have access the to widget, so it's pretty simple to change the color. Below I use alpha channel to darken the color of the button a bit, for all three types of button discussed above it works well:
+Now the button looks like a button, but doesn't behave like one. First thing is to change colors when mouse cursor hovers over the button. To do it we can leverage the signals: `mouse::enter` and `mouse::leave`. When using signals, we have access the to widget, so it's pretty simple to change the color. Below I use alpha channel to darken the color of the button a bit, for all three types of button discussed above it works well:
 
 <div class="row">
   <div class="col s8">
@@ -177,7 +177,7 @@ button_basic:connect_signal("button::release", function(c) c:set_bg('#00000066')
 
 ## Onclick action
 
-To perform some action when the button is clicked you need to handle press/release signal. The important part here is to properly handle the button which was used, otherwise the any click will trigger the function execution:
+To perform some action when the button is clicked you need to handle press/release signal. The important part here is to properly handle the button which was used, otherwise any click will trigger the function execution:
 
 ```lua
 button_basic:connect_signal("button::press", function(c, _, _, button) 
@@ -188,7 +188,7 @@ button_basic:connect_signal("button::press", function(c, _, _, button)
 end)
 ```
 
-## Resume
+## Summary
 
 As you can see it is pretty easy to create interactive nice-looking buttons. But if you use multiple buttons in your widget, you may have quite a lot of boilerplate code. To solve this issue I created an [awesome-buttons](https://github.com/streetturtle/awesome-buttons) library, which simplifies this process:
 
@@ -198,4 +198,4 @@ awesomebuttons.with_icon{ type = 'outline', icon = 'zoom-in', color = '#f8f', sh
 awesomebuttons.with_icon_and_text{ icon = 'check-circle', text = 'With Icon!', color = '#f48' },
 ```
 
-Please refer to the repo's README for more details.
+Please refer to the repo's README for more details. It is still in progress. 
