@@ -2,7 +2,9 @@
 
 Widget which allows to perform lock, reboot, log out, power off and sleep actions. It can be called either by a shortcut, or by clicking on a widget in wibar.
 
-![screenshot](./screenshot.gif)
+<p align="center">
+    <img src="/streetturtle/awesome-wm-widgets/raw/master/experiments/logout-widget/screenshot.gif" alt="screenshot">
+</p>
 
 # Installation
 
