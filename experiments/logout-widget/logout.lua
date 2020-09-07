@@ -12,7 +12,7 @@ local capi = {keygrabber = keygrabber }
 local wibox = require("wibox")
 local gears = require("gears")
 local beautiful = require("beautiful")
-local fancybuttons = require("awesome-buttons.awesome-buttons")
+local awesomebuttons = require("awesome-buttons.awesome-buttons")
 
 
 local HOME_DIR = os.getenv("HOME")
@@ -38,7 +38,7 @@ local action = wibox.widget {
 
 local function create_button(icon_name, action_name, color, onclick)
 
-    local button = fancybuttons.with_icon{ type = 'basic', icon = icon_name, color = color, onclick = onclick }
+    local button = awesomebuttons.with_icon{ type = 'basic', icon = icon_name, color = color, onclick = onclick }
     button:connect_signal("mouse::enter", function(c) action:set_text(action_name) end)
     button:connect_signal("mouse::leave", function(c) action:set_text(' ') end)
     return button
@@ -52,10 +52,10 @@ local function launch(args)
     local phrases = args.phrases or {'Goodbye!'}
 
     local onlogout = args.onlogout or function () awesome.quit() end
-    local onlock = args.onlock
-    local onreboot = args.onreboot
-    local onsuspend = args.onsuspend or function () awful.spawn.with_shell("systemctl suspend") end
-    local onpoweroff = args.onpoweroff or function () awful.spawn.with_shell("shutdown now") end
+    local onlock = args.onlock or function() awful.spawn.with_shell("systemctl suspend") end
+    local onreboot = args.onreboot or function() awful.spawn.with_shell("reboot") end
+    local onsuspend = args.onsuspend or function() awful.spawn.with_shell("systemctl suspend") end
+    local onpoweroff = args.onpoweroff or function() awful.spawn.with_shell("shutdown now") end
 
     w:set_bg(bg_color)
 
@@ -110,10 +110,12 @@ local function launch(args)
 end
 
 local function widget(args)
+    local icon = args.icon or WIDGET_DIR .. '/power.svg'
+
     local res = wibox.widget {
         {
             {
-                image = WIDGET_DIR .. '/power.svg',
+                image = icon,
                 widget = wibox.widget.imagebox
             },
             margins = 4,
