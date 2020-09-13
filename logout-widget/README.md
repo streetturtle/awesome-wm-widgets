@@ -57,9 +57,9 @@ Then
 
 Some color themes for inspiration:
 
-![nord](logout-nord.png)
-![outrun](logout-outrun.png)
-![dark](logout-dark.png)
+![nord](./logout-nord.png)
+![outrun](./logout-outrun.png)
+![dark](./logout-dark.png)
 
 ```lua
 logout.launch{
