@@ -11,7 +11,11 @@ for D in *; do
         sed -i '1s/^/---\nlayout: page\n---\n/' ${pages_dir}/_widgets/${D}.md
 
         mkdir -p ${pages_dir}/assets/img/screenshots/${D}
-        cp ${D}/*.{png,gif,jpg,svg} ${pages_dir}/assets/img/screenshots/${D}
+
+        
+        find ${D}/ \( -name '*.jpg' -o -name '*.png' -o -name '*.gif' -o -name '*.svg' \) -exec cp '{}' ${pages_dir}/assets/img/screenshots/${D} \;
+
+
 
         sed -i "s/](./](..\/awesome-wm-widgets\/assets\/img\/screenshots\/$D/g" ${pages_dir}/_widgets/${D}.md
     fi
