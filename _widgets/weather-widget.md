@@ -3,6 +3,9 @@ layout: page
 ---
 # Weather widget
 
+[![GitHub issues by-label](../awesome-wm-widgets/assets/img/screenshots/weather-widgetttps://img.shields.io/github/issues-raw/streetturtle/awesome-wm-widgets/weather)](../awesome-wm-widgets/assets/img/screenshots/weather-widgetttps://github.com/streetturtle/awesome-wm-widgets/labels/weather)
+
+
 Widget showing current, hourly and daily weather forecast.
 
 <p align="center">

@@ -3,9 +3,14 @@ layout: page
 ---
 # Docker Widget
 
-The widget allows to manage containers, namely start/stop/pause/unpause:
+[![GitHub issues by-label](../awesome-wm-widgets/assets/img/screenshots/docker-widgetttps://img.shields.io/github/issues-raw/streetturtle/awesome-wm-widgets/docker)](../awesome-wm-widgets/assets/img/screenshots/docker-widgetttps://github.com/streetturtle/awesome-wm-widgets/labels/docker)
+![Twitter URL](../awesome-wm-widgets/assets/img/screenshots/docker-widgetttps://img.shields.io/twitter/url?url=https%3A%2F%2Fgithub.com%2Fstreetturtle%2Fawesome-wm-widgets%2Fedit%2Fmaster%2Fdocker-widget)
 
-![screenshot](../awesome-wm-widgets/assets/img/screenshots/docker-widget/docker.gif)
+The widget allows to manage docker containers, namely start/stop/pause/unpause:
+
+<p align="center">
+    <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/docker-widget/docker.gif"/>
+</p>
 
 ## Customization
 
