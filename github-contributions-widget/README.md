@@ -18,10 +18,10 @@ It is possible to customize the widget by providing a table with all or some of 
 
 Few more screenshots:
 
-1000 days:
+1000 days, with border:  
 ![screenshot1](./screenshot1.jpg)
 
-No borders:
+365 days, no border:  
 ![screenshot2](./screenshot2.jpg)
 
 
