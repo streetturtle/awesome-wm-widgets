@@ -19,6 +19,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `uuid` | Required | UUID |
 | `workspace` | Required | Workspace ID|
 | `repo_slug` | Required | Repository slug |
+| `timeout` | 60 | How often in seconds the widget refreshes |
 
 ## Installation
 

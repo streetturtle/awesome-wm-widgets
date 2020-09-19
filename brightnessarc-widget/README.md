@@ -14,6 +14,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `color` | `beautiful.fg_color` | Color of the arc |
 | `bg_color` | `#ffffff11` | Color of the arc's background |
 | `path_to_icon` | `/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg` | Path to the icon |
+| `timeout` | 1 | How often in seconds the widget refreshes |
 
 ### Example:
 
