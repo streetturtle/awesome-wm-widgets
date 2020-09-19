@@ -32,6 +32,7 @@ local function worker(args)
     local width = args.width or 50
     local shape = args.shape or 'bar'
     local margins = args.margins or 10
+    local timeout = args.timeout or 1
 
     local get_volume_cmd = args.get_volume_cmd or GET_VOLUME_CMD
     local inc_volume_cmd = args.inc_volume_cmd or INC_VOLUME_CMD
@@ -77,7 +78,7 @@ local function worker(args)
         end)
     end)
 
-    watch(get_volume_cmd, 1, update_graphic, volumebar_widget)
+    watch(get_volume_cmd, timeout, update_graphic, volumebar_widget)
 
     return volumebar_widget
 end

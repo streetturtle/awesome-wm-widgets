@@ -96,6 +96,7 @@ local function worker(args)
     local args = args or {}
 
     local interface = args.interface or '*'
+    local timeout = args.timeout or 1
 
     local update_widget = function(widget, stdout, stderr)
 
@@ -119,7 +120,7 @@ local function worker(args)
         prev_tx = cur_tx
     end
 
-    watch(string.format([[bash -c "cat /sys/class/net/%s/statistics/*_bytes"]], interface), 1, update_widget, net_speed_widget)
+    watch(string.format([[bash -c "cat /sys/class/net/%s/statistics/*_bytes"]], interface), timeout, update_widget, net_speed_widget)
 
     return net_speed_widget
 

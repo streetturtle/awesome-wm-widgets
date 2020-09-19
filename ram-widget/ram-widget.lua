@@ -7,6 +7,7 @@ local ramgraph_widget = {}
 local function worker(args)
 
     local args = args or {}
+    local timeout = args.timeout or 1
 
     --- Main ram widget shown on wibar
     ramgraph_widget = wibox.widget {
@@ -48,7 +49,7 @@ local function worker(args)
         return math.floor(value / (total+total_swap) * 100 + 0.5) .. '%'
     end
 
-    watch('bash -c "LANGUAGE=en_US.UTF-8 free | grep -z Mem.*Swap.*"', 1,
+    watch('bash -c "LANGUAGE=en_US.UTF-8 free | grep -z Mem.*Swap.*"', timeout,
         function(widget, stdout, stderr, exitreason, exitcode)
             total, used, free, shared, buff_cache, available, total_swap, used_swap, free_swap =
                 stdout:match('(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*Swap:%s*(%d+)%s*(%d+)%s*(%d+)')

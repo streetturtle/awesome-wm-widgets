@@ -38,6 +38,7 @@ local function worker(args)
         text = 'Gerrit host is unknown'
     }
     local query = args.query or 'is:reviewer AND status:open AND NOT is:wip'
+    local timeout = args.timeout or 10
 
     local current_number_of_reviews
     local previous_number_of_reviews = 0
@@ -220,7 +221,7 @@ local function worker(args)
         )
     )
 
-    watch(string.format(GET_CHANGES_CMD, host, query:gsub(" ", "+")), 10, update_widget, gerrit_widget)
+    watch(string.format(GET_CHANGES_CMD, host, query:gsub(" ", "+")), timeout, update_widget, gerrit_widget)
     return gerrit_widget
 end
 

@@ -26,6 +26,7 @@ local function worker(args)
     local arc_thickness = args.arc_thickness or 2
     local show_current_level = args.show_current_level or false
     local size = args.size or 18
+    local timeout = args.timeout or 10
 
     local main_color = args.main_color or beautiful.fg_color
     local bg_color = args.bg_color or '#ffffff11'
@@ -114,7 +115,7 @@ local function worker(args)
         end
     end
 
-    watch("acpi", 10, update_widget, widget)
+    watch("acpi", timeout, update_widget, widget)
 
     -- Popup with battery info
     local notification

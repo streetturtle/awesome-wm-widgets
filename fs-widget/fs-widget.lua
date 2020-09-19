@@ -9,6 +9,7 @@ local storage_bar_widget = {}
 local function worker(args)
     local args = args or {}
     local mounts = args.mounts or {'/'}
+    local timeout = args.timeout or 60
 
     storage_bar_widget = wibox.widget {
         max_value = 100,
@@ -78,7 +79,7 @@ local function worker(args)
     local disk_widget = wibox.container.margin(storage_bar_widget, 0, 0, 0, 0)
 
     local disks = {}
-    watch([[bash -c "df | tail -n +2"]], 60,
+    watch([[bash -c "df | tail -n +2"]], timeout,
         function(widget, stdout)
           for line in stdout:gmatch("[^\r\n$]+") do
             local filesystem, size, used, avail, perc, mount =

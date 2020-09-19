@@ -76,6 +76,7 @@ local function worker(args)
     local uuid = args.uuid or show_warning('UUID is not set')
     local workspace = args.workspace or show_warning('Workspace is not set')
     local repo_slug = args.repo_slug or show_warning('Repo slug is not set')
+    local timeout = args.timeout or 60
 
     local current_number_of_prs
 
@@ -267,7 +268,7 @@ local function worker(args)
     )
 
     watch(string.format(GET_PRS_CMD, host, workspace, repo_slug, uuid, uuid),
-            60, update_widget, bitbucket_widget)
+            timeout, update_widget, bitbucket_widget)
     return bitbucket_widget
 end
 

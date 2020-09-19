@@ -28,6 +28,7 @@ local function worker(args)
     local dec_brightness_cmd = args.dec_brightness_cmd or DEC_BRIGHTNESS_CMD
     local path_to_icon = args.path_to_icon or PATH_TO_ICON
     local font = args.font or 'Play 9'
+    local timeout = args.timeout or 1
 
     local brightness_text = wibox.widget.textbox()
     brightness_text:set_font(font)
@@ -61,7 +62,7 @@ local function worker(args)
         end
     end)
 
-    watch(get_brightness_cmd, 1, update_widget, brightness_text)
+    watch(get_brightness_cmd, timeout, update_widget, brightness_text)
 
     return widget
 end

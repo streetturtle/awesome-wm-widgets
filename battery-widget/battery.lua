@@ -33,6 +33,7 @@ local function worker(args)
 
     local display_notification = args.display_notification or false
     local position = args.notification_position or "top_right"
+    local timeout = args.timeout or 10
 
     local warning_msg_title = args.warning_msg_title or 'Huston, we have a problem'
     local warning_msg_text = args.warning_msg_text or 'Battery is dying'
@@ -116,7 +117,7 @@ local function worker(args)
     local last_battery_check = os.time()
     local batteryType = "battery-good-symbolic"
 
-    watch("acpi -i", 10,
+    watch("acpi -i", timeout,
     function(widget, stdout, stderr, exitreason, exitcode)
         local battery_info = {}
         local capacities = {}
