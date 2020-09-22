@@ -96,6 +96,7 @@ local function worker(args)
     local color = args.color or beautiful.fg_normal
     local enable_kill_button = args.enable_kill_button or false
     local process_info_max_length = args.process_info_max_length or -1
+    local timeout = args.timeout or 1
 
     local cpugraph_widget = wibox.widget {
         max_value = 100,
@@ -138,7 +139,7 @@ local function worker(args)
     local cpu_widget = wibox.container.margin(wibox.container.mirror(cpugraph_widget, { horizontal = true }), 0, 0, 0, 2)
 
     local cpus = {}
-    watch([[bash -c "cat /proc/stat | grep '^cpu.' ; ps -eo '%p|%c|%C|' -o "%mem" -o '|%a' --sort=-%cpu | head -11 | tail -n +2"]], 1,
+    watch([[bash -c "cat /proc/stat | grep '^cpu.' ; ps -eo '%p|%c|%C|' -o "%mem" -o '|%a' --sort=-%cpu | head -11 | tail -n +2"]], timeout,
             function(widget, stdout)
                 local i = 1
                 local j = 1

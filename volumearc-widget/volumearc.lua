@@ -33,6 +33,7 @@ local function worker(args)
     local path_to_icon = args.path_to_icon or PATH_TO_ICON
     local thickness = args.thickness or 2
     local height = args.height or 18
+    local timeout = args.timeout or 1
 
     local get_volume_cmd = args.get_volume_cmd or GET_VOLUME_CMD
     local inc_volume_cmd = args.inc_volume_cmd or INC_VOLUME_CMD
@@ -81,7 +82,7 @@ local function worker(args)
     end
     volumearc:connect_signal("button::press", button_press)
 
-    watch(get_volume_cmd, 1, update_graphic, volumearc)
+    watch(get_volume_cmd, timeout, update_graphic, volumearc)
 
     return volumearc
 end

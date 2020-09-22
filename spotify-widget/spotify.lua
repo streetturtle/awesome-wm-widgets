@@ -35,6 +35,7 @@ local function worker(args)
     local dim_opacity = args.dim_opacity or 0.2
     local max_length = args.max_length or 15
     local show_tooltip = args.show_tooltip == nil and false or args.show_tooltip
+    local timeout = args.timeout or 1
 
     local cur_artist = ''
     local cur_title = ''
@@ -106,8 +107,8 @@ local function worker(args)
         end
     end
 
-    watch(GET_SPOTIFY_STATUS_CMD, 1, update_widget_icon, spotify_widget)
-    watch(GET_CURRENT_SONG_CMD, 1, update_widget_text, spotify_widget)
+    watch(GET_SPOTIFY_STATUS_CMD, timeout, update_widget_icon, spotify_widget)
+    watch(GET_CURRENT_SONG_CMD, timeout, update_widget_text, spotify_widget)
 
     --- Adds mouse controls to the widget:
     --  - left click - play/pause

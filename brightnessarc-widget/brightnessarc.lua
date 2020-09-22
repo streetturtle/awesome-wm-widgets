@@ -30,6 +30,7 @@ local function worker(args)
     local color = args.color or beautiful.fg_color
     local bg_color = args.bg_color or '#ffffff11'
     local path_to_icon = args.path_to_icon or PATH_TO_ICON
+    local timeout = args.timeout or 1
 
     local icon = {
         id = "icon",
@@ -66,7 +67,7 @@ local function worker(args)
         end
     end)
 
-    watch(get_brightness_cmd, 1, update_widget, widget)
+    watch(get_brightness_cmd, timeout, update_widget, widget)
 
     return widget
 end

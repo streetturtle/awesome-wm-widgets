@@ -13,6 +13,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `dec_brightness_cmd` | `light -U 5`| Decrease brightness |
 | `path_to_icon` | `/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg` | Path to the icon |
 | `font` | `Play 9` | Font |
+| `timeout` | 1 | How often in seconds the widget refreshes |
 
 ### Example:
 
