@@ -19,6 +19,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `host` | Required | Ex: _http://jira.tmnt.com_ |
 | `query` | `jql=assignee=currentuser() AND resolution=Unresolved` | JQL query |
 | `icon` | `~/.config/awesome/awesome-wm-widgets/jira-widget/jira-mark-gradient-blue.svg` | Path to the icon |
+| `timeout` | 10 | How often in seconds the widget refreshes |
 
 ## Installation
 

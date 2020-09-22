@@ -28,6 +28,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `margin_left`|0| The left margin of the widget|
 | `display_notification` | `false` | Display a notification on mouseover |
 | `notification_position` | `top_right` | The notification position |
+| `timeout` | 10 | How often in seconds the widget refreshes |
 | `warning_msg_title` | _Huston, we have a problem_ | Title of the warning popup |
 | `warning_msg_text` | _Battery is dying_ | Text of the warning popup |
 | `warning_msg_position` | `bottom_right` | Position of the warning popup |

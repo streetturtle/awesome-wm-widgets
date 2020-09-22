@@ -23,6 +23,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `icon`| `/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg`| Path to the icon |
 | `host` | Required | Ex https://gerrit.tmnt.com |
 | `query` | `is:reviewer AND status:open AND NOT is:wip` | Query to retrieve reviews |
+| `timeout` | 10 | How often in seconds the widget refreshes |
 
 ## Prerequisite
 

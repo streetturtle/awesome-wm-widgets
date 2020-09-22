@@ -107,6 +107,7 @@ local function worker(args)
     local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/jira-widget/jira-mark-gradient-blue.svg'
     local host = args.host or show_warning('Jira host is unknown')
     local query = args.query or 'jql=assignee=currentuser() AND resolution=Unresolved'
+    local timeout = args.timeout or 10
 
     jira_widget:set_icon(icon)
 
@@ -229,7 +230,7 @@ local function worker(args)
             )
     )
     watch(string.format(GET_ISSUES_CMD, host, query:gsub(' ', '+')),
-            10, update_widget, jira_widget)
+            timeout, update_widget, jira_widget)
     return jira_widget
 end
 

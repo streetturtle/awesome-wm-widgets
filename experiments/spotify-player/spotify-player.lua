@@ -34,6 +34,8 @@ local function worker(args)
 
     local args = args or {}
 
+    local timeout = args.timeout or 1
+
     local function get_artwork(track_id, url)
         if ((url ~= nil or url ~='') and not gfs.file_readable('/tmp/' .. track_id)) then
             spawn.easy_async('touch /tmp/' .. track_id, function()
@@ -191,7 +193,7 @@ local function worker(args)
             )
     )
 
-    watch('sp metadata', 1, update_widget, spotify_player)
+    watch('sp metadata', timeout, update_widget, spotify_player)
 
     return spotify_player
 end

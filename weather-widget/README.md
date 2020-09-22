@@ -30,6 +30,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | show_daily_forecast | false | Show daily forecast section |
 | icon_pack_name | weather-underground-icons | Name of the icon pack, could be `weather-underground-icon` or `VitalyGorbachev` or create your own, more details below |
 | icons_extension | `.svg` | File extension of icons in the pack |
+| timeout | 120 | How often in seconds the widget refreshes |
 
 
 ### Icons:

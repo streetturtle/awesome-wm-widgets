@@ -29,6 +29,7 @@ local function worker(args)
     local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/stackoverflow-widget/so-icon.svg'
     local limit = args.limit or 5
     local tagged = args.tagged or 'awesome-wm'
+    local timeout = args.timeout or 300
 
     local rows = {
         { widget = wibox.widget.textbox },
@@ -115,7 +116,7 @@ local function worker(args)
                     end)
             )
     )
-    watch(string.format(GET_QUESTIONS_CMD, limit, tagged),  300, update_widget, stackoverflow_widget)
+    watch(string.format(GET_QUESTIONS_CMD, limit, tagged),  timeout, update_widget, stackoverflow_widget)
     return stackoverflow_widget
 end
 
