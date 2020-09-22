@@ -16,7 +16,7 @@ local awesomebuttons = require("awesome-buttons.awesome-buttons")
 
 
 local HOME_DIR = os.getenv("HOME")
-local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/experiments/logout-widget'
+local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/logout-widget'
 
 
 local w = wibox {
@@ -35,10 +35,22 @@ local action = wibox.widget {
     widget = wibox.widget.textbox
 }
 
+local phrase_widget = wibox.widget{
+    align  = 'center',
+    widget = wibox.widget.textbox
+}
 
 local function create_button(icon_name, action_name, color, onclick)
 
-    local button = awesomebuttons.with_icon{ type = 'basic', icon = icon_name, color = color, onclick = onclick }
+    local button = awesomebuttons.with_icon {
+        type = 'basic',
+        icon = icon_name,
+        color = color,
+        onclick = function()
+            onclick()
+            w.visible = false
+        end
+    }
     button:connect_signal("mouse::enter", function(c) action:set_text(action_name) end)
     button:connect_signal("mouse::leave", function(c) action:set_text(' ') end)
     return button
@@ -58,12 +70,7 @@ local function launch(args)
     local onpoweroff = args.onpoweroff or function() awful.spawn.with_shell("shutdown now") end
 
     w:set_bg(bg_color)
-
-    local phrase_widget = wibox.widget{
-        markup = '<span color="'.. text_color .. '" size="20000">' .. phrases[ math.random( #phrases ) ] .. '</span>',
-        align  = 'center',
-        widget = wibox.widget.textbox
-    }
+    phrase_widget:set_markup('<span color="'.. text_color .. '" size="20000">' .. phrases[ math.random( #phrases ) ] .. '</span>')
 
     w:setup {
         {
@@ -127,7 +134,13 @@ local function widget(args)
     res:buttons(
         awful.util.table.join(
             awful.button({}, 1, function()
-                launch(args)
+                if w.visible then
+                    phrase_widget:set_text('')
+                    capi.keygrabber.stop()
+                    w.visible = false
+                else
+                    launch(args)
+                end
             end)
         ))
 
