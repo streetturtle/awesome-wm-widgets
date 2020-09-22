@@ -25,6 +25,7 @@ local battery_widget = {}
 local function worker(args)
     local args = args or {}
 
+    local bat_num = args.bat_num or 0
     local font = args.font or 'Play 8'
     local path_to_icons = args.path_to_icons or "/usr/share/icons/Arc/status/symbolic/"
     local show_current_level = args.show_current_level or false
@@ -43,6 +44,7 @@ local function worker(args)
         enable_battery_warning = true
     end
 
+    local bat_expr = 'Battery ' .. bat_num
     if not gfs.dir_readable(path_to_icons) then
         naughty.notify{
             title = "Battery Widget",
@@ -73,7 +75,7 @@ local function worker(args)
     -- One way of creating a pop-up notification - naughty.notify
     local notification
     local function show_battery_status(batteryType)
-        awful.spawn.easy_async([[bash -c 'acpi']],
+        awful.spawn.easy_async('bash -c "acpi | grep \'' .. bat_expr .. '\'"',
         function(stdout, _, _, _)
             naughty.destroy(notification)
             notification = naughty.notify{
@@ -116,7 +118,7 @@ local function worker(args)
     local last_battery_check = os.time()
     local batteryType = "battery-good-symbolic"
 
-    watch("acpi -i", 10,
+    watch('bash -c "acpi -i | grep \'' .. bat_expr .. '\'"', 10,
     function(widget, stdout, stderr, exitreason, exitcode)
         local battery_info = {}
         local capacities = {}
