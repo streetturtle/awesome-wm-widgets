@@ -49,6 +49,7 @@ local function create_button(icon_name, action_name, color, onclick)
         onclick = function()
             onclick()
             w.visible = false
+            capi.keygrabber.stop()
         end
     }
     button:connect_signal("mouse::enter", function(c) action:set_text(action_name) end)
