@@ -34,7 +34,7 @@ local function worker(args)
     local medium_level_color = args.medium_level_color or '#c0ca33'
     local charging_color = args.charging_color or '#43a047'
 
-    local warning_msg_title = args.warning_msg_title or 'Huston, we have a problem'
+    local warning_msg_title = args.warning_msg_title or 'Houston, we have a problem'
     local warning_msg_text = args.warning_msg_text or 'Battery is dying'
     local warning_msg_position = args.warning_msg_position or 'bottom_right'
     local warning_msg_icon = args.warning_msg_icon or HOME .. '/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg'
