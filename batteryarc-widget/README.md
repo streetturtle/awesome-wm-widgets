@@ -1,5 +1,7 @@
 # Batteryarc widget
 
+[![GitHub issues by-label](https://img.shields.io/github/issues-raw/streetturtle/awesome-wm-widgets/batteryarc)](https://github.com/streetturtle/awesome-wm-widgets/labels/batteryarc)
+
 This widget is more informative version of [battery widget](https://github.com/streetturtle/awesome-wm-widgets/tree/master/battery-widget).
 
 Depending of the battery status it could look following ways:
