@@ -74,18 +74,20 @@ local function launch(args)
     local onpoweroff = args.onpoweroff or function() awful.spawn.with_shell("shutdown now") end
 
     w:set_bg(bg_color)
-    phrase_widget:set_markup('<span color="'.. text_color .. '" size="20000">' .. phrases[ math.random( #phrases ) ] .. '</span>')
+    if #phrases > 0 then
+        phrase_widget:set_markup('<span color="'.. text_color .. '" size="20000">' .. phrases[ math.random( #phrases ) ] .. '</span>')
+    end
 
     w:setup {
         {
             phrase_widget,
             {
                 {
-                    create_button('log-out', 'Log Out', accent_color, onlogout, icon_size, icon_margin),
-                    create_button('lock', 'Lock', accent_color, onlock, icon_size, icon_margin),
-                    create_button('refresh-cw', 'Reboot', accent_color, onreboot, icon_size, icon_margin),
-                    create_button('moon', 'Suspend', accent_color, onsuspend, icon_size, icon_margin),
-                    create_button('power', 'Power Off', accent_color, onpoweroff, icon_size, icon_margin),
+                    create_button('log-out', 'Log Out (l)', accent_color, onlogout, icon_size, icon_margin),
+                    create_button('lock', 'Lock (k)', accent_color, onlock, icon_size, icon_margin),
+                    create_button('refresh-cw', 'Reboot (r)', accent_color, onreboot, icon_size, icon_margin),
+                    create_button('moon', 'Suspend (u)', accent_color, onsuspend, icon_size, icon_margin),
+                    create_button('power', 'Power Off (s)', accent_color, onpoweroff, icon_size, icon_margin),
                     id = 'buttons',
                     spacing = 8,
                     layout = wibox.layout.fixed.horizontal
@@ -113,9 +115,22 @@ local function launch(args)
     capi.keygrabber.run(function(_, key, event)
         if event == "release" then return end
         if key then
-            phrase_widget:set_text('')
-            capi.keygrabber.stop()
-            w.visible = false
+            if key == 'Escape' then
+                phrase_widget:set_text('')
+                capi.keygrabber.stop()
+                w.visible = false
+            elseif key == 's' then onpoweroff()
+            elseif key == 'r' then onreboot()
+            elseif key == 'u' then onsuspend()
+            elseif key == 'k' then onlock()
+            elseif key == 'l' then onlogout()
+            end
+
+            if key == 'Escape' or string.match("srukl", key) then
+                phrase_widget:set_text('')
+                capi.keygrabber.stop()
+                w.visible = false
+            end
         end
     end)
 end
