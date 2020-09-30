@@ -40,12 +40,14 @@ local phrase_widget = wibox.widget{
     widget = wibox.widget.textbox
 }
 
-local function create_button(icon_name, action_name, color, onclick)
+local function create_button(icon_name, action_name, color, onclick, icon_size, icon_margin)
 
     local button = awesomebuttons.with_icon {
         type = 'basic',
         icon = icon_name,
         color = color,
+        icon_size = icon_size,
+        icon_margin = icon_margin,
         onclick = function()
             onclick()
             w.visible = false
@@ -62,6 +64,8 @@ local function launch(args)
     local accent_color = args.accent_color or beautiful.bg_focus
     local text_color = args.text_color or beautiful.fg_normal
     local phrases = args.phrases or {'Goodbye!'}
+    local icon_size = args.icon_size or 40
+    local icon_margin = args.icon_margin or 16
 
     local onlogout = args.onlogout or function () awesome.quit() end
     local onlock = args.onlock or function() awful.spawn.with_shell("systemctl suspend") end
@@ -77,11 +81,11 @@ local function launch(args)
             phrase_widget,
             {
                 {
-                    create_button('log-out', 'Log Out', accent_color, onlogout),
-                    create_button('lock', 'Lock', accent_color, onlock),
-                    create_button('refresh-cw', 'Reboot', accent_color, onreboot),
-                    create_button('moon', 'Suspend', accent_color, onsuspend),
-                    create_button('power', 'Power Off', accent_color, onpoweroff),
+                    create_button('log-out', 'Log Out', accent_color, onlogout, icon_size, icon_margin),
+                    create_button('lock', 'Lock', accent_color, onlock, icon_size, icon_margin),
+                    create_button('refresh-cw', 'Reboot', accent_color, onreboot, icon_size, icon_margin),
+                    create_button('moon', 'Suspend', accent_color, onsuspend, icon_size, icon_margin),
+                    create_button('power', 'Power Off', accent_color, onpoweroff, icon_size, icon_margin),
                     id = 'buttons',
                     spacing = 8,
                     layout = wibox.layout.fixed.horizontal

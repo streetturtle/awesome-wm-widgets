@@ -63,7 +63,7 @@ Some color themes for inspiration:
 
 ```lua
 logout.launch{
-    bg_color = "#261447", accent_color = "#ff4365", text_color = '#f706cf', -- outrun
+    bg_color = "#261447", accent_color = "#ff4365", text_color = '#f706cf', icon_size = 40, icon_margin = 16, -- outrun
     -- bg_color = "#0b0c10", accent_color = "#1f2833", text_color = '#66fce1', -- dark
     -- bg_color = "#3B4252", accent_color = "#88C0D0", text_color = '#D8DEE9', -- nord
     phrases = {"exit(0)", "Don't forget to be awesome.", "Yippee ki yay!"},
