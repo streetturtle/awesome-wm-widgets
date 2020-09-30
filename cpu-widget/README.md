@@ -1,5 +1,7 @@
 # CPU widget
 
+[![GitHub issues by-label](https://img.shields.io/github/issues-raw/streetturtle/awesome-wm-widgets/cpu)](https://github.com/streetturtle/awesome-wm-widgets/labels/cpu)
+
 This widget shows the average CPU load among all cores of the machine:
 
 ![screenshot](./cpu.gif)
