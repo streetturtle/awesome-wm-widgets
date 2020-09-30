@@ -45,6 +45,8 @@ Then
 | Name | Default | Description |
 |---|---|---|
 | `icon` | `power.svg` | If used as widget - the path to the widget's icon |
+| `icon_size` | `40` | Size of the icon |
+| `icon_margin` | `16` | Margin around the icon |
 | `bg_color` |  `beautiful.bg_normal` | The color the background of the |
 | `accent_color` | `beautiful.bg_focus` | The color of the buttons |
 | `text_color` | `beautiful.fg_normal` | The color of text |
