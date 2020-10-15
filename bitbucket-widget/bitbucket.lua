@@ -19,8 +19,9 @@ local beautiful = require("beautiful")
 local gfs = require("gears.filesystem")
 
 local HOME_DIR = os.getenv("HOME")
+local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/bitbucket-widget/'
 
-local GET_PRS_CMD= [[bash -c "curl -s --show-error -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.title,values.links.html,values.author.display_name,values.author.uuid,values.author.links.avatar,values.source.branch,values.destination.branch&q=%%28author.uuid+%%3D+%%22%s%%22+OR+reviewers.uuid+%%3D+%%22%s%%22+%%29+AND+state+%%3D+%%22OPEN%%22' | jq '.[] | unique'"]]
+local GET_PRS_CMD= [[bash -c "curl -s --show-error -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.participants.approved,values.title,values.links.html,values.author.display_name,values.author.uuid,values.author.links.avatar,values.source.branch,values.destination.branch,values.comment_count,values.created_on&q=reviewers.uuid+%%3D+%%22%s%%22+AND+state+%%3D+%%22OPEN%%22' | jq '.[] '"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -L -n --create-dirs -o %s/.cache/awmw/bitbucket-widget/avatars/%s %s"]]
 
 local bitbucket_widget = wibox.widget {
@@ -67,11 +68,54 @@ local popup = awful.popup{
     widget = {}
 }
 
+--- Converts string representation of date (2020-06-02T11:25:27Z) to date
+local function parse_date(date_str)
+    local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)%Z"
+    local y, m, d, h, min, sec, mil = date_str:match(pattern)
+
+    return os.time{year = y, month = m, day = d, hour = h, min = min, sec = sec}
+end
+
+--- Converts seconds to "time ago" represenation, like '1 hour ago'
+local function to_time_ago(seconds)
+    local days = seconds / 86400
+    if days > 1 then
+        days = math.floor(days + 0.5)
+        return days .. (days == 1 and ' day' or ' days') .. ' ago'
+    end
+
+    local hours = (seconds % 86400) / 3600
+    if hours > 1 then
+        hours = math.floor(hours + 0.5)
+        return hours .. (hours == 1 and ' hour' or ' hours') .. ' ago'
+    end
+
+    local minutes = ((seconds % 86400) % 3600) / 60
+    if minutes > 1 then
+        minutes = math.floor(minutes + 0.5)
+        return minutes .. (minutes == 1 and ' minute' or ' minutes') .. ' ago'
+    end
+end
+
+local function ellipsize(text, length)
+    return (text:len() > length and length > 0)
+        and text:sub(0, length - 3) .. '...'
+        or text
+end
+
+local function count_approves(participants)
+    local res = 0
+    for i = 1, #participants do
+        if participants[i]['approved'] then res = res + 1 end
+    end
+    return res
+end
+
 local function worker(args)
 
     local args = args or {}
 
-    local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/bitbucket-widget/bitbucket-icon-gradient-blue.svg'
+    local icon = args.icon or WIDGET_DIR .. '/bitbucket-icon-gradient-blue.svg'
     local host = args.host or show_warning('Bitbucket host is not set')
     local uuid = args.uuid or show_warning('UUID is not set')
     local workspace = args.workspace or show_warning('Workspace is not set')
@@ -129,52 +173,100 @@ local function worker(args)
             bg = beautiful.bg_normal,
             widget = wibox.container.background
         })
+        local current_time = os.time(os.date("!*t"))
 
         for _, pr in ipairs(result) do
             local path_to_avatar = os.getenv("HOME") ..'/.cache/awmw/bitbucket-widget/avatars/' .. pr.author.uuid
+            local number_of_approves = count_approves(pr.participants)
 
             local row = wibox.widget {
                 {
                     {
                         {
-                            {
-                                resize = true,
-                                image = path_to_avatar,
-                                forced_width = 40,
-                                forced_height = 40,
-                                widget = wibox.widget.imagebox
-                            },
-                            id = 'avatar',
-                            margins = 8,
-                            layout = wibox.container.margin
+                                {
+                                    resize = true,
+                                    image = path_to_avatar,
+                                    forced_width = 40,
+                                    forced_height = 40,
+                                    widget = wibox.widget.imagebox
+                                },
+                                id = 'avatar',
+                                margins = 8,
+                                layout = wibox.container.margin
                         },
                         {
                             {
                                 id = 'title',
-                                markup = '<b>' .. pr.title .. '</b>',
-                                widget = wibox.widget.textbox
+                                markup = '<b>' .. ellipsize(pr.title, 50) .. '</b>',
+                                widget = wibox.widget.textbox,
+                                forced_width = 400
                             },
                             {
                                 {
-                                    text = pr.source.branch.name,
-                                    widget = wibox.widget.textbox
+                                    {
+                                        {
+                                            text = ellipsize(pr.source.branch.name, 30),
+                                            widget = wibox.widget.textbox
+                                        },
+                                        {
+                                            text = '->',
+                                            widget = wibox.widget.textbox
+                                        },
+                                        {
+                                            text = pr.destination.branch.name,
+                                            widget = wibox.widget.textbox
+                                        },
+                                        spacing = 8,
+                                        layout = wibox.layout.fixed.horizontal
+                                    },
+                                    {
+                                        {
+                                            text = pr.author.display_name,
+                                            widget = wibox.widget.textbox
+                                        },
+                                        {
+                                            text = to_time_ago(os.difftime(current_time, parse_date(pr.created_on))),
+                                            widget = wibox.widget.textbox
+                                        },
+                                        spacing = 8,
+                                        expand = 'none',
+                                        layout = wibox.layout.fixed.horizontal
+                                    },
+                                    forced_width = 285,
+                                    layout = wibox.layout.fixed.vertical
                                 },
                                 {
-                                    text = '->',
-                                    widget = wibox.widget.textbox
+                                    {
+                                        {
+                                            image = number_of_approves > 0 and WIDGET_DIR .. '/check.svg' or '',
+                                            resize = false,
+                                            widget = wibox.widget.imagebox
+                                        },
+                                        {
+                                            text = number_of_approves,
+                                            widget = wibox.widget.textbox
+                                        },
+                                        layout = wibox.layout.fixed.horizontal
+                                    },
+                                    {
+                                        {
+                                            image = WIDGET_DIR .. '/message-circle.svg',
+                                            resize = false,
+                                            widget = wibox.widget.imagebox
+                                        },
+                                        {
+                                            text = pr.comment_count,
+                                            widget = wibox.widget.textbox
+                                        },
+                                        layout = wibox.layout.fixed.horizontal
+                                    },
+                                    layout = wibox.layout.fixed.vertical
                                 },
-                                {
-                                    text = pr.destination.branch.name,
-                                    widget = wibox.widget.textbox
-                                },
-                                spacing = 8,
                                 layout = wibox.layout.fixed.horizontal
                             },
-                            {
-                                text = pr.author.display_name,
-                                widget = wibox.widget.textbox
-                            },
-                            layout = wibox.layout.align.vertical
+
+                            spacing = 8,
+                            layout = wibox.layout.fixed.vertical
                         },
                         spacing = 8,
                         layout = wibox.layout.fixed.horizontal
@@ -250,7 +342,7 @@ local function worker(args)
 
         table.insert(rows, to_review_rows)
         if (#my_review_rows > 1) then
-                table.insert(rows, my_review_rows)
+            table.insert(rows, my_review_rows)
         end
         popup:setup(rows)
     end
