@@ -1,7 +1,6 @@
 # Weather widget
 
-[![GitHub issues by-label](https://img.shields.io/github/issues-raw/streetturtle/awesome-wm-widgets/weather)](https://github.com/streetturtle/awesome-wm-widgets/labels/weather)
-
+[![GitHub issues by-label](https://img.shields.io/github/issues/streetturtle/awesome-wm-widgets/weather)](https://github.com/streetturtle/awesome-wm-widgets/labels/weather)
 
 Widget showing current, hourly and daily weather forecast.
 
