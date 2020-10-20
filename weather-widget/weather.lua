@@ -140,7 +140,7 @@ local function worker(args)
     local timeout = args.timeout or 120
 
     local owm_one_cal_api =
-        ('https://api.openweathermap.org/data/2.5/onecall' .. 
+        ('https://api.openweathermap.org/data/2.5/onecall' ..
             '?lat=' .. coordinates[1] .. '&lon=' .. coordinates[2] .. '&appid=' .. api_key ..
             '&units=' .. units .. '&exclude=minutely' ..
             (show_hourly_forecast == false and ',hourly' or '') ..
@@ -325,12 +325,27 @@ local function worker(args)
             self.min_value = new_min_value
         end
     }
+    local hourly_forecast_negative_graph = wibox.widget {
+        step_width = 12,
+        color = '#5E81AC',
+        background_color = beautiful.bg_normal,
+        forced_height = 100,
+        forced_width = 300,
+        widget = wibox.widget.graph,
+        set_max_value = function(self, new_max_value)
+            self.max_value = new_max_value
+        end,
+        set_min_value = function(self, new_min_value)
+            self.min_value = new_min_value
+        end
+    }
 
     local hourly_forecast_widget = {
         layout = wibox.layout.fixed.vertical,
         update = function(self, hourly)
             local hours_below = {
                 id = 'hours',
+                forced_width = 300,
                 layout = wibox.layout.flex.horizontal
             }
             local temp_below = {
@@ -355,37 +370,101 @@ local function worker(args)
                         widget = wibox.widget.textbox
                     })
                     table.insert(temp_below, wibox.widget {
-                        markup = '<span foreground="#2E3440">' .. string.format('%.0f', hour.temp) .. '°' .. '</span>',
+                        markup = '<span >' .. string.format('%.0f', hour.temp) .. '°' .. '</span>',
                         align = 'center',
                         font = font_name .. ' 9',
                         widget = wibox.widget.textbox
                     })
                 end
             end
-            hourly_forecast_graph:set_max_value(max_temp)
-            hourly_forecast_graph:set_min_value(min_temp * 0.7) -- move graph a bit up
+
+            hourly_forecast_graph:set_max_value(math.max(max_temp, math.abs(min_temp)))
+            hourly_forecast_graph:set_min_value(min_temp > 0 and min_temp * 0.7 or 0) -- move graph a bit up
+
+            hourly_forecast_negative_graph:set_max_value(math.abs(min_temp))
+            hourly_forecast_negative_graph:set_min_value(max_temp < 0 and math.abs(max_temp) * 0.7 or 0)
+
             for i, value in ipairs(values) do
-                hourly_forecast_graph:add_value(value)
+                print(value)
+                if value >= 0 then
+                    hourly_forecast_graph:add_value(value)
+                    hourly_forecast_negative_graph:add_value(0)
+                else
+                    hourly_forecast_graph:add_value(0)
+                    hourly_forecast_negative_graph:add_value(math.abs(value))
+                end
             end
 
             local count = #self
             for i = 0, count do self[i]=nil end
 
-            table.insert(self, wibox.widget{
-                {
-                    hourly_forecast_graph,
-                    reflection = {horizontal = true},
-                    widget = wibox.container.mirror
-                },
-                {
-                    temp_below,
-                    valign = 'bottom',
-                    widget = wibox.container.place
-                },
-                id = 'graph',
-                layout = wibox.layout.stack
-            })
-            table.insert(self, hours_below)
+            -- all temperatures are positive
+            if min_temp > 0 then
+                table.insert(self, wibox.widget{
+                    {
+                        hourly_forecast_graph,
+                        reflection = {horizontal = true},
+                        widget = wibox.container.mirror
+                    },
+                    {
+                        temp_below,
+                        valign = 'bottom',
+                        widget = wibox.container.place
+                    },
+                    id = 'graph',
+                    layout = wibox.layout.stack
+                })
+                table.insert(self, hours_below)
+
+            -- all temperatures are negative
+            elseif max_temp < 0 then
+                table.insert(self, hours_below)
+                table.insert(self, wibox.widget{
+                    {
+                        hourly_forecast_negative_graph,
+                        reflection = {horizontal = true, vertical = true},
+                        widget = wibox.container.mirror
+                    },
+                    {
+                        temp_below,
+                        valign = 'top',
+                        widget = wibox.container.place
+                    },
+                    id = 'graph',
+                    layout = wibox.layout.stack
+                })
+
+            -- there are both negative and positive temperatures
+            else
+                table.insert(self, wibox.widget{
+                    {
+                        hourly_forecast_graph,
+                        reflection = {horizontal = true},
+                        widget = wibox.container.mirror
+                    },
+                    {
+                        temp_below,
+                        valign = 'bottom',
+                        widget = wibox.container.place
+                    },
+                    id = 'graph',
+                    layout = wibox.layout.stack
+                })
+                table.insert(self, wibox.widget{
+                    {
+                        hourly_forecast_negative_graph,
+                        reflection = {horizontal = true, vertical = true},
+                        widget = wibox.container.mirror
+                    },
+                    {
+                        hours_below,
+                        valign = 'top',
+                        widget = wibox.container.place
+                    },
+                    id = 'graph',
+                    layout = wibox.layout.stack
+                })
+            end
         end
     }
 

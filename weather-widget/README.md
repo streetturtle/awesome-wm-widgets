@@ -47,7 +47,7 @@ To add your custom icons, create a folder with the pack name under `/icons` and 
 
 #### Custom font, icons
 
-![example1](./screenshots/example1.png)
+![example1](./example1.png)
 
 ```lua
 weather_curl_widget({
@@ -65,7 +65,7 @@ weather_curl_widget({
 
 #### Only current weather
 
-![example2](./screenshots/example2.png)
+![example2](./example2.png)
 
 ```lua
 weather_curl_widget({
@@ -73,8 +73,6 @@ weather_curl_widget({
     coordinates = {45.5017, -73.5673},
 }),
 ```
-
-
 
 ## Installation
 
@@ -126,6 +124,15 @@ weather_curl_widget({
             ...
     ```
 
+## More screenshots
+
+Only negative temperature:
+
+![negative](./negative.png)
+
+Both positive and negative tempertature:
+
+![both](./both.png)
 
 ## How it works
 
