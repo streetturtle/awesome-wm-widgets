@@ -1,15 +1,20 @@
 # Weather widget
 
-[![GitHub issues by-label](https://img.shields.io/github/issues-raw/streetturtle/awesome-wm-widgets/weather)](https://github.com/streetturtle/awesome-wm-widgets/labels/weather)
-
-
-Widget showing current, hourly and daily weather forecast.
-
 <p align="center">
- <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/weather-widget/screenshots/weather-widget.png" alt="screenshot" style="max-width:100%;">
+  <a href="https://github.com/streetturtle/awesome-wm-widgets/labels/weather" target="_blank"><img alt="GitHub issues by-label" src="https://img.shields.io/github/issues/streetturtle/awesome-wm-widgets/weather"></a>
+  
+  <a href="https://twitter.com/intent/tweet?text=Check%20out%20this%20awesome%20weather%20widget%20for%20Awesome%20Window%20Manager%20&url=https://github.com/streetturtle/awesome-wm-widgets/blob/master/weather-widget" target="_blank">
+  <img alt="Twitter URL" src="https://img.shields.io/twitter/url?logo=twitter&style=social&url=https%3A%2F%2Fgithub.com%2Fstreetturtle%2Fawesome-wm-widgets%2Fblob%2Fmaster%2Fweather-widget">
+   </a>
 </p>
 
-Widget consists of three sections:
+The widget showing current, hourly and daily weather forecast.
+
+<p align="center">
+ <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/weather-widget/weather-widget.png" alt="screenshot" style="max-width:100%;">
+</p>
+
+The widget consists of three sections:
  - current weather, including humidity, wind speed, UV index
  - hourly forecast for the next 24 hours
  - daily forecast for the next five days
@@ -32,10 +37,9 @@ It is possible to customize widget by providing a table with all or some of the 
 | icons_extension | `.svg` | File extension of icons in the pack |
 | timeout | 120 | How often in seconds the widget refreshes |
 
-
 ### Icons:
 
-Widget comes with two predefined icon packs:
+The widget comes with two predefined icon packs:
 
  - weather-underground-icons taken from [here](https://github.com/manifestinteractive/weather-underground-icons)
  - VitalyGorbachev taken from [here](https://www.flaticon.com/authors/vitaly-gorbachev)
@@ -43,7 +47,6 @@ Widget comes with two predefined icon packs:
 To add your custom icons, create a folder with the pack name under `/icons` and use the folder name in widget's config. There should be 18 icons, preferably 128x128 minimum. Icons should also respect the naming convention, please check widget's source.
 
 ### Examples:
-
 
 #### Custom font, icons
 
