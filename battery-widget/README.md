@@ -69,6 +69,6 @@ s.mytasklist, -- Middle widget
 	{ -- Right widgets
     	layout = wibox.layout.fixed.horizontal,
 		...
-		battery_widget(),
+		battery_widget,
 		...
 ```
