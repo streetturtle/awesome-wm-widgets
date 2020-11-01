@@ -12,39 +12,22 @@ local wibox = require("wibox")
 local spawn = require("awful.spawn")
 local gears = require("gears")
 local beautiful = require("beautiful")
+local watch = require("awful.widget.watch")
 local utils = require("awesome-wm-widgets.experiments.volume.utils")
+local arc_widget = require("awesome-wm-widgets.experiments.volume.arc-widget")
+local icon_and_text_widget = require("awesome-wm-widgets.experiments.volume.icon-and-text-widget")
 
 
-local HOME_DIR = os.getenv("HOME")
-local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/experiments/volume'
 local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
+local GET_VOLUME_CMD = 'amixer -D pulse sget Master'
+local INC_VOLUME_CMD = 'amixer -q -D pulse sset Master 5%+'
+local DEC_VOLUME_CMD = 'amixer -q -D pulse sset Master 5%-'
+local TOG_VOLUME_CMD = 'amixer -q -D pulse sset Master toggle'
 
+
+local volume_widget = wibox.widget{}
 
 local rows  = { layout = wibox.layout.fixed.vertical }
-local volume_widget = wibox.widget {
-    {
-        {
-            id = "icon",
-            image = WIDGET_DIR .. '/volume-2.svg',
-            widget = wibox.widget.imagebox
-        },
-        id = "margin",
-        margins = 4,
-        layout = wibox.container.margin
-    },
-    {
-        id = "txt",
-        widget = wibox.widget.textbox
-    },
-    layout = wibox.layout.fixed.horizontal,
-    set_text = function(self, new_value)
-        self.txt.text = new_value
-    end,
-    set_icon = function(self, new_value)
-        self.margin.icon.image = new_value
-    end
-}
-
 
 local popup = awful.popup{
     bg = beautiful.bg_normal,
@@ -82,7 +65,6 @@ local function build_rows(devices, on_checkbox_click, device_type)
         }
 
         checkbox:connect_signal("button::press", function(c)
-            print(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name))
             spawn.easy_async(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name), function()
                 on_checkbox_click()
             end)
@@ -147,24 +129,41 @@ local function rebuild_popup()
 
         popup:setup(rows)
     end)
-
 end
 
 
 local function worker(args)
 
+    volume_widget = arc_widget.get_widget()
+    -- volume_widget = icon_and_text_widget.get_widget()
+
     volume_widget:buttons(
             awful.util.table.join(
-                    awful.button({}, 1, function()
+                    awful.button({}, 3, function()
                         if popup.visible then
                             popup.visible = not popup.visible
                         else
                             rebuild_popup()
                             popup:move_next_to(mouse.current_widget_geometry)
                         end
-                    end)
+                    end),
+                    awful.button({}, 4, function() awful.spawn(INC_VOLUME_CMD, false) end),
+                    awful.button({}, 5, function() awful.spawn(DEC_VOLUME_CMD, false) end),
+                    awful.button({}, 1, function() awful.spawn(TOG_VOLUME_CMD, false) end)
             )
     )
+
+    local function update_graphic(widget, stdout)
+        local mute = string.match(stdout, "%[(o%D%D?)%]")   -- \[(o\D\D?)\] - [on] or [off]
+        if mute == 'off' then volume_widget:mute()
+        elseif mute == 'on' then volume_widget:unmute()
+        end
+        local volume = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
+        volume = string.format("% 3d", volume)
+        widget:set_volume_level(volume)
+    end
+
+    watch(GET_VOLUME_CMD, 1, update_graphic, volume_widget)
 
     return volume_widget
 end
