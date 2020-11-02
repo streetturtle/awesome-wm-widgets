@@ -24,6 +24,14 @@ local github_contributions_widget = wibox.widget{
     widget = wibox.container.mirror
 }
 
+local color_dict = {
+    color_calendar_graph_day_L4_bg = '#216e39',
+    color_calendar_graph_day_L3_bg = '#239a3b',
+    color_calendar_graph_day_L2_bg = '#7bc96f',
+    color_calendar_graph_day_L1_bg = '#c6e48b',
+    color_calendar_graph_day_bg = '#ebedf0',
+}
+
 local function worker(args)
 
     local args = args or {}
@@ -62,7 +70,7 @@ local function worker(args)
 
     local col = {layout = wibox.layout.fixed.vertical}
     local row = {layout = wibox.layout.fixed.horizontal}
-    local a = 5 - os.date('%w')
+    local a = 6 - os.date('%w')
     for i = 0, a do
         table.insert(col, get_square('#ebedf0'))
     end
@@ -73,7 +81,7 @@ local function worker(args)
                 table.insert(row, col)
                 col = {layout = wibox.layout.fixed.vertical}
             end
-            table.insert(col, get_square(colors))
+            table.insert(col, get_square(color_dict[colors:match('var%(%-%-(.*)%)'):gsub('-', '_')]))
             a = a + 1
         end
         github_contributions_widget:setup(
