@@ -110,6 +110,7 @@ local function launch(args)
         layout = wibox.container.place
     }
 
+    w.screen = mouse.screen
     w.visible = true
 
     awful.placement.centered(w)
