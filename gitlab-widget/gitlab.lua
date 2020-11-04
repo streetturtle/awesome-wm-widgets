@@ -17,17 +17,31 @@ local naughty = require("naughty")
 local gears = require("gears")
 local beautiful = require("beautiful")
 local gfs = require("gears.filesystem")
+local color = require("gears.color")
 
 local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/gitlab-widget/'
-local GET_PRS_CMD= [[bash -c "curl -s --show-error --header 'PRIVATE-TOKEN: %s' '%s/api/v4/merge_requests?state=opened'"]]
-local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -L -n --create-dirs -o %s/.cache/awmw/gitlab-widget/avatars/%s %s"]]
+local GET_PRS_CMD= [[bash -c "curl -s --connect-timeout 5 --show-error --header 'PRIVATE-TOKEN: %s' '%s/api/v4/merge_requests?state=opened'"]]
+local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -L --create-dirs -o %s/.cache/awmw/gitlab-widget/avatars/%s %s"]]
 
 local gitlab_widget = wibox.widget {
     {
         {
-            id = 'icon',
-            widget = wibox.widget.imagebox
+            {
+                id = 'icon',
+                widget = wibox.widget.imagebox
+            },
+            {
+                id = 'error_marker',
+                draw = function(self, context, cr, width, height)
+                    cr:set_source(color(beautiful.fg_urgent))
+                    cr:arc(height/4, height/4, height/4, 0, math.pi*2)
+                    cr:fill()
+                end,
+                visible = false,
+                layout = wibox.widget.base.make_widget,
+            },
+            layout = wibox.layout.stack
         },
         margins = 4,
         layout = wibox.container.margin
@@ -46,6 +60,18 @@ local gitlab_widget = wibox.widget {
     end,
     set_icon = function(self, new_value)
         self:get_children_by_id('icon')[1]:set_image(new_value)
+    end,
+    is_everything_ok = function(self, is_ok)
+        if is_ok then
+            self:get_children_by_id('error_marker')[1]:set_visible(false)
+            self:get_children_by_id('icon')[1]:set_opacity(1)
+            self:get_children_by_id('icon')[1]:emit_signal('widget:redraw_needed')
+        else
+            self.txt:set_text('')
+            self:get_children_by_id('error_marker')[1]:set_visible(true)
+            self:get_children_by_id('icon')[1]:set_opacity(0.2)
+            self:get_children_by_id('icon')[1]:emit_signal('widget:redraw_needed')
+        end
     end
 }
 
@@ -102,6 +128,12 @@ local function ellipsize(text, length)
         or text
 end
 
+local warning_shown = false
+local tooltip = awful.tooltip {
+    mode = 'outside',
+    preferred_positions = {'bottom'},
+ }
+
 local function worker(args)
 
     local args = args or {}
@@ -122,9 +154,22 @@ local function worker(args)
     local update_widget = function(widget, stdout, stderr, _, _)
 
         if stderr ~= '' then
-            show_warning(stderr)
+            if not warning_shown then
+                show_warning(stderr)
+                warning_shown = true
+                widget:is_everything_ok(false)
+                tooltip:add_to_object(widget)
+
+                widget:connect_signal('mouse::enter', function()
+                    tooltip.text = stderr
+                end)
+            end
             return
         end
+
+        warning_shown = false
+        tooltip:remove_from_object(widget)
+        widget:is_everything_ok(true)
 
         local result = json.decode(stdout)
 
