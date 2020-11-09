@@ -385,7 +385,6 @@ local function worker(args)
             hourly_forecast_negative_graph:set_min_value(max_temp < 0 and math.abs(max_temp) * 0.7 or 0)
 
             for i, value in ipairs(values) do
-                print(value)
                 if value >= 0 then
                     hourly_forecast_graph:add_value(value)
                     hourly_forecast_negative_graph:add_value(0)
