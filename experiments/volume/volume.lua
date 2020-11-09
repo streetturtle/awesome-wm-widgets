@@ -43,7 +43,7 @@ local popup = awful.popup{
 
 local function build_main_line(device)
     if device.active_port ~= nil and device.ports[device.active_port] ~= nil then
-        return device.properties.device_description .. ' - ' .. device.ports[device.active_port]
+        return device.properties.device_description .. ' · ' .. device.ports[device.active_port]
     else
         return device.properties.device_description
     end
@@ -90,12 +90,34 @@ local function build_rows(devices, on_checkbox_click, device_type)
                     spacing = 8,
                     layout = wibox.layout.align.horizontal
                 },
-                margins = 8,
+                margins = 4,
                 layout = wibox.container.margin
             },
             bg = beautiful.bg_normal,
             widget = wibox.container.background
         }
+
+        row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
+        row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
+
+        local old_cursor, old_wibox
+        row:connect_signal("mouse::enter", function(c)
+            local wb = mouse.current_wibox
+            old_cursor, old_wibox = wb.cursor, wb
+            wb.cursor = "hand1"
+        end)
+        row:connect_signal("mouse::leave", function(c)
+            if old_wibox then
+                old_wibox.cursor = old_cursor
+                old_wibox = nil
+            end
+        end)
+
+        row:connect_signal("button::press", function(c)
+            spawn.easy_async(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name), function()
+                on_checkbox_click()
+            end)
+        end)
 
         table.insert(device_rows, row)
     end

@@ -28,7 +28,7 @@ function widget.get_widget()
         end,
         unmute = function(self)
             self.colors = {beautiful.fg_color}
-        end   
+        end
     }
 
 end
