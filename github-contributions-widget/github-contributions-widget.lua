@@ -9,12 +9,11 @@
 -------------------------------------------------
 
 local awful = require("awful")
+local naughty = require("naughty")
 local wibox = require("wibox")
-local beautiful = require("beautiful")
+local widget_themes = require("awesome-wm-widgets.github-contributions-widget.themes")
 
 local GET_CONTRIBUTIONS_CMD = [[bash -c "curl -s https://github-contributions.now.sh/api/v1/%s | jq -r '[.contributions[] | select ( .date | strptime(\"%%Y-%%m-%%d\") | mktime < now)][:%s]| .[].color'"]]
--- in case github-contributions.now.sh stops working contributions can be scrapped from the github.com with the command below. Note that the order is reversed.
-local GET_CONTRIBUTIONS_CMD_FALLBACK = [[bash -c "curl -s https://github.com/users/%s/contributions | grep -o '\" fill=\"\#[0-9a-fA-F]\{6\}\" da' | grep -o '\#[0-9a-fA-F]\{6\}'"]]
 
 local github_contributions_widget = wibox.widget{
     reflection = {
@@ -24,13 +23,12 @@ local github_contributions_widget = wibox.widget{
     widget = wibox.container.mirror
 }
 
-local color_dict = {
-    color_calendar_graph_day_L4_bg = '#216e39',
-    color_calendar_graph_day_L3_bg = '#239a3b',
-    color_calendar_graph_day_L2_bg = '#7bc96f',
-    color_calendar_graph_day_L1_bg = '#c6e48b',
-    color_calendar_graph_day_bg = '#ebedf0',
-}
+local function show_warning(message)
+    naughty.notify{
+        preset = naughty.config.presets.critical,
+        title = 'Github Contributions Widget',
+        text = message}
+end
 
 local function worker(args)
 
@@ -38,18 +36,26 @@ local function worker(args)
 
     local username = args.username or 'streetturtle'
     local days = args.days or 365
-    local empty_color = args.empty_color or beautiful.bg_normal
+    local color_of_empty_cells = args.color_of_empty_cells
     local with_border = args.with_border
     local margin_top = args.margin_top or 1
+    local theme = args.theme or 'standard'
+
+    if widget_themes[theme] == nil then
+        show_warning('Theme ' .. theme .. ' does not exist')
+        theme = 'standard'
+    end
 
     if with_border == nil then with_border = true end
 
     local function hex2rgb(hex)
-        if hex == '#ebedf0' then hex = empty_color end
-        hex = tostring(hex):gsub("#","")
-        return tonumber("0x" .. hex:sub(1, 2)),
-                tonumber("0x" .. hex:sub(3, 4)),
-                tonumber("0x" .. hex:sub(5, 6))
+        if color_of_empty_cells ~= nil and hex == widget_themes[theme]['color_calendar_graph_day_bg'] then
+            hex = color_of_empty_cells
+        end
+        hex = tostring(hex):gsub('#','')
+        return tonumber('0x' .. hex:sub(1, 2)),
+                tonumber('0x' .. hex:sub(3, 4)),
+                tonumber('0x' .. hex:sub(5, 6))
     end
 
     local function get_square(color)
@@ -70,9 +76,9 @@ local function worker(args)
 
     local col = {layout = wibox.layout.fixed.vertical}
     local row = {layout = wibox.layout.fixed.horizontal}
-    local a = 6 - os.date('%w')
+    local a = 5 - os.date('%w')
     for i = 0, a do
-        table.insert(col, get_square('#ebedf0'))
+        table.insert(col, get_square(color_of_empty_cells))
     end
 
     local update_widget = function(widget, stdout, _, _, _)
@@ -81,7 +87,7 @@ local function worker(args)
                 table.insert(row, col)
                 col = {layout = wibox.layout.fixed.vertical}
             end
-            table.insert(col, get_square(color_dict[colors:match('var%(%-%-(.*)%)'):gsub('-', '_')]))
+            table.insert(col, get_square(widget_themes[theme][colors:match('var%(%-%-(.*)%)'):gsub('-', '_')]))
             a = a + 1
         end
         github_contributions_widget:setup(
