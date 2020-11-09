@@ -14,8 +14,6 @@ local gears = require("gears")
 local beautiful = require("beautiful")
 local watch = require("awful.widget.watch")
 local utils = require("awesome-wm-widgets.experiments.volume.utils")
-local arc_widget = require("awesome-wm-widgets.experiments.volume.arc-widget")
-local icon_and_text_widget = require("awesome-wm-widgets.experiments.volume.icon-and-text-widget")
 
 
 local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
@@ -24,6 +22,12 @@ local INC_VOLUME_CMD = 'amixer -q -D pulse sset Master 5%+'
 local DEC_VOLUME_CMD = 'amixer -q -D pulse sset Master 5%-'
 local TOG_VOLUME_CMD = 'amixer -q -D pulse sset Master toggle'
 
+
+local widget_types = {
+    icon_and_text = require("awesome-wm-widgets.experiments.volume.widgets.icon-and-text-widget"),
+    icon = require("awesome-wm-widgets.experiments.volume.widgets.icon-widget"),
+    arc = require("awesome-wm-widgets.experiments.volume.widgets.arc-widget")
+}
 
 local volume_widget = wibox.widget{}
 
@@ -156,8 +160,15 @@ end
 
 local function worker(args)
 
-    volume_widget = arc_widget.get_widget()
-    -- volume_widget = icon_and_text_widget.get_widget()
+    local args = args or {}
+
+    local widget_type = args.widget_type
+
+    if widget_types[widget_type] == nil then
+        volume_widget = widget_types['icon_and_text'].get_widget()
+    else
+        volume_widget = widget_types[widget_type].get_widget()
+    end
 
     volume_widget:buttons(
             awful.util.table.join(

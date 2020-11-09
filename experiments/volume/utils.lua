@@ -99,7 +99,6 @@ function utils.extract_sinks_and_sources(pacmd_output)
             ports[key] = t[2]
         end
     end
-    print(json.encode(sources))
 
     return sinks, sources
 end

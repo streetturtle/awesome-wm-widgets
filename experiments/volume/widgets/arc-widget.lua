@@ -1,6 +1,8 @@
 local wibox = require("wibox")
 local beautiful = require('beautiful')
 
+local ICON_DIR = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/experiments/volume/icons/'
+
 local widget = {}
 
 function widget.get_widget()
@@ -8,7 +10,7 @@ function widget.get_widget()
     return wibox.widget {
         {
             id = "icon",
-            image = '/usr/share/icons/Arc/status/symbolic/audio-volume-muted-symbolic.svg',
+            image = ICON_DIR .. 'audio-volume-high-symbolic.svg',
             resize = true,
             widget = wibox.widget.imagebox,
         },

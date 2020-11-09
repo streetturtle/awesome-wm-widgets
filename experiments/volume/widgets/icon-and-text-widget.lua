@@ -10,7 +10,6 @@ function widget.get_widget()
         {
             {
                 id = "icon",
-                image = '/usr/share/icons/Arc/status/symbolic/audio-volume-muted-symbolic.svg',
                 resize = false,
                 widget = wibox.widget.imagebox,
             },
