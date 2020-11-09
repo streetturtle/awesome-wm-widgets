@@ -83,21 +83,21 @@ local function generate_action_string(event)
     if (event.type == "PullRequestEvent") then
         action_string = event.action .. ' a pull request in'
         link = event.pr_url
-        icon = 'pr.svg'
+        icon = 'git-pull-request.svg'
     elseif (event.type == "IssuesEvent") then
         action_string = event.action .. ' an issue in'
         link = event.issue_url
-        icon = 'issue.svg'
+        icon = 'alert-circle.svg'
     elseif (event.type == "IssueCommentEvent") then
         action_string = event.action == 'created' and 'commented in issue' or event.action .. ' a comment in'
         link = event.issue_url
-        icon = 'comment.svg'
+        icon = 'message-square.svg'
     elseif (event.type == "WatchEvent") then
         action_string = 'starred'
         icon = 'star.svg'
     elseif (event.type == "ForkEvent") then
         action_string = 'forked'
-        icon = 'fork.svg'
+        icon = 'git-branch.svg'
     elseif (event.type == "CreateEvent") then
         action_string = 'created'
     end
@@ -144,7 +144,6 @@ local function worker(args)
     github_widget:set_icon(icon)
 
     local rows = {
-        { widget = wibox.widget.textbox },
         layout = wibox.layout.fixed.vertical,
     }
 
