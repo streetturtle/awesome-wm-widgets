@@ -57,7 +57,6 @@ local function worker(args)
         shape         = gears.shape.rounded_rect,
         border_width  = 1,
         border_color  = beautiful.bg_normal,
-        bg            = beautiful.bg_focus,
         maximum_width = 400,
         offset        = { y = 5 },
         widget        = {}
