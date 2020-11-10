@@ -35,7 +35,7 @@ local function worker(args)
         layout = wibox.layout.fixed.vertical,
     }
 
-    local disk_header = {
+    local disk_header = wibox.widget{
       {
         markup = '<b>Mount</b>',
         forced_width = 150,
@@ -47,8 +47,9 @@ local function worker(args)
         align  = 'left',
         widget = wibox.widget.textbox,
       },
-      layout = wibox.layout.align.horizontal
+      layout = wibox.layout.ratio.horizontal
     }
+    disk_header:ajust_ratio(1, 0, 0.3, 0.7)
 
     local popup = awful.popup{
         ontop         = true,
@@ -131,8 +132,9 @@ local function worker(args)
                     .. math.floor(disks[v].perc) .. '%)',
                   widget = wibox.widget.textbox
               },
-              layout = wibox.layout.align.horizontal
+              layout = wibox.layout.ratio.horizontal
             }
+            row:ajust_ratio(2, 0.3, 0.3, 0.4)
 
             disk_rows[k] = row
           end
