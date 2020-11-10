@@ -238,7 +238,7 @@ local function worker(args)
                                 {
                                     {
                                         {
-                                            image = number_of_approves > 0 and WIDGET_DIR .. '/check.svg' or '',
+                                            image = WIDGET_DIR .. '/check.svg',
                                             resize = false,
                                             widget = wibox.widget.imagebox
                                         },
