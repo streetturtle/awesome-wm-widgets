@@ -34,7 +34,7 @@ local function worker(args)
     local dim_when_paused = args.dim_when_paused == nil and false or args.dim_when_paused
     local dim_opacity = args.dim_opacity or 0.2
     local max_length = args.max_length or 15
-    local show_tooltip = args.show_tooltip == nil and false or args.show_tooltip
+    local show_tooltip = args.show_tooltip == nil and true or args.show_tooltip
     local timeout = args.timeout or 1
 
     local cur_artist = ''
@@ -52,31 +52,37 @@ local function worker(args)
             widget = wibox.widget.imagebox,
         },
         {
-            id = 'titlew',
-            font = font,
-            widget = wibox.widget.textbox
+            layout = wibox.container.scroll.horizontal,
+            max_size = 100,
+            step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
+            speed = 40,
+            {
+                id = 'titlew',
+                font = font,
+                widget = wibox.widget.textbox
+            }
         },
         layout = wibox.layout.align.horizontal,
         set_status = function(self, is_playing)
             self.icon.image = (is_playing and play_icon or pause_icon)
             if dim_when_paused then
-                self.icon.opacity = (is_playing and 1 or dim_opacity)
+                self:get_children_by_id('icon')[1]:set_opacity(is_playing and 1 or dim_opacity)
 
-                self.titlew:set_opacity(is_playing and 1 or dim_opacity)
-                self.titlew:emit_signal('widget::redraw_needed')
+                self:get_children_by_id('titlew')[1]:set_opacity(is_playing and 1 or dim_opacity)
+                self:get_children_by_id('titlew')[1]:emit_signal('widget::redraw_needed')
 
-                self.artistw:set_opacity(is_playing and 1 or dim_opacity)
-                self.artistw:emit_signal('widget::redraw_needed')
+                self:get_children_by_id('artistw')[1]:set_opacity(is_playing and 1 or dim_opacity)
+                self:get_children_by_id('artistw')[1]:emit_signal('widget::redraw_needed')
             end
         end,
         set_text = function(self, artist, song)
             local artist_to_display = ellipsize(artist, max_length)
-            if self.artistw.text ~= artist_to_display then
-                self.artistw.text = artist_to_display
+            if self:get_children_by_id('artistw')[1]:get_markup() ~= artist_to_display then
+                self:get_children_by_id('artistw')[1]:set_markup(artist_to_display)
             end
             local title_to_display = ellipsize(song, max_length)
-            if self.titlew.text ~= title_to_display then
-                self.titlew.text = title_to_display
+            if self:get_children_by_id('titlew')[1]:get_markup() ~= title_to_display then
+                self:get_children_by_id('titlew')[1]:set_markup(title_to_display)
             end
         end
     }
