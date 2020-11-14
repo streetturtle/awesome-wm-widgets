@@ -34,8 +34,8 @@ function widget.new()
         local w = wibox {
             visible = false,
             ontop = true,
-            height = 1060,
-            width = 1920
+            height = mouse.screen.geometry.height,
+            width = mouse.screen.geometry.width,
         }
 
         w:setup {
