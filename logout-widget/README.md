@@ -38,7 +38,7 @@ Then
 - to show by clicking on a widget in wibar - add widget to the wibar:
 
     ```lua
-    local logout = require("awesome-wm-widgets.experiments.logout-widget.logout")
+    local logout = require("awesome-wm-widgets.logout-widget.logout")
     
     s.mytasklist, -- Middle widget
             { -- Right widgets
