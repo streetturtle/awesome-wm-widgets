@@ -24,7 +24,7 @@ s.mytasklist, -- Middle widget
         todo_widget(),
 		...      
 ```
-Also note that widget uses [Arc Icons](../awesome-wm-widgets/assets/img/screenshots/todo-widgetttps://github.com/horst3180/arc-icon-theme) and expects them to be installed under `/usr/share/icons/Arc/`.
+Also note that widget uses [Arc Icons](https://github.com/horst3180/arc-icon-theme) and expects them to be installed under `/usr/share/icons/Arc/`.
 
 # Theming
 

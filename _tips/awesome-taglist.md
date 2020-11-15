@@ -2,6 +2,8 @@
 layout: page
 ---
 
+# Awesome Taglist
+
 Here is nice-looking and super easy way to customize taglist. The idea is simple - literally write 'awesome' or 'awesomewm' (if you want to keep 9 tags) in the taglist using characters from the Awesome logo.
 
 To do it you need to install a font which was generated from the svg images of the letters from the logo. Download it from [here]({{ "/assets/fonts/awesomewm-font.ttf" | relative_url }}) and place it under **~/.local/share/fonts**. Then name your tags in rc.lua using it. The font has two types of letters: uppercase are for the bold characters:

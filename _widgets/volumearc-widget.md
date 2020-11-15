@@ -3,7 +3,7 @@ layout: page
 ---
 # Volumearc widget
 
-Almost the same as [volumebar widget](../awesome-wm-widgets/assets/img/screenshots/volumearc-widgetttps://github.com/streetturtle/awesome-wm-widgets/tree/master/volumebar-widget), but using [arcchart](../awesome-wm-widgets/assets/img/screenshots/volumearc-widgetttps://awesomewm.org/doc/api/classes/wibox.container.arcchart.html):
+Almost the same as [volumebar widget](https://github.com/streetturtle/awesome-wm-widgets/tree/master/volumebar-widget), but using [arcchart](https://awesomewm.org/doc/api/classes/wibox.container.arcchart.html):
 
 ![screenshot](../awesome-wm-widgets/assets/img/screenshots/volumearc-widget/out.gif)
 
@@ -24,6 +24,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `path_to_icon` | /usr/share/icons/Arc/status/symbolic/audio-volume-muted-symbolic.svg | Path to the icon |
 | `thickness` | 2 | The arc thickness |
 | `height` | `beautiful.fg_normal` | Widget height |
+| `timeout` | 1 | How often in seconds the widget refreshes |
 | `get_volume_cmd` | `amixer -D pulse sget Master` | Get current volume level |
 | `inc_volume_cmd` | `amixer -D pulse sset Master 5%+` | Increase volume level |
 | `dec_volume_cmd` | `amixer -D pulse sset Master 5%-` | Decrease volume level |

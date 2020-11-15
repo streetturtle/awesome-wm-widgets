@@ -5,7 +5,7 @@ layout: page
 
 Simple and easy-to-install widget for Awesome Window Manager which shows the sound level: ![Volume Widget](../awesome-wm-widgets/assets/img/screenshots/volume-widget/vol-widget-1.png)
 
-Note that widget uses the Arc icon theme, so it should be [installed](../awesome-wm-widgets/assets/img/screenshots/volume-widgetttps://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
+Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
 
 ## Customization
 

@@ -7,7 +7,7 @@ layout: page
 
 ## Installation
 
-This widget is based on [@jsspencer](../awesome-wm-widgets/assets/img/screenshots/pomodoroarc-widgetttps://github.com/jsspencer)' [pomo](../awesome-wm-widgets/assets/img/screenshots/pomodoroarc-widgetttps://github.com/jsspencer/pomo) - a simple pomodoro timer.
+This widget is based on [@jsspencer](https://github.com/jsspencer)' [pomo](https://github.com/jsspencer/pomo) - a simple pomodoro timer.
 So first install/clone it anywhere you like, then either 
  - in widget's code provide path to the pomo.sh, or
  - add pomo.sh to the PATH, or

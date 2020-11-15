@@ -6,7 +6,7 @@ layout: page
 This widget consists of an icon with counter which shows number of unread emails: ![email icon](../awesome-wm-widgets/assets/img/screenshots/email-widget/em-wid-1.png)
 and a popup message which appears when mouse hovers over an icon: ![email popup](../awesome-wm-widgets/assets/img/screenshots/email-widget/em-wid-2.png)
 
-Note that widget uses the Arc icon theme, so it should be [installed](../awesome-wm-widgets/assets/img/screenshots/email-widgetttps://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
+Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
 
 ## Installation
 

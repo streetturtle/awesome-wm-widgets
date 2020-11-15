@@ -2,7 +2,7 @@
 layout: page
 ---
 
-# Taglist
+# Toggable Systray
 
 Here is a trick to toggle system tray visibility in Awesome using keyboard shortcut. The reason to do that is pretty simple - it looks ugly in some themes. In my case I don't like two things about it:
 

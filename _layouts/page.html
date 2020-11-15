@@ -14,14 +14,12 @@
                             style="font-family: awesomewm-font; font-weight: 100;">awesome wm</span></a>
                 </div>
                     <div id="description" class="header center white-text">
-<!--                         <span><i class="fa fa-exclamation-triangle" style="color: yellow"></i> This page is under construction</span> -->
                     Widgets for Awesome Window Manager
                 </div>
             </div>
             <div id="particles-js"></div>
         </div>
 
-        <!--<a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>-->
     </div>
 </header>
 
@@ -31,35 +29,71 @@
     <ul class="sidenav sidenav-fixed" style="transform: translateX(0px);">
         <li class=""><a class="white-text" href="#tabMain">Awesome WM Widgets</a></li>
         <li><div class="divider"></div></li>
-        <li><a class="subheader white-text">Widgets</a></li>
 
-        {% for widget in site.widgets %}
-        <li class="tab col s2 ">
-            <a href="#tab{{ widget.title | replace: ' ', '_' }}">
-                {{ widget.title | replace: 'Cpu', 'CPU' | replace: 'Ram', 'RAM'}}
-            </a>
-        </li>
-        {% endfor %}
+        <ul class="collapsible collapsible-accordion">
+            
+            <li>
+                <a class="collapsible-header">Widgets</a>
+                <div class="collapsible-body">
+                    <ul>
+                        {% for widget in site.widgets %}
+                        <li class="tab col s2 ">
+                            <a class="tab" href="#tab{{ widget.title | replace: ' ', '_' }}">
+                                {{ widget.title | replace: 'Cpu', 'CPU' | replace: 'Ram', 'RAM' | replace: 'Fs', 'FS' | replace: 'Todo', 'ToDo'}}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
+            
+            <li>
+                <a class="collapsible-header">Prompts</a>
+                <div class="collapsible-body">
+                    <ul>
+                        {% for prompt in site.prompts %}
+                        <li class="tab col s2 ">
+                            <a class="tab" href="#tab{{ prompt.title | replace: ' ', '_' }}">
+                                {{ prompt.title }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
 
-        <li><a class="subheader white-text">Prompts</a></li>
 
-        {% for prompt in site.prompts %}
-        <li class="tab col s2 ">
-            <a href="#tab{{ prompt.title | replace: ' ', '_' }}">
-                {{ prompt.title }}
-            </a>
-        </li>
-        {% endfor %}
+            <li>
+                <a class="collapsible-header">Tips and tricks</a>
+                <div class="collapsible-body">
+                    <ul>
+                        {% for tip in site.tips %}
+                        <li class="tab col s2 ">
+                            <a class="tab" href="#tab{{ tip.title | replace: ' ', '_' }}">
+                                {{ tip.title }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
 
-        <li><a class="subheader white-text">Tips and tricks</a></li>
-
-        {% for tip in site.tips %}
-        <li class="tab col s2 ">
-            <a href="#tab{{ tip.title | replace: ' ', '_' }}" onclick="">
-                {{ tip.title }}
-            </a>
-        </li>
-        {% endfor %}
+            <li>
+                <a class="collapsible-header">Snippets</a>
+                <div class="collapsible-body">
+                    <ul>
+                        {% for snippet in site.snippets %}
+                        <li class="tab col s2 ">
+                            <a class="tab" href="#tab{{ snippet.title | replace: ' ', '_' }}">
+                                {{ snippet.title }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
+            
+        </ul>
 
         <li><div class="divider"></div></li>
         <li><a class="subheader white-text">Links</a></li>
@@ -72,10 +106,6 @@
     <div class="container">
         <div class="section">
             <div class="row">
-
-                <div class="center-align">
-                    <img src="https://github.com/streetturtle/AwesomeWM/blob/master/screenshot.png?raw=true"/>
-                </div>
 
                 <div id="tabMain" class="widget col s12 hide">
                     {{site.main[0].content}}
@@ -96,6 +126,12 @@
                 {% for tip in site.tips %}
                 <div id="tab{{ tip.title | replace: ' ', '_' }}" class="widget col s12 hide">{{
                     tip.content }}
+                </div>
+                {% endfor %}
+
+                {% for snippet in site.snippets %}
+                <div id="tab{{ snippet.title | replace: ' ', '_' }}" class="widget col s12 hide">{{
+                    snippet.content }}
                 </div>
                 {% endfor %}
 

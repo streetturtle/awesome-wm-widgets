@@ -9,4 +9,4 @@ This widget shows the RAM usage. When clicked another widget appears with more d
 
 ## Installation
 
-Please refer to the [installation](../awesome-wm-widgets/assets/img/screenshots/ram-widgetttps://github.com/streetturtle/awesome-wm-widgets#installation) section of the repo.
+Please refer to the [installation](https://github.com/streetturtle/awesome-wm-widgets#installation) section of the repo.

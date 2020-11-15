@@ -3,7 +3,7 @@ layout: page
 ---
 # Spotify widget
 
-This widget displays currently playing song on [Spotify for Linux](../awesome-wm-widgets/assets/img/screenshots/spotify-widgetttps://www.spotify.com/download/linux/) client: ![screenshot](../awesome-wm-widgets/assets/img/screenshots/spotify-widget/spo-wid-1.png)
+This widget displays currently playing song on [Spotify for Linux](https://www.spotify.com/download/linux/) client: ![screenshot](../awesome-wm-widgets/assets/img/screenshots/spotify-widget/spo-wid-1.png)
 
 Some features:
 
@@ -21,7 +21,7 @@ Some features:
 
 ## Dependencies
 
-Note that widget uses the Arc icon theme, so it should be [installed](../awesome-wm-widgets/assets/img/screenshots/spotify-widgetttps://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
+Note that widget uses the Arc icon theme, so it should be [installed](https://github.com/horst3180/arc-icon-theme#installation) first under **/usr/share/icons/Arc/** folder.
 
 ## Customization
 
@@ -35,7 +35,8 @@ It is possible to customize widget by providing a table with all or some of the 
 | `dim_when_paused` | `false` | Decrease the widget opacity if spotify is paused |
 | `dim_opacity` | `0.2` | Widget's opacity when dimmed, `dim_when_paused` should be set to `true` |
 | `max_length` | `15` | Maximum lentgh of artist and title names. Text will be ellipsized if longer. |
-| `show_tooltip` | `true`| Show tooltip on hover with information about the playing song |
+| `show_tooltip` | `true` | Show tooltip on hover with information about the playing song |
+| `timeout` | 1 | How often in seconds the widget refreshes |
 
 
 ### Example:

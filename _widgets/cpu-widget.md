@@ -3,13 +3,15 @@ layout: page
 ---
 # CPU widget
 
+[![GitHub issues by-label](https://img.shields.io/github/issues-raw/streetturtle/awesome-wm-widgets/cpu)](https://github.com/streetturtle/awesome-wm-widgets/labels/cpu)
+
 This widget shows the average CPU load among all cores of the machine:
 
 ![screenshot](../awesome-wm-widgets/assets/img/screenshots/cpu-widget/cpu.gif)
 
 ## How it works
 
-To measure the load I took Paul Colby's bash [script](../awesome-wm-widgets/assets/img/screenshots/cpu-widgetttp://colby.id.au/calculating-cpu-usage-from-proc-stat/) and rewrote it in Lua, which was quite simple.
+To measure the load I took Paul Colby's bash [script](http://colby.id.au/calculating-cpu-usage-from-proc-stat/) and rewrote it in Lua, which was quite simple.
 So awesome simply reads the first line of /proc/stat:
 
 ```bash
@@ -31,6 +33,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `color` | `beautiful.fg_normal` | Color of the graph |
 | `enable_kill_button` | `false` | Show button which kills the process |
 | `process_info_max_length` | `-1` | Truncate the process information. Some processes may have a very long list of parameters which won't fit in the screen, this options allows to truncate it to the given length. |
+| `timeout` | 1 | How often in seconds the widget refreshes |
 
 ### Example
 

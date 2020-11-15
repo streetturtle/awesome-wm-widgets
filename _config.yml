@@ -5,6 +5,7 @@ collections:
   tips:
   prompts:
   widgets:
+  snippets:
 #    output: true
 
 markdown: kramdown

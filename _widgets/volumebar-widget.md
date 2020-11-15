@@ -22,8 +22,9 @@ It is possible to customize widget by providing a table with all or some of the 
 | `bg_color` | `#ffffff11` | Color of the bar's background |
 | `mute_color` | `beautiful.fg_urgent` | Color of the bar when mute |
 | `width` | 50 | The bar width |
-| `shape` | `bar` | [gears.shape](../awesome-wm-widgets/assets/img/screenshots/volumebar-widgetttps://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
-| `margin` | `10` | Top and bottom margin (if your wibar is 22 px high, bar will be 2 px (22 - 2*10)) |
+| `shape` | `bar` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
+| `margins` | `10` | Top and bottom margin (if your wibar is 22 px high, bar will be 2 px (22 - 2*10)) |
+| `timeout` | 1 | How often in seconds the widget refreshes |
 | `get_volume_cmd` | `amixer -D pulse sget Master` | Get current volume level |
 | `inc_volume_cmd` | `amixer -D pulse sset Master 5%+` | Increase volume level |
 | `dec_volume_cmd` | `amixer -D pulse sset Master 5%-` | Decrease volume level |

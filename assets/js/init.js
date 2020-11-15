@@ -16,13 +16,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 $(document).ready(function(){
     $('.sidenav').sidenav();
+    $('.collapsible').collapsible();
 
     let currentPage = document.location.hash.replace('#tab', '').replace(/[\s+_]/g, '-').toLowerCase();
     if (currentPage === 'main') currentPage = 'awesome-wm-widgets';
     ga('set', 'page', currentPage);1
     ga('send', 'pageview');
 
-    $('.sidenav > li > a').click(function(event){
+    $('li.tab > a').click(function(event){
         event.preventDefault();//stop browser to take action for clicked anchor
 
         let currentPage = $(this).text().trim().replace(/\s+/g, '-').toLowerCase();
@@ -32,10 +33,10 @@ $(document).ready(function(){
         location.hash = event.target.hash;
 
         //get displaying tab content jQuery selector
-        let active_tab_selector = $('.sidenav > li.active > a').attr('href');
+        let active_tab_selector = $('li.tab.col.s2.active > a.tab').attr('href');
 
         //find actived navigation and remove 'active' css
-        let actived_nav = $('.sidenav > li.active');
+        let actived_nav = $('.collapsible-body li.active');
         actived_nav.removeClass('active');
 
         //add 'active' css into clicked navigation

@@ -12,11 +12,8 @@ for D in *; do
 
         mkdir -p ${pages_dir}/assets/img/screenshots/${D}
 
-        
-        find ${D}/ \( -name '*.jpg' -o -name '*.png' -o -name '*.gif' -o -name '*.svg' \) -exec cp '{}' ${pages_dir}/assets/img/screenshots/${D} \;
+        find ${D}/ \( -name '*.jpg' -o -name '*.png' -o -name '*.gif' \) -exec cp '{}' ${pages_dir}/assets/img/screenshots/${D} \;
 
-
-
-        sed -i "s/](./](..\/awesome-wm-widgets\/assets\/img\/screenshots\/$D/g" ${pages_dir}/_widgets/${D}.md
+        sed -i "s/](\.\(\/screenshots\)\{0,1\}/](..\/awesome-wm-widgets\/assets\/img\/screenshots\/$D/g" ${pages_dir}/_widgets/${D}.md
     fi
 done

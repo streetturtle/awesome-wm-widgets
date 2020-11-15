@@ -47,7 +47,7 @@ s.mytasklist, -- Middle widget
 
 ## How it works
 
-Everything starts with this timer, which gets recent activities by calling GitHub [Events API](../awesome-wm-widgets/assets/img/screenshots/github-activity-widgetttps://developer.github.com/v3/activity/events/) and stores the response under /.cache/awmw/github-activity-widget/activity.json directory:
+Everything starts with this timer, which gets recent activities by calling GitHub [Events API](https://developer.github.com/v3/activity/events/) and stores the response under /.cache/awmw/github-activity-widget/activity.json directory:
 
 ```lua
 gears.timer {

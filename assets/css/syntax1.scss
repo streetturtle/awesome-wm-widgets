@@ -20,7 +20,7 @@ $tag: #f1c829;
 $attributes: #9876AA;
 $comments: #75715e;
 $linenos: #A9B7C6;
-.highlight, .highlighter-rouge {
+.highlight, .highlighter-rouge, figure.highlight {
   font-size: 12px;
   margin-bottom: 1.5em;
   color: $foreground;
@@ -81,6 +81,18 @@ p > code,
 p > code,
 td > code {
   padding: 2px 4px;
+}
+
+table.rouge-table{
+  border: 0;
+  td.gutter, td.code {
+    padding: 0;
+    border: 0;
+  }
+}
+
+.highlight > pre {
+  border-radius: 5px;
 }
 
 

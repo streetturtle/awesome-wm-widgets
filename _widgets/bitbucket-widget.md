@@ -7,9 +7,9 @@ The widget shows the number of pull requests assigned to the user and when click
 
 ## How it works
 
-Widget uses cURL to query Bitbucket's [REST API](../awesome-wm-widgets/assets/img/screenshots/bitbucket-widgetttps://developer.atlassian.com/bitbucket/api/2/reference/). In order to be authenticated, widget uses a [netrc](../awesome-wm-widgets/assets/img/screenshots/bitbucket-widgetttps://ec.haxx.se/usingcurl/usingcurl-netrc) feature of the cURL, which is basically to store basic auth credentials in a .netrc file in home folder. 
+Widget uses cURL to query Bitbucket's [REST API](https://developer.atlassian.com/bitbucket/api/2/reference/). In order to be authenticated, widget uses a [netrc](https://ec.haxx.se/usingcurl/usingcurl-netrc) feature of the cURL, which is basically to store basic auth credentials in a .netrc file in home folder. 
 
-Bitbucket allows using [App Passwords](../awesome-wm-widgets/assets/img/screenshots/bitbucket-widgetttps://confluence.atlassian.com/bitbucket/app-passwords-828781300.html) (available in the account settings) - simply generate one for the widget and use it as password in .netrc file.
+Bitbucket allows using [App Passwords](https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html) (available in the account settings) - simply generate one for the widget and use it as password in .netrc file.
 
 ## Customization
 
@@ -22,6 +22,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `uuid` | Required | UUID |
 | `workspace` | Required | Workspace ID|
 | `repo_slug` | Required | Repository slug |
+| `timeout` | 60 | How often in seconds the widget refreshes |
 
 ## Installation
 

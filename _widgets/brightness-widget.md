@@ -16,6 +16,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `dec_brightness_cmd` | `light -U 5`| Decrease brightness |
 | `path_to_icon` | `/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg` | Path to the icon |
 | `font` | `Play 9` | Font |
+| `timeout` | 1 | How often in seconds the widget refreshes |
 
 ### Example:
 
@@ -45,7 +46,7 @@ First you need to get the current brightness level. There are two options:
 
  - using `light` command
  
-    Install it from this git repo: [github.com/haikarainen/light](../awesome-wm-widgets/assets/img/screenshots/brightness-widgetttps://github.com/haikarainen/light) and check if it works but running
+    Install it from this git repo: [github.com/haikarainen/light](https://github.com/haikarainen/light) and check if it works but running
 
     ```bash
     git clone https://github.com/haikarainen/light.git && \
