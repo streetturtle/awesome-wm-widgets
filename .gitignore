@@ -41,3 +41,6 @@ luac.out
 
 # IDEA files
 .idea
+
+# vscode files
+.history

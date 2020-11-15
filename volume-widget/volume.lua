@@ -19,7 +19,7 @@ local PATH_TO_ICONS = "/usr/share/icons/Arc/status/symbolic/"
 local volume_icon_name="audio-volume-high-symbolic"
 local GET_VOLUME_CMD = 'amixer sget Master'
 
-local volume = {device = '', display_notification = false, notification = nil, delta = 5}
+local volume = {device = '', display_notification = false, display_notification_onClick = true, notification = nil, delta = 5}
 
 function volume:toggle()
     volume:_cmd('amixer ' .. volume.device .. ' sset Master toggle')
@@ -64,14 +64,14 @@ end
 local function update_graphic(widget, stdout, _, _, _)
     local txt = parse_output(stdout)
     widget.image = PATH_TO_ICONS .. volume_icon_name .. ".svg"
-    if volume.display_notification then
+    if (volume.display_notification or volume.display_notification_onClick) then
         volume.notification.iconbox.image = PATH_TO_ICONS .. volume_icon_name .. ".svg"
         naughty.replace_text(volume.notification, "Volume", txt)
     end
 end
 
 local function notif(msg, keep)
-    if volume.display_notification then
+    if (volume.display_notification or (keep and volume.display_notification_onClick)) then
         naughty.destroy(volume.notification)
         volume.notification= naughty.notify{
             text =  msg,
@@ -94,6 +94,7 @@ local function worker(args)
 
     local volume_audio_controller = args.volume_audio_controller or 'pulse'
     volume.display_notification = args.display_notification or false
+    volume.display_notification_onClick = args.display_notification_onClick or true
     volume.position = args.notification_position or "top_right"
     if volume_audio_controller == 'pulse' then
         volume.device = '-D pulse'
@@ -134,10 +135,9 @@ local function worker(args)
     end
 
     local function show()
-        spawn.easy_async(GET_VOLUME_CMD,
-        function(stdout, _, _, _)
-        txt = parse_output(stdout)
-        notif(txt, true)
+        spawn.easy_async(GET_VOLUME_CMD, function(stdout, _, _, _)
+            txt = parse_output(stdout)
+            notif(txt, true)
         end
         )
     end
@@ -155,6 +155,11 @@ local function worker(args)
     end)
     if volume.display_notification then
         volume.widget:connect_signal("mouse::enter", function() show() end)
+        volume.widget:connect_signal("mouse::leave", function() naughty.destroy(volume.notification) end)
+    elseif volume.display_notification_onClick then
+        volume.widget:connect_signal("button::press", function(_,_,_,button)
+            if (button == 3) then show() end
+        end)
         volume.widget:connect_signal("mouse::leave", function() naughty.destroy(volume.notification) end)
     end
 --}}}
