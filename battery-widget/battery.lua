@@ -123,7 +123,7 @@ local function worker(args)
         local battery_info = {}
         local capacities = {}
         for s in stdout:gmatch("[^\r\n]+") do
-            local status, charge_str, time = string.match(s, '.+: (%a+), (%d?%d?%d)%%,?(.*)')
+            local status, charge_str, time = string.match(s, '.+: ([%a ]+), (%d?%d?%d)%%,?(.*)')
             if status ~= nil then
                 table.insert(battery_info, {status = status, charge = tonumber(charge_str)})
             else
@@ -184,12 +184,12 @@ local function worker(args)
         battery_widget:connect_signal("mouse::enter", function() show_battery_status(batteryType) end)
         battery_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
     elseif display_notification_onClick then
-        battery_widget:connect_signal("button::press", function(_,_,_,button) 
+        battery_widget:connect_signal("button::press", function(_,_,_,button)
             if (button == 3) then show_battery_status(batteryType) end
         end)
         battery_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
     end
-    
+
     return wibox.container.margin(battery_widget, margin_left, margin_right)
 end
 
