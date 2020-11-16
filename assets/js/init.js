@@ -44,7 +44,7 @@ $(document).ready(function(){
 
         //hide displaying tab content
         $(active_tab_selector).removeClass('active fade-in');
-        $(active_tab_selector).addClass('hide ');
+        $(active_tab_selector).addClass('hide');
 
         //show target tab content
         let target_tab_selector = $(this).attr('href');
