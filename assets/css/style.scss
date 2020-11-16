@@ -99,7 +99,14 @@ footer {
     li {
       line-height: normal;
       padding: 4px 32px;
+      a.social-link {
+        display: inline;
+        height: 0;
+        line-height: 0;
+        padding: 0px;
+      }
     }
+    
   }
 }
 
