@@ -38,6 +38,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `warning_msg_position` | `bottom_right` | Position of the warning popup |
 | `warning_msg_icon` | ~/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg | Icon of the warning popup |
 | `enable_battery_warning` | `true` | Display low battery warning |
+| `show_notification_mode` | `on_hover` | How to trigger a notification with the battery status: `on_hover`, `on_click` or `off`  |
 
 ## Requirements
 

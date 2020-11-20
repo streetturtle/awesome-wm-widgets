@@ -27,6 +27,7 @@ local function worker(args)
     local show_current_level = args.show_current_level or false
     local size = args.size or 18
     local timeout = args.timeout or 10
+    local show_notification_mode = args.show_notification_mode or 'on_hover' -- on_hover / on_click
 
     local main_color = args.main_color or beautiful.fg_color
     local bg_color = args.bg_color or '#ffffff11'
@@ -66,6 +67,22 @@ local function worker(args)
     }
 
     local last_battery_check = os.time()
+
+    --[[ Show warning notification ]]
+    local function show_battery_warning()
+        naughty.notify {
+            icon = warning_msg_icon,
+            icon_size = 100,
+            text = warning_msg_text,
+            title = warning_msg_title,
+            timeout = 25, -- show the warning for a longer time
+            hover_timeout = 0.5,
+            position = warning_msg_position,
+            bg = "#F06060",
+            fg = "#EEE9EF",
+            width = 300,
+        }
+    end
 
     local function update_widget(widget, stdout)
         local charge = 0
@@ -119,7 +136,7 @@ local function worker(args)
 
     -- Popup with battery info
     local notification
-    function show_battery_status()
+    local function show_battery_status()
         awful.spawn.easy_async([[bash -c 'acpi']],
                 function(stdout, _, _, _)
                     naughty.destroy(notification)
@@ -127,33 +144,18 @@ local function worker(args)
                         text = stdout,
                         title = "Battery status",
                         timeout = 5,
-                        hover_timeout = 0.5,
                         width = 200,
                     }
                 end)
     end
 
-    widget:connect_signal("mouse::enter", function()
-        show_battery_status()
-    end)
-    widget:connect_signal("mouse::leave", function()
-        naughty.destroy(notification)
-    end)
-
-    --[[ Show warning notification ]]
-    function show_battery_warning()
-        naughty.notify {
-            icon = warning_msg_icon,
-            icon_size = 100,
-            text = warning_msg_text,
-            title = warning_msg_title,
-            timeout = 25, -- show the warning for a longer time
-            hover_timeout = 0.5,
-            position = warning_msg_position,
-            bg = "#F06060",
-            fg = "#EEE9EF",
-            width = 300,
-        }
+    if show_notification_mode == 'on_hover' then
+        widget:connect_signal("mouse::enter", function() show_battery_status() end)
+        widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
+    elseif show_notification_mode == 'on_click' then
+        widget:connect_signal('button::press', function(_, _, _, button)
+            if (button == 1) then show_battery_status() end
+        end)
     end
 
     return widget
