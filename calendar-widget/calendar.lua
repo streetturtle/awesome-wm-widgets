@@ -68,7 +68,18 @@ local function worker(args)
             weekday_fg = '#FD971F',
             header_fg = '#F92672',
             border = '#75715E'
+        },
+        naughty = {
+            bg = beautiful.notification_bg or beautiful.bg,
+            fg = beautiful.notification_fg or beautiful.fg,
+            focus_date_bg = beautiful.notification_fg or beautiful.fg,
+            focus_date_fg = beautiful.notification_bg or beautiful.bg,
+            weekend_day_bg = beautiful.bg_focus,
+            weekday_fg = beautiful.fg,
+            header_fg = beautiful.fg,
+            border = beautiful.border_normal
         }
+
     }
 
     local args = args or {}
@@ -78,11 +89,12 @@ local function worker(args)
             preset = naughty.config.presets.critical,
             title = 'Calendar Widget',
             text = 'Theme "' .. args.theme .. '" not found, fallback to default'})
-        args.theme = 'nord'
+        args.theme = 'naughty'
     end
 
-    local theme = args.theme or 'nord'
+    local theme = args.theme or 'naughty'
     local placement = args.placement or 'top'
+    local radius = args.radius or 8
 
 
     local styles = {}
@@ -175,7 +187,7 @@ local function worker(args)
     local popup = awful.popup {
         ontop = true,
         visible = false,
-        shape = gears.shape.rounded_rect,
+        shape = rounded_shape(radius),
         offset = { y = 5 },
         border_width = 1,
         border_color = calendar_themes[theme].border,
