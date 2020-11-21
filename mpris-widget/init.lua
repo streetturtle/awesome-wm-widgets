@@ -13,7 +13,7 @@ local wibox = require("wibox")
 local naughty = require("naughty")
 
 local GET_MPD_CMD =
-    "playerctl -f '{{lc(status)}};{{xesam:artist}};{{xesam:title}}' metadata"
+    "playerctl -f '{{status}};{{xesam:artist}};{{xesam:title}}' metadata"
 
 local TOGGLE_MPD_CMD = "playerctl play-pause"
 local PAUSE_MPD_CMD = "playerctl pause"
@@ -66,19 +66,23 @@ local update_graphic = function(widget, stdout, _, _, _)
         end
     end
 
-    if mpdstatus == "playing" then
+    if mpdstatus == "Playing" then
+        mpdarc_icon_widget.visible = true
         icon.image = PLAY_ICON_NAME
         widget.colors = {beautiful.widget_main_color}
         mpdarc_current_song_widget.markup = current_song
-    elseif mpdstatus == "paused" then
+    elseif mpdstatus == "Paused" then
+        mpdarc_icon_widget.visible = true
         icon.image = PAUSE_ICON_NAME
         widget.colors = {beautiful.widget_main_color}
         mpdarc_current_song_widget.markup = current_song
-    elseif mpdstatus == "stopped" then
+    elseif mpdstatus == "Stopped" then
+        mpdarc_icon_widget.visible = true
         icon.image = STOP_ICON_NAME
         mpdarc_current_song_widget.markup = ""
     else -- no player is running
         icon.image = LIBRARY_ICON_NAME
+        mpdarc_icon_widget.visible = false
         mpdarc_current_song_widget.markup = ""
         widget.colors = {beautiful.widget_red}
     end
@@ -107,7 +111,7 @@ function show_MPD_status()
     spawn.easy_async(GET_MPD_CMD, function(stdout, _, _, _)
         notification = naughty.notify {
             text = current_song .. " by " .. artist,
-            title = "Now Playing",
+            title = mpdstatus,
             timeout = 5,
             hover_timeout = 0.5,
             width = 600
@@ -124,6 +128,7 @@ mpdarc:connect_signal("mouse::leave",
 watch(GET_MPD_CMD, 1, update_graphic, mpdarc)
 
 local mpdarc_widget = wibox.widget {
+    screen = 'primary',
     mpdarc_icon_widget,
     mpdarc_current_song_widget,
     layout = wibox.layout.align.horizontal
