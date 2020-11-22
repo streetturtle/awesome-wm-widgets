@@ -18,8 +18,18 @@ local function tablelength(T)
   return count
 end
 
+local function split(string_to_split, separator)
+    if separator == nil then separator = "%s" end
+    local t = {}
+
+    for str in string.gmatch(string_to_split, "([^".. separator .."]+)") do
+        table.insert(t, str)
+    end
+
+    return t
+end
+
 local function convertNumberToName(num)
-    num = tonumber(num)
     local lowNames = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
                  "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
                   "eighteen", "nineteen"};
@@ -49,28 +59,28 @@ local function worker(args)
 
     local args = args or {}
 
+    local main_color = args.main_color or beautiful.fg_normal
+    local accent_color = args.accent_color or beautiful.fg_urgent
+    local font = args.font or beautiful.font
+    local mode = args.mode or 'human' -- human /
+    local military_time = args.military_time
+
+    if military_time == nil then military_time = false end
+
     text_clock = wibox.widget {
         {
-            id = 'hours',
-            font = 'Play 12',
-            widget = wibox.widget.textbox,
-        },
-        {
-            id = "minutes",
-            font = 'Play 12',
+            id = 'clock',
+            font = font,
             widget = wibox.widget.textbox,
         },
         layout = wibox.layout.align.horizontal,
-        set_text = function(self, hours, minutes)
-            self:get_children_by_id('hours')[1]:set_text(hours)
-
-            if string.match(minutes, " ") then
-                local f,s = minutes:match("(%w+)%s(%w+)")
-                self:get_children_by_id('minutes')[1]:set_markup('<span font_weight="bold" color="' .. beautiful.fg_urgent .. '">' .. f .. '</span>' .. s)
-            else
-                self:get_children_by_id('minutes')[1]:set_markup('<span font_weight="bold"> color="' .. beautiful.fg_urgent .. '">' .. minutes .. '</span>')
-              end
-
+        set_text = function(self, time)
+            local t = split(time)
+            local res = ''
+            for i, v in ipairs(t) do
+                res = res .. '<span color="' .. ((i % 2 == 0) and accent_color or main_color) .. '">' .. v .. '</span>'
+            end
+            self:get_children_by_id('clock')[1]:set_markup(res)
         end
     }
 
@@ -79,13 +89,34 @@ local function worker(args)
         call_now  = true,
         autostart = true,
         callback  = function()
-            local time = os.date("%I:%M")
+            local time = os.date((military_time and '%H' or '%I') ..  ':%M')
             local h,m = time:match('(%d+):(%d+)')
-            local hw = convertNumberToName(h)
-            local mw = convertNumberToName(m)
-            print(hw)
-            print(mw)
-            text_clock:set_text(hw, mw)
+            local min = tonumber(m)
+            local hour = tonumber(h)
+
+            if mode == 'human' then
+                local mm
+                if min == 15 or min == 45 then
+                    mm = 'quater'
+                elseif min == 30 then
+                    mm = 'half'
+                else
+                    mm = convertNumberToName((min < 31) and min or 60 - min)
+                end
+
+                local to_past
+
+                if min < 31 then
+                    to_past = 'past'
+                else
+                    to_past = 'to'
+                    hour = hour + 1
+                end
+
+                text_clock:set_text(mm .. ' ' .. to_past .. ' ' .. convertNumberToName(hour))
+            else
+                text_clock:set_text(convertNumberToName(hour) .. ' ' .. convertNumberToName(min))
+            end
         end
     }
 
