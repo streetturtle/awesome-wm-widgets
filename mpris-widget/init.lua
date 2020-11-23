@@ -13,7 +13,7 @@ local wibox = require("wibox")
 local naughty = require("naughty")
 
 local GET_MPD_CMD =
-    "playerctl -f '{{status}};{{xesam:artist}};{{xesam:title}}' metadata"
+    "playerctl -f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}}' metadata"
 
 local TOGGLE_MPD_CMD = "playerctl play-pause"
 local PAUSE_MPD_CMD = "playerctl pause"
@@ -26,7 +26,6 @@ local PAUSE_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_pause.png"
 local PLAY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_play.png"
 local STOP_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_stop.png"
 local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/music-library.png"
-
 
 local mpdarc_widget = {}
 
