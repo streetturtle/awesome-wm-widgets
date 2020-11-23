@@ -62,7 +62,6 @@ local parse_container = function(line)
     else actual_status = status end
 
     how_long = how_long:gsub('%s?%(.*%)%s?', '')
-    -- if how_long:find('seconds') then how_long = 'less than a minute ago' end
 
     local container = {
         name = name,
@@ -122,20 +121,36 @@ local function worker(args)
             if container.is_up() or container.is_exited() then
                 start_stop_button = wibox.widget {
                     {
-                        id = 'icon',
-                        image = ICONS_DIR .. (container:is_up() and 'stop-btn.svg' or 'play-btn.svg'),
-                        opacity = 0.4,
-                        resize = false,
-                        widget = wibox.widget.imagebox
+                        {
+                            id = 'icon',
+                            image = ICONS_DIR .. (container:is_up() and 'stop-btn.svg' or 'play-btn.svg'),
+                            opacity = 0.4,
+                            resize = false,
+                            widget = wibox.widget.imagebox
+                        },
+                        left = 2,
+                        right = 2,
+                        layout = wibox.container.margin
                     },
-                    left = 2,
-                    right = 2,
-                    layout = wibox.container.margin
+                    shape = gears.shape.circle,
+                    bg = '#00000000',
+                    widget = wibox.container.background
                 }
+                local old_cursor, old_wibox
                 start_stop_button:connect_signal("mouse::enter", function(c)
+                    c:set_bg('#3B4252')
+
+                    local wb = mouse.current_wibox
+                    old_cursor, old_wibox = wb.cursor, wb
+                    wb.cursor = "hand1"
                     c:get_children_by_id("icon")[1]:set_opacity(1)
                     c:get_children_by_id("icon")[1]:emit_signal('widget::redraw_needed')  end)
                 start_stop_button:connect_signal("mouse::leave", function(c)
+                    c:set_bg('#00000000')
+                    if old_wibox then
+                        old_wibox.cursor = old_cursor
+                        old_wibox = nil
+                    end
                     c:get_children_by_id("icon")[1]:set_opacity(0.4)
                     c:get_children_by_id("icon")[1]:emit_signal('widget::redraw_needed')
                 end)
@@ -148,7 +163,7 @@ local function worker(args)
                         status_icon:set_opacity(0.2)
                         status_icon:emit_signal('widget::redraw_needed')
 
-                        awful.spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(stdout, stderr)
+                        spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(stdout, stderr)
                             if stderr ~= '' then show_warning(stderr) end
                             spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), function(stdout, stderr)
                                 rebuild_widget(stdout, stderr) end)
@@ -163,21 +178,36 @@ local function worker(args)
             if container.is_up() then
                 pause_unpause_button = wibox.widget {
                     {
-                        id = 'icon',
-                        image = ICONS_DIR .. (container:is_paused() and 'unpause-btn.svg' or 'pause-btn.svg'),
-                        opacity = 0.4,
-                        resize = false,
-                        widget = wibox.widget.imagebox
+                        {
+                            id = 'icon',
+                            image = ICONS_DIR .. (container:is_paused() and 'unpause-btn.svg' or 'pause-btn.svg'),
+                            opacity = 0.4,
+                            resize = false,
+                            widget = wibox.widget.imagebox
+                        },
+                        left = 2,
+                        right = 2,
+                        layout = wibox.container.margin
                     },
-                    left = 2,
-                    right = 2,
-                    layout = wibox.container.margin
+                    shape = gears.shape.circle,
+                    bg = '#00000000',
+                    widget = wibox.container.background
                 }
+                local old_cursor, old_wibox
                 pause_unpause_button:connect_signal("mouse::enter", function(c)
+                    c:set_bg('#3B4252')
+                    local wb = mouse.current_wibox
+                    old_cursor, old_wibox = wb.cursor, wb
+                    wb.cursor = "hand1"
                     c:get_children_by_id("icon")[1]:set_opacity(1)
                     c:get_children_by_id("icon")[1]:emit_signal('widget::redraw_needed')
                 end)
                 pause_unpause_button:connect_signal("mouse::leave", function(c)
+                    c:set_bg('#00000000')
+                    if old_wibox then
+                        old_wibox.cursor = old_cursor
+                        old_wibox = nil
+                    end
                     c:get_children_by_id("icon")[1]:set_opacity(0.4)
                     c:get_children_by_id("icon")[1]:emit_signal('widget::redraw_needed')
                 end)
@@ -198,6 +228,55 @@ local function worker(args)
                     end) ) )
             else
                 pause_unpause_button = nil
+            end
+
+            local delete_button
+            if not container.is_up() then
+                delete_button = wibox.widget {
+                    {
+                        {
+                            id = 'icon',
+                            image = ICONS_DIR .. 'trash-btn.svg',
+                            opacity = 0.4,
+                            resize = false,
+                            widget = wibox.widget.imagebox
+                        },
+                        margins = 4,
+                        layout = wibox.container.margin
+                    },
+                    shape = gears.shape.circle,
+                    bg = '#00000000',
+                    widget = wibox.container.background
+                }
+                delete_button:buttons(
+                        awful.util.table.join( awful.button({}, 1, function()
+                            awful.spawn.easy_async('docker rm ' .. container['name'], function(stdout, stderr)
+                                if stderr ~= '' then show_warning(stderr) end
+                                spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), function(stdout, stderr)
+                                    rebuild_widget(stdout, stderr) end)
+                                end)
+                        end)))
+
+                local old_cursor, old_wibox
+                delete_button:connect_signal("mouse::enter", function(c)
+                    c:set_bg('#3B4252')
+                    local wb = mouse.current_wibox
+                    old_cursor, old_wibox = wb.cursor, wb
+                    wb.cursor = "hand1"
+                    c:get_children_by_id("icon")[1]:set_opacity(1)
+                    c:get_children_by_id("icon")[1]:emit_signal('widget::redraw_needed')
+                end)
+                delete_button:connect_signal("mouse::leave", function(c)
+                    c:set_bg('#00000000')
+                    if old_wibox then
+                        old_wibox.cursor = old_cursor
+                        old_wibox = nil
+                    end
+                    c:get_children_by_id("icon")[1]:set_opacity(0.4)
+                    c:get_children_by_id("icon")[1]:emit_signal('widget::redraw_needed')
+                end)
+            else
+                delete_button = nil
             end
 
 
@@ -237,9 +316,10 @@ local function worker(args)
                             {
                                 start_stop_button,
                                 pause_unpause_button,
+                                delete_button,
                                 layout = wibox.layout.align.horizontal
                             },
-                            forced_width = 60,
+                            forced_width = 90,
                             valign = 'center',
                             haligh = 'center',
                             layout = wibox.container.place,
