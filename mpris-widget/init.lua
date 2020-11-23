@@ -13,7 +13,7 @@ local wibox = require("wibox")
 local naughty = require("naughty")
 
 local GET_MPD_CMD =
-    "playerctl -f '{{status}};{{xesam:artist}};{{xesam:title}}' metadata"
+    "playerctl -f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}}' metadata"
 
 local TOGGLE_MPD_CMD = "playerctl play-pause"
 local PAUSE_MPD_CMD = "playerctl pause"
@@ -28,7 +28,7 @@ local STOP_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_stop.png"
 local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/music-library.png"
 
 -- retriving song info
-current_song, artist = nil, nil
+current_song, artist, artUrl = nil, nil, nil
 
 local icon = wibox.widget {
     id = "icon",
@@ -59,12 +59,25 @@ local mpdarc_current_song_widget = wibox.widget {
 }
 
 local update_graphic = function(widget, stdout, _, _, _)
-    mpdstatus, artist, current_song = stdout:match("(%w+)%;+(.-)%;(.*)")
+    -- mpdstatus, artist, current_song = stdout:match("(%w+)%;+(.-)%;(.*)")
+    local words = {}
+    for w in stdout:gmatch("([^;]*)") do
+        print(w)
+        table.insert(words, w)
+    end
+
+    mpdstatus = words[1]
+    current_song = words[2]
+    artist = words[3]
+    local art = words[4]
+
     if current_song ~= nil then
-        if current_song.len == 18 then
-            current_song = string.sub(current_song, 0, 9) .. ".."
+        if string.len(current_song) > 18 then
+            current_song = string.sub(current_song, 0, 12) .. " .."
         end
     end
+
+    if art ~= nil then artUrl = string.sub(art, 8, -1) end
 
     if mpdstatus == "Playing" then
         mpdarc_icon_widget.visible = true
@@ -106,16 +119,20 @@ mpdarc:connect_signal("button::press", function(_, _, _, button)
     end)
 end)
 
-local notification
+-- local notification
 function show_MPD_status()
     spawn.easy_async(GET_MPD_CMD, function(stdout, _, _, _)
         notification = naughty.notify {
-            text = current_song .. " by " .. artist,
+            margin = 5,
             title = mpdstatus,
+            -- position = "top_left",
+            width = 440,
+            height = 120,
+            text = current_song .. " by " .. artist,
             timeout = 5,
             hover_timeout = 0.5,
-            width = 600
-        }
+            image = artUrl
+        };
     end)
 end
 
