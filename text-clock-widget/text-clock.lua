@@ -62,10 +62,13 @@ local function worker(args)
     local main_color = args.main_color or beautiful.fg_normal
     local accent_color = args.accent_color or beautiful.fg_urgent
     local font = args.font or beautiful.font
-    local mode = args.mode or 'human' -- human /
+    local is_human_readable = args.is_human_readable
     local military_time = args.military_time
+    local with_spaces = args.with_spaces
 
     if military_time == nil then military_time = false end
+    if with_spaces == nil then with_spaces = false end
+    if is_human_readable == nil then is_human_readable = false end
 
     text_clock = wibox.widget {
         {
@@ -78,7 +81,7 @@ local function worker(args)
             local t = split(time)
             local res = ''
             for i, v in ipairs(t) do
-                res = res .. '<span color="' .. ((i % 2 == 0) and accent_color or main_color) .. '">' .. v .. '</span>'
+                res = res .. '<span color="' .. ((i % 2 == 0) and accent_color or main_color) .. '">' .. v .. '</span>' .. (with_spaces and ' ' or '')
             end
             self:get_children_by_id('clock')[1]:set_markup(res)
         end
@@ -91,29 +94,36 @@ local function worker(args)
         callback  = function()
             local time = os.date((military_time and '%H' or '%I') ..  ':%M')
             local h,m = time:match('(%d+):(%d+)')
+            h = 3
+            m = 30
             local min = tonumber(m)
             local hour = tonumber(h)
 
-            if mode == 'human' then
-                local mm
-                if min == 15 or min == 45 then
-                    mm = 'quater'
-                elseif min == 30 then
-                    mm = 'half'
+            if is_human_readable then
+
+                if min == 0 then
+                    text_clock:set_text(convertNumberToName(hour) .. " o'clock")
                 else
-                    mm = convertNumberToName((min < 31) and min or 60 - min)
+                    local mm
+                    if min == 15 or min == 45 then
+                        mm = 'quater'
+                    elseif min == 30 then
+                        mm = 'half'
+                    else
+                        mm = convertNumberToName((min < 31) and min or 60 - min)
+                    end
+
+                    local to_past
+
+                    if min < 31 then
+                        to_past = 'past'
+                    else
+                        to_past = 'to'
+                        hour = hour + 1
+                    end
+
+                    text_clock:set_text(mm .. ' ' .. to_past .. ' ' .. convertNumberToName(hour))
                 end
-
-                local to_past
-
-                if min < 31 then
-                    to_past = 'past'
-                else
-                    to_past = 'to'
-                    hour = hour + 1
-                end
-
-                text_clock:set_text(mm .. ' ' .. to_past .. ' ' .. convertNumberToName(hour))
             else
                 text_clock:set_text(convertNumberToName(hour) .. ' ' .. convertNumberToName(min))
             end
