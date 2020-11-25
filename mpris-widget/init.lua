@@ -32,7 +32,7 @@ local mpdarc_widget = {}
 local function worker(args)
 
     -- retriving song info
-    local current_song, artist, mpdstatus
+    local current_song, artist, mpdstatus, art, artUrl
 
     local icon = wibox.widget {
         id = "icon",
@@ -55,7 +55,8 @@ local function worker(args)
         widget = wibox.container.arcchart
     }
 
-    local mpdarc_icon_widget = wibox.container.mirror(mpdarc, {horizontal = true})
+    local mpdarc_icon_widget = wibox.container.mirror(mpdarc,
+                                                      {horizontal = true})
     local mpdarc_current_song_widget = wibox.widget {
         id = 'current_song',
         widget = wibox.widget.textbox,
@@ -63,12 +64,21 @@ local function worker(args)
     }
 
     local update_graphic = function(widget, stdout, _, _, _)
-        mpdstatus, artist, current_song = stdout:match("(%w+)%;+(.-)%;(.*)")
+        -- mpdstatus, artist, current_song = stdout:match("(%w+)%;+(.-)%;(.*)")
+        local words = {}
+        for w in stdout:gmatch("([^;]*)") do table.insert(words, w) end
+
+        mpdstatus = words[1]
+        artist = words[2]
+        current_song = words[3]
+        art = words[4]
         if current_song ~= nil then
-            if current_song.len == 18 then
+            if string.len(current_song) > 18 then
                 current_song = string.sub(current_song, 0, 9) .. ".."
             end
         end
+
+        if art ~= nil then artUrl = string.sub(art, 8, -1) end
 
         if mpdstatus == "Playing" then
             mpdarc_icon_widget.visible = true
@@ -105,7 +115,8 @@ local function worker(args)
             awful.spawn(PREV_MPD_CMD, false) -- scroll down
         end
 
-        spawn.easy_async(GET_MPD_CMD, function(stdout, stderr, exitreason, exitcode)
+        spawn.easy_async(GET_MPD_CMD,
+                         function(stdout, stderr, exitreason, exitcode)
             update_graphic(mpdarc, stdout, stderr, exitreason, exitcode)
         end)
     end)
@@ -113,12 +124,15 @@ local function worker(args)
     local notification
     local function show_MPD_status()
         spawn.easy_async(GET_MPD_CMD, function(stdout, _, _, _)
-            notification = naughty.notify {
-                text = current_song .. " by " .. artist,
-                title = mpdstatus,
+            notification = naughty.notification {
+                margin = 10,
                 timeout = 5,
                 hover_timeout = 0.5,
-                width = 600
+                width = 240,
+                height = 90,
+                title = "<b>" .. mpdstatus .. "</b>",
+                text = current_song .. " <b>by</b> " .. artist,
+                image = artUrl
             }
         end)
     end
@@ -127,7 +141,7 @@ local function worker(args)
         if current_song ~= nil and artist ~= nil then show_MPD_status() end
     end)
     mpdarc:connect_signal("mouse::leave",
-                        function() naughty.destroy(notification) end)
+                          function() naughty.destroy(notification) end)
 
     watch(GET_MPD_CMD, 1, update_graphic, mpdarc)
 
@@ -141,6 +155,5 @@ local function worker(args)
 
 end
 
-return setmetatable(mpdarc_widget, { __call = function(_, ...)
-    return worker(...)
-end })
+return setmetatable(mpdarc_widget,
+                    {__call = function(_, ...) return worker(...) end})
