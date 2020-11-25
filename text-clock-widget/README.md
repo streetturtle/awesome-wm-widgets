@@ -17,6 +17,21 @@ It is possible to customize widget by providing a table with all or some of the 
 | military_time | `false` | 12 or 24 time format |
 | with_spaces | `false` | Separate words with spaces |
 
+## Installation
+
+Clone repo, include widget and use it in **rc.lua**:
+
+```lua
+local text_clock = require("awesome-wm-widgets.text-clock-widget.text-clock")
+...
+s.mytasklist, -- Middle widget
+	{ -- Right widgets
+    	layout = wibox.layout.fixed.horizontal,
+		...
+		text_clock(),		
+	...
+```
+
 # Screenshots
 
 ```lua
