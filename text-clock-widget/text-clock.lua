@@ -94,8 +94,6 @@ local function worker(args)
         callback  = function()
             local time = os.date((military_time and '%H' or '%I') ..  ':%M')
             local h,m = time:match('(%d+):(%d+)')
-            h = 3
-            m = 30
             local min = tonumber(m)
             local hour = tonumber(h)
 
