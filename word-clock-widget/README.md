@@ -1,4 +1,4 @@
-# Text clock widget
+# word clock widget
 
 Widget displaying current time using words:
 
@@ -22,20 +22,20 @@ It is possible to customize widget by providing a table with all or some of the 
 Clone repo, include widget and use it in **rc.lua**:
 
 ```lua
-local text_clock = require("awesome-wm-widgets.text-clock-widget.text-clock")
+local word_clock = require("awesome-wm-widgets.word-clock-widget.word-clock")
 ...
 s.mytasklist, -- Middle widget
 	{ -- Right widgets
     	layout = wibox.layout.fixed.horizontal,
 		...
-		text_clock(),		
+		word_clock(),		
 	...
 ```
 
 # Screenshots
 
 ```lua
- text_clock{
+ word_clock{
     font = 'Carter One 12',
     accent_color = '#ff79c6',
     main_color = '#8be9fd',
@@ -46,7 +46,7 @@ s.mytasklist, -- Middle widget
 
 
 ```lua
-text_clock{
+word_clock{
     font = 'Carter One 12',
     is_human_readable = true,
 }
@@ -55,7 +55,7 @@ text_clock{
 
 
 ```lua
-text_clock{
+word_clock{
     font = 'Carter One 12',
     is_human_readable = true,
     military_time = true
