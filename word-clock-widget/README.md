@@ -64,3 +64,11 @@ word_clock{
 ![](./screenshots/twentythreepasttwentyone.png)
 
 
+```lua
+word_clock{
+    font = 'Carter One 12',
+    accent_color = '#f00',
+    main_color = '#0f0',
+}
+```
+![](./screenshots/onetwentyseven.png)
