@@ -18,6 +18,7 @@ local dpi = require('beautiful').xresources.apply_dpi
 -- acpi sample outputs
 -- Battery 0: Discharging, 75%, 01:51:38 remaining
 -- Battery 0: Charging, 53%, 00:57:43 until charged
+-- Battery 0: Not charging, 98%
 
 local HOME = os.getenv("HOME")
 
@@ -123,7 +124,7 @@ local function worker(args)
         local battery_info = {}
         local capacities = {}
         for s in stdout:gmatch("[^\r\n]+") do
-            local status, charge_str, time = string.match(s, '.+: (%a+), (%d?%d?%d)%%,?(.*)')
+            local status, charge_str, time = string.match(s, '.+: ([a-zA-Z0-9 ]+), (%d?%d?%d)%%,?(.*)')
             if status ~= nil then
                 table.insert(battery_info, {status = status, charge = tonumber(charge_str)})
             else
