@@ -17,7 +17,8 @@ local function worker(args)
         forced_width = 35,
         paddings = 1,
         margins = 4,
-        border_width = 0.5,
+        border_width = 1,
+        border_radius = 2,
         border_color = beautiful.fg_normal,
         background_color = beautiful.bg_normal,
         bar_border_width = 1,
@@ -61,8 +62,6 @@ local function worker(args)
         offset        = { y = 5 },
         widget        = {}
     }
-    popup:connect_signal("mouse::enter", function(c) is_update = false end)
-    popup:connect_signal("mouse::leave", function(c) is_update = true end)
 
     storage_bar_widget:buttons(
       awful.util.table.join(
