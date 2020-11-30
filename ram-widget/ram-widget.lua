@@ -26,6 +26,7 @@ local function worker(args)
 
     --- Widget which is shown when user clicks on the ram widget
     local popup = awful.popup{
+       ontop = true,
        visible = false,
        widget = {
           widget = wibox.widget.piechart,
