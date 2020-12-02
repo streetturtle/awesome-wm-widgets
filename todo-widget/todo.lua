@@ -89,7 +89,7 @@ local add_button = wibox.widget {
     widget = wibox.container.background
 }
 
-add_button:connect_signal("button::press", function(c)
+add_button:connect_signal("button::press", function()
     local pr = awful.widget.prompt()
 
     table.insert(rows, wibox.widget {
