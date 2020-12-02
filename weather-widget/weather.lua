@@ -138,6 +138,7 @@ local function worker(user_args)
     local icons_extension = args.icons_extension or '.png'
     local timeout = args.timeout or 120
 
+    local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
     local owm_one_cal_api =
         ('https://api.openweathermap.org/data/2.5/onecall' ..
             '?lat=' .. coordinates[1] .. '&lon=' .. coordinates[2] .. '&appid=' .. api_key ..
@@ -240,11 +241,14 @@ local function worker(user_args)
         forced_width = 300,
         layout = wibox.layout.flex.horizontal,
         update = function(self, weather)
-            self:get_children_by_id('icon')[1]:set_image(WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/' .. icon_map[weather.weather[1].icon] .. icons_extension)
+            self:get_children_by_id('icon')[1]:set_image(
+                ICONS_DIR .. icon_map[weather.weather[1].icon] .. icons_extension)
             self:get_children_by_id('temp')[1]:set_text(gen_temperature_str(weather.temp, '%.0f', false, units))
-            self:get_children_by_id('feels_like_temp')[1]:set_text('Feels like ' .. gen_temperature_str(weather.feels_like, '%.0f', false, units))
+            self:get_children_by_id('feels_like_temp')[1]:set_text(
+                'Feels like ' .. gen_temperature_str(weather.feels_like, '%.0f', false, units))
             self:get_children_by_id('description')[1]:set_text(weather.weather[1].description)
-            self:get_children_by_id('wind')[1]:set_markup('Wind: <b>' .. weather.wind_speed .. 'm/s (' .. to_direction(weather.wind_deg) .. ')</b>')
+            self:get_children_by_id('wind')[1]:set_markup(
+                'Wind: <b>' .. weather.wind_speed .. 'm/s (' .. to_direction(weather.wind_deg) .. ')</b>')
             self:get_children_by_id('humidity')[1]:set_markup('Humidity: <b>' .. weather.humidity .. '%</b>')
             self:get_children_by_id('uv')[1]:set_markup('UV: ' .. uvi_index_color(weather.uvi))
         end
@@ -269,7 +273,7 @@ local function worker(user_args)
                     {
                         {
                             {
-                                image = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/' .. icon_map[day.weather[1].icon] .. icons_extension,
+                                image = ICONS_DIR .. icon_map[day.weather[1].icon] .. icons_extension,
                                 resize = true,
                                 forced_width = 48,
                                 forced_height = 48,
@@ -470,8 +474,8 @@ local function worker(user_args)
         if stderr ~= '' then
             if not warning_shown then
                 if (stderr ~= 'curl: (52) Empty reply from server'
-                    and stderr ~= 'curl: (28) Failed to connect to api.openweathermap.org port 443: Connection timed out'
-                    and stderr:find('^curl: %(18%) transfer closed with %d+ bytes remaining to read$') ~= nil
+                and stderr ~= 'curl: (28) Failed to connect to api.openweathermap.org port 443: Connection timed out'
+                and stderr:find('^curl: %(18%) transfer closed with %d+ bytes remaining to read$') ~= nil
                 ) then
                     show_warning(stderr)
                 end
@@ -490,7 +494,7 @@ local function worker(user_args)
 
         local result = json.decode(stdout)
 
-        widget:set_image(WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/' .. icon_map[result.current.weather[1].icon] .. icons_extension)
+        widget:set_image(ICONS_DIR .. icon_map[result.current.weather[1].icon] .. icons_extension)
         widget:set_text(gen_temperature_str(result.current.temp, '%.0f', both_units_widget, units))
 
         current_weather_widget:update(result.current)

@@ -9,7 +9,6 @@
 -------------------------------------------------
 
 local wibox = require("wibox")
-local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
 local naughty = require("naughty")
 local gfs = require("gears.filesystem")
@@ -19,7 +18,13 @@ local PATH_TO_ICONS = "/usr/share/icons/Arc/status/symbolic/"
 local volume_icon_name="audio-volume-high-symbolic"
 local GET_VOLUME_CMD = 'amixer sget Master'
 
-local volume = {device = '', display_notification = false, display_notification_onClick = true, notification = nil, delta = 5}
+local volume = {
+    device = '',
+    display_notification = false,
+    display_notification_onClick = true,
+    notification = nil,
+    delta = 5
+}
 
 function volume:toggle()
     volume:_cmd('amixer ' .. volume.device .. ' sset Master toggle')
@@ -88,9 +93,9 @@ end
 
 --}}}
 
-local function worker(args)
+local function worker(user_args)
 --{{{ Args
-    local args = args or {}
+    local args = user_args or {}
 
     local volume_audio_controller = args.volume_audio_controller or 'pulse'
     volume.display_notification = args.display_notification or false
@@ -120,7 +125,8 @@ local function worker(args)
             resize = false,
             widget = wibox.widget.imagebox,
         },
-        layout = wibox.container.margin(_, _, _, 3),
+        margins = 3,
+        layout = wibox.container.margin,
         set_image = function(self, path)
             self.icon.image = path
         end
@@ -136,7 +142,7 @@ local function worker(args)
 
     local function show()
         spawn.easy_async(GET_VOLUME_CMD, function(stdout, _, _, _)
-            txt = parse_output(stdout)
+            local txt = parse_output(stdout)
             notif(txt, true)
         end
         )

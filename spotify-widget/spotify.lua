@@ -11,7 +11,6 @@
 local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
-local naughty = require("naughty")
 
 local GET_SPOTIFY_STATUS_CMD = 'sp status'
 local GET_CURRENT_SONG_CMD = 'sp current'
@@ -24,9 +23,9 @@ end
 
 local spotify_widget = {}
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local play_icon = args.play_icon or '/usr/share/icons/Arc/actions/24/player_play.png'
     local pause_icon = args.pause_icon or '/usr/share/icons/Arc/actions/24/player_pause.png'
@@ -100,7 +99,7 @@ local function worker(args)
         end
 
         local escaped = string.gsub(stdout, "&", '&amp;')
-        local album, album_artist, artist, title =
+        local album, _, artist, title =
             string.match(escaped, 'Album%s*(.*)\nAlbumArtist%s*(.*)\nArtist%s*(.*)\nTitle%s*(.*)\n')
 
         if album ~= nil and title ~=nil and artist ~= nil then

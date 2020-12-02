@@ -23,9 +23,9 @@ local PATH_TO_ICON = "/usr/share/icons/Arc/status/symbolic/audio-volume-muted-sy
 
 local widget = {}
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local main_color = args.main_color or beautiful.fg_color
     local bg_color = args.bg_color or '#ffffff11'
@@ -59,7 +59,7 @@ local function worker(args)
         widget = wibox.container.arcchart
     }
 
-    local update_graphic = function(widget, stdout, _, _, _)
+    local update_graphic = function(_, stdout, _, _, _)
         local mute = string.match(stdout, "%[(o%D%D?)%]")   -- \[(o\D\D?)\] - [on] or [off]
         local volume = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
         volume = tonumber(string.format("% 3d", volume))

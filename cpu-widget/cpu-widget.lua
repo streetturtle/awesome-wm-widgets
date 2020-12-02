@@ -14,6 +14,9 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 local gears = require("gears")
 
+local CMD = [[sh -c "grep '^cpu.' /proc/stat; ps -eo '%p|%c|%C|' -o "%mem" -o '|%a' --sort=-%cpu ]] 
+    .. [[| head -11 | tail -n +2"]]
+
 local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/cpu-widget'
 
@@ -86,9 +89,9 @@ local function create_kill_process_button()
     }
 end
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local width = args.width or 50
     local step_width = args.step_width or 2
@@ -120,8 +123,8 @@ local function worker(args)
     }
 
     -- Do not update process rows when mouse cursor is over the widget
-    popup:connect_signal("mouse::enter", function(c) is_update = false end)
-    popup:connect_signal("mouse::leave", function(c) is_update = true end)
+    popup:connect_signal("mouse::enter", function() is_update = false end)
+    popup:connect_signal("mouse::leave", function() is_update = true end)
 
     cpugraph_widget:buttons(
             awful.util.table.join(
@@ -139,7 +142,7 @@ local function worker(args)
     local cpu_widget = wibox.container.margin(wibox.container.mirror(cpugraph_widget, { horizontal = true }), 0, 0, 0, 2)
 
     local cpus = {}
-    watch([[sh -c "grep '^cpu.' /proc/stat; ps -eo '%p|%c|%C|' -o "%mem" -o '|%a' --sort=-%cpu | head -11 | tail -n +2"]], timeout,
+    watch(CMD, timeout,
             function(widget, stdout)
                 local i = 1
                 local j = 1

@@ -11,7 +11,6 @@ local awful = require("awful")
 local wibox = require("wibox")
 local json = require("json")
 local spawn = require("awful.spawn")
-local naughty = require("naughty")
 local gears = require("gears")
 local beautiful = require("beautiful")
 local gfs = require("gears.filesystem")
@@ -126,9 +125,9 @@ end)
 add_button:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
 add_button:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local icon = args.icon or WIDGET_DIR .. '/checkbox-checked-symbolic.svg'
 
@@ -229,7 +228,7 @@ local function worker(args)
                 widget = wibox.widget.imagebox
             }
 
-            move_down:connect_signal("button::press", function(c)
+            move_down:connect_signal("button::press", function()
                 local temp = result.todo_items[i]
                 result.todo_items[i] = result.todo_items[i+1]
                 result.todo_items[i+1] = temp
@@ -322,7 +321,8 @@ local function worker(args)
 end
 
 if not gfs.file_readable(STORAGE) then
-    spawn.easy_async(string.format([[bash -c "dirname %s | xargs mkdir -p && echo '{\"todo_items\":{}}' > %s"]], STORAGE, STORAGE))
+    spawn.easy_async(string.format([[bash -c "dirname %s | xargs mkdir -p && echo '{\"todo_items\":{}}' > %s"]],
+    STORAGE, STORAGE))
 end
 
 return setmetatable(todo_widget, { __call = function(_, ...) return worker(...) end })

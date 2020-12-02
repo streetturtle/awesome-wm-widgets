@@ -17,12 +17,12 @@ local naughty = require("naughty")
 local gears = require("gears")
 local beautiful = require("beautiful")
 local gfs = require("gears.filesystem")
-local gs = require("gears.string")
 local color = require("gears.color")
 
 local HOME_DIR = os.getenv("HOME")
 
-local GET_ISSUES_CMD = [[bash -c "curl -s --show-error -X GET -n '%s/rest/api/2/search?%s&fields=id,assignee,summary,status'"]]
+local GET_ISSUES_CMD =
+    [[bash -c "curl -s --show-error -X GET -n '%s/rest/api/2/search?%s&fields=id,assignee,summary,status'"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o  %s/.cache/awmw/jira-widget/avatars/%s %s"]]
 
 local function show_warning(message)
@@ -41,7 +41,7 @@ local jira_widget = wibox.widget {
             },
             {
                 id = 'd',
-                draw = function(self, context, cr, width, height)
+                draw = function(_, _, cr, _, height)
                     cr:set_source(color(beautiful.fg_urgent))
                     cr:arc(height/4, height/4, height/4, 0, math.pi*2)
                     cr:fill()
@@ -100,9 +100,9 @@ local tooltip = awful.tooltip {
     preferred_positions = {'bottom'},
  }
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/jira-widget/jira-mark-gradient-blue.svg'
     local host = args.host or show_warning('Jira host is unknown')
@@ -149,7 +149,7 @@ local function worker(args)
 
         for i = 0, #rows do rows[i]=nil end
         for _, issue in ipairs(result.issues) do
-            local path_to_avatar = os.getenv("HOME") ..'/.cache/awmw/jira-widget/avatars/' .. issue.fields.assignee.accountId
+            local path_to_avatar = HOME_DIR ..'/.cache/awmw/jira-widget/avatars/' .. issue.fields.assignee.accountId
 
             if not gfs.file_readable(path_to_avatar) then
                 spawn.easy_async(string.format(

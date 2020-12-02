@@ -89,7 +89,7 @@ function widget.new()
         local w = self._cached_wiboxes[s][1]
         local rnd = math.random()
         awful.spawn.with_line_callback(string.format(self._cmd_blur, tostring(awful.screen.focused().geometry.x), rnd), {
-            stdout = function(line)
+            stdout = function()
                 w.visible = true
                 w.bgimage = '/tmp/i3lock-' .. rnd ..'.png'
                 awful.placement.top(w, { margins = { top = 20 }, parent = awful.screen.focused() })
