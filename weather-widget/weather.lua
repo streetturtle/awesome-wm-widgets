@@ -27,7 +27,6 @@ end
 
 local weather_widget = {}
 local warning_shown = false
-local notification
 local tooltip = awful.tooltip {
     mode = 'outside',
     preferred_positions = {'bottom'}
@@ -115,9 +114,9 @@ local function uvi_index_color(uvi)
     return '<span weight="bold" foreground="' .. color .. '">' .. uvi .. '</span>'
 end
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     --- Validate required parameters
     if args.coordinates == nil or args.api_key == nil then
@@ -384,7 +383,7 @@ local function worker(args)
             hourly_forecast_negative_graph:set_max_value(math.abs(min_temp))
             hourly_forecast_negative_graph:set_min_value(max_temp < 0 and math.abs(max_temp) * 0.7 or 0)
 
-            for i, value in ipairs(values) do
+            for _, value in ipairs(values) do
                 if value >= 0 then
                     hourly_forecast_graph:add_value(value)
                     hourly_forecast_negative_graph:add_value(0)
@@ -470,12 +469,9 @@ local function worker(args)
     local function update_widget(widget, stdout, stderr)
         if stderr ~= '' then
             if not warning_shown then
-                if (
-                    stderr ~= 'curl: (52) Empty reply from server' and
-                    stderr ~= 'curl: (28) Failed to connect to api.openweathermap.org port 443: Connection timed out' and
-                    stderr:find(
-                        '^curl: %(18%) transfer closed with %d+ bytes remaining to read$'
-                    ) ~= nil
+                if (stderr ~= 'curl: (52) Empty reply from server'
+                    and stderr ~= 'curl: (28) Failed to connect to api.openweathermap.org port 443: Connection timed out'
+                    and stderr:find('^curl: %(18%) transfer closed with %d+ bytes remaining to read$') ~= nil
                 ) then
                     show_warning(stderr)
                 end

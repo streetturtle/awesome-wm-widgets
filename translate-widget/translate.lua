@@ -159,9 +159,9 @@ input_widget:setup{
     widget = wibox.container.margin
 }
 
-local function launch(args)
+local function launch(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local api_key = args.api_key
     local url = args.url

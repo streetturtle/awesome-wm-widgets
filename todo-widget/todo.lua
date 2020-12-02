@@ -200,7 +200,7 @@ local function worker(args)
                 widget = wibox.container.background
             }
 
-            trash_button:connect_signal("button::press", function(c)
+            trash_button:connect_signal("button::press", function()
                 table.remove(result.todo_items, i)
                 spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE, function ()
                     spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
@@ -214,7 +214,7 @@ local function worker(args)
                 widget = wibox.widget.imagebox
             }
 
-            move_up:connect_signal("button::press", function(c)
+            move_up:connect_signal("button::press", function()
                 local temp = result.todo_items[i]
                 result.todo_items[i] = result.todo_items[i-1]
                 result.todo_items[i-1] = temp
