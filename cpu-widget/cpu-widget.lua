@@ -139,7 +139,7 @@ local function worker(args)
     local cpu_widget = wibox.container.margin(wibox.container.mirror(cpugraph_widget, { horizontal = true }), 0, 0, 0, 2)
 
     local cpus = {}
-    watch([[bash -c "grep '^cpu.' /proc/stat; ps -eo '%p|%c|%C|' -o "%mem" -o '|%a' --sort=-%cpu | head -11 | tail -n +2"]], timeout,
+    watch([[sh -c "grep '^cpu.' /proc/stat; ps -eo '%p|%c|%C|' -o "%mem" -o '|%a' --sort=-%cpu | head -11 | tail -n +2"]], timeout,
             function(widget, stdout)
                 local i = 1
                 local j = 1
@@ -227,11 +227,11 @@ local function worker(args)
 
                             row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
                             row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
-                            
+
                             if enable_kill_button then
                                 row:connect_signal("mouse::enter", function(c) kill_proccess_button.icon.opacity = 1 end)
                                 row:connect_signal("mouse::leave", function(c) kill_proccess_button.icon.opacity = 0.1 end)
-                                
+
                                 kill_proccess_button:buttons(
                                     awful.util.table.join( awful.button({}, 1, function() 
                                         row:set_bg('#ff0000')
