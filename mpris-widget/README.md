@@ -1,13 +1,13 @@
-# MPRIS Widget
+# MPD Widget
 
-Music Player Info widget cy @mgabs
+Music Player Daemon widget by @raphaelfournier.
 
 # Prerequisite
 
-Install `playerctl` (mpris implementation), should be available in repo, e.g for Ubuntu:
+Install `mpd` (Music Player Daemon itself) and `mpc` (Music Player Client - program for controlling mpd), both should be available in repo, e.g for Ubuntu:
 
 ```bash
-sudo apt-get install playerctl
+sudo apt-get install mpd mpc
 ```
 
 ## Installation
@@ -15,12 +15,16 @@ sudo apt-get install playerctl
 To use this widget clone repo under **~/.config/awesome/** and then add it in **rc.lua**:
 
 ```lua
-local mpris_widget = require("awesome-wm-widgets.mpris-widget")
+local mpdarc_widget = require("awesome-wm-widgets.mpdarc-widget.mpdarc")
 ...
 s.mytasklist, -- Middle widget
 	{ -- Right widgets
     layout = wibox.layout.fixed.horizontal,
 		...
-    mpris_widget,
+    mpdarc_widget(),
 		...
 ```
+
+## Options
+
+The widgets takes button as boolean argument to enable or disable next & previous buttons
