@@ -1,13 +1,13 @@
-# MPD Widget
+# MPRIS Widget
 
-Music Player Daemon widget by @raphaelfournier.
+Music Player Daemon control widget by @mgabs.
 
 # Prerequisite
 
-Install `mpd` (Music Player Daemon itself) and `mpc` (Music Player Client - program for controlling mpd), both should be available in repo, e.g for Ubuntu:
+Install `playerctl` - program for controlling mpris), both should be available in repo, e.g for Ubuntu:
 
 ```bash
-sudo apt-get install mpd mpc
+sudo apt-get install playerctl
 ```
 
 ## Installation
