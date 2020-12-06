@@ -98,15 +98,15 @@ local function worker(user_args)
         layout = wibox.layout.fixed.vertical,
     }
 
-    local function rebuild_widget(stdout, stderr, _, _)
-        if stderr ~= '' then
-            show_warning(stderr)
+    local function rebuild_widget(containers, errors, _, _)
+        if errors ~= '' then
+            show_warning(errors)
             return
         end
 
         for i = 0, #rows do rows[i]=nil end
 
-        for line in stdout:gmatch("[^\r\n]+") do
+        for line in containers:gmatch("[^\r\n]+") do
 
             local container = parse_container(line)
 
@@ -165,7 +165,7 @@ local function worker(user_args)
                         status_icon:emit_signal('widget::redraw_needed')
 
                         spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function()
-                            if stderr ~= '' then show_warning(stderr) end
+                            if errors ~= '' then show_warning(errors) end
                             spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers),
                                 function(stdout, stderr)
                                     rebuild_widget(stdout, stderr)
@@ -223,10 +223,12 @@ local function worker(user_args)
                         status_icon:set_opacity(0.2)
                         status_icon:emit_signal('widget::redraw_needed')
 
-                        awful.spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(stdout, stderr)
+                        awful.spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(_, stderr)
                             if stderr ~= '' then show_warning(stderr) end
-                            spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), function(stdout, stderr)
-                                rebuild_widget(stdout, stderr) end)
+                            spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers),
+                                function(stdout, container_errors)
+                                    rebuild_widget(stdout, container_errors)
+                                end)
                             end)
                     end) ) )
             else
@@ -354,7 +356,7 @@ local function worker(user_args)
                     if popup.visible then
                         popup.visible = not popup.visible
                     else
-                        spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), 
+                        spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers),
                             function(stdout, stderr)
                                 rebuild_widget(stdout, stderr)
                                 popup:move_next_to(mouse.current_widget_geometry)

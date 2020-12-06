@@ -22,9 +22,12 @@ local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/github-activ
 local ICONS_DIR = WIDGET_DIR .. '/icons/'
 local CACHE_DIR = HOME_DIR .. '/.cache/awmw/github-activity-widget'
 
-local GET_EVENTS_CMD = [[bash -c "cat %s/activity.json | jq '.[:%d] | [.[] | {type: .type, actor: .actor, repo: .repo, action: .payload.action, issue_url: .payload.issue.html_url, pr_url: .payload.pull_request.html_url, created_at: .created_at}]'"]]
-local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -n --create-dirs -o  %s/avatars/%s %s"]]
-local UPDATE_EVENTS_CMD = [[bash -c "curl -s --show-error https://api.github.com/users/%s/received_events > %s/activity.json"]]
+local GET_EVENTS_CMD = [[sh -c "cat %s/activity.json | jq '.[:%d] | [.[] ]]
+    .. [[| {type: .type, actor: .actor, repo: .repo, action: .payload.action, issue_url: .payload.issue.html_url, ]]
+    .. [[pr_url: .payload.pull_request.html_url, created_at: .created_at}]'"]]
+local DOWNLOAD_AVATAR_CMD = [[sh -c "curl -n --create-dirs -o  %s/avatars/%s %s"]]
+local UPDATE_EVENTS_CMD = [[sh -c "curl -s --show-error https://api.github.com/users/%s/received_events ]]
+    ..[[> %s/activity.json"]]
 
 --- Utility function to show warning messages
 local function show_warning(message)
@@ -37,7 +40,7 @@ end
 --- Converts string representation of date (2020-06-02T11:25:27Z) to date
 local function parse_date(date_str)
     local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)%Z"
-    local y, m, d, h, min, sec, mil = date_str:match(pattern)
+    local y, m, d, h, min, sec, _ = date_str:match(pattern)
 
     return os.time{year = y, month = m, day = d, hour = h, min = min, sec = sec}
 end
@@ -129,13 +132,13 @@ local github_widget = wibox.widget {
 }
 
 
-local function worker(args)
+local function worker(user_args)
 
     if not gfs.dir_readable(CACHE_DIR) then
         gfs.make_directories(CACHE_DIR)
     end
 
-    local args = args or {}
+    local args = user_args or {}
 
     local icon = args.icon or ICONS_DIR .. 'github.png'
     local username = args.username or show_warning('No username provided')
@@ -147,7 +150,7 @@ local function worker(args)
         layout = wibox.layout.fixed.vertical,
     }
 
-    local rebuild_widget = function(widget, stdout, stderr, _, _)
+    local rebuild_widget = function(stdout, stderr, _, _)
         if stderr ~= '' then
             show_warning(stderr)
             return
@@ -197,7 +200,8 @@ local function worker(args)
 
             local repo_info = wibox.widget {
                 {
-                    markup = '<b> ' .. event.actor.display_login .. '</b> ' .. action_and_link.action_string .. ' <b>' .. event.repo.name .. '</b>',
+                    markup = '<b> ' .. event.actor.display_login .. '</b> ' .. action_and_link.action_string
+                        .. ' <b>' .. event.repo.name .. '</b>',
                     wrap = 'word',
                     widget = wibox.widget.textbox
                 },
@@ -261,10 +265,11 @@ local function worker(args)
                         if popup.visible then
                             popup.visible = not popup.visible
                         else
-                            spawn.easy_async(string.format(GET_EVENTS_CMD, CACHE_DIR, number_of_events), function (stdout, stderr)
-                                rebuild_widget(github_widget, stdout, stderr)
-                                popup:move_next_to(mouse.current_widget_geometry)
-                            end)
+                            spawn.easy_async(string.format(GET_EVENTS_CMD, CACHE_DIR, number_of_events),
+                                function (stdout, stderr)
+                                    rebuild_widget(stdout, stderr)
+                                    popup:move_next_to(mouse.current_widget_geometry)
+                                end)
                         end
                     end)
             )
@@ -276,7 +281,7 @@ local function worker(args)
         call_now  = true,
         autostart = true,
         callback  = function()
-            spawn.easy_async(string.format(UPDATE_EVENTS_CMD, username, CACHE_DIR), function(stdout, stderr)
+            spawn.easy_async(string.format(UPDATE_EVENTS_CMD, username, CACHE_DIR), function(_, stderr)
                 if stderr ~= '' then show_warning(stderr) return end
             end)
         end

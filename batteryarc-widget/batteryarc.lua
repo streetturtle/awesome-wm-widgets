@@ -15,12 +15,13 @@ local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 
 local HOME = os.getenv("HOME")
+local WIDGET_DIR = HOME .. '/.config/awesome/awesome-wm-widgets/batteryarc-widget'
 
-local widget = {}
+local batteryarc_widget = {}
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local font = args.font or 'Play 6'
     local arc_thickness = args.arc_thickness or 2
@@ -38,7 +39,7 @@ local function worker(args)
     local warning_msg_title = args.warning_msg_title or 'Houston, we have a problem'
     local warning_msg_text = args.warning_msg_text or 'Battery is dying'
     local warning_msg_position = args.warning_msg_position or 'bottom_right'
-    local warning_msg_icon = args.warning_msg_icon or HOME .. '/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg'
+    local warning_msg_icon = args.warning_msg_icon or WIDGET_DIR .. '/spaceman.jpg'
     local enable_battery_warning = args.enable_battery_warning
     if enable_battery_warning == nil then
         enable_battery_warning = true
@@ -53,7 +54,7 @@ local function worker(args)
 
     local text_with_background = wibox.container.background(text)
 
-    widget = wibox.widget {
+    batteryarc_widget = wibox.widget {
         text_with_background,
         max_value = 100,
         rounded_edge = true,
@@ -88,7 +89,7 @@ local function worker(args)
         local charge = 0
         local status
         for s in stdout:gmatch("[^\r\n]+") do
-            local cur_status, charge_str, time = string.match(s, '.+: (%a+), (%d?%d?%d)%%,?(.*)')
+            local cur_status, charge_str, _ = string.match(s, '.+: (%a+), (%d?%d?%d)%%,?(.*)')
             if cur_status ~= nil and charge_str ~=nil then
                 local cur_charge = tonumber(charge_str)
                 if cur_charge > charge then
@@ -132,7 +133,7 @@ local function worker(args)
         end
     end
 
-    watch("acpi", timeout, update_widget, widget)
+    watch("acpi", timeout, update_widget, batteryarc_widget)
 
     -- Popup with battery info
     local notification
@@ -150,18 +151,18 @@ local function worker(args)
     end
 
     if show_notification_mode == 'on_hover' then
-        widget:connect_signal("mouse::enter", function() show_battery_status() end)
-        widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
+        batteryarc_widget:connect_signal("mouse::enter", function() show_battery_status() end)
+        batteryarc_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
     elseif show_notification_mode == 'on_click' then
-        widget:connect_signal('button::press', function(_, _, _, button)
+        batteryarc_widget:connect_signal('button::press', function(_, _, _, button)
             if (button == 1) then show_battery_status() end
         end)
     end
 
-    return widget
+    return batteryarc_widget
 
 end
 
-return setmetatable(widget, { __call = function(_, ...)
+return setmetatable(batteryarc_widget, { __call = function(_, ...)
     return worker(...)
 end })

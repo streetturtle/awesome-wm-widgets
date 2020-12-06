@@ -68,7 +68,7 @@ local function build_rows(devices, on_checkbox_click, device_type)
             widget        = wibox.widget.checkbox
         }
 
-        checkbox:connect_signal("button::press", function(c)
+        checkbox:connect_signal("button::press", function()
             spawn.easy_async(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name), function()
                 on_checkbox_click()
             end)
@@ -105,19 +105,19 @@ local function build_rows(devices, on_checkbox_click, device_type)
         row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
 
         local old_cursor, old_wibox
-        row:connect_signal("mouse::enter", function(c)
+        row:connect_signal("mouse::enter", function()
             local wb = mouse.current_wibox
             old_cursor, old_wibox = wb.cursor, wb
             wb.cursor = "hand1"
         end)
-        row:connect_signal("mouse::leave", function(c)
+        row:connect_signal("mouse::leave", function()
             if old_wibox then
                 old_wibox.cursor = old_cursor
                 old_wibox = nil
             end
         end)
 
-        row:connect_signal("button::press", function(c)
+        row:connect_signal("button::press", function()
             spawn.easy_async(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name), function()
                 on_checkbox_click()
             end)
@@ -158,9 +158,9 @@ local function rebuild_popup()
 end
 
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local widget_type = args.widget_type
 

@@ -6,7 +6,7 @@
 -- @author Pavel Makhov
 -- @copyright 2020 Pavel Makhov
 -------------------------------------------------
-
+--luacheck:ignore
 local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")

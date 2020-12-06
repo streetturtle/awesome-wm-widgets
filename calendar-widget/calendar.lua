@@ -16,7 +16,7 @@ local naughty = require("naughty")
 
 local calendar_widget = {}
 
-local function worker(args)
+local function worker(user_args)
 
     local calendar_themes = {
         nord = {
@@ -82,7 +82,7 @@ local function worker(args)
 
     }
 
-    local args = args or {}
+    local args = user_args or {}
 
     if args.theme ~= nil and calendar_themes[args.theme] == nil then
         naughty.notify({
@@ -154,7 +154,9 @@ local function worker(args)
         -- Change bg color for weekends
         local d = { year = date.year, month = (date.month or 1), day = (date.day or 1) }
         local weekday = tonumber(os.date('%w', os.time(d)))
-        local default_bg = (weekday == 0 or weekday == 6) and calendar_themes[theme].weekend_day_bg or calendar_themes[theme].bg
+        local default_bg = (weekday == 0 or weekday == 6)
+            and calendar_themes[theme].weekend_day_bg
+            or calendar_themes[theme].bg
         local ret = wibox.widget {
             {
                 {
@@ -228,7 +230,8 @@ local function worker(args)
             elseif placement == 'top_right' then
                 awful.placement.top_right(popup, { margins = { top = 30, right = 10}, parent = awful.screen.focused() })
             elseif placement == 'bottom_right' then
-                awful.placement.bottom_right(popup, { margins = { bottom = 30, right = 10}, parent = awful.screen.focused() })
+                awful.placement.bottom_right(popup, { margins = { bottom = 30, right = 10},
+                    parent = awful.screen.focused() })
             else
                 awful.placement.top(popup, { margins = { top = 30 }, parent = awful.screen.focused() })
             end
