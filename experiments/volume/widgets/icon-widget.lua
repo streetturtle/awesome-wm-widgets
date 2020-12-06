@@ -15,7 +15,7 @@ function widget.get_widget()
         valign = 'center',
         layout = wibox.container.place,
         set_volume_level = function(self, new_value)
-            local volume_icon_name = ''
+            local volume_icon_name
             if self.is_muted then
                 volume_icon_name = 'audio-volume-muted-symbolic.svg'
             else

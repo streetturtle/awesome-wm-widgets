@@ -19,7 +19,8 @@ local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/docker-widget'
 local ICONS_DIR = WIDGET_DIR .. '/icons/'
 
-local LIST_CONTAINERS_CMD = [[bash -c "docker container ls -a -s -n %s --format '{{.Names}}::{{.ID}}::{{.Image}}::{{.Status}}::{{.Size}}'"]]
+local LIST_CONTAINERS_CMD = [[bash -c "docker container ls -a -s -n %s]]
+    .. [[ --format '{{.Names}}::{{.ID}}::{{.Image}}::{{.Status}}::{{.Size}}'"]]
 
 --- Utility function to show warning messages
 local function show_warning(message)
@@ -83,9 +84,9 @@ local status_to_icon_name = {
     Paused = ICONS_DIR .. 'pause.svg'
 }
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local icon = args.icon or ICONS_DIR .. 'docker.svg'
     local number_of_containers = args.number_of_containers or -1
@@ -163,10 +164,12 @@ local function worker(args)
                         status_icon:set_opacity(0.2)
                         status_icon:emit_signal('widget::redraw_needed')
 
-                        spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function(stdout, stderr)
+                        spawn.easy_async('docker ' .. command .. ' ' .. container['name'], function()
                             if stderr ~= '' then show_warning(stderr) end
-                            spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), function(stdout, stderr)
-                                rebuild_widget(stdout, stderr) end)
+                            spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers),
+                                function(stdout, stderr)
+                                    rebuild_widget(stdout, stderr)
+                                end)
                             end)
                     end) ) )
             else
@@ -250,11 +253,12 @@ local function worker(args)
                 }
                 delete_button:buttons(
                         awful.util.table.join( awful.button({}, 1, function()
-                            awful.spawn.easy_async('docker rm ' .. container['name'], function(stdout, stderr)
-                                if stderr ~= '' then show_warning(stderr) end
-                                spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), function(stdout, stderr)
-                                    rebuild_widget(stdout, stderr) end)
-                                end)
+                            awful.spawn.easy_async('docker rm ' .. container['name'], function(_, rm_stderr)
+                                if rm_stderr ~= '' then show_warning(rm_stderr) end
+                                spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers),
+                                    function(lc_stdout, lc_stderr)
+                                        rebuild_widget(lc_stdout, lc_stderr) end)
+                                    end)
                         end)))
 
                 local old_cursor, old_wibox
@@ -350,10 +354,11 @@ local function worker(args)
                     if popup.visible then
                         popup.visible = not popup.visible
                     else
-                        spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), function(stdout, stderr)
-                            rebuild_widget(stdout, stderr)
-                            popup:move_next_to(mouse.current_widget_geometry)
-                        end)
+                        spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers), 
+                            function(stdout, stderr)
+                                rebuild_widget(stdout, stderr)
+                                popup:move_next_to(mouse.current_widget_geometry)
+                            end)
                     end
                 end)
         )

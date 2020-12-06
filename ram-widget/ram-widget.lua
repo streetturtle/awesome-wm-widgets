@@ -8,8 +8,8 @@ local wibox = require("wibox")
 local ramgraph_widget = {}
 
 
-local function worker(args)
-    local args = args or {}
+local function worker(user_args)
+    local args = user_args or {}
     local timeout = args.timeout or 1
 
     --- Main ram widget shown on wibar
@@ -43,6 +43,7 @@ local function worker(args)
        offset = { y = 5 },
     }
 
+    --luacheck:ignore 231
     local total, used, free, shared, buff_cache, available, total_swap, used_swap, free_swap
 
     local function getPercentage(value)
@@ -50,7 +51,7 @@ local function worker(args)
     end
 
     watch('bash -c "LANGUAGE=en_US.UTF-8 free | grep -z Mem.*Swap.*"', timeout,
-        function(widget, stdout, stderr, exitreason, exitcode)
+        function(widget, stdout)
             total, used, free, shared, buff_cache, available, total_swap, used_swap, free_swap =
                 stdout:match('(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*Swap:%s*(%d+)%s*(%d+)%s*(%d+)')
 
@@ -75,7 +76,7 @@ local function worker(args)
                     {'free ' .. getPercentage(free + free_swap), free + free_swap},
                     {'buff_cache ' .. getPercentage(buff_cache), buff_cache}
                 }
-                
+
                 if popup.visible then
                    popup.visible = not popup.visible
                 else

@@ -92,7 +92,7 @@ text.font      = "Inconsolata Medium 13"
           widget.value = tonumber(pomodoro/(25*60))
 text.font      = "Inconsolata Medium 13"
           text.text = "PW"
-        elseif workbreak == "B" then 
+        elseif workbreak == "B" then
           widget.colors = { beautiful.widget_yellow }
           widget.value = tonumber(pomodoro/(5*60))
 text.font      = "Inconsolata Medium 13"
@@ -114,7 +114,7 @@ pomodoroarc:connect_signal("button::press", function(_, _, _, button)
 end)
 
 local notification
-function show_pomodoro_status()
+local function show_pomodoro_status()
     spawn.easy_async(GET_pomodoro_CMD,
         function(stdout, _, _, _)
             notification = naughty.notify {

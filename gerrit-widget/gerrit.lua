@@ -27,9 +27,9 @@ local DOWNLOAD_AVATAR_CMD = [[bash -c "curl --create-dirs -o %s %s"]]
 
 local gerrit_widget = {}
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local icon = args.icons or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/gerrit-widget/gerrit_icon.svg'
     local host = args.host or naughty.notify{

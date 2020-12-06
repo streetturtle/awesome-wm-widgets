@@ -21,8 +21,9 @@ local color = require("gears.color")
 
 local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/gitlab-widget/'
-local GET_PRS_CMD= [[bash -c "curl -s --connect-timeout 5 --show-error --header 'PRIVATE-TOKEN: %s' '%s/api/v4/merge_requests?state=opened'"]]
-local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -L --create-dirs -o %s/.cache/awmw/gitlab-widget/avatars/%s %s"]]
+local GET_PRS_CMD= [[sh -c "curl -s --connect-timeout 5 --show-error --header 'PRIVATE-TOKEN: %s']]
+    ..[[ '%s/api/v4/merge_requests?state=opened'"]]
+local DOWNLOAD_AVATAR_CMD = [[sh -c "curl -L --create-dirs -o %s/.cache/awmw/gitlab-widget/avatars/%s %s"]]
 
 local gitlab_widget = wibox.widget {
     {
@@ -33,7 +34,7 @@ local gitlab_widget = wibox.widget {
             },
             {
                 id = 'error_marker',
-                draw = function(self, context, cr, width, height)
+                draw = function(_, _, cr, _, height)
                     cr:set_source(color(beautiful.fg_urgent))
                     cr:arc(height/4, height/4, height/4, 0, math.pi*2)
                     cr:fill()
@@ -96,7 +97,7 @@ local popup = awful.popup{
 --- Converts string representation of date (2020-06-02T11:25:27Z) to date
 local function parse_date(date_str)
     local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)%Z"
-    local y, m, d, h, min, sec, mil = date_str:match(pattern)
+    local y, m, d, h, min, sec, _ = date_str:match(pattern)
 
     return os.time{year = y, month = m, day = d, hour = h, min = min, sec = sec}
 end
@@ -134,9 +135,9 @@ local tooltip = awful.tooltip {
     preferred_positions = {'bottom'},
  }
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local icon = args.icon or WIDGET_DIR .. '/icons/gitlab-icon.svg'
     local api_token = args.api_token or show_warning('API Token is not set')
@@ -318,7 +319,9 @@ local function worker(args)
                         DOWNLOAD_AVATAR_CMD,
                         HOME_DIR,
                         pr.author.id,
-                        pr.author.avatar_url), function() row:get_children_by_id('avatar')[1]:set_image(path_to_avatar) end)
+                        pr.author.avatar_url), function()
+                            row:get_children_by_id('avatar')[1]:set_image(path_to_avatar)
+                        end)
             end
 
             row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
@@ -342,25 +345,24 @@ local function worker(args)
             )
 
             local old_cursor, old_wibox
-            row:get_children_by_id('title')[1]:connect_signal("mouse::enter", function(c)
+            row:get_children_by_id('title')[1]:connect_signal("mouse::enter", function()
                 local wb = mouse.current_wibox
                 old_cursor, old_wibox = wb.cursor, wb
                 wb.cursor = "hand1"
             end)
-            row:get_children_by_id('title')[1]:connect_signal("mouse::leave", function(c)
+            row:get_children_by_id('title')[1]:connect_signal("mouse::leave", function()
                 if old_wibox then
                     old_wibox.cursor = old_cursor
                     old_wibox = nil
                 end
             end)
 
-            local old_cursor, old_wibox
-            row:get_children_by_id('avatar')[1]:connect_signal("mouse::enter", function(c)
+            row:get_children_by_id('avatar')[1]:connect_signal("mouse::enter", function()
                 local wb = mouse.current_wibox
                 old_cursor, old_wibox = wb.cursor, wb
                 wb.cursor = "hand1"
             end)
-            row:get_children_by_id('avatar')[1]:connect_signal("mouse::leave", function(c)
+            row:get_children_by_id('avatar')[1]:connect_signal("mouse::leave", function()
                 if old_wibox then
                     old_wibox.cursor = old_cursor
                     old_wibox = nil

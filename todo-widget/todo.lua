@@ -23,7 +23,7 @@ local GET_TODO_ITEMS = 'bash -c "cat ' .. STORAGE .. '"'
 
 local rows  = { layout = wibox.layout.fixed.vertical }
 local todo_widget = {}
-
+local update_widget
 todo_widget.widget = wibox.widget {
     {
         {
@@ -115,7 +115,7 @@ add_button:connect_signal("button::press", function()
                 local res = json.decode(stdout)
                 table.insert(res.todo_items, {todo_item = input_text, status = false})
                 spawn.easy_async_with_shell("echo '" .. json.encode(res) .. "' > " .. STORAGE, function()
-                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                    spawn.easy_async(GET_TODO_ITEMS, function(items) update_widget(items) end)
                 end)
             end)
         end
@@ -202,7 +202,7 @@ local function worker(user_args)
             trash_button:connect_signal("button::press", function()
                 table.remove(result.todo_items, i)
                 spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE, function ()
-                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                    spawn.easy_async(GET_TODO_ITEMS, function(items) update_widget(items) end)
                 end)
             end)
 
@@ -218,7 +218,7 @@ local function worker(user_args)
                 result.todo_items[i] = result.todo_items[i-1]
                 result.todo_items[i-1] = temp
                 spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE, function ()
-                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                    spawn.easy_async(GET_TODO_ITEMS, function(items) update_widget(items) end)
                 end)
             end)
 
@@ -233,7 +233,7 @@ local function worker(user_args)
                 result.todo_items[i] = result.todo_items[i+1]
                 result.todo_items[i+1] = temp
                 spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE, function ()
-                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                    spawn.easy_async(GET_TODO_ITEMS, function(items) update_widget(items) end)
                 end)
             end)
 
@@ -242,13 +242,11 @@ local function worker(user_args)
                 layout = wibox.layout.fixed.vertical
             }
 
-            if 1 == #result.todo_items then
-                -- one item, no need in arrows
-            elseif i == 1 then
+            if i == 1 and #result.todo_items > 1 then
                 table.insert(move_buttons, move_down)
-            elseif i == #result.todo_items then
+            elseif i == #result.todo_items and #result.todo_items > 1 then
                 table.insert(move_buttons, move_up)
-            else
+            elseif #result.todo_items > 1 then
                 table.insert(move_buttons, move_up)
                 table.insert(move_buttons, move_down)
             end

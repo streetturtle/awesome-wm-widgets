@@ -45,6 +45,7 @@ function widget.new()
             widget = wibox.widget.imagebox,
             resize = false,
             opacity = 0.2,
+            --luacheck:ignore 432
             set_hover = function(self, opacity)
                 self.opacity = opacity
                 self.image = '/usr/share/icons/Arc/actions/symbolic/system-shutdown-symbolic.svg'
