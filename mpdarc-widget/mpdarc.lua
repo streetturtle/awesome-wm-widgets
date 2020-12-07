@@ -25,7 +25,7 @@ local PAUSE_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_pause.png"
 local PLAY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_play.png"
 local STOP_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_stop.png"
 
-local icon = wibox.widget { 
+local icon = wibox.widget {
         id = "icon",
         widget = wibox.widget.imagebox,
         image = PLAY_ICON_NAME
@@ -58,7 +58,7 @@ local update_graphic = function(widget, stdout, _, _, _)
     stdout = string.gsub(stdout, "\n", "")
     local mpdpercent = string.match(stdout, "(%d%d)%%")
     local mpdstatus = string.match(stdout, "%[(%a+)%]")
-    if mpdstatus == "playing" then 
+    if mpdstatus == "playing" then
       icon.image = PLAY_ICON_NAME
       widget.colors = { beautiful.widget_main_color }
       widget.value = tonumber((100-mpdpercent)/100)
@@ -93,7 +93,7 @@ mpdarc:connect_signal("button::press", function(_, _, _, button)
 end)
 
 local notification
-function show_MPD_status()
+local function show_MPD_status()
     spawn.easy_async(GET_MPD_CMD,
         function(stdout, _, _, _)
             notification = naughty.notify {

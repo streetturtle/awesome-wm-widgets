@@ -18,13 +18,15 @@ local beautiful = require("beautiful")
 
 local HOME_DIR = os.getenv("HOME")
 
-local GET_QUESTIONS_CMD = [[bash -c "curl --compressed -s -X GET 'http://api.stackexchange.com/2.2/questions/no-answers?page=1&pagesize=%s&order=desc&sort=activity&tagged=%s&site=stackoverflow'"]]
+local GET_QUESTIONS_CMD = [[bash -c "curl --compressed -s -X GET]]
+    .. [[ 'http://api.stackexchange.com/2.2/questions/no-answers]]
+    .. [[?page=1&pagesize=%s&order=desc&sort=activity&tagged=%s&site=stackoverflow'"]]
 
 local stackoverflow_widget = {}
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/stackoverflow-widget/so-icon.svg'
     local limit = args.limit or 5
@@ -43,7 +45,7 @@ local function worker(args)
         border_width = 1,
         border_color = beautiful.bg_focus,
         maximum_width = 400,
-        preferred_positions = top,
+        preferred_positions = 'top',
         offset = { y = 5 },
         widget = {}
     }
@@ -63,7 +65,7 @@ local function worker(args)
         end,
     }
 
-    local update_widget = function(widget, stdout, stderr, _, _)
+    local update_widget = function(_, stdout, _, _, _)
 
         local result = json.decode(stdout)
 
@@ -91,7 +93,7 @@ local function worker(args)
                 widget = wibox.container.background
             }
 
-            row:connect_signal("button::release", function(_, _, _, button)
+            row:connect_signal("button::release", function()
                 spawn.with_shell("xdg-open " .. item.link)
                 popup.visible = false
             end)

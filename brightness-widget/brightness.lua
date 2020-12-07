@@ -17,11 +17,11 @@ local GET_BRIGHTNESS_CMD = "light -G"   -- "xbacklight -get"
 local INC_BRIGHTNESS_CMD = "light -A 5" -- "xbacklight -inc 5"
 local DEC_BRIGHTNESS_CMD = "light -U 5" -- "xbacklight -dec 5"
 
-local widget = {}
+local brightness_widget = {}
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local get_brightness_cmd = args.get_brightness_cmd or GET_BRIGHTNESS_CMD
     local inc_brightness_cmd = args.inc_brightness_cmd or INC_BRIGHTNESS_CMD
@@ -43,7 +43,7 @@ local function worker(args)
         widget = wibox.container.margin
     }
 
-    widget = wibox.widget {
+    brightness_widget = wibox.widget {
         brightness_icon,
         brightness_text,
         layout = wibox.layout.fixed.horizontal,
@@ -52,9 +52,9 @@ local function worker(args)
     local update_widget = function(widget, stdout, _, _, _)
         local brightness_level = tonumber(string.format("%.0f", stdout))
         widget:set_text(" " .. brightness_level .. "%")
-    end,
+    end
 
-    widget:connect_signal("button::press", function(_, _, _, button)
+    brightness_widget:connect_signal("button::press", function(_, _, _, button)
         if (button == 4) then
             spawn(inc_brightness_cmd, false)
         elseif (button == 5) then
@@ -64,9 +64,9 @@ local function worker(args)
 
     watch(get_brightness_cmd, timeout, update_widget, brightness_text)
 
-    return widget
+    return brightness_widget
 end
 
-return setmetatable(widget, { __call = function(_, ...)
+return setmetatable(brightness_widget, { __call = function(_, ...)
     return worker(...)
 end })

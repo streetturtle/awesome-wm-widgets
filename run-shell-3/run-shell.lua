@@ -8,10 +8,6 @@
 -- @copyright 2019 Pavel Makhov
 -------------------------------------------------
 
-local capi = {
-    screen = screen,
-    client = client,
-}
 local awful = require("awful")
 local gfs = require("gears.filesystem")
 local wibox = require("wibox")
@@ -26,8 +22,10 @@ local widget = {}
 function widget.new()
     local widget_instance = {
         _cached_wiboxes = {},
-        _cmd_pixelate = [[bash -c 'ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -y -i :0.0+%s,20 -vf frei0r=pixeliz0r -vframes 1 /tmp/i3lock-%s.png ; echo done']],
-        _cmd_blur = [[bash -c 'ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -y -i :0.0+%s,20 -filter_complex "boxblur=9" -vframes 1 /tmp/i3lock-%s.png ; echo done']]
+        _cmd_pixelate = [[sh -c 'ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -y -i :0.0+%s,20 -vf ]]
+            .. [[frei0r=pixeliz0r -vframes 1 /tmp/i3lock-%s.png ; echo done']],
+        _cmd_blur = [[sh -c 'ffmpeg -loglevel panic -f x11grab -video_size 1920x1060 -y -i :0.0+%s,20 ]]
+            .. [[-filter_complex "boxblur=9" -vframes 1 /tmp/i3lock-%s.png ; echo done']]
     }
 
     function widget_instance:_create_wibox()
@@ -74,22 +72,19 @@ function widget.new()
         return w
     end
 
-    function widget_instance:launch(s, c)
-        c = c or capi.client.focus
-        s = mouse.screen
-        --        naughty.notify { text = 'screen ' .. s.index }
+    function widget_instance:launch()
+        local s = mouse.screen
         if not self._cached_wiboxes[s] then
             self._cached_wiboxes[s] = {}
-            --            naughty.notify { text = 'nope' }
         end
         if not self._cached_wiboxes[s][1] then
             self._cached_wiboxes[s][1] = self:_create_wibox()
-            --            naughty.notify { text = 'nope' }
         end
         local w = self._cached_wiboxes[s][1]
         local rnd = math.random()
-        awful.spawn.with_line_callback(string.format(self._cmd_blur, tostring(awful.screen.focused().geometry.x), rnd), {
-            stdout = function(line)
+        awful.spawn.with_line_callback(
+            string.format(self._cmd_blur, tostring(awful.screen.focused().geometry.x), rnd), {
+            stdout = function()
                 w.visible = true
                 w.bgimage = '/tmp/i3lock-' .. rnd ..'.png'
                 awful.placement.top(w, { margins = { top = 20 }, parent = awful.screen.focused() })

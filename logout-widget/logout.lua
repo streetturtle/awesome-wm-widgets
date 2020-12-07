@@ -54,8 +54,8 @@ local function create_button(icon_name, action_name, color, onclick, icon_size, 
             capi.keygrabber.stop()
         end
     }
-    button:connect_signal("mouse::enter", function(c) action:set_text(action_name) end)
-    button:connect_signal("mouse::leave", function(c) action:set_text(' ') end)
+    button:connect_signal("mouse::enter", function() action:set_text(action_name) end)
+    button:connect_signal("mouse::leave", function() action:set_text(' ') end)
     return button
 end
 
@@ -76,7 +76,8 @@ local function launch(args)
 
     w:set_bg(bg_color)
     if #phrases > 0 then
-        phrase_widget:set_markup('<span color="'.. text_color .. '" size="20000">' .. phrases[ math.random( #phrases ) ] .. '</span>')
+        phrase_widget:set_markup(
+            '<span color="'.. text_color .. '" size="20000">' .. phrases[ math.random( #phrases ) ] .. '</span>')
     end
 
     w:setup {

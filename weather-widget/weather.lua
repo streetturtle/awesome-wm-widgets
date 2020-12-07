@@ -27,7 +27,6 @@ end
 
 local weather_widget = {}
 local warning_shown = false
-local notification
 local tooltip = awful.tooltip {
     mode = 'outside',
     preferred_positions = {'bottom'}
@@ -115,9 +114,9 @@ local function uvi_index_color(uvi)
     return '<span weight="bold" foreground="' .. color .. '">' .. uvi .. '</span>'
 end
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     --- Validate required parameters
     if args.coordinates == nil or args.api_key == nil then
@@ -139,6 +138,7 @@ local function worker(args)
     local icons_extension = args.icons_extension or '.png'
     local timeout = args.timeout or 120
 
+    local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
     local owm_one_cal_api =
         ('https://api.openweathermap.org/data/2.5/onecall' ..
             '?lat=' .. coordinates[1] .. '&lon=' .. coordinates[2] .. '&appid=' .. api_key ..
@@ -241,11 +241,14 @@ local function worker(args)
         forced_width = 300,
         layout = wibox.layout.flex.horizontal,
         update = function(self, weather)
-            self:get_children_by_id('icon')[1]:set_image(WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/' .. icon_map[weather.weather[1].icon] .. icons_extension)
+            self:get_children_by_id('icon')[1]:set_image(
+                ICONS_DIR .. icon_map[weather.weather[1].icon] .. icons_extension)
             self:get_children_by_id('temp')[1]:set_text(gen_temperature_str(weather.temp, '%.0f', false, units))
-            self:get_children_by_id('feels_like_temp')[1]:set_text('Feels like ' .. gen_temperature_str(weather.feels_like, '%.0f', false, units))
+            self:get_children_by_id('feels_like_temp')[1]:set_text(
+                'Feels like ' .. gen_temperature_str(weather.feels_like, '%.0f', false, units))
             self:get_children_by_id('description')[1]:set_text(weather.weather[1].description)
-            self:get_children_by_id('wind')[1]:set_markup('Wind: <b>' .. weather.wind_speed .. 'm/s (' .. to_direction(weather.wind_deg) .. ')</b>')
+            self:get_children_by_id('wind')[1]:set_markup(
+                'Wind: <b>' .. weather.wind_speed .. 'm/s (' .. to_direction(weather.wind_deg) .. ')</b>')
             self:get_children_by_id('humidity')[1]:set_markup('Humidity: <b>' .. weather.humidity .. '%</b>')
             self:get_children_by_id('uv')[1]:set_markup('UV: ' .. uvi_index_color(weather.uvi))
         end
@@ -270,7 +273,7 @@ local function worker(args)
                     {
                         {
                             {
-                                image = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/' .. icon_map[day.weather[1].icon] .. icons_extension,
+                                image = ICONS_DIR .. icon_map[day.weather[1].icon] .. icons_extension,
                                 resize = true,
                                 forced_width = 48,
                                 forced_height = 48,
@@ -384,7 +387,7 @@ local function worker(args)
             hourly_forecast_negative_graph:set_max_value(math.abs(min_temp))
             hourly_forecast_negative_graph:set_min_value(max_temp < 0 and math.abs(max_temp) * 0.7 or 0)
 
-            for i, value in ipairs(values) do
+            for _, value in ipairs(values) do
                 if value >= 0 then
                     hourly_forecast_graph:add_value(value)
                     hourly_forecast_negative_graph:add_value(0)
@@ -470,12 +473,9 @@ local function worker(args)
     local function update_widget(widget, stdout, stderr)
         if stderr ~= '' then
             if not warning_shown then
-                if (
-                    stderr ~= 'curl: (52) Empty reply from server' and
-                    stderr ~= 'curl: (28) Failed to connect to api.openweathermap.org port 443: Connection timed out' and
-                    stderr:find(
-                        '^curl: %(18%) transfer closed with %d+ bytes remaining to read$'
-                    ) ~= nil
+                if (stderr ~= 'curl: (52) Empty reply from server'
+                and stderr ~= 'curl: (28) Failed to connect to api.openweathermap.org port 443: Connection timed out'
+                and stderr:find('^curl: %(18%) transfer closed with %d+ bytes remaining to read$') ~= nil
                 ) then
                     show_warning(stderr)
                 end
@@ -494,7 +494,7 @@ local function worker(args)
 
         local result = json.decode(stdout)
 
-        widget:set_image(WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/' .. icon_map[result.current.weather[1].icon] .. icons_extension)
+        widget:set_image(ICONS_DIR .. icon_map[result.current.weather[1].icon] .. icons_extension)
         widget:set_text(gen_temperature_str(result.current.temp, '%.0f', both_units_widget, units))
 
         current_weather_widget:update(result.current)

@@ -11,7 +11,6 @@ local awful = require("awful")
 local wibox = require("wibox")
 local json = require("json")
 local spawn = require("awful.spawn")
-local naughty = require("naughty")
 local gears = require("gears")
 local beautiful = require("beautiful")
 local gfs = require("gears.filesystem")
@@ -24,7 +23,7 @@ local GET_TODO_ITEMS = 'bash -c "cat ' .. STORAGE .. '"'
 
 local rows  = { layout = wibox.layout.fixed.vertical }
 local todo_widget = {}
-
+local update_widget
 todo_widget.widget = wibox.widget {
     {
         {
@@ -89,7 +88,7 @@ local add_button = wibox.widget {
     widget = wibox.container.background
 }
 
-add_button:connect_signal("button::press", function(c)
+add_button:connect_signal("button::press", function()
     local pr = awful.widget.prompt()
 
     table.insert(rows, wibox.widget {
@@ -116,7 +115,7 @@ add_button:connect_signal("button::press", function(c)
                 local res = json.decode(stdout)
                 table.insert(res.todo_items, {todo_item = input_text, status = false})
                 spawn.easy_async_with_shell("echo '" .. json.encode(res) .. "' > " .. STORAGE, function()
-                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                    spawn.easy_async(GET_TODO_ITEMS, function(items) update_widget(items) end)
                 end)
             end)
         end
@@ -126,9 +125,9 @@ end)
 add_button:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
 add_button:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local icon = args.icon or WIDGET_DIR .. '/checkbox-checked-symbolic.svg'
 
@@ -200,10 +199,10 @@ local function worker(args)
                 widget = wibox.container.background
             }
 
-            trash_button:connect_signal("button::press", function(c)
+            trash_button:connect_signal("button::press", function()
                 table.remove(result.todo_items, i)
                 spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE, function ()
-                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                    spawn.easy_async(GET_TODO_ITEMS, function(items) update_widget(items) end)
                 end)
             end)
 
@@ -214,12 +213,12 @@ local function worker(args)
                 widget = wibox.widget.imagebox
             }
 
-            move_up:connect_signal("button::press", function(c)
+            move_up:connect_signal("button::press", function()
                 local temp = result.todo_items[i]
                 result.todo_items[i] = result.todo_items[i-1]
                 result.todo_items[i-1] = temp
                 spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE, function ()
-                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                    spawn.easy_async(GET_TODO_ITEMS, function(items) update_widget(items) end)
                 end)
             end)
 
@@ -229,12 +228,12 @@ local function worker(args)
                 widget = wibox.widget.imagebox
             }
 
-            move_down:connect_signal("button::press", function(c)
+            move_down:connect_signal("button::press", function()
                 local temp = result.todo_items[i]
                 result.todo_items[i] = result.todo_items[i+1]
                 result.todo_items[i+1] = temp
                 spawn.easy_async_with_shell("printf '" .. json.encode(result) .. "' > " .. STORAGE, function ()
-                    spawn.easy_async(GET_TODO_ITEMS, function(stdout) update_widget(stdout) end)
+                    spawn.easy_async(GET_TODO_ITEMS, function(items) update_widget(items) end)
                 end)
             end)
 
@@ -243,13 +242,11 @@ local function worker(args)
                 layout = wibox.layout.fixed.vertical
             }
 
-            if 1 == #result.todo_items then
-                -- one item, no need in arrows
-            elseif i == 1 then
+            if i == 1 and #result.todo_items > 1 then
                 table.insert(move_buttons, move_down)
-            elseif i == #result.todo_items then
+            elseif i == #result.todo_items and #result.todo_items > 1 then
                 table.insert(move_buttons, move_up)
-            else
+            elseif #result.todo_items > 1 then
                 table.insert(move_buttons, move_up)
                 table.insert(move_buttons, move_down)
             end
@@ -322,7 +319,8 @@ local function worker(args)
 end
 
 if not gfs.file_readable(STORAGE) then
-    spawn.easy_async(string.format([[bash -c "dirname %s | xargs mkdir -p && echo '{\"todo_items\":{}}' > %s"]], STORAGE, STORAGE))
+    spawn.easy_async(string.format([[bash -c "dirname %s | xargs mkdir -p && echo '{\"todo_items\":{}}' > %s"]],
+    STORAGE, STORAGE))
 end
 
 return setmetatable(todo_widget, { __call = function(_, ...) return worker(...) end })

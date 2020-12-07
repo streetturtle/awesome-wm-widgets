@@ -16,7 +16,8 @@ local wibox = require("wibox")
 local gears = require("gears")
 local gfs = require("gears.filesystem")
 
-local TRANSLATE_CMD = [[bash -c 'curl -s -u "apikey:%s" -H "Content-Type: application/json" -d '\''{"text": ["%s"], "model_id":"%s"}'\'' "%s/v3/translate?version=2018-05-01"']]
+local TRANSLATE_CMD = [[bash -c 'curl -s -u "apikey:%s" -H "Content-Type: application/json"]]
+    ..[[ -d '\''{"text": ["%s"], "model_id":"%s"}'\'' "%s/v3/translate?version=2018-05-01"']]
 local ICON = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/translate-widget/gnome-translate.svg'
 
 --- Returns two values - string to translate and direction:
@@ -82,12 +83,14 @@ local function translate(to_translate, lang, api_key, url)
                     {
                         {
                             id = 'src',
-                            markup = '<b>' .. lang:sub(1,2) .. '</b>: <span color="#FFFFFF"> ' .. to_translate .. '</span>',
+                            markup = '<b>' .. lang:sub(1,2) .. '</b>: <span color="#FFFFFF"> '
+                                .. to_translate .. '</span>',
                             widget = wibox.widget.textbox
                         },
                         {
                             id = 'res',
-                            markup = '<b>' .. lang:sub(4) .. '</b>: <span color="#FFFFFF"> ' .. resp.translations[1].translation .. '</span>',
+                            markup = '<b>' .. lang:sub(4) .. '</b>: <span color="#FFFFFF"> '
+                                .. resp.translations[1].translation .. '</span>',
                             widget = wibox.widget.textbox
                         },
                         id = 'text',
@@ -110,11 +113,11 @@ local function translate(to_translate, lang, api_key, url)
         w:buttons(
             awful.util.table.join(
                 awful.button({}, 1, function()
-                    awful.spawn.with_shell("echo '" .. resp.translations[1].translation .. "' | xclip -selection clipboard")
+                    spawn.with_shell("echo '" .. resp.translations[1].translation .. "' | xclip -selection clipboard")
                     w.visible = false
                 end),
                 awful.button({}, 3, function()
-                    awful.spawn.with_shell("echo '" .. to_translate .."' | xclip -selection clipboard")
+                    spawn.with_shell("echo '" .. to_translate .."' | xclip -selection clipboard")
                     w.visible = false
                 end)
             )
@@ -159,9 +162,9 @@ input_widget:setup{
     widget = wibox.container.margin
 }
 
-local function launch(args)
+local function launch(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local api_key = args.api_key
     local url = args.url

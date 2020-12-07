@@ -55,9 +55,9 @@ end
 
 local text_clock = {}
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local main_color = args.main_color or beautiful.fg_normal
     local accent_color = args.accent_color or beautiful.fg_urgent
@@ -81,7 +81,10 @@ local function worker(args)
             local t = split(time)
             local res = ''
             for i, v in ipairs(t) do
-                res = res .. '<span color="' .. ((i % 2 == 0) and accent_color or main_color) .. '">' .. v .. '</span>' .. (with_spaces and ' ' or '')
+                res = res .. '<span color="'
+                .. ((i % 2 == 0) and accent_color or main_color)
+                .. '">' .. v .. '</span>'
+                .. (with_spaces and ' ' or '')
             end
             self:get_children_by_id('clock')[1]:set_markup(res)
         end

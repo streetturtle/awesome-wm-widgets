@@ -24,7 +24,7 @@ function widget.get_widget()
         is_muted = true,
         set_volume_level = function(self, new_value)
             self:get_children_by_id('txt')[1]:set_text(new_value)
-            local volume_icon_name = ''
+            local volume_icon_name
             if self.is_muted then
                 volume_icon_name = 'audio-volume-muted-symbolic.svg'
             else
@@ -41,7 +41,7 @@ function widget.get_widget()
         end,
         mute = function(self)
             self.is_muted = true
-            self:get_children_by_id('icon')[1]:set_image(WIDGET_DIR .. 'audio-volume-muted-symbolic.svg') 
+            self:get_children_by_id('icon')[1]:set_image(WIDGET_DIR .. 'audio-volume-muted-symbolic.svg')
         end,
         unmute = function(self)
             self.is_muted = false

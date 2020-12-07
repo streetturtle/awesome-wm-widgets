@@ -21,7 +21,12 @@ local gfs = require("gears.filesystem")
 local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/bitbucket-widget/'
 
-local GET_PRS_CMD= [[bash -c "curl -s --show-error -n '%s/2.0/repositories/%s/%s/pullrequests?fields=values.participants.approved,values.title,values.links.html,values.author.display_name,values.author.uuid,values.author.links.avatar,values.source.branch,values.destination.branch,values.comment_count,values.created_on&q=reviewers.uuid+%%3D+%%22%s%%22+AND+state+%%3D+%%22OPEN%%22' | jq '.[] '"]]
+local GET_PRS_CMD= [[bash -c "curl -s --show-error -n ]]
+    .. [['%s/2.0/repositories/%s/%s/pullrequests]]
+    .. [[?fields=values.participants.approved,values.title,values.links.html,values.author.display_name,]]
+    .. [[values.author.uuid,values.author.links.avatar,values.source.branch,values.destination.branch,]]
+    .. [[values.comment_count,values.created_on&q=reviewers.uuid+%%3D+%%22%s%%22+AND+state+%%3D+%%22OPEN%%22']]
+    .. [[ | jq '.[] '"]]
 local DOWNLOAD_AVATAR_CMD = [[bash -c "curl -L -n --create-dirs -o %s/.cache/awmw/bitbucket-widget/avatars/%s %s"]]
 
 local bitbucket_widget = wibox.widget {
@@ -71,7 +76,7 @@ local popup = awful.popup{
 --- Converts string representation of date (2020-06-02T11:25:27Z) to date
 local function parse_date(date_str)
     local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)%Z"
-    local y, m, d, h, min, sec, mil = date_str:match(pattern)
+    local y, m, d, h, min, sec, _ = date_str:match(pattern)
 
     return os.time{year = y, month = m, day = d, hour = h, min = min, sec = sec}
 end
@@ -111,9 +116,9 @@ local function count_approves(participants)
     return res
 end
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
 
     local icon = args.icon or WIDGET_DIR .. '/bitbucket-icon-gradient-blue.svg'
     local host = args.host or show_warning('Bitbucket host is not set')
@@ -279,11 +284,8 @@ local function worker(args)
             }
 
             if not gfs.file_readable(path_to_avatar) then
-                spawn.easy_async(string.format(
-                        DOWNLOAD_AVATAR_CMD,
-                        HOME_DIR,
-                        pr.author.uuid,
-                        pr.author.links.avatar.href), function() row:get_children_by_id('avatar')[1]:set_image(path_to_avatar) end)
+                local cmd = string.format(DOWNLOAD_AVATAR_CMD, HOME_DIR, pr.author.uuid, pr.author.links.avatar.href)
+                spawn.easy_async(cmd, function() row:get_children_by_id('avatar')[1]:set_image(path_to_avatar) end)
             end
 
 
@@ -299,34 +301,36 @@ local function worker(args)
                     )
             )
             row:get_children_by_id('avatar')[1]:buttons(
-                    awful.util.table.join(
-                            awful.button({}, 1, function()
-                                spawn.with_shell(string.format('xdg-open "https://bitbucket.org/%s/%s/pull-requests?state=OPEN&author=%s"', workspace, repo_slug, pr.author.uuid))
-                                popup.visible = false
-                            end)
-                    )
+                awful.util.table.join(
+                    awful.button({}, 1, function()
+                        spawn.with_shell(
+                            string.format('xdg-open "https://bitbucket.org/%s/%s/pull-requests?state=OPEN&author=%s"',
+                            workspace, repo_slug, pr.author.uuid)
+                        )
+                        popup.visible = false
+                    end)
+                )
             )
 
             local old_cursor, old_wibox
-            row:get_children_by_id('title')[1]:connect_signal("mouse::enter", function(c)
+            row:get_children_by_id('title')[1]:connect_signal("mouse::enter", function()
                 local wb = mouse.current_wibox
                 old_cursor, old_wibox = wb.cursor, wb
                 wb.cursor = "hand1"
             end)
-            row:get_children_by_id('title')[1]:connect_signal("mouse::leave", function(c)
+            row:get_children_by_id('title')[1]:connect_signal("mouse::leave", function()
                 if old_wibox then
                     old_wibox.cursor = old_cursor
                     old_wibox = nil
                 end
             end)
 
-            local old_cursor, old_wibox
-            row:get_children_by_id('avatar')[1]:connect_signal("mouse::enter", function(c)
+            row:get_children_by_id('avatar')[1]:connect_signal("mouse::enter", function()
                 local wb = mouse.current_wibox
                 old_cursor, old_wibox = wb.cursor, wb
                 wb.cursor = "hand1"
             end)
-            row:get_children_by_id('avatar')[1]:connect_signal("mouse::leave", function(c)
+            row:get_children_by_id('avatar')[1]:connect_signal("mouse::leave", function()
                 if old_wibox then
                     old_wibox.cursor = old_cursor
                     old_wibox = nil

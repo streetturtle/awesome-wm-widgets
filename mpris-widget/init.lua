@@ -29,7 +29,7 @@ local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/music-library.png"
 
 local mpdarc_widget = {}
 
-local function worker(args)
+local function worker()
 
     -- retriving song info
     local current_song, artist, mpdstatus, art, artUrl
@@ -123,7 +123,7 @@ local function worker(args)
 
     local notification
     local function show_MPD_status()
-        spawn.easy_async(GET_MPD_CMD, function(stdout, _, _, _)
+        spawn.easy_async(GET_MPD_CMD, function()
             notification = naughty.notification {
                 margin = 10,
                 timeout = 5,

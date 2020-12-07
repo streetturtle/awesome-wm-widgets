@@ -6,8 +6,8 @@ local gears = require("gears")
 
 local storage_bar_widget = {}
 
-local function worker(args)
-    local args = args or {}
+local function worker(user_args)
+    local args = user_args or {}
     local mounts = args.mounts or {'/'}
     local timeout = args.timeout or 60
 
