@@ -59,6 +59,10 @@ Clone the repo under **~/.config/awesome/**, then follow an Installation section
 
 [![Stargazers over time](https://starchart.cc/streetturtle/awesome-wm-widgets.svg)](https://starchart.cc/streetturtle/awesome-wm-widgets)
 
+# Troubleshooting
+
+In case of any doubts/questions don't hesitate to create an issue. Or try [Discussions](https://github.com/streetturtle/awesome-wm-widgets/discussions)!
+
 # Support
 
 If you find anything useful here, you can:
