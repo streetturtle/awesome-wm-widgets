@@ -69,7 +69,18 @@ footer {
   padding-top: 0 !important;
   padding-bottom: 12px;
 }
-
+a.sidenav-trigger.top-nav {
+  position: absolute;
+  text-align: center;
+  height: 28px;
+  width: 28px;
+  top: 8px;
+  float: none;
+  margin-left: 1.5rem;
+  color: #3CA2A2;
+  font-size: 36px;
+  z-index: 2;
+}
 .sidenav {
   background-color: #202020;
   color: white;

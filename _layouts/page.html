@@ -13,11 +13,14 @@
                     <a href="{{ site.url | append: site.baseurl}}/"><span
                             style="font-family: awesomewm-font; font-weight: 100;">awesome wm</span></a>
                 </div>
-                    <div id="description" class="header center white-text">
+                <div id="description" class="header center white-text">
                     Widgets for Awesome Window Manager
                 </div>
             </div>
             <div id="particles-js"></div>
+            
+            <a href="#" data-target="slide-out" class="top-nav sidenav-trigger full hide-on-large-only"><i class="fa fa-bars"></i></a>
+            
         </div>
 
     </div>
@@ -26,7 +29,7 @@
 <main>
     {% include github-corner.html %}
 
-    <ul class="sidenav sidenav-fixed" style="transform: translateX(0px);">
+    <ul id="slide-out" class="sidenav sidenav-fixed" style="transform: translateX(0px);">
         <ul class="collapsible collapsible-accordion">
             <li class="tab col s2"><a class="tab white-text" href="#tabMain">Awesome WM Widgets</a></li>
             <li><div class="divider"></div></li>    
@@ -35,7 +38,7 @@
                 <div class="collapsible-body">
                     <ul>
                         {% for widget in site.widgets %}
-                        <li class="tab col s2 ">
+                        <li class="tab col s2 sidenav-close">
                             <a class="tab" href="#tab{{ widget.title | replace: ' ', '_' }}">
                                 {{ widget.title | replace: 'Cpu', 'CPU' | replace: 'Ram', 'RAM' | replace: 'Fs', 'FS' | replace: 'Todo', 'ToDo'}}
                             </a>
@@ -50,7 +53,7 @@
                 <div class="collapsible-body">
                     <ul>
                         {% for prompt in site.prompts %}
-                        <li class="tab col s2 ">
+                        <li class="tab col s2 sidenav-close">
                             <a class="tab" href="#tab{{ prompt.title | replace: ' ', '_' }}">
                                 {{ prompt.title }}
                             </a>
@@ -66,7 +69,7 @@
                 <div class="collapsible-body">
                     <ul>
                         {% for tip in site.tips %}
-                        <li class="tab col s2 ">
+                        <li class="tab col s2 sidenav-close">
                             <a class="tab" href="#tab{{ tip.title | replace: ' ', '_' }}">
                                 {{ tip.title }}
                             </a>
@@ -81,7 +84,7 @@
                 <div class="collapsible-body">
                     <ul>
                         {% for snippet in site.snippets %}
-                        <li class="tab col s2 ">
+                        <li class="tab col s2 sidenav-close">
                             <a class="tab" href="#tab{{ snippet.title | replace: ' ', '_' }}">
                                 {{ snippet.title }}
                             </a>
