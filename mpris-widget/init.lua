@@ -11,6 +11,7 @@ local spawn = require("awful.spawn")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 local naughty = require("naughty")
+local gears = require("gears")
 
 local GET_MPD_CMD =
     "playerctl -f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}}' metadata"
@@ -24,8 +25,12 @@ local PREV_MPD_CMD = "playerctl previous"
 local PATH_TO_ICONS = "/usr/share/icons/Arc"
 local PAUSE_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_pause.png"
 local PLAY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_play.png"
+local NEXT_ICON_NAME = PATH_TO_ICONS .. "/actions/24/gtk-media-previous-rtl.png"
+local PREV_ICON_NAME = PATH_TO_ICONS .. "/actions/24/gtk-media-previous-ltr.png"
 local STOP_ICON_NAME = PATH_TO_ICONS .. "/actions/24/player_stop.png"
 local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/music-library.png"
+local DEFAULT_ART = gears.filesystem.get_configuration_dir() ..
+                        "widgets/mpris-widget/music.png"
 
 local mpdarc_widget = {}
 
@@ -41,10 +46,25 @@ local function worker()
     }
     local mirrored_icon = wibox.container.mirror(icon, {horizontal = true})
 
+    local next = wibox.widget {
+        id = "next",
+        widget = wibox.widget.imagebox,
+        image = NEXT_ICON_NAME
+    }
+    local prev = wibox.widget {
+        id = "prev",
+        widget = wibox.widget.imagebox,
+        image = PREV_ICON_NAME
+    }
+
+    local mirrored_next = wibox.container.mirror(next, {horizontal = true})
+    local mirrored_prev = wibox.container.mirror(prev, {horizontal = true})
     local mpdarc = wibox.widget {
         mirrored_icon,
+        prev,
+        next,
         -- max_value = 1,
-        -- value = 0,
+        -- value = 1,
         thickness = 2,
         start_angle = 4.71238898, -- 2pi*3/4
         forced_height = 24,
@@ -74,33 +94,69 @@ local function worker()
         art = words[4]
         if current_song ~= nil then
             if string.len(current_song) > 18 then
-                current_song = string.sub(current_song, 0, 9) .. ".."
+                current_song = string.sub(current_song, 0, 16) .. ".."
             end
         end
 
-        if art ~= nil then artUrl = string.sub(art, 8, -1) end
+        if art ~= nil then
+            if string.len(art) > 10 then
+                artUrl = string.sub(art, 8, -1)
+            end
+        else
+            artUrl = DEFAULT_ART
+        end
 
         if mpdstatus == "Playing" then
             mpdarc_icon_widget.visible = true
+            mirrored_prev.visible = true
+            mirrored_next.visible = true
             icon.image = PLAY_ICON_NAME
             widget.colors = {beautiful.widget_main_color}
             mpdarc_current_song_widget.markup = current_song
         elseif mpdstatus == "Paused" then
             mpdarc_icon_widget.visible = true
+            mirrored_prev.visible = true
+            mirrored_next.visible = true
             icon.image = PAUSE_ICON_NAME
             widget.colors = {beautiful.widget_main_color}
             mpdarc_current_song_widget.markup = current_song
         elseif mpdstatus == "Stopped" then
             mpdarc_icon_widget.visible = true
+            mirrored_prev.visible = true
+            mirrored_next.visible = true
             icon.image = STOP_ICON_NAME
             mpdarc_current_song_widget.markup = ""
         else -- no player is running
             icon.image = LIBRARY_ICON_NAME
             mpdarc_icon_widget.visible = false
+            mirrored_prev.visible = false
+            mirrored_next.visible = false
             mpdarc_current_song_widget.markup = ""
             widget.colors = {beautiful.widget_red}
         end
     end
+
+    mirrored_next:connect_signal("button::press", function(_, _, _, button)
+        if (button == 1) then
+            awful.spawn(NEXT_MPD_CMD, false) -- left click
+        end
+
+        spawn.easy_async(GET_MPD_CMD,
+                         function(stdout, stderr, exitreason, exitcode)
+            update_graphic(mpdarc, stdout, stderr, exitreason, exitcode)
+        end)
+    end)
+
+    mirrored_prev:connect_signal("button::press", function(_, _, _, button)
+        if (button == 1) then
+            awful.spawn(PREV_MPD_CMD, false) -- left click
+        end
+
+        spawn.easy_async(GET_MPD_CMD,
+                         function(stdout, stderr, exitreason, exitcode)
+            update_graphic(mpdarc, stdout, stderr, exitreason, exitcode)
+        end)
+    end)
 
     mpdarc:connect_signal("button::press", function(_, _, _, button)
         if (button == 1) then
@@ -131,7 +187,8 @@ local function worker()
                 width = 240,
                 height = 90,
                 title = "<b>" .. mpdstatus .. "</b>",
-                text = current_song .. " <b>by</b> " .. artist,
+                text = current_song .. " - " .. artist,
+                -- text = "art: " .. artUrl,
                 image = artUrl
             }
         end)
@@ -147,7 +204,9 @@ local function worker()
 
     mpdarc_widget = wibox.widget {
         screen = 'primary',
+        mirrored_next,
         mpdarc_icon_widget,
+        mirrored_prev,
         mpdarc_current_song_widget,
         layout = wibox.layout.align.horizontal
     }
