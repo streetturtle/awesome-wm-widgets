@@ -2,9 +2,12 @@ local wibox = require("wibox")
 
 local widget = {}
 
-local WIDGET_DIR = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/experiments/volume/icons/'
+local ICON_DIR = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/experiments/volume/icons/'
 
-function widget.get_widget()
+function widget.get_widget(widgets_args)
+    local args = widgets_args or {}
+
+    local icon_dir = args.icon_dir or ICON_DIR
 
     return wibox.widget {
         {
@@ -17,7 +20,7 @@ function widget.get_widget()
         set_volume_level = function(self, new_value)
             local volume_icon_name
             if self.is_muted then
-                volume_icon_name = 'audio-volume-muted-symbolic.svg'
+                volume_icon_name = 'audio-volume-muted-symbolic'
             else
                 local new_value_num = tonumber(new_value)
                 if (new_value_num >= 0 and new_value_num < 33) then
@@ -28,11 +31,11 @@ function widget.get_widget()
                     volume_icon_name="audio-volume-high-symbolic"
                 end
             end
-            self:get_children_by_id('icon')[1]:set_image(WIDGET_DIR .. volume_icon_name .. '.svg')
+            self:get_children_by_id('icon')[1]:set_image(icon_dir .. volume_icon_name .. '.svg')
         end,
         mute = function(self)
             self.is_muted = true
-            self:get_children_by_id('icon')[1]:set_image(WIDGET_DIR .. 'audio-volume-muted-symbolic.svg')
+            self:get_children_by_id('icon')[1]:set_image(icon_dir .. 'audio-volume-muted-symbolic.svg')
         end,
         unmute = function(self)
             self.is_muted = false

@@ -208,7 +208,7 @@ local function worker(user_args)
 
 
             local move_up = wibox.widget {
-                image = WIDGET_DIR .. '/up.png',
+                image = WIDGET_DIR .. '/chevron-up.svg',
                 resize = false,
                 widget = wibox.widget.imagebox
             }
@@ -223,7 +223,7 @@ local function worker(user_args)
             end)
 
             local move_down = wibox.widget {
-                image = WIDGET_DIR .. '/down.png',
+                image = WIDGET_DIR .. '/chevron-down.svg',
                 resize = false,
                 widget = wibox.widget.imagebox
             }

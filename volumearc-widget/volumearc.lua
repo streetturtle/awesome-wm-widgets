@@ -13,6 +13,7 @@ local beautiful = require("beautiful")
 local spawn = require("awful.spawn")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
+local gears = require("gears")
 
 local GET_VOLUME_CMD = 'amixer -D pulse sget Master'
 local INC_VOLUME_CMD = 'amixer -q -D pulse sset Master 5%+'
@@ -23,6 +24,20 @@ local PATH_TO_ICON = "/usr/share/icons/Arc/status/symbolic/audio-volume-muted-sy
 
 local widget = {}
 
+local popup = awful.popup{
+    ontop = true,
+    visible = false,
+    shape = gears.shape.rounded_rect,
+    border_width = 1,
+    border_color = beautiful.bg_focus,
+    maximum_width = 400,
+    offset = { y = 5 },
+    widget = {}
+}
+local rows = {
+    { widget = wibox.widget.textbox },
+    layout = wibox.layout.fixed.vertical,
+}
 local function worker(user_args)
 
     local args = user_args or {}
@@ -32,7 +47,7 @@ local function worker(user_args)
     local mute_color = args.mute_color or beautiful.fg_urgent
     local path_to_icon = args.path_to_icon or PATH_TO_ICON
     local thickness = args.thickness or 2
-    local height = args.height or 18
+    local margins = args.height or 18
     local timeout = args.timeout or 1
 
     local get_volume_cmd = args.get_volume_cmd or GET_VOLUME_CMD
@@ -52,8 +67,8 @@ local function worker(user_args)
         max_value = 1,
         thickness = thickness,
         start_angle = 4.71238898, -- 2pi*3/4
-        forced_height = height,
-        forced_width = height,
+        forced_height = margins,
+        forced_width = margins,
         bg = bg_color,
         paddings = 2,
         widget = wibox.container.arcchart
@@ -70,7 +85,7 @@ local function worker(user_args)
                 or { main_color }
     end
 
-    local button_press = args.button_press or  function(_, _, _, button)
+    local button_press = args.button_press or function(_, _, _, button)
         if (button == 4) then awful.spawn(inc_volume_cmd, false)
         elseif (button == 5) then awful.spawn(dec_volume_cmd, false)
         elseif (button == 1) then awful.spawn(tog_volume_cmd, false)
@@ -81,6 +96,38 @@ local function worker(user_args)
         end)
     end
     volumearc:connect_signal("button::press", button_press)
+
+    local rebuild_widget = function(stdout, stderr)
+        for i = 0, #rows do rows[i]=nil end
+
+        for line in stdout:gmatch("[^\r\n]+") do
+
+        local row = wibox.widget {
+            text = line,
+            widget = wibox.widget.textbox
+        }
+            table.insert(rows, row)
+        end
+
+        popup:setup(rows)
+    end
+
+    volumearc:buttons(
+        awful.util.table.join(
+                awful.button({}, 3, function()
+                    if popup.visible then
+                        popup.visible = not popup.visible
+                    else
+                        spawn.easy_async([[bash -c "cat /proc/asound/cards"]], function(stdout, stderr)
+                            rebuild_widget(stdout, stderr)
+                            popup:move_next_to(mouse.current_widget_geometry)
+                        end)
+                    end
+                end)
+        )
+    )
+
+
 
     watch(get_volume_cmd, timeout, update_graphic, volumearc)
 

@@ -1,4 +1,4 @@
-# MPRIS Widget
+# MPRIS Widget (In progress)
 
 Music Player Info widget cy @mgabs
 

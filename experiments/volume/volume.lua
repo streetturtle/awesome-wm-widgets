@@ -26,7 +26,9 @@ local TOG_VOLUME_CMD = 'amixer -q -D pulse sset Master toggle'
 local widget_types = {
     icon_and_text = require("awesome-wm-widgets.experiments.volume.widgets.icon-and-text-widget"),
     icon = require("awesome-wm-widgets.experiments.volume.widgets.icon-widget"),
-    arc = require("awesome-wm-widgets.experiments.volume.widgets.arc-widget")
+    arc = require("awesome-wm-widgets.experiments.volume.widgets.arc-widget"),
+    horizontal_bar = require("awesome-wm-widgets.experiments.volume.widgets.horizontal-bar-widget"),
+    vertical_bar = require("awesome-wm-widgets.experiments.volume.widgets.vertical-bar-widget")
 }
 
 local volume_widget = wibox.widget{}
@@ -58,14 +60,14 @@ local function build_rows(devices, on_checkbox_click, device_type)
     for _, device in pairs(devices) do
 
         local checkbox = wibox.widget {
-            checked       = device.is_default,
-            color         = beautiful.bg_normal,
-            paddings      = 2,
-            shape         = gears.shape.circle,
+            checked = device.is_default,
+            color = beautiful.bg_normal,
+            paddings = 2,
+            shape = gears.shape.circle,
             forced_width = 20,
             forced_height = 20,
             check_color = beautiful.fg_urgent,
-            widget        = wibox.widget.checkbox
+            widget = wibox.widget.checkbox
         }
 
         checkbox:connect_signal("button::press", function()
@@ -163,11 +165,12 @@ local function worker(user_args)
     local args = user_args or {}
 
     local widget_type = args.widget_type
+    local refresh_rate = args.refresh_rate or 1
 
     if widget_types[widget_type] == nil then
-        volume_widget = widget_types['icon_and_text'].get_widget()
+        volume_widget = widget_types['icon_and_text'].get_widget(user_args.icon_and_text_args)
     else
-        volume_widget = widget_types[widget_type].get_widget()
+        volume_widget = widget_types[widget_type].get_widget(user_args[widget_type .. '_args'])
     end
 
     volume_widget:buttons(
@@ -180,23 +183,23 @@ local function worker(user_args)
                             popup:move_next_to(mouse.current_widget_geometry)
                         end
                     end),
-                    awful.button({}, 4, function() awful.spawn(INC_VOLUME_CMD, false) end),
-                    awful.button({}, 5, function() awful.spawn(DEC_VOLUME_CMD, false) end),
-                    awful.button({}, 1, function() awful.spawn(TOG_VOLUME_CMD, false) end)
+                    awful.button({}, 4, function() spawn(INC_VOLUME_CMD, false) end),
+                    awful.button({}, 5, function() spawn(DEC_VOLUME_CMD, false) end),
+                    awful.button({}, 1, function() spawn(TOG_VOLUME_CMD, false) end)
             )
     )
 
     local function update_graphic(widget, stdout)
         local mute = string.match(stdout, "%[(o%D%D?)%]")   -- \[(o\D\D?)\] - [on] or [off]
-        if mute == 'off' then volume_widget:mute()
-        elseif mute == 'on' then volume_widget:unmute()
+        if mute == 'off' then widget:mute()
+        elseif mute == 'on' then widget:unmute()
         end
         local volume = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
         volume = string.format("% 3d", volume)
         widget:set_volume_level(volume)
     end
 
-    watch(GET_VOLUME_CMD, 1, update_graphic, volume_widget)
+    watch(GET_VOLUME_CMD, refresh_rate, update_graphic, volume_widget)
 
     return volume_widget
 end
