@@ -13,7 +13,7 @@ function widget.get_widget(widgets_args)
     local mute_color = args.mute_color or beautiful.fg_urgent
     local bg_color = args.bg_color or '#ffffff11'
     local width = args.width or 50
-    local margins = args.height or 10
+    local margins = args.margins or 10
     local shape = args.shape or 'bar'
     local with_icon = args.with_icon == true and true or false
 

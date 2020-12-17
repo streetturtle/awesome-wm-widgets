@@ -6,8 +6,14 @@ Volume widget based on [amixer](https://linux.die.net/man/1/amixer) (is used for
 
 From left to right: `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc`
 
-Right-click on the widget opens a popup where you can choose a sink/source:  
+A right-click on the widget opens a popup where you can choose a sink/source:  
 ![sink-sources](./screenshots/volume-sink-sources.png)
+
+### Features
+
+ - switch between sinks/sources by right clicking on the widget;
+ - more responsive than previous versions of volume widget, which were refreshed once a second;
+ - 5 predefined looks (check the screenshots below);
 
 ## Customization
 
@@ -60,7 +66,7 @@ _Note:_ if you are changing icons, the folder should contain following .svg imag
 | `shape` | `'bar'` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
 | `with_icon` | `true` | Show volume icon|
 
-_Note:_ I didn't figure out how does the `forced_height` property of progressbar widget works (maybe it doesn't work at all), thus there is a workaround with margins.
+_Note:_ I didn't figure out how does the `forced_height` property of progressbar widget work (maybe it doesn't work at all), thus there is a workaround with margins.
 
 ### `vertical_bar` parameters
 

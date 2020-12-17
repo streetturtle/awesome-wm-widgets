@@ -170,7 +170,7 @@ local function worker(user_args)
     if widget_types[widget_type] == nil then
         volume_widget = widget_types['icon_and_text'].get_widget(user_args.icon_and_text_args)
     else
-        volume_widget = widget_types[widget_type].get_widget(user_args[widget_type .. '_args'])
+        volume_widget = widget_types[widget_type].get_widget(args)
     end
 
     local function update_graphic(widget, stdout)
