@@ -24,7 +24,7 @@ def process_mailbox(M):
                     local_date = datetime.datetime.fromtimestamp(email.utils.mktime_tz(date_tuple))
                     print("{}: {}".format(header, local_date.strftime("%a, %d %b %Y %H:%M:%S")))
             else:
-                print('{}: {}'.format(header, hdr)
+                print('{}: {}'.format(header, hdr))
         # with code below you can process text of email
         # if msg.is_multipart():
         #     for payload in msg.get_payload():
