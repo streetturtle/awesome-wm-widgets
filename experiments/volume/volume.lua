@@ -18,9 +18,9 @@ local utils = require("awesome-wm-widgets.experiments.volume.utils")
 
 local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
 local GET_VOLUME_CMD = 'amixer -D pulse sget Master'
-local INC_VOLUME_CMD = 'amixer -q -D pulse sset Master 5%+'
-local DEC_VOLUME_CMD = 'amixer -q -D pulse sset Master 5%-'
-local TOG_VOLUME_CMD = 'amixer -q -D pulse sset Master toggle'
+local INC_VOLUME_CMD = 'amixer -D pulse sset Master 5%+'
+local DEC_VOLUME_CMD = 'amixer -D pulse sset Master 5%-'
+local TOG_VOLUME_CMD = 'amixer -D pulse sset Master toggle'
 
 
 local widget_types = {
@@ -173,6 +173,16 @@ local function worker(user_args)
         volume_widget = widget_types[widget_type].get_widget(user_args[widget_type .. '_args'])
     end
 
+    local function update_graphic(widget, stdout)
+        local mute = string.match(stdout, "%[(o%D%D?)%]")   -- \[(o\D\D?)\] - [on] or [off]
+        if mute == 'off' then widget:mute()
+        elseif mute == 'on' then widget:unmute()
+        end
+        local volume = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
+        volume = string.format("% 3d", volume)
+        widget:set_volume_level(volume)
+    end
+
     volume_widget:buttons(
             awful.util.table.join(
                     awful.button({}, 3, function()
@@ -183,21 +193,17 @@ local function worker(user_args)
                             popup:move_next_to(mouse.current_widget_geometry)
                         end
                     end),
-                    awful.button({}, 4, function() spawn(INC_VOLUME_CMD, false) end),
-                    awful.button({}, 5, function() spawn(DEC_VOLUME_CMD, false) end),
-                    awful.button({}, 1, function() spawn(TOG_VOLUME_CMD, false) end)
+                    awful.button({}, 4, function()
+                        spawn.easy_async(INC_VOLUME_CMD, function(stdout) update_graphic(volume_widget, stdout) end)
+                    end),
+                    awful.button({}, 5, function()
+                        spawn.easy_async(DEC_VOLUME_CMD, function(stdout) update_graphic(volume_widget, stdout) end)
+                    end),
+                    awful.button({}, 1, function()
+                        spawn.easy_async(TOG_VOLUME_CMD, function(stdout) update_graphic(volume_widget, stdout) end)
+                    end)
             )
     )
-
-    local function update_graphic(widget, stdout)
-        local mute = string.match(stdout, "%[(o%D%D?)%]")   -- \[(o\D\D?)\] - [on] or [off]
-        if mute == 'off' then widget:mute()
-        elseif mute == 'on' then widget:unmute()
-        end
-        local volume = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
-        volume = string.format("% 3d", volume)
-        widget:set_volume_level(volume)
-    end
 
     watch(GET_VOLUME_CMD, refresh_rate, update_graphic, volume_widget)
 
