@@ -93,7 +93,7 @@ local function rebuild_popup()
                     layout = wibox.container.place,
                 }
 
-                checkbox:connect_signal("button::press", function(c)
+                checkbox:connect_signal("button::press", function()
                     default_player = player_name
                     rebuild_popup()
                 end)
@@ -214,7 +214,8 @@ local function worker()
             awful.spawn(PREV_MPD_CMD, false) -- scroll down
         end
 
-        -- spawn.easy_async(string.format(GET_MPD_CMD, "'" .. default_player .. "'"), function(stdout, stderr, exitreason, exitcode)
+        -- spawn.easy_async(string.format(GET_MPD_CMD, "'" .. default_player .. "'"),
+        -- function(stdout, stderr, exitreason, exitcode)
         --     update_graphic(mpdarc, stdout, stderr, exitreason, exitcode)
         -- end)
     end)

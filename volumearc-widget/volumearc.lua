@@ -97,7 +97,7 @@ local function worker(user_args)
     end
     volumearc:connect_signal("button::press", button_press)
 
-    local rebuild_widget = function(stdout, stderr)
+    local rebuild_widget = function(stdout)
         for i = 0, #rows do rows[i]=nil end
 
         for line in stdout:gmatch("[^\r\n]+") do
