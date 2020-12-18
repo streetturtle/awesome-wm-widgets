@@ -36,7 +36,7 @@ $(document).ready(function(){
         let active_tab_selector = $('li.tab.col.s2.active > a.tab').attr('href');
 
         //find actived navigation and remove 'active' css
-        let actived_nav = $('.collapsible-body li.active');
+        let actived_nav = $('li.active');
         actived_nav.removeClass('active');
 
         //add 'active' css into clicked navigation
