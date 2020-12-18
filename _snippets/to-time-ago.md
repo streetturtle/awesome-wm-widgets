@@ -4,9 +4,9 @@ layout: page
 
 # To time ago
 
-
+>Converts seconds to "time ago" represenation, like '1 hour ago'
+{:.filename}
 ```lua
---- Converts seconds to "time ago" represenation, like '1 hour ago'
 local function to_time_ago(seconds)
     local days = seconds / 86400
     if days > 1 then
