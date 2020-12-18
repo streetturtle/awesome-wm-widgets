@@ -1,6 +1,7 @@
 -------------------------------------------------
 -- Gitlab Widget for Awesome Window Manager
--- Shows the number of currently assigned pull requests
+-- Shows the number of currently assigned merge requests
+-- and information about them
 -- More details could be found here:
 -- https://github.com/streetturtle/awesome-wm-widgets/tree/master/gitlab-widget
 
@@ -140,7 +141,7 @@ local function worker(user_args)
     local args = user_args or {}
 
     local icon = args.icon or WIDGET_DIR .. '/icons/gitlab-icon.svg'
-    local api_token = args.api_token or show_warning('API Token is not set')
+    local access_token = args.access_token or show_warning('API Token is not set')
     local host = args.host or show_warning('Gitlab host is not set')
     local timeout = args.timeout or 60
 
@@ -391,7 +392,7 @@ local function worker(user_args)
             )
     )
 
-    watch(string.format(GET_PRS_CMD, api_token, host),
+    watch(string.format(GET_PRS_CMD, access_token, host),
         -- string.format(GET_PRS_CMD, host, workspace, repo_slug, uuid, uuid),
             timeout, update_widget, gitlab_widget)
     return gitlab_widget
