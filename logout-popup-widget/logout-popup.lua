@@ -16,7 +16,7 @@ local awesomebuttons = require("awesome-buttons.awesome-buttons")
 
 
 local HOME_DIR = os.getenv("HOME")
-local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/logout-widget'
+local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/logout-popup-widget'
 
 
 local w = wibox {
@@ -69,7 +69,7 @@ local function launch(args)
     local icon_margin = args.icon_margin or 16
 
     local onlogout = args.onlogout or function () awesome.quit() end
-    local onlock = args.onlock or function() awful.spawn.with_shell("systemctl suspend") end
+    local onlock = args.onlock or function() awful.spawn.with_shell("i3lock") end
     local onreboot = args.onreboot or function() awful.spawn.with_shell("reboot") end
     local onsuspend = args.onsuspend or function() awful.spawn.with_shell("systemctl suspend") end
     local onpoweroff = args.onpoweroff or function() awful.spawn.with_shell("shutdown now") end

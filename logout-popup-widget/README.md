@@ -1,4 +1,4 @@
-# Logout widget
+# Logout Popup Widget
 
 Widget which allows to perform lock, reboot, log out, power off and sleep actions. It can be called either by a shortcut, or by clicking on a widget in wibar.
 
@@ -38,13 +38,13 @@ Then
 - to show by clicking on a widget in wibar - add widget to the wibar:
 
     ```lua
-    local logout = require("awesome-wm-widgets.logout-widget.logout")
+    local logout_popup = require("awesome-wm-widgets.logout-popup-widget.logout-popup")
     
     s.mytasklist, -- Middle widget
             { -- Right widgets
                 layout = wibox.layout.fixed.horizontal,
                 ...
-                logout.widget{},
+                logout_popup.widget{},
                 ...
     ```
 
