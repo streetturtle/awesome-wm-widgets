@@ -9,7 +9,6 @@
 
 local awful = require("awful")
 local wibox = require("wibox")
-local spawn = require("awful.spawn")
 local gears = require("gears")
 local beautiful = require("beautiful")
 
