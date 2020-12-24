@@ -50,7 +50,7 @@ local function worker(user_args)
     if with_border == nil then with_border = true end
 
     local function hex2rgb(hex)
-        if color_of_empty_cells ~= nil and hex == widget_themes[theme]['color_calendar_graph_day_bg'] then
+        if color_of_empty_cells ~= nil and hex == '#ebedf0' then
             hex = color_of_empty_cells
         end
         hex = tostring(hex):gsub('#','')
@@ -88,7 +88,8 @@ local function worker(user_args)
                 table.insert(row, col)
                 col = {layout = wibox.layout.fixed.vertical}
             end
-            table.insert(col, get_square(widget_themes[theme][colors:match('var%(%-%-(.*)%)'):gsub('-', '_')]))
+            --table.insert(col, get_square(widget_themes[theme][colors:match('var%(%-%-(.*)%)'):gsub('-', '_')]))
+            table.insert(col, get_square(colors))
             a = a + 1
         end
         github_contributions_widget:setup(

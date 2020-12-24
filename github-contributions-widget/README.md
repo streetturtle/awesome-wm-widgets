@@ -25,6 +25,8 @@ _Note:_ widget height is 21px (7 rows of 3x3 cells). So it would look nice on th
 
 ### Themes
 
+Themes don't work for the moment due to changes in the API the widget relies upon;
+
 Following themes are available:
 
 | Theme name | Preview |
