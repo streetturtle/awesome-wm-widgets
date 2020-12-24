@@ -292,6 +292,10 @@ img.center-image {
   background-color: #202020
 }
 
+.keyboard-focused .collapsible-header:focus {
+  background-color: #202020
+}
+
 body .gist .highlight {
   background: #272822;
 }
