@@ -32,8 +32,9 @@ $(document).ready(function(){
 
         location.hash = event.target.hash;
 
-        //get displaying tab content jQuery selector
-        let active_tab_selector = $('li.tab.col.s2.active > a.tab').attr('href');
+        let active_tab_selector
+        active_tab_selector = location.hash === '#tabMain' ? '#tabMain' : $('li.tab.col.s2.active > a.tab').attr('href');
+
 
         //find actived navigation and remove 'active' css
         let actived_nav = $('li.active');
