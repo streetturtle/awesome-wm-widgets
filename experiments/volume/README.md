@@ -13,7 +13,36 @@ A right-click on the widget opens a popup where you can choose a sink/source:
 
  - switch between sinks/sources by right clicking on the widget;
  - more responsive than previous versions of volume widget, which were refreshed once a second;
- - 5 predefined looks (check the screenshots below);
+ - 5 predefined customizable looks;
+
+## Installation
+
+Clone the repo under **~/.config/awesome/** and add widget in **rc.lua**:
+
+```lua
+local volume_widget = require('awesome-wm-widgets.experiments.volume.volume')
+...
+s.mytasklist, -- Middle widget
+	{ -- Right widgets
+    	layout = wibox.layout.fixed.horizontal,
+        ...
+        -- default
+        volume_widget(),
+        -- customized
+        volume_widget{
+            type = 'arc'
+        },
+```
+
+### Shortcuts
+
+To improve responsiveness of the widget when volume level is changed by a shortcut use corresponding methods of the widget:
+
+```lua
+awful.key({ modkey }, "]", function() volume_widget:inc() end),
+awful.key({ modkey }, "[", function() volume_widget:dec() end),
+awful.key({ modkey }, "\\", function() volume_widget:toggle() end),
+```
 
 ## Customization
 
@@ -25,7 +54,9 @@ It is possible to customize the widget by providing a table with all or some of 
 |---|---|---|
 | `type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` | 
 
-### `icon` parameters
+Depending on the chosen widget type add parameters from the corresponding section below:
+
+#### `icon` parameters
 
 | Name | Default | Description |
 |---|---|---|
@@ -37,14 +68,14 @@ _Note:_ if you are changing icons, the folder should contain following .svg imag
  - audio-volume-low-symbolic
  - audio-volume-muted-symbolic
 
-### `icon_and_text` parameters
+#### `icon_and_text` parameters
 
 | Name | Default | Description |
 |---|---|---|
 | `icon_dir`| `./icons`| Path to the folder with icons | 
 | `font` | `beautiful.font` | Font name and size, like `Play 12` |
 
-### `arc` parameters
+#### `arc` parameters
 
 | Name | Default | Description |
 |---|---|---|
@@ -54,7 +85,7 @@ _Note:_ if you are changing icons, the folder should contain following .svg imag
 | `mute_color` | `beautiful.fg_urgent` | Color of the arc when mute |
 | `size` | 18 | Size of the widget |
 
-### `horizontal_bar` parameters
+#### `horizontal_bar` parameters
 
 | Name | Default | Description |
 |---|---|---|
@@ -68,7 +99,7 @@ _Note:_ if you are changing icons, the folder should contain following .svg imag
 
 _Note:_ I didn't figure out how does the `forced_height` property of progressbar widget work (maybe it doesn't work at all), thus there is a workaround with margins.
 
-### `vertical_bar` parameters
+#### `vertical_bar` parameters
 
 | Name | Default | Description |
 |---|---|---|

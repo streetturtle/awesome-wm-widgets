@@ -30,8 +30,7 @@ local widget_types = {
     horizontal_bar = require("awesome-wm-widgets.experiments.volume.widgets.horizontal-bar-widget"),
     vertical_bar = require("awesome-wm-widgets.experiments.volume.widgets.vertical-bar-widget")
 }
-
-local volume_widget = wibox.widget{}
+local volume = {}
 
 local rows  = { layout = wibox.layout.fixed.vertical }
 
@@ -168,9 +167,9 @@ local function worker(user_args)
     local refresh_rate = args.refresh_rate or 1
 
     if widget_types[widget_type] == nil then
-        volume_widget = widget_types['icon_and_text'].get_widget(user_args.icon_and_text_args)
+        volume.widget = widget_types['icon_and_text'].get_widget(user_args.icon_and_text_args)
     else
-        volume_widget = widget_types[widget_type].get_widget(args)
+        volume.widget = widget_types[widget_type].get_widget(args)
     end
 
     local function update_graphic(widget, stdout)
@@ -178,12 +177,24 @@ local function worker(user_args)
         if mute == 'off' then widget:mute()
         elseif mute == 'on' then widget:unmute()
         end
-        local volume = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
-        volume = string.format("% 3d", volume)
-        widget:set_volume_level(volume)
+        local volume_level = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
+        volume_level = string.format("% 3d", volume_level)
+        widget:set_volume_level(volume_level)
     end
 
-    volume_widget:buttons(
+    function volume:inc()
+        spawn.easy_async(INC_VOLUME_CMD, function(stdout) update_graphic(volume.widget, stdout) end)
+    end
+
+    function volume:dec()
+        spawn.easy_async(DEC_VOLUME_CMD, function(stdout) update_graphic(volume.widget, stdout) end)
+    end
+
+    function volume:toggle()
+        spawn.easy_async(TOG_VOLUME_CMD, function(stdout) update_graphic(volume.widget, stdout) end)
+    end
+
+    volume.widget:buttons(
             awful.util.table.join(
                     awful.button({}, 3, function()
                         if popup.visible then
@@ -193,21 +204,15 @@ local function worker(user_args)
                             popup:move_next_to(mouse.current_widget_geometry)
                         end
                     end),
-                    awful.button({}, 4, function()
-                        spawn.easy_async(INC_VOLUME_CMD, function(stdout) update_graphic(volume_widget, stdout) end)
-                    end),
-                    awful.button({}, 5, function()
-                        spawn.easy_async(DEC_VOLUME_CMD, function(stdout) update_graphic(volume_widget, stdout) end)
-                    end),
-                    awful.button({}, 1, function()
-                        spawn.easy_async(TOG_VOLUME_CMD, function(stdout) update_graphic(volume_widget, stdout) end)
-                    end)
+                    awful.button({}, 4, function() volume:inc() end),
+                    awful.button({}, 5, function() volume:dec() end),
+                    awful.button({}, 1, function() volume:toggle() end)
             )
     )
 
-    watch(GET_VOLUME_CMD, refresh_rate, update_graphic, volume_widget)
+    watch(GET_VOLUME_CMD, refresh_rate, update_graphic, volume.widget)
 
-    return volume_widget
+    return volume.widget
 end
 
-return setmetatable(volume_widget, { __call = function(_, ...) return worker(...) end })
+return setmetatable(volume, { __call = function(_, ...) return worker(...) end })
