@@ -14,7 +14,7 @@ local wibox = require("wibox")
 local widget_themes = require("awesome-wm-widgets.github-contributions-widget.themes")
 
 local GET_CONTRIBUTIONS_CMD = [[bash -c "curl -s https://github-contributions.now.sh/api/v1/%s]]
-    .. [[ | jq -r '[.contributions[] | select ( .date | strptime(\"%%Y-%%m-%%d\") | mktime < now)][:%s]| .[].color'"]]
+    .. [[ | jq -r '[.contributions[] | select ( .date | strptime(\"%%Y-%%m-%%d\") | mktime < now)][:%s]| .[].intensity'"]]
 
 local github_contributions_widget = wibox.widget{
     reflection = {
@@ -50,7 +50,7 @@ local function worker(user_args)
     if with_border == nil then with_border = true end
 
     local function hex2rgb(hex)
-        if color_of_empty_cells ~= nil and hex == '#ebedf0' then
+        if color_of_empty_cells ~= nil and hex == widget_themes[theme][0] then
             hex = color_of_empty_cells
         end
         hex = tostring(hex):gsub('#','')
@@ -77,20 +77,19 @@ local function worker(user_args)
 
     local col = {layout = wibox.layout.fixed.vertical}
     local row = {layout = wibox.layout.fixed.horizontal}
-    local a = 5 - os.date('%w')
-    for _ = 0, a do
+    local day_idx = 5 - os.date('%w')
+    for _ = 0, day_idx do
         table.insert(col, get_square(color_of_empty_cells))
     end
 
     local update_widget = function(_, stdout, _, _, _)
-        for colors in stdout:gmatch("[^\r\n]+") do
-            if a%7 == 0 then
+        for intensity in stdout:gmatch("[^\r\n]+") do
+            if day_idx %7 == 0 then
                 table.insert(row, col)
                 col = {layout = wibox.layout.fixed.vertical}
             end
-            --table.insert(col, get_square(widget_themes[theme][colors:match('var%(%-%-(.*)%)'):gsub('-', '_')]))
-            table.insert(col, get_square(colors))
-            a = a + 1
+            table.insert(col, get_square(widget_themes[theme][tonumber(intensity)]))
+            day_idx = day_idx + 1
         end
         github_contributions_widget:setup(
             {
