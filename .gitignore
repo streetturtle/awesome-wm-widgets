@@ -44,3 +44,5 @@ luac.out
 
 # vscode files
 .history
+/_site/
+/.jekyll-cache/
