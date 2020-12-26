@@ -188,7 +188,6 @@ local function worker(user_args)
 
     local popup = awful.popup {
         ontop = true,
-        hide_on_right_click = true,
         visible = false,
         shape = rounded_shape(radius),
         offset = { y = 5 },
