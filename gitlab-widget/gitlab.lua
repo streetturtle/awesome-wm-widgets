@@ -86,6 +86,7 @@ end
 
 local popup = awful.popup{
     ontop = true,
+    hide_on_right_click = true,
     visible = false,
     shape = gears.shape.rounded_rect,
     border_width = 1,
