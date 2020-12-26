@@ -35,9 +35,8 @@ local volume = {}
 local rows  = { layout = wibox.layout.fixed.vertical }
 
 local popup = awful.popup{
-    ontop = true,
-    hide_on_right_click = true,
     bg = beautiful.bg_normal,
+    ontop = true,
     visible = false,
     shape = gears.shape.rounded_rect,
     border_width = 1,
