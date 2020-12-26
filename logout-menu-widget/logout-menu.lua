@@ -27,6 +27,7 @@ local logout_menu_widget = wibox.widget {
 
 local popup = awful.popup {
     ontop = true,
+    hide_on_right_click = true,
     visible = false,
     shape = function(cr, width, height)
         gears.shape.rounded_rect(cr, width, height, 4)
