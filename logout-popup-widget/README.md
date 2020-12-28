@@ -28,11 +28,11 @@ Then
 - to show by a shortcut - define a shortcut in `globalkeys`:
 
     ```lua
-    local logout = require("awesome-wm-widgets.experiments.logout-widget.logout")
+    local logout_popup = require("awesome-wm-widgets.logout-popup-widget.logout-popup")
     ...
     globalkeys = gears.table.join(
     ...
-        awful.key({ modkey }, "l", function() logout.launch() end, {description = "Show logout screen", group = "custom"}),
+        awful.key({ modkey }, "l", function() logout_popup.launch() end, {description = "Show logout screen", group = "custom"}),
     ```
 
 - to show by clicking on a widget in wibar - add widget to the wibar:
