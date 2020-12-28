@@ -59,7 +59,8 @@ local function create_button(icon_name, action_name, color, onclick, icon_size, 
     return button
 end
 
-local function launch(args)
+local function launch(user_args)
+    local args = user_args or {}
 
     local bg_color = args.bg_color or beautiful.bg_normal
     local accent_color = args.accent_color or beautiful.bg_focus
