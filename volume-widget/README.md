@@ -23,11 +23,12 @@ It is possible to customize widget by providing a table with all or some of the 
 
 ```lua
 local volume_widget = require("awesome-wm-widgets.volume-widget.volume")
+local volume_widget_widget = volume_widget({display_notification = true})
 ...
         s.mytasklist, -- Middle widget
         { -- Right widgets
            ...
-            volume_widget({display_notification = true}),
+            volume_widget_widget,
            ...
 
 ```
