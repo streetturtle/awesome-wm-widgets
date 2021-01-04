@@ -41,9 +41,9 @@ local jira_widget = wibox.widget {
             },
             {
                 id = 'd',
-                draw = function(_, _, cr, _, height)
+                draw = function(_, _, cr, width, height)
                     cr:set_source(color(beautiful.fg_urgent))
-                    cr:arc(height/4, height/4, height/4, 0, math.pi*2)
+                    cr:arc(width - height/6, height/6, height/6, 0, math.pi*2)
                     cr:fill()
                 end,
                 visible = false,
