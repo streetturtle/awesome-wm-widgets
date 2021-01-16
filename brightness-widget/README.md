@@ -1,6 +1,6 @@
 # Brightness widget
 
-This widget represents current brightness level: ![Brightness widget](./br-wid-1.png)
+This widget represents current brightness level, depending on config parameters could be an arcchart or icon with text: ![Brightness widget](./br-wid-1.png)
 
 ## Customization
 
@@ -8,50 +8,39 @@ It is possible to customize widget by providing a table with all or some of the 
 
 | Name | Default | Description |
 |---|---|---|
-| `get_brightness_cmd` | `light -G` | Get current screen brightness |
-| `inc_brightness_cmd` | `light -A 5` | Increase brightness |
-| `dec_brightness_cmd` | `light -U 5`| Decrease brightness |
+| `type`| `arc` | The widget type. Could be `arc` or `icon_and_text` |
+| `program` | `light` | The program used to control the brightness, either 'light' or 'xbacklight'. |
+| `step` | 5 | Step |
 | `path_to_icon` | `/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg` | Path to the icon |
 | `font` | `Play 9` | Font |
-| `timeout` | 1 | How often in seconds the widget refreshes |
+| `timeout` | 1 | How often in seconds the widget refreshes. Check the note below |
 
-### Example:
-
-```lua
-brightness_widget({
-    get_brightness_cmd = 'xbacklight -get',
-    inc_brightness_cmd = 'xbacklight -inc 5',
-    dec_brightness_cmd = 'xbacklight -dec 5'
-})
-```
-
+_Note:_ If brightness is controlled only by the widget (either by a mouse, or by a shortcut, then the `timeout` could be quite big, as there is no reason to synchronize the brightness level).
 
 ## Installation
 
-First you need to get the current brightness level. There are two options:
+To choose the right `program` argument, first you need to check which of them works better for you. 
 
- - using `xbacklight` command (depending on your video card (I guess) it may or may not work)
+ - using `xbacklight`:
  
-    To check if it works install xbackligth and check if it works:
+    Install (on Ubuntu it's available in the apt repository) it and check if it works by running:
  
     ```bash
-    sudo apt-get install xbacklight
     xbacklight -get
     ```
 
-    If there is no output it means that it doesn't work, but there is a second option:
+    If there is no output it means that it doesn't work, you can either try to fix it, or try to use `light`.
 
  - using `light` command
  
-    Install it from this git repo: [github.com/haikarainen/light](https://github.com/haikarainen/light) and check if it works but running
+    Install (on Ubuntu it's available in the apt repository) from the repo: [github.com/haikarainen/light](https://github.com/haikarainen/light) and check if it works by running
 
     ```bash
-    git clone https://github.com/haikarainen/light.git && \
-    cd ./light && \
-    sudo make && sudo make install \
     light -G
     49.18
+    light -A 5
     ```
+    If you're on Ubuntu/debian and if the brightness level doesn't change, try to do this: https://github.com/haikarainen/light/issues/113#issuecomment-632638436.
 
 Then clone this repo under **~/.config/awesome/**:
 
@@ -65,7 +54,7 @@ Require widget at the beginning of **rc.lua**:
 local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
 ```
 
-Add widget to the tasklist:
+Add the widget to the tasklist:
 
 ```lua
 s.mytasklist, -- Middle widget
@@ -75,13 +64,13 @@ s.mytasklist, -- Middle widget
         -- default
         brightness_widget(),
         -- or customized
-        brightness_widget({
-          get_brightness_cmd = 'xbacklight -get',
-          inc_brightness_cmd = 'xbacklight -inc 5',
-          dec_brightness_cmd = 'xbacklight -dec 5'
-        })      
+        brightness_widget{
+            type = 'icon_and_text',
+            program = 'xbacklight',
+            step = 2,        
+        }
     }
-        ...
+    ...
 ```
 
 ## Controls
@@ -89,7 +78,7 @@ s.mytasklist, -- Middle widget
 In order to change brightness by shortcuts you can add them to the `globalkeys` table in the **rc.lua**:
 
 ```lua
-awful.key({ modkey         }, ";", function () awful.spawn("light -A 5") end, {description = "increase brightness", group = "custom"}),
-awful.key({ modkey, "Shift"}, ";", function () awful.spawn("light -U 5") end, {description = "decrease brightness", group = "custom"}),
+awful.key({ modkey         }, ";", function () brightness_widget:inc() end, {description = "increase brightness", group = "custom"}),
+awful.key({ modkey, "Shift"}, ";", function () brightness_widget:dec() end, {description = "decrease brightness", group = "custom"}),
 ```
-On laptop you can use `XF86MonBrightnessUp` and `XF86MonBrightnessDown` keys.
+On a laptop you can use `XF86MonBrightnessUp` and `XF86MonBrightnessDown` keys.
