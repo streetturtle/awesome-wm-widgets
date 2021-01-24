@@ -45,7 +45,7 @@ local function parse_date(date_str)
     return os.time{year = y, month = m, day = d, hour = h, min = min, sec = sec}
 end
 
---- Converts seconds to "time ago" represenation, like '1 hour ago'
+--- Converts seconds to "time ago" representation, like '1 hour ago'
 local function to_time_ago(seconds)
     local days = seconds / 86400
     if days > 1 then
