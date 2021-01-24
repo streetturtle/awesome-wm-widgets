@@ -45,7 +45,6 @@ function widget.get_widget(widgets_args)
             self:get_children_by_id('icon')[1]:set_image(icon_dir .. volume_icon_name .. '.svg')
         end,
         mute = function(self)
-            print("called")
             self.is_muted = true
             self:get_children_by_id('icon')[1]:set_image(icon_dir .. 'audio-volume-muted-symbolic.svg')
         end,
