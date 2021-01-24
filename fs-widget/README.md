@@ -4,7 +4,7 @@ This widget shows file system disk space usage which is based on the `df` output
 
 ![](./screenshot.png)
 
-## Cusomizations
+## Customizations
 
 It is possible to customize widget by providing a table with all or some of the following config parameters:
 
