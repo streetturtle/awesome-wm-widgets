@@ -32,7 +32,7 @@ Keyboard navigation (copied from [`awful.prompt`](https://awesomewm.org/doc/api/
 | CTRL+K | kill-line |
 | CTRL+U | unix-line-discard |
 | CTRL+W | unix-word-rubout |
-| CTRL+BACKSPAC | unix-word-rubout |
+| CTRL+BACKSPACE | unix-word-rubout |
 | SHIFT+INSERT | paste |
 | HOME | beginning-of-line |
 | END | end-of-line |
