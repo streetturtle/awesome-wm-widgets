@@ -5,7 +5,7 @@ layout: page
 # Lists
 
 This type of UI element is also called menu (for example in GTK).
-As an example let's create a bookmarks widget - a widget will show a static list of sites. If item in the list is clicked - the site will be opened in the browser.
+As an example let's create a bookmarks widget - a widget will show a static list of sites. If item in the list is clicked - the site will be opened in the browser. You can find the created widget [here](https://github.com/streetturtle/awesome-wm-tutorials/tree/master/bookmark-widget)
 
 ## Prerequisite
 
@@ -309,3 +309,5 @@ And another one from [github-activity-widget](https://github.com/streetturtle/aw
 And one more from [docker](https://github.com/streetturtle/awesome-wm-widgets/tree/master/docker-widget) widget:
 
 ![1]({{ "/assets/img/tips/lists/docker.png" | relative_url }}){:.center-image}
+
+Widget described above can be found [here](https://github.com/streetturtle/awesome-wm-tutorials/tree/master/bookmark-widget)
