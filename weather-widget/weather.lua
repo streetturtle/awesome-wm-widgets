@@ -373,7 +373,9 @@ local function worker(user_args)
                         widget = wibox.widget.textbox
                     })
                     table.insert(temp_below, wibox.widget {
-                        markup = '<span >' .. string.format('%.0f', hour.temp) .. '°' .. '</span>',
+                        markup = '<span foreground="'
+                                .. (tonumber(hour.temp) > 0 and '#2E3440' or '#ECEFF4') .. '">'
+                                .. string.format('%.0f', hour.temp) .. '°' .. '</span>',
                         align = 'center',
                         font = font_name .. ' 9',
                         widget = wibox.widget.textbox
