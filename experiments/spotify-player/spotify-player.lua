@@ -4,7 +4,7 @@
 -- https://github.com/streetturtle/awesome-wm-widgets/tree/master/spotify-player
 
 -- @author Pavel Makhov
--- @copyright 2020 Pavel Makhov
+-- @copyright 2021 Pavel Makhov
 -------------------------------------------------
 --luacheck:ignore
 local awful = require("awful")
@@ -19,12 +19,10 @@ local gs = require("gears.string")
 local awesomebuttons = require("awesome-buttons.awesome-buttons")
 
 local HOME_DIR = os.getenv("HOME")
-local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/experiments/spotify-player'
+local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/experiments/spotify-player/'
 local ICON_DIR = WIDGET_DIR
 
-local spotify_playerr = {}
-
-local BLUR_CMD = 'convert %s ( -clone 0 -fill white -colorize 100 -fill black -draw "polygon 0,200 300,200 300,300 0,300" -alpha off -write mpr:mask +delete ) -mask mpr:mask -blur 0x3 +mask %s'
+local spotify_player = {}
 
 local function show_warning(message)
     naughty.notify{
@@ -33,9 +31,9 @@ local function show_warning(message)
         text = message}
 end
 
-local function worker(args)
+local function worker(user_args)
 
-    local args = args or {}
+    local args = user_args or {}
     local artwork_size = args.artwork_size or 300
 
     local timeout = args.timeout or 1
@@ -58,10 +56,9 @@ local function worker(args)
         layout = wibox.layout.align.vertical,
     }
 
-    spotify_playerr.widget = wibox.widget {
-        --image = ,
-        text = 'sp-player',
-        widget = wibox.widget.textbox
+    spotify_player.widget = wibox.widget {
+        image = ICON_DIR .. 'spotify-indicator.svg',
+        widget = wibox.widget.imagebox
     }
 
     local artwork_widget = wibox.widget {
@@ -140,6 +137,10 @@ local function worker(args)
     local update_widget = function(widget, stdout, stderr, _, _)
         for i = 0, #rows do rows[i]=nil end
 
+        if string.find(stdout, 'Error: Spotify is not running.') ~= nil then
+            return
+        end
+
         local track_id, length, art_url, album, album_artist, artist, auto_rating, disc_number, title, track_number, url =
             string.match(stdout, 'trackid|(.*)\nlength|(.*)\nartUrl|(.*)\nalbum|(.*)\nalbumArtist|(.*)\nartist|(.*)\nautoRating|(.*)\ndiscNumber|(.*)\ntitle|(.*)\ntrackNumber|(.*)\nurl|(.*)')
 
@@ -147,6 +148,7 @@ local function worker(args)
         artist_w:set_artist(artist)
         title_w:set_title(title)
 
+        -- spotify client bug: https://community.spotify.com/t5/Desktop-Linux/MPRIS-cover-art-url-file-not-found/td-p/4920104
         art_url = art_url:gsub('https://open.spotify.com', 'https://i.scdn.co')
         if ((art_url ~= nil or art_url ~='') and not gfs.file_readable('/tmp/' .. track_id)) then
             spawn.easy_async('touch /tmp/' .. track_id, function()
@@ -163,7 +165,7 @@ local function worker(args)
         end
     end
 
-    function spotify_playerr:tog()
+    function spotify_player:tog()
         if popup.visible then
             popup.visible = not popup.visible
         else
@@ -171,9 +173,9 @@ local function worker(args)
         end
     end
 
-    spotify_playerr.widget:buttons(
+    spotify_player.widget:buttons(
             awful.util.table.join(
-                    awful.button({}, 1, function() spotify_playerr:tog() end)
+                    awful.button({}, 1, function() spotify_player:tog() end)
             )
     )
 
@@ -184,7 +186,7 @@ local function worker(args)
         play_pause_btn:set_icon(stdout == 'Playing' and 'pause' or 'play')
     end)
 
-    return spotify_playerr
+    return spotify_player
 end
 
-return setmetatable(spotify_playerr, { __call = function(_, ...) return worker(...) end })
+return setmetatable(spotify_player, { __call = function(_, ...) return worker(...) end })
