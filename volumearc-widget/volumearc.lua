@@ -74,15 +74,18 @@ local function worker(user_args)
         widget = wibox.container.arcchart
     }
 
-    local update_graphic = function(_, stdout, _, _, _)
-        local mute = string.match(stdout, "%[(o%D%D?)%]")   -- \[(o\D\D?)\] - [on] or [off]
-        local volume = string.match(stdout, "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
-        volume = tonumber(string.format("% 3d", volume))
-
+    local update_graphic = function(widget, stdout, _, _, _)
+        local mute = "on"
+        local volume = 0
+        if not (stdout == nil or stdout == '') then
+            mute = string.match(stdout, "%[(o%D%D?)%]")   -- \[(o\D\D?)\] - [on] or [off]
+            volume = string.match(tostring(stdout), "(%d?%d?%d)%%") -- (\d?\d?\d)\%)
+            volume = tonumber(string.format("% 3d", volume))
+        end
         widget.value = volume / 100;
         widget.colors = mute == 'off'
-                and { mute_color }
-                or { main_color }
+            and { mute_color }
+            or { main_color }
     end
 
     local button_press = args.button_press or function(_, _, _, button)
