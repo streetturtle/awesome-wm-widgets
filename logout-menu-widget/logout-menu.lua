@@ -37,9 +37,9 @@ local popup = awful.popup {
     offset = { y = 5 },
     widget = {}
 }
-local rows = { layout = wibox.layout.fixed.vertical }
 
 local function worker(user_args)
+    local rows = { layout = wibox.layout.fixed.vertical }
 
     local args = user_args or {}
 
