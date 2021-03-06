@@ -111,23 +111,22 @@ end
 local github_widget = wibox.widget {
     {
         {
-            id = 'icon',
-            widget = wibox.widget.imagebox
+            {
+                id = 'icon',
+                widget = wibox.widget.imagebox
+            },
+            id = "m",
+            margins = 4,
+            layout = wibox.container.margin
         },
-        id = "m",
-        margins = 4,
-        layout = wibox.container.margin
+        layout = wibox.layout.fixed.horizontal,
     },
-    {
-        id = "txt",
-        widget = wibox.widget.textbox
-    },
-    layout = wibox.layout.fixed.horizontal,
-    set_icon = function(self, new_icon)
-        self.m.icon.image = new_icon
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 4)
     end,
-    set_text = function(self, new_value)
-        self.txt.text = new_value
+    widget = wibox.container.background,
+    set_icon = function(self, new_icon)
+        self:get_children_by_id("icon")[1].image = new_icon
     end
 }
 
@@ -264,7 +263,9 @@ local function worker(user_args)
                     awful.button({}, 1, function()
                         if popup.visible then
                             popup.visible = not popup.visible
+                            github_widget:set_bg('#00000000')
                         else
+                            github_widget:set_bg(beautiful.bg_focus)
                             spawn.easy_async(string.format(GET_EVENTS_CMD, CACHE_DIR, number_of_events),
                                 function (stdout, stderr)
                                     rebuild_widget(stdout, stderr)
