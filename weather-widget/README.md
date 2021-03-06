@@ -34,7 +34,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | time_format_12h |false | 12 or 24 hour format (13:00 - default or 1pm) |
 | show_daily_forecast | false | Show daily forecast section |
 | icon_pack_name | weather-underground-icons | Name of the icon pack, could be `weather-underground-icon` or `VitalyGorbachev` or create your own, more details below |
-| icons_extension | `.svg` | File extension of icons in the pack |
+| icons_extension | `.png` | File extension of icons in the pack |
 | timeout | 120 | How often in seconds the widget refreshes |
 
 ### Icons:
@@ -61,6 +61,7 @@ weather_curl_widget({
     both_units_widget = true,
     font_name = 'Carter One',
     icons = 'VitalyGorbachev',
+    icons_extension = '.svg',
     show_hourly_forecast = true,
     show_daily_forecast = true,
 }),
@@ -121,6 +122,7 @@ weather_curl_widget({
                 both_units_widget = true,
                 font_name = 'Carter One',
                 icons = 'VitalyGorbachev',
+                icons_extension = '.svg',
                 show_hourly_forecast = true,
                 show_daily_forecast = true,
             }),
