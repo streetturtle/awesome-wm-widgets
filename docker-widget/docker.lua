@@ -157,7 +157,7 @@ local function worker(user_args)
                 end)
 
                 start_stop_button:buttons(
-                    awful.util.table.join( awful.button({}, 1, function()
+                    gears.table.join( awful.button({}, 1, function()
                         local command
                         if container:is_up() then command = 'stop' else command = 'start' end
 
@@ -216,7 +216,7 @@ local function worker(user_args)
                 end)
 
                 pause_unpause_button:buttons(
-                    awful.util.table.join( awful.button({}, 1, function()
+                    gears.table.join( awful.button({}, 1, function()
                         local command
                         if container:is_paused() then command = 'unpause' else command = 'pause' end
 
@@ -254,7 +254,7 @@ local function worker(user_args)
                     widget = wibox.container.background
                 }
                 delete_button:buttons(
-                        awful.util.table.join( awful.button({}, 1, function()
+                        gears.table.join( awful.button({}, 1, function()
                             awful.spawn.easy_async('docker rm ' .. container['name'], function(_, rm_stderr)
                                 if rm_stderr ~= '' then show_warning(rm_stderr) end
                                 spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers),
@@ -351,7 +351,7 @@ local function worker(user_args)
     end
 
     docker_widget:buttons(
-        awful.util.table.join(
+        gears.table.join(
                 awful.button({}, 1, function()
                     if popup.visible then
                         popup.visible = not popup.visible
