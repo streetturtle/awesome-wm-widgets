@@ -538,7 +538,7 @@ local function worker(user_args)
         })
     end
 
-    weather_widget:buttons(awful.util.table.join(awful.button({}, 1, function()
+    weather_widget:buttons(gears.table.join(awful.button({}, 1, function()
             if weather_popup.visible then
                 weather_widget:set_bg('#00000000')
                 weather_popup.visible = not weather_popup.visible
