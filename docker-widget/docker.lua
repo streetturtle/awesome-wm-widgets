@@ -50,7 +50,10 @@ local docker_widget = wibox.widget {
         margins = 4,
         layout = wibox.container.margin
     },
-    layout = wibox.layout.fixed.horizontal,
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 4)
+    end,
+    widget = wibox.container.background,
     set_icon = function(self, new_icon)
         self:get_children_by_id("icon")[1].image = new_icon
     end
@@ -354,8 +357,10 @@ local function worker(user_args)
         gears.table.join(
                 awful.button({}, 1, function()
                     if popup.visible then
+                        docker_widget:set_bg('#00000000')
                         popup.visible = not popup.visible
                     else
+                        docker_widget:set_bg(beautiful.bg_focus)
                         spawn.easy_async(string.format(LIST_CONTAINERS_CMD, number_of_containers),
                             function(stdout, stderr)
                                 rebuild_widget(stdout, stderr)
