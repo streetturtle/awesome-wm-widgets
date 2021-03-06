@@ -27,23 +27,35 @@ local update_widget
 todo_widget.widget = wibox.widget {
     {
         {
-            id = "icon",
-            widget = wibox.widget.imagebox
+            {
+                {
+                    id = "icon",
+                    forced_height = 16,
+                    forced_width = 16,
+                    widget = wibox.widget.imagebox
+                },
+                valign = 'center',
+                layout = wibox.container.place
+            },
+            {
+                id = "txt",
+                widget = wibox.widget.textbox
+            },
+            spacing = 4,
+            layout = wibox.layout.fixed.horizontal,
         },
-        id = "margin",
         margins = 4,
         layout = wibox.container.margin
     },
-    {
-        id = "txt",
-        widget = wibox.widget.textbox
-    },
-    layout = wibox.layout.fixed.horizontal,
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 4)
+    end,
+    widget = wibox.container.background,
     set_text = function(self, new_value)
-        self.txt.text = new_value
+        self:get_children_by_id("txt")[1].text = new_value
     end,
     set_icon = function(self, new_value)
-        self.margin.icon.image = new_value
+        self:get_children_by_id("icon")[1].image = new_value
     end
 }
 
@@ -302,11 +314,13 @@ local function worker(user_args)
     end
 
     todo_widget.widget:buttons(
-            awful.util.table.join(
+            gears.table.join(
                     awful.button({}, 1, function()
                         if popup.visible then
+                            todo_widget.widget:set_bg('#00000000')
                             popup.visible = not popup.visible
                         else
+                            todo_widget.widget:set_bg(beautiful.bg_focus)
                             popup:move_next_to(mouse.current_widget_geometry)
                         end
                     end)
