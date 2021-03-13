@@ -17,12 +17,18 @@ local ICON_DIR = HOME .. '/.config/awesome/awesome-wm-widgets/logout-menu-widget
 
 local logout_menu_widget = wibox.widget {
     {
-        image = ICON_DIR .. 'power_w.svg',
-        resize = true,
-        widget = wibox.widget.imagebox,
+        {
+            image = ICON_DIR .. 'power_w.svg',
+            resize = true,
+            widget = wibox.widget.imagebox,
+        },
+        margins = 4,
+        layout = wibox.container.margin
     },
-    margins = 4,
-    layout = wibox.container.margin
+    shape = function(cr, width, height)
+    gears.shape.rounded_rect(cr, width, height, 4)
+    end,
+    widget = wibox.container.background,
 }
 
 local popup = awful.popup {
@@ -114,8 +120,10 @@ local function worker(user_args)
                     awful.button({}, 1, function()
                         if popup.visible then
                             popup.visible = not popup.visible
+                            logout_menu_widget:set_bg('#00000000')
                         else
                             popup:move_next_to(mouse.current_widget_geometry)
+                            logout_menu_widget:set_bg(beautiful.bg_focus)
                         end
                     end)
             )
