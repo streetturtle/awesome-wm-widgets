@@ -2,7 +2,7 @@ local wibox = require("wibox")
 local beautiful = require('beautiful')
 local gears = require("gears")
 
-local ICON_DIR = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/experiments/volume/icons/'
+local ICON_DIR = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/volume-widget/icons/'
 
 local widget = {}
 
@@ -12,8 +12,8 @@ function widget.get_widget(widgets_args)
     local main_color = args.main_color or beautiful.fg_normal
     local mute_color = args.mute_color or beautiful.fg_urgent
     local bg_color = args.bg_color or '#ffffff11'
-    local width = args.width or 10
-    local margins = args.height or 2
+    local width = args.width or 50
+    local margins = args.margins or 10
     local shape = args.shape or 'bar'
     local with_icon = args.with_icon == true and true or false
 
@@ -30,20 +30,14 @@ function widget.get_widget(widgets_args)
             layout = wibox.container.place,
         },
         {
-            {
-                id = 'bar',
-                max_value = 100,
-                forced_width = width,
-                forced_height = 5,
-                margins = { top = margins, bottom = margins },
-                color = main_color,
-                background_color = bg_color,
-                shape = gears.shape[shape],
-                widget = wibox.widget.progressbar,
-            },
+            id = 'bar',
+            max_value = 100,
             forced_width = width,
-            direction = 'east',
-            layout = wibox.container.rotate,
+            color = main_color,
+            margins = { top = margins, bottom = margins },
+            background_color = bg_color,
+            shape = gears.shape[shape],
+            widget = wibox.widget.progressbar,
         },
         spacing = 4,
         layout = wibox.layout.fixed.horizontal,
