@@ -171,7 +171,8 @@ local function worker(user_args)
     local maincpu = {}
     watch(CMD_slim, timeout, function(widget, stdout)
 
-        local name, user, nice, system, idle, iowait, irq, softirq, steal, _, _ = stdout:match('(%w+)%s+(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)')
+        local _, user, nice, system, idle, iowait, irq, softirq, steal, _, _ =
+            stdout:match('(%w+)%s+(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)%s(%d+)')
 
         local total = user + nice + system + idle + iowait + irq + softirq + steal
 
@@ -191,7 +192,7 @@ local function worker(user_args)
     -- It therefore only runs when the popup is open.
     local cpus = {}
     popup_timer:connect_signal('timeout', function()
-        awful.spawn.easy_async(CMD, function(stdout, stderr, reason, exit_code)
+        awful.spawn.easy_async(CMD, function(stdout, _, _, _)
             local i = 1
             local j = 1
             for line in stdout:gmatch("[^\r\n]+") do
