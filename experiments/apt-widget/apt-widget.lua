@@ -29,6 +29,7 @@ local function show_warning(message)
         text = message}
 end
 
+-- luacheck:ignore ellipsize
 local function ellipsize(text, length)
     return (text:len() > length and length > 0)
             and text:sub(0, length - 3) .. '...'
@@ -65,6 +66,7 @@ local apt_widget = wibox.widget {
 
 --yaru-theme-sound/focal-updates,focal-updates 20.04.10.1 all [upgradable from: 20.04.8]
 local parse_package = function(line)
+    --luacheck:ignore 211
     local name,one,nv,type,ov = line:match('(.*)%/(.*)%s(.*)%s(.*)%s%[upgradable from: (.*)]')
 
     if name == nil then return nil end
@@ -128,7 +130,6 @@ local function worker(user_args)
             end
         end)
 
-        local i = 1
         for line in containers:gmatch("[^\r\n]+") do
             local package = parse_package(line)
 
@@ -230,8 +231,10 @@ local function worker(user_args)
                         self:get_children_by_id('name')[1]:set_opacity(0.4)
                         self:get_children_by_id('name')[1]:emit_signal('widget::redraw_needed')
 
-                        spawn.easy_async(string.format([[sh -c 'yes | aptdcon --hide-terminal -u %s']], package['name']), function(stdout, stderr)
-                            rows:remove_widgets(self)
+                        spawn.easy_async(
+                            string.format([[sh -c 'yes | aptdcon --hide-terminal -u %s']], package['name']),
+                            function(stdout, stderr) -- luacheck:ignore 212
+                                rows:remove_widgets(self)
                         end)
 
                     end
@@ -254,8 +257,6 @@ local function worker(user_args)
 
                 rows:add(row)
             end
-
-            i = i + 1
         end
 
 
@@ -285,6 +286,7 @@ local function worker(user_args)
             widget = wibox.widget.imagebox
         }
         header_refresh_icon:buttons(awful.util.table.join(awful.button({}, 1, function()
+            -- luacheck:ignore 213
             for i,v in pairs(to_update) do
                 if v ~= nil then
                     v:update()
