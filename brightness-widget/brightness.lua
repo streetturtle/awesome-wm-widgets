@@ -90,9 +90,7 @@ local function worker(user_args)
             start_angle = 4.71238898, -- 2pi*3/4
             forced_height = 18,
             forced_width = 18,
-            bg = bg_color,
             paddings = 2,
-            colors = {color},
             widget = wibox.container.arcchart,
             set_value = function(self, level)
                 self:set_value(level)
