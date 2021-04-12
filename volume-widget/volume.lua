@@ -167,7 +167,7 @@ local function worker(user_args)
     local refresh_rate = args.refresh_rate or 1
 
     if widget_types[widget_type] == nil then
-        volume.widget = widget_types['icon_and_text'].get_widget(user_args.icon_and_text_args)
+        volume.widget = widget_types['icon_and_text'].get_widget(args.icon_and_text_args)
     else
         volume.widget = widget_types[widget_type].get_widget(args)
     end
