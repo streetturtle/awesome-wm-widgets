@@ -5,7 +5,7 @@
 -- https://github.com/streetturtle/awesome-wm-widgets/tree/master/jira-widget
 
 -- @author Pavel Makhov
--- @copyright 2019 Pavel Makhov
+-- @copyright 2020 Pavel Makhov
 -------------------------------------------------
 
 local awful = require("awful")
@@ -36,33 +36,40 @@ local jira_widget = wibox.widget {
     {
         {
             {
-                id = 'c',
-                widget = wibox.widget.imagebox
+                {
+                    id = 'c',
+                    widget = wibox.widget.imagebox
+                },
+                {
+                    id = 'd',
+                    draw = function(_, _, cr, width, height)
+                        cr:set_source(color(beautiful.fg_urgent))
+                        cr:arc(width - height / 6, height / 6, height / 6, 0, math.pi * 2)
+                        cr:fill()
+                    end,
+                    visible = false,
+                    layout = wibox.widget.base.make_widget,
+                },
+                id = 'b',
+                layout = wibox.layout.stack
             },
             {
-                id = 'd',
-                draw = function(_, _, cr, width, height)
-                    cr:set_source(color(beautiful.fg_urgent))
-                    cr:arc(width - height/6, height/6, height/6, 0, math.pi*2)
-                    cr:fill()
-                end,
-                visible = false,
-                layout = wibox.widget.base.make_widget,
+                id = "txt",
+                widget = wibox.widget.textbox
             },
-            id = 'b',
-            layout = wibox.layout.stack
+            spacing = 4,
+            layout = wibox.layout.fixed.horizontal,
         },
-        id = 'a',
         margins = 4,
         layout = wibox.container.margin
     },
-    {
-        id = "txt",
-        widget = wibox.widget.textbox
-    },
-    layout = wibox.layout.fixed.horizontal,
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 4)
+    end,
+    widget = wibox.container.background,
     set_text = function(self, new_value)
-        self.txt.text = new_value
+        self:get_children_by_id('txt')[1]:set_text(new_value)
+        --self.txt.text = new_value
     end,
     set_icon = function(self, path)
         self:get_children_by_id('c')[1]:set_image(path)
@@ -73,7 +80,8 @@ local jira_widget = wibox.widget {
             self:get_children_by_id('c')[1]:set_opacity(1)
             self:get_children_by_id('c')[1]:emit_signal('widget:redraw_needed')
         else
-            self.txt:set_text('')
+            --self.txt:set_text('')
+            self:get_children_by_id('txt')[1]:set_text('')
             self:get_children_by_id('d')[1]:set_visible(true)
             self:get_children_by_id('c')[1]:set_opacity(0.2)
             self:get_children_by_id('c')[1]:emit_signal('widget:redraw_needed')
@@ -104,12 +112,19 @@ local function worker(user_args)
 
     local args = user_args or {}
 
-    local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/jira-widget/jira-mark-gradient-blue.svg'
+    local icon = args.icon or HOME_DIR .. '/.config/awesome/awesome-wm-widgets/jira-widget/icon/jira-mark-gradient-blue.svg'
     local host = args.host or show_warning('Jira host is unknown')
     local query = args.query or 'jql=assignee=currentuser() AND resolution=Unresolved'
-    local timeout = args.timeout or 10
+    local timeout = args.timeout or 600
 
     jira_widget:set_icon(icon)
+
+    local separator_widget = {
+        orientation = 'horizontal',
+        forced_height = 1,
+        color = beautiful.bg_focus,
+        widget = wibox.widget.separator
+    }
 
     local update_widget = function(widget, stdout, stderr, _, _)
         if stderr ~= '' then
@@ -142,21 +157,44 @@ local function worker(user_args)
         widget:set_visible(true)
         widget:set_text(number_of_issues)
 
-        local rows = {
-            { widget = wibox.widget.textbox },
-            layout = wibox.layout.fixed.vertical,
-        }
+        local rows = { layout = wibox.layout.fixed.vertical }
 
         for i = 0, #rows do rows[i]=nil end
+
+        -- sort issues based on the status
+        table.sort(result.issues, function(a,b) return a.fields.status.name > b.fields.status.name end)
+
+        local cur_status = ''
         for _, issue in ipairs(result.issues) do
-            local path_to_avatar = HOME_DIR ..'/.cache/awmw/jira-widget/avatars/' .. issue.fields.assignee.accountId
+            local path_to_avatar = HOME_DIR ..'/.cache/awmw/jira-widget/avatars/' .. issue.fields.assignee.name
 
             if not gfs.file_readable(path_to_avatar) then
                 spawn.easy_async(string.format(
                         DOWNLOAD_AVATAR_CMD,
                         HOME_DIR,
-                        issue.fields.assignee.accountId,
+                        issue.fields.assignee.name,
                         issue.fields.assignee.avatarUrls['48x48']))
+            end
+
+            if (cur_status ~= issue.fields.status.name) then
+                -- do not insert separator before first item
+                if (cur_status ~= '') then
+                    table.insert(rows, separator_widget)
+                end
+
+                table.insert(rows, wibox.widget {
+                    {
+                        {
+                            markup = "<span foreground='#888888'>" .. issue.fields.status.name .. "</span>",
+                            widget = wibox.widget.textbox,
+                        },
+                        left = 8,
+                        layout = wibox.container.margin
+                    },
+                    bg = beautiful.bg_normal,
+                    widget = wibox.container.background
+                })
+                cur_status = issue.fields.status.name
             end
 
             local row = wibox.widget {
@@ -170,44 +208,63 @@ local function worker(user_args)
                                 forced_height = 40,
                                 widget = wibox.widget.imagebox
                             },
-                            margins = 8,
+                            left = 4,
                             layout = wibox.container.margin
                         },
                         {
                             {
-                                markup = '<b>' .. issue.key .. '</b>',
-                                align = 'center',
-                                forced_width = 350, -- for horizontal alignment
+                                markup = '<b>' .. issue.fields.summary .. '</b>',
                                 widget = wibox.widget.textbox
                             },
                             {
-                                text = issue.fields.summary,
-                                widget = wibox.widget.textbox
-                            },
-                            {
-                                text = issue.fields.status.name,
-                                widget = wibox.widget.textbox
+                                {
+                                    markup = "<span foreground='#888888'>" .. issue.key .. "</span>",
+                                    widget = wibox.widget.textbox
+                                },
+                                {
+                                    markup = "<span foreground='#888888'>" .. issue.fields.assignee.displayName .. "</span>",
+                                    widget = wibox.widget.textbox
+                                },
+                                spacing = 8,
+                                layout = wibox.layout.fixed.horizontal
                             },
                             layout = wibox.layout.align.vertical
                         },
                         spacing = 8,
                         layout = wibox.layout.fixed.horizontal
                     },
-                    margins = 8,
+                    margins = 4,
                     layout = wibox.container.margin
                 },
                 bg = beautiful.bg_normal,
                 widget = wibox.container.background
             }
 
-            row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
-            row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
+            local old_cursor, old_wibox
+            row:connect_signal("mouse::enter", function(c)
+                c:set_bg(beautiful.bg_focus)
+                c:set_shape(function(cr, width, height)
+                    gears.shape.rounded_rect(cr, width, height, 4)
+                end)
+                local wb = mouse.current_wibox
+                old_cursor, old_wibox = wb.cursor, wb
+                wb.cursor = "hand1"
+            end)
+            row:connect_signal("mouse::leave", function(c)
+                c:set_bg(beautiful.bg_normal)
+                c:set_shape(nil)
+                if old_wibox then
+                    old_wibox.cursor = old_cursor
+                    old_wibox = nil
+                end
+            end)
 
             row:buttons(
                     awful.util.table.join(
                             awful.button({}, 1, function()
                                 spawn.with_shell("xdg-open " .. host .. '/browse/' .. issue.key)
                                 popup.visible = false
+                                jira_widget:set_bg('#00000000')
                             end)
                     )
             )
@@ -222,14 +279,18 @@ local function worker(user_args)
             awful.util.table.join(
                     awful.button({}, 1, function()
                         if popup.visible then
+                            jira_widget:set_bg('#00000000')
                             popup.visible = not popup.visible
                         else
+                            jira_widget:set_bg(beautiful.bg_focus)
                             popup:move_next_to(mouse.current_widget_geometry)
                         end
                     end)
             )
     )
-    watch(string.format(GET_ISSUES_CMD, host, query:gsub(' ', '+')),
+    watch(
+            'cat /home/pmakhov/.config/JetBrains/IntelliJIdea2020.2/scratches/scratch_27.json',
+            --string.format(GET_ISSUES_CMD, host, query:gsub(' ', '+')),
             timeout, update_widget, jira_widget)
     return jira_widget
 end
