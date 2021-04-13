@@ -1,5 +1,7 @@
 # Net Speed Widget
 
+The widget and readme is in progress
+
 ## Installation
 
 Please refer to the [installation](https://github.com/streetturtle/awesome-wm-widgets#installation) section of the repo.
