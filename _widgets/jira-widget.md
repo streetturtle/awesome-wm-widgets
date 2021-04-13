@@ -3,9 +3,11 @@ layout: page
 ---
 # Jira widget
 
-The widget shows the number of tickets assigned  to the user and when clicked shows them in the list with some additional information. When item in the list is clicked - it opens the issue in browser.
+The widget shows the number of tickets assigned to the user (or any other result of a JQL query, see customization section) and when clicked shows them in the list, grouped by the ticket status. Left-click on the item opens the issue in the default browser:
 
-![git](../awesome-wm-widgets/assets/img/screenshots/jira-widget/out.gif)
+<p align="center">
+<img alt="screenshot" src="https://raw.githubusercontent.com/streetturtle/awesome-wm-widgets/master/jira-widget/screenshot/screenshot.png"/>
+</p>
 
 ## How it works
 
@@ -22,7 +24,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `host` | Required | Ex: _http://jira.tmnt.com_ |
 | `query` | `jql=assignee=currentuser() AND resolution=Unresolved` | JQL query |
 | `icon` | `~/.config/awesome/awesome-wm-widgets/jira-widget/jira-mark-gradient-blue.svg` | Path to the icon |
-| `timeout` | 10 | How often in seconds the widget refreshes |
+| `timeout` | 600 | How often in seconds the widget refreshes |
 
 ## Installation
 
@@ -39,13 +41,13 @@ Then change file's permissions to 600 (so only you can read/write it):
 ```bash
 chmod 600 ~/.netrc
 ```
-And test if it works by calling the API:
+And test if it works by calling the API (`-n` option is to use the .netrc file for authentication):
 
 ```bash
-curl -s -n 'https://turtleninja.com/rest/api/2/search?jql=assignee=currentuser()+AND+resolution=Unresolved'
+curl -n 'https://turtleninja.com/rest/api/2/search?jql=assignee=currentuser()+AND+resolution=Unresolved'
 ```
 
-Clone/download repo and use widget in **rc.lua**:
+Clone/download repo and use the widget in **rc.lua**:
 
 ```lua
 local jira_widget = require("awesome-wm-widgets.jira-widget.jira")

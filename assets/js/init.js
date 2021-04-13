@@ -20,7 +20,7 @@ $(document).ready(function(){
 
     let currentPage = document.location.hash.replace('#tab', '').replace(/[\s+_]/g, '-').toLowerCase();
     if (currentPage === 'main') currentPage = 'awesome-wm-widgets';
-    ga('set', 'page', currentPage);1
+    ga('set', 'page', currentPage);
     ga('send', 'pageview');
 
     $('li.tab > a').click(function(event){
@@ -30,12 +30,6 @@ $(document).ready(function(){
         ga('set', 'page', currentPage);
         ga('send', 'pageview');
 
-        location.hash = event.target.hash;
-
-        let active_tab_selector
-        active_tab_selector = location.hash === '#tabMain' ? '#tabMain' : $('li.tab.col.s2.active > a.tab').attr('href');
-
-
         //find actived navigation and remove 'active' css
         let actived_nav = $('li.active');
         actived_nav.removeClass('active');
@@ -44,8 +38,7 @@ $(document).ready(function(){
         $(this).parents('li').addClass('active');
 
         //hide displaying tab content
-        $(active_tab_selector).removeClass('active fade-in');
-        $(active_tab_selector).addClass('hide');
+        $('.widget.active').each(function(){$(this).removeClass('active fade-in').addClass('hide')})
 
         //show target tab content
         let target_tab_selector = $(this).attr('href');
