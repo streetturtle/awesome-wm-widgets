@@ -41,6 +41,7 @@ local function worker(user_args)
     local program = args.program or 'light'
     local step = args.step or 5
     local base = args.base or 20
+    local level = 0 -- current brightness value
     if program == 'light' then
         get_brightness_cmd = 'light -G'
         set_brightness_cmd = 'light -S ' -- <level>
@@ -108,15 +109,33 @@ local function worker(user_args)
 
     local update_widget = function(widget, stdout, _, _, _)
         local brightness_level = tonumber(string.format("%.0f", stdout))
+        level = brightness_level
         widget:set_value(brightness_level)
     end
 
     function brightness_widget:set(value)
+        level = value
         spawn.easy_async(set_brightness_cmd .. value, function()
             spawn.easy_async(get_brightness_cmd, function(out)
                 update_widget(brightness_widget.widget, out)
             end)
         end)
+    end
+    local old_level = 0
+    function brightness_widget:toggle()
+        if old_level < 0.1 then
+            -- avoid toggling between '0' and 'almost 0'
+            old_level = 1
+        end
+        if level < 0.1 then
+            -- restore previous level
+            level = old_level
+        else
+            -- save current brightness for later
+            old_level = level
+            level = 0
+        end
+        brightness_widget:set(level)
     end
     function brightness_widget:inc()
         spawn.easy_async(inc_brightness_cmd, function()
@@ -136,6 +155,7 @@ local function worker(user_args)
     brightness_widget.widget:buttons(
             awful.util.table.join(
                     awful.button({}, 1, function() brightness_widget:set(base) end),
+                    awful.button({}, 3, function() brightness_widget:toggle() end),
                     awful.button({}, 4, function() brightness_widget:inc() end),
                     awful.button({}, 5, function() brightness_widget:dec() end)
             )
