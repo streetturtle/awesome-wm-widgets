@@ -42,6 +42,7 @@ local function worker(user_args)
     local step = args.step or 5
     local base = args.base or 20
     local level = 0 -- current brightness value
+    local tooltip = args.tooltip or false
     if program == 'light' then
         get_brightness_cmd = 'light -G'
         set_brightness_cmd = 'light -S ' -- <level>
@@ -162,6 +163,15 @@ local function worker(user_args)
     )
 
     watch(get_brightness_cmd, timeout, update_widget, brightness_widget.widget)
+
+    if tooltip then
+        awful.tooltip {
+            objects        = { brightness_widget.widget },
+            timer_function = function()
+                return level .. " %"
+            end,
+        }
+    end
 
     return brightness_widget.widget
 end
