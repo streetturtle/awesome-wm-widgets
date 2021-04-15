@@ -16,6 +16,7 @@ local naughty = require("naughty")
 
 local ICON_DIR = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/brightness-widget/'
 local get_brightness_cmd
+local set_brightness_cmd
 local inc_brightness_cmd
 local dec_brightness_cmd
 
@@ -39,12 +40,15 @@ local function worker(user_args)
 
     local program = args.program or 'light'
     local step = args.step or 5
+    local base = args.base or 20
     if program == 'light' then
         get_brightness_cmd = 'light -G'
+        set_brightness_cmd = 'light -S ' -- <level>
         inc_brightness_cmd = 'light -A ' .. step
         dec_brightness_cmd = 'light -U ' .. step
     elseif program == 'xbacklight' then
         get_brightness_cmd = 'xbacklight -get'
+        set_brightness_cmd = 'xbacklight -set ' -- <level>
         inc_brightness_cmd = 'xbacklight -inc ' .. step
         dec_brightness_cmd = 'xbacklight -dec ' .. step
     else
@@ -107,6 +111,13 @@ local function worker(user_args)
         widget:set_value(brightness_level)
     end
 
+    function brightness_widget:set(value)
+        spawn.easy_async(set_brightness_cmd .. value, function()
+            spawn.easy_async(get_brightness_cmd, function(out)
+                update_widget(brightness_widget.widget, out)
+            end)
+        end)
+    end
     function brightness_widget:inc()
         spawn.easy_async(inc_brightness_cmd, function()
             spawn.easy_async(get_brightness_cmd, function(out)
@@ -124,6 +135,7 @@ local function worker(user_args)
 
     brightness_widget.widget:buttons(
             awful.util.table.join(
+                    awful.button({}, 1, function() brightness_widget:set(base) end),
                     awful.button({}, 4, function() brightness_widget:inc() end),
                     awful.button({}, 5, function() brightness_widget:dec() end)
             )
