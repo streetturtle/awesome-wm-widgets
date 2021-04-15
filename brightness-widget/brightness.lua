@@ -40,9 +40,9 @@ local function worker(user_args)
     local program = args.program or 'light'
     local step = args.step or 5
     if program == 'light' then
-        get_brightness_cmd = 'sh -c "light -G"'
-        inc_brightness_cmd = 'sh -c "light -A ' .. step .. '"'
-        dec_brightness_cmd = 'sh -c "light -U ' .. step .. '"'
+        get_brightness_cmd = 'light -G'
+        inc_brightness_cmd = 'light -A ' .. step
+        dec_brightness_cmd = 'light -U ' .. step
     elseif program == 'xbacklight' then
         get_brightness_cmd = 'xbacklight -get'
         inc_brightness_cmd = 'xbacklight -inc ' .. step
