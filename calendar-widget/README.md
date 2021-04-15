@@ -45,8 +45,8 @@ local cw = calendar_widget()
 -- or customized
 local cw = calendar_widget({
     theme = 'outrun',
-    placement = 'bottom_right'
-    radius = 8
+    placement = 'bottom_right',
+    radius = 8,
 })
 mytextclock:connect_signal("button::press", 
     function(_, _, _, button)
