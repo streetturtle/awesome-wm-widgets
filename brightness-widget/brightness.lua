@@ -41,7 +41,7 @@ local function worker(user_args)
     local program = args.program or 'light'
     local step = args.step or 5
     local base = args.base or 20
-    local level = 0 -- current brightness value
+    local current_level = 0 -- current brightness value
     local tooltip = args.tooltip or false
     if program == 'light' then
         get_brightness_cmd = 'light -G'
@@ -110,12 +110,12 @@ local function worker(user_args)
 
     local update_widget = function(widget, stdout, _, _, _)
         local brightness_level = tonumber(string.format("%.0f", stdout))
-        level = brightness_level
+        current_level = brightness_level
         widget:set_value(brightness_level)
     end
 
     function brightness_widget:set(value)
-        level = value
+        current_level = value
         spawn.easy_async(set_brightness_cmd .. value, function()
             spawn.easy_async(get_brightness_cmd, function(out)
                 update_widget(brightness_widget.widget, out)
@@ -128,15 +128,15 @@ local function worker(user_args)
             -- avoid toggling between '0' and 'almost 0'
             old_level = 1
         end
-        if level < 0.1 then
+        if current_level < 0.1 then
             -- restore previous level
-            level = old_level
+            current_level = old_level
         else
             -- save current brightness for later
-            old_level = level
-            level = 0
+            old_level = current_level
+            current_level = 0
         end
-        brightness_widget:set(level)
+        brightness_widget:set(current_level)
     end
     function brightness_widget:inc()
         spawn.easy_async(inc_brightness_cmd, function()
@@ -168,7 +168,7 @@ local function worker(user_args)
         awful.tooltip {
             objects        = { brightness_widget.widget },
             timer_function = function()
-                return level .. " %"
+                return current_level .. " %"
             end,
         }
     end
