@@ -19,3 +19,19 @@ It is possible to customize widget by providing a table with all or some of the 
 ## Installation
 
 Please refer to the [installation](https://github.com/streetturtle/awesome-wm-widgets#installation) section of the repo.
+
+Clone repo, include widget and use it in **rc.lua**:
+
+```lua
+local ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
+...
+s.mytasklist, -- Middle widget
+	{ -- Right widgets
+    	layout = wibox.layout.fixed.horizontal,
+		...
+		ram_widget(),
+    		...
+	}
+	...
+```
+
