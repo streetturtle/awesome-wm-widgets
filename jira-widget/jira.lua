@@ -112,7 +112,7 @@ local function worker(user_args)
 
     local args = user_args or {}
 
-    local icon = args.icon or 
+    local icon = args.icon or
       HOME_DIR .. '/.config/awesome/awesome-wm-widgets/jira-widget/icon/jira-mark-gradient-blue.svg'
     local host = args.host or show_warning('Jira host is unknown')
     local query = args.query or 'jql=assignee=currentuser() AND resolution=Unresolved'
@@ -223,7 +223,7 @@ local function worker(user_args)
                                     widget = wibox.widget.textbox
                                 },
                                 {
-                                    markup = "<span foreground='#888888'>" 
+                                    markup = "<span foreground='#888888'>"
                                       .. issue.fields.assignee.displayName .. "</span>",
                                     widget = wibox.widget.textbox
                                 },
