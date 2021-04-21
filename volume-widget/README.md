@@ -30,7 +30,7 @@ s.mytasklist, -- Middle widget
         volume_widget(),
         -- customized
         volume_widget{
-            type = 'arc'
+            widget_type = 'arc'
         },
 ```
 
@@ -52,7 +52,7 @@ It is possible to customize the widget by providing a table with all or some of 
 
 | Name | Default | Description |
 |---|---|---|
-| `type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` | 
+| `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
 
 Depending on the chosen widget type add parameters from the corresponding section below:
 
