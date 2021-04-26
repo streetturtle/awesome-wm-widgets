@@ -142,12 +142,14 @@ local function worker(user_args)
         local charge = 0
         local status
         for i, batt in ipairs(battery_info) do
-            if batt.charge >= charge then
-                status = batt.status -- use most charged battery status
-                -- this is arbitrary, and maybe another metric should be used
-            end
+            if capacities[i] ~= nil then
+                if batt.charge >= charge then
+                    status = batt.status -- use most charged battery status
+                    -- this is arbitrary, and maybe another metric should be used
+                end
 
-            charge = charge + batt.charge * capacities[i]
+                charge = charge + batt.charge * capacities[i]
+            end
         end
         charge = charge / capacity
 
