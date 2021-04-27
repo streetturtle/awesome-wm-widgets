@@ -164,7 +164,8 @@ local function worker(user_args)
                 },
                 layout = wibox.layout.fixed.horizontal,
             },
-            margins = 4,
+            left = 4,
+            right = 4,
             layout = wibox.container.margin
         },
         shape = function(cr, width, height)
