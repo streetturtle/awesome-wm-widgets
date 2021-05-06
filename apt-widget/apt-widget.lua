@@ -5,7 +5,7 @@
 -- https://github.com/streetturtle/awesome-wm-widgets/tree/master/apt-widget
 
 -- @author Pavel Makhov
--- @copyright 2020 Pavel Makhov
+-- @copyright 2021 Pavel Makhov
 -------------------------------------------------
 
 local awful = require("awful")
@@ -27,13 +27,6 @@ local function show_warning(message)
         preset = naughty.config.presets.critical,
         title = 'Docker Widget',
         text = message}
-end
-
--- luacheck:ignore ellipsize
-local function ellipsize(text, length)
-    return (text:len() > length and length > 0)
-            and text:sub(0, length - 3) .. '...'
-            or text
 end
 
 local wibox_popup = wibox {
@@ -64,10 +57,10 @@ local apt_widget = wibox.widget {
     end
 }
 
---yaru-theme-sound/focal-updates,focal-updates 20.04.10.1 all [upgradable from: 20.04.8]
+--- Parses the line and creates the package table out of it
+--- yaru-theme-sound/focal-updates,focal-updates 20.04.10.1 all [upgradable from: 20.04.8]
 local parse_package = function(line)
-    --luacheck:ignore 211
-    local name,one,nv,type,ov = line:match('(.*)%/(.*)%s(.*)%s(.*)%s%[upgradable from: (.*)]')
+    local name,_,nv,type,ov = line:match('(.*)%/(.*)%s(.*)%s(.*)%s%[upgradable from: (.*)]')
 
     if name == nil then return nil end
 
@@ -286,8 +279,8 @@ local function worker(user_args)
             widget = wibox.widget.imagebox
         }
         header_refresh_icon:buttons(awful.util.table.join(awful.button({}, 1, function()
-            -- luacheck:ignore 213
-            for i,v in pairs(to_update) do
+            print(#to_update)
+            for _,v in pairs(to_update) do
                 if v ~= nil then
                     v:update()
                 end
@@ -305,7 +298,7 @@ local function worker(user_args)
                     {
                         {
                             id = 'name',
-                            markup = '<b>APT</b>',
+                            markup = '<b>' .. #rows.children .. '</b> packages to update',
                             widget = wibox.widget.textbox
                         },
                         halign = 'center',
