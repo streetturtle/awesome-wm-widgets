@@ -40,3 +40,5 @@ local function show_emails()
 end
 
 email_icon:connect_signal("mouse::enter", function() show_emails() end)
+
+return email_widget, email_icon

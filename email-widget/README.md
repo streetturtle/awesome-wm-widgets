@@ -14,7 +14,8 @@ To install it put **email.lua** and **email-widget** folder under **~/.config/aw
  - add widget to awesome:
 
 ```lua
-require("email")
+local email_widget, email_icon = require("email")
+
 ...
 s.mytasklist, -- Middle widget
 	{ -- Right widgets
