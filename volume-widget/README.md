@@ -9,6 +9,8 @@ From left to right: `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `
 A right-click on the widget opens a popup where you can choose a sink/source:  
 ![sink-sources](screenshots/volume-sink-sources.png)
 
+Left click toggles mute and middle click opens a mixer ([pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) by default).
+
 ### Features
 
  - switch between sinks/sources by right clicking on the widget;
@@ -52,6 +54,7 @@ It is possible to customize the widget by providing a table with all or some of 
 
 | Name | Default | Description |
 |---|---|---|
+| `mixer_cmd` | `pavucontrol` | command to run on middle click (e.g. a mixer program) |
 | `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
 
 Depending on the chosen widget type add parameters from the corresponding section below:
