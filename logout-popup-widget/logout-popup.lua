@@ -40,12 +40,12 @@ local phrase_widget = wibox.widget{
     widget = wibox.widget.textbox
 }
 
-local function create_button(icon_name, action_name, color, onclick, icon_size, icon_margin)
+local function create_button(icon_name, action_name, accent_color, label_color, onclick, icon_size, icon_margin)
 
     local button = awesomebuttons.with_icon {
         type = 'basic',
         icon = icon_name,
-        color = color,
+        color = accent_color,
         icon_size = icon_size,
         icon_margin = icon_margin,
         onclick = function()
@@ -54,8 +54,11 @@ local function create_button(icon_name, action_name, color, onclick, icon_size, 
             capi.keygrabber.stop()
         end
     }
-    button:connect_signal("mouse::enter", function() action:set_text(action_name) end)
-    button:connect_signal("mouse::leave", function() action:set_text(' ') end)
+    button:connect_signal("mouse::enter", 
+      function() action:set_markup('<span color="' .. label_color .. '">' .. action_name .. '</span>') end)
+    
+    button:connect_signal("mouse::leave", function() action:set_markup('<span> </span>') end)
+
     return button
 end
 
@@ -65,6 +68,7 @@ local function launch(args)
     local bg_color = args.bg_color or beautiful.bg_normal
     local accent_color = args.accent_color or beautiful.bg_focus
     local text_color = args.text_color or beautiful.fg_normal
+    local label_color = args.label_color or beautiful.fg_focus
     local phrases = args.phrases or {'Goodbye!'}
     local icon_size = args.icon_size or 40
     local icon_margin = args.icon_margin or 16
@@ -86,11 +90,11 @@ local function launch(args)
             phrase_widget,
             {
                 {
-                    create_button('log-out', 'Log Out (l)', accent_color, onlogout, icon_size, icon_margin),
-                    create_button('lock', 'Lock (k)', accent_color, onlock, icon_size, icon_margin),
-                    create_button('refresh-cw', 'Reboot (r)', accent_color, onreboot, icon_size, icon_margin),
-                    create_button('moon', 'Suspend (u)', accent_color, onsuspend, icon_size, icon_margin),
-                    create_button('power', 'Power Off (s)', accent_color, onpoweroff, icon_size, icon_margin),
+                    create_button('log-out', 'Log Out (l)', accent_color, label_color, onlogout, icon_size, icon_margin),
+                    create_button('lock', 'Lock (k)', accent_color, label_color, onlock, icon_size, icon_margin),
+                    create_button('refresh-cw', 'Reboot (r)', accent_color, label_color, onreboot, icon_size, icon_margin),
+                    create_button('moon', 'Suspend (u)', accent_color, label_color, onsuspend, icon_size, icon_margin),
+                    create_button('power', 'Power Off (s)', accent_color, label_color, onpoweroff, icon_size, icon_margin),
                     id = 'buttons',
                     spacing = 8,
                     layout = wibox.layout.fixed.horizontal
