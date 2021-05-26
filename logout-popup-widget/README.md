@@ -58,6 +58,7 @@ Then
 | `bg_color` |  `beautiful.bg_normal` | The color the background of the |
 | `accent_color` | `beautiful.bg_focus` | The color of the buttons |
 | `text_color` | `beautiful.fg_normal` | The color of text |
+| `label_color` | `beautiful.fg_normal` | The color of the button's label |
 | `phrases` | `{'Goodbye!'}` | The table with phrase(s) to show, if more than one provided, the phrase is chosen randomly. Leave empty (`{}`) to hide the phrase |
 | `onlogout` | `function() awesome.quit() end` | Function which is called when the logout button is pressed |
 | `onlock` | `function() awful.spawn.with_shell("systemctl suspend") end` | Function which is called when the lock button is pressed |
