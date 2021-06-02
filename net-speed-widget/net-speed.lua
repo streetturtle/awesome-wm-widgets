@@ -15,35 +15,7 @@ local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/net-speed-widget/'
 local ICONS_DIR = WIDGET_DIR .. 'icons/'
 
-local net_speed_widget = wibox.widget {
-    {
-        id = 'rx_speed',
-        forced_width = 55,
-        align = 'right',
-        widget = wibox.widget.textbox
-    },
-    {
-        image = ICONS_DIR .. 'down.svg',
-        widget = wibox.widget.imagebox
-    },
-    {
-        image =  ICONS_DIR .. 'up.svg',
-        widget = wibox.widget.imagebox
-    },
-    {
-        id = 'tx_speed',
-        forced_width = 55,
-        align = 'left',
-        widget = wibox.widget.textbox
-    },
-    layout = wibox.layout.fixed.horizontal,
-    set_rx_text = function(self, new_rx_speed)
-        self:get_children_by_id('rx_speed')[1]:set_text(tostring(new_rx_speed))
-    end,
-    set_tx_text = function(self, new_tx_speed)
-        self:get_children_by_id('tx_speed')[1]:set_text(tostring(new_tx_speed))
-    end
-}
+local net_speed_widget = {}
 
 local prev_rx = 0
 local prev_tx = 0
@@ -88,6 +60,37 @@ local function worker(user_args)
 
     local interface = args.interface or '*'
     local timeout = args.timeout or 1
+    local width = args.width or 55
+
+    local net_speed_widget = wibox.widget {
+        {
+            id = 'rx_speed',
+            forced_width = width,
+            align = 'right',
+            widget = wibox.widget.textbox
+        },
+        {
+            image = ICONS_DIR .. 'down.svg',
+            widget = wibox.widget.imagebox
+        },
+        {
+            image =  ICONS_DIR .. 'up.svg',
+            widget = wibox.widget.imagebox
+        },
+        {
+            id = 'tx_speed',
+            forced_width = width,
+            align = 'left',
+            widget = wibox.widget.textbox
+        },
+        layout = wibox.layout.fixed.horizontal,
+        set_rx_text = function(self, new_rx_speed)
+            self:get_children_by_id('rx_speed')[1]:set_text(tostring(new_rx_speed))
+        end,
+        set_tx_text = function(self, new_tx_speed)
+            self:get_children_by_id('tx_speed')[1]:set_text(tostring(new_tx_speed))
+        end
+    }
 
     local update_widget = function(widget, stdout)
 
