@@ -163,6 +163,7 @@ local function worker(user_args)
 
     local args = user_args or {}
 
+    local mixer_cmd = args.mixer_cmd or 'pavucontrol'
     local widget_type = args.widget_type
     local refresh_rate = args.refresh_rate or 1
 
@@ -194,6 +195,12 @@ local function worker(user_args)
         spawn.easy_async(TOG_VOLUME_CMD, function(stdout) update_graphic(volume.widget, stdout) end)
     end
 
+    function volume:mixer()
+        if mixer_cmd then
+            spawn.easy_async(mixer_cmd)
+        end
+    end
+
     volume.widget:buttons(
             awful.util.table.join(
                     awful.button({}, 3, function()
@@ -206,6 +213,7 @@ local function worker(user_args)
                     end),
                     awful.button({}, 4, function() volume:inc() end),
                     awful.button({}, 5, function() volume:dec() end),
+                    awful.button({}, 2, function() volume:mixer() end),
                     awful.button({}, 1, function() volume:toggle() end)
             )
     )
