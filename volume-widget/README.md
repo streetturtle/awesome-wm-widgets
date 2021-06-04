@@ -36,6 +36,8 @@ s.mytasklist, -- Middle widget
         },
 ```
 
+Note that widget uses following command the get the current volume: `amixer -D pulse sget Master`, so please make sure that it works for you, otherwise you need to install `pulseaudio-alsa` package.
+
 ### Shortcuts
 
 To improve responsiveness of the widget when volume level is changed by a shortcut use corresponding methods of the widget:
