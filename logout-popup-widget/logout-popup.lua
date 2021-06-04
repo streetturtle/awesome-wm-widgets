@@ -54,9 +54,10 @@ local function create_button(icon_name, action_name, accent_color, label_color, 
             capi.keygrabber.stop()
         end
     }
-    button:connect_signal("mouse::enter", 
-      function() action:set_markup('<span color="' .. label_color .. '">' .. action_name .. '</span>') end)
-    
+    button:connect_signal("mouse::enter", function() 
+            action:set_markup('<span color="' .. label_color .. '">' .. action_name .. '</span>') 
+        end)
+
     button:connect_signal("mouse::leave", function() action:set_markup('<span> </span>') end)
 
     return button
@@ -90,11 +91,16 @@ local function launch(args)
             phrase_widget,
             {
                 {
-                    create_button('log-out', 'Log Out (l)', accent_color, label_color, onlogout, icon_size, icon_margin),
-                    create_button('lock', 'Lock (k)', accent_color, label_color, onlock, icon_size, icon_margin),
-                    create_button('refresh-cw', 'Reboot (r)', accent_color, label_color, onreboot, icon_size, icon_margin),
-                    create_button('moon', 'Suspend (u)', accent_color, label_color, onsuspend, icon_size, icon_margin),
-                    create_button('power', 'Power Off (s)', accent_color, label_color, onpoweroff, icon_size, icon_margin),
+                    create_button('log-out', 'Log Out (l)', 
+                        accent_color, label_color, onlogout, icon_size, icon_margin),
+                    create_button('lock', 'Lock (k)', 
+                        accent_color, label_color, onlock, icon_size, icon_margin),
+                    create_button('refresh-cw', 'Reboot (r)', 
+                        accent_color, label_color, onreboot, icon_size, icon_margin),
+                    create_button('moon', 'Suspend (u)', 
+                        accent_color, label_color, onsuspend, icon_size, icon_margin),
+                    create_button('power', 'Power Off (s)', 
+                        accent_color, label_color, onpoweroff, icon_size, icon_margin),
                     id = 'buttons',
                     spacing = 8,
                     layout = wibox.layout.fixed.horizontal
