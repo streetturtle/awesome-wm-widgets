@@ -104,8 +104,8 @@ local function worker(user_args)
             if i%2 == 0 then cur_tx = cur_tx + cur_vals[i] end
         end
 
-        local speed_rx = cur_rx - prev_rx
-        local speed_tx = cur_tx - prev_tx
+        local speed_rx = (cur_rx - prev_rx) / timeout
+        local speed_tx = (cur_tx - prev_tx) / timeout
 
         widget:set_rx_text(convert_to_h(speed_rx))
         widget:set_tx_text(convert_to_h(speed_tx))
