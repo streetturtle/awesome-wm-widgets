@@ -17,9 +17,6 @@ local ICONS_DIR = WIDGET_DIR .. 'icons/'
 
 local net_speed_widget = {}
 
-local prev_rx = 0
-local prev_tx = 0
-
 local function convert_to_h(bytes)
     local speed
     local dim
@@ -92,6 +89,11 @@ local function worker(user_args)
         end
     }
 
+    -- make sure these are not shared across different worker/widgets (e.g. two monitors)
+    -- otherwise the speed will be randomly split among the worker in each monitor
+    local prev_rx = 0
+    local prev_tx = 0
+
     local update_widget = function(widget, stdout)
 
         local cur_vals = split(stdout, '\r\n')
@@ -99,9 +101,9 @@ local function worker(user_args)
         local cur_rx = 0
         local cur_tx = 0
 
-        for i, _ in ipairs(cur_vals) do
-            if i%2 == 1 then cur_rx = cur_rx + cur_vals[i] end
-            if i%2 == 0 then cur_tx = cur_tx + cur_vals[i] end
+        for i, v in ipairs(cur_vals) do
+            if i%2 == 1 then cur_rx = cur_rx + v end
+            if i%2 == 0 then cur_tx = cur_tx + v end
         end
 
         local speed_rx = (cur_rx - prev_rx) / timeout
