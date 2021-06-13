@@ -12,22 +12,32 @@ local function worker(user_args)
     local timeout = args.timeout or 60
 
     storage_bar_widget = wibox.widget {
-        max_value = 100,
-        forced_height = 20,
-        forced_width = 35,
-        paddings = 1,
-        margins = 4,
-        border_width = 1,
-        border_radius = 2,
-        border_color = beautiful.fg_normal,
-        background_color = beautiful.bg_normal,
-        bar_border_width = 1,
-        bar_border_color = beautiful.bg_focus,
-        color = "linear:150,0:0,0:0,"
-                .. beautiful.fg_normal
-                .. ":0.3," .. beautiful.bg_urgent .. ":0.6,"
-                .. beautiful.fg_normal,
-        widget = wibox.widget.progressbar,
+        {
+            id = 'progressbar',
+            max_value = 100,
+            forced_height = 20,
+            forced_width = 35,
+            paddings = 1,
+            margins = 4,
+            border_width = 1,
+            border_radius = 2,
+            border_color = beautiful.fg_normal,
+            background_color = beautiful.bg_normal,
+            bar_border_width = 1,
+            bar_border_color = beautiful.bg_focus,
+            color = "linear:150,0:0,0:0,"
+                    .. beautiful.fg_normal
+                    .. ":0.3," .. beautiful.bg_urgent .. ":0.6,"
+                    .. beautiful.fg_normal,
+            widget = wibox.widget.progressbar
+        },
+        shape = function(cr, width, height)
+            gears.shape.rounded_rect(cr, width, height, 4)
+        end,
+        widget = wibox.container.background,
+        set_value = function(self, new_value)
+            self:get_children_by_id("progressbar")[1].value = new_value
+        end
     }
 
     local disk_rows = {
@@ -68,14 +78,14 @@ local function worker(user_args)
                     awful.button({}, 1, function()
                         if popup.visible then
                             popup.visible = not popup.visible
+                            storage_bar_widget:set_bg('#00000000')
                         else
+                            storage_bar_widget:set_bg(beautiful.bg_focus)
                             popup:move_next_to(mouse.current_widget_geometry)
                         end
                     end)
             )
     )
-
-    local disk_widget = wibox.container.margin(storage_bar_widget, 0, 0, 0, 0)
 
     local disks = {}
     watch([[bash -c "df | tail -n +2"]], timeout,
@@ -92,7 +102,7 @@ local function worker(user_args)
                     disks[mount].mount = mount
 
                     if disks[mount].mount == mounts[1] then
-                        widget.value = tonumber(disks[mount].perc)
+                        widget:set_value(tonumber(disks[mount].perc))
                     end
                 end
 
@@ -148,7 +158,7 @@ local function worker(user_args)
             storage_bar_widget
     )
 
-    return disk_widget
+    return storage_bar_widget
 end
 
 return setmetatable(storage_bar_widget, { __call = function(_, ...)
