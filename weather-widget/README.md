@@ -8,7 +8,7 @@
    </a>
 </p>
 
-The widget showing current, hourly and daily weather forecast.
+The widget showing current, hourly and daily weather forecast:
 
 <p align="center">
  <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/weather-widget/weather-widget.png" alt="screenshot" style="max-width:100%;">
@@ -18,6 +18,8 @@ The widget consists of three sections:
  - current weather, including humidity, wind speed, UV index
  - hourly forecast for the next 24 hours
  - daily forecast for the next five days
+
+Note: this widget is compatible with Awesome v4.3+, as it is using [awful.popup](https://awesomewm.org/doc/api/classes/awful.popup.html)
 
 ## Customization
 
