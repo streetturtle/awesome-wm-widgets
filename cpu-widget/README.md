@@ -6,6 +6,8 @@ This widget shows the average CPU load among all cores of the machine:
 
 ![screenshot](./cpu.gif)
 
+Note: this widget is compatible with Awesome v4.3+, as it is using [awful.popup](https://awesomewm.org/doc/api/classes/awful.popup.html)
+
 ## How it works
 
 To measure the load I took Paul Colby's bash [script](http://colby.id.au/calculating-cpu-usage-from-proc-stat/) and rewrote it in Lua, which was quite simple.
