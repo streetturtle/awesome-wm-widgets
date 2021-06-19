@@ -13,7 +13,7 @@
    </a>
 </p>
 
-Set of widgets compatible with Awesome Window Manager v.4+.
+Set of widgets compatible with Awesome Window Manager v.4.3+.
 
 ## Screenshots
 
