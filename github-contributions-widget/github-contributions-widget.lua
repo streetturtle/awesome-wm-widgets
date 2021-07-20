@@ -73,11 +73,11 @@ local function worker(user_args)
             end,
             layout = wibox.widget.base.make_widget
         }
-        
+
         if date ~= nil then
             awful.tooltip { text = date }:add_to_object(square)
         end
-        
+
         return square
     end
 
@@ -90,8 +90,8 @@ local function worker(user_args)
 
     local update_widget = function(_, stdout, _, _, _)
         for day_value in stdout:gmatch("[^\r\n]+") do
-            intensity = day_value:sub(1, 1)
-            date = day_value:sub(3, 12)
+            local intensity = day_value:sub(1, 1)
+            local date = day_value:sub(3, 12)
             if day_idx %7 == 0 then
                 table.insert(row, col)
                 col = {layout = wibox.layout.fixed.vertical}
