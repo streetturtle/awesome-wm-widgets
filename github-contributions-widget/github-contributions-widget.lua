@@ -13,7 +13,7 @@ local naughty = require("naughty")
 local wibox = require("wibox")
 local widget_themes = require("awesome-wm-widgets.github-contributions-widget.themes")
 
-local GET_CONTRIBUTIONS_CMD = [[bash -c "curl -s https://github-contributions.now.sh/api/v1/%s]]
+local GET_CONTRIBUTIONS_CMD = [[bash -c "curl -s https://github-contributions.vercel.app/api/v1/%s]]
     .. [[ | jq -r '[.contributions[] ]]
     .. [[ | select ( .date | strptime(\"%%Y-%%m-%%d\") | mktime < now)][:%s]| .[].intensity'"]]
 
@@ -78,8 +78,8 @@ local function worker(user_args)
 
     local col = {layout = wibox.layout.fixed.vertical}
     local row = {layout = wibox.layout.fixed.horizontal}
-    local day_idx = 5 - os.date('%w')
-    for _ = 0, day_idx do
+    local day_idx = 6 - os.date('%w')
+    for _ = 1, day_idx do
         table.insert(col, get_square(color_of_empty_cells))
     end
 
