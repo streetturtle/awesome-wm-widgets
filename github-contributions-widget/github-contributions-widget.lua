@@ -38,6 +38,7 @@ local function worker(user_args)
     local args = user_args or {}
     local username = args.username or 'streetturtle'
     local days = args.days or 365
+    local square_size = args.square_size or 3
     local color_of_empty_cells = args.color_of_empty_cells
     local with_border = args.with_border
     local margin_top = args.margin_top or 1
@@ -57,11 +58,16 @@ local function worker(user_args)
 
         return wibox.widget{
             fit = function()
-                return 3, 3
+                return square_size, square_size
             end,
             draw = function(_, _, cr, _, _)
                 cr:set_source(gears.color(color))
-                cr:rectangle(0, 0, with_border and 2 or 3, with_border and 2 or 3)
+                cr:rectangle(
+                    0,
+                    0,
+                    with_border and square_size-1 or square_size,
+                    with_border and square_size-1 or square_size
+                )
                 cr:fill()
             end,
             layout = wibox.widget.base.make_widget
