@@ -13,7 +13,7 @@ local naughty = require("naughty")
 local wibox = require("wibox")
 local widget_themes = require("awesome-wm-widgets.github-contributions-widget.themes")
 
-local GET_CONTRIBUTIONS_CMD = [[bash -c "curl -s https://github-contributions.now.sh/api/v1/%s]]
+local GET_CONTRIBUTIONS_CMD = [[bash -c "curl -s https://github-contributions.vercel.app/api/v1/%s]]
     .. [[ | jq -r '[.contributions[] ]]
     .. [[ | select ( .date | strptime(\"%%Y-%%m-%%d\") | mktime < now)][:%s]| .[].intensity'"]]
 
