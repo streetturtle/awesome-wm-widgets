@@ -16,7 +16,8 @@ local widget_themes = require("awesome-wm-widgets.github-contributions-widget.th
 
 local GET_CONTRIBUTIONS_CMD = [[bash -c "curl -s https://github-contributions.vercel.app/api/v1/%s]]
     .. [[ | jq -r '[.contributions[] ]]
-    .. [[ | select ( .date | strptime(\"%%Y-%%m-%%d\") | mktime < now)][:%s]| .[].intensity'"]]
+    .. [[ | select ( .date | strptime(\"%%Y-%%m-%%d\") | mktime < now)][:%s] ]]
+    .. [[ | .[] | .intensity + \" \" + .date'"]]
 
 local github_contributions_widget = wibox.widget{
     reflection = {
@@ -51,12 +52,12 @@ local function worker(user_args)
 
     if with_border == nil then with_border = true end
 
-    local function get_square(color)
+    local function get_square(date, color)
         if color_of_empty_cells ~= nil and color == widget_themes[theme][0] then
             color = color_of_empty_cells
         end
 
-        return wibox.widget{
+        local square = wibox.widget{
             fit = function()
                 return square_size, square_size
             end,
@@ -72,22 +73,33 @@ local function worker(user_args)
             end,
             layout = wibox.widget.base.make_widget
         }
+        
+        if date ~= nil then
+            awful.tooltip { text = date }:add_to_object(square)
+        end
+        
+        return square
     end
 
     local col = {layout = wibox.layout.fixed.vertical}
     local row = {layout = wibox.layout.fixed.horizontal}
     local day_idx = 6 - os.date('%w')
     for _ = 1, day_idx do
-        table.insert(col, get_square(color_of_empty_cells))
+        table.insert(col, get_square(nil, color_of_empty_cells))
     end
 
     local update_widget = function(_, stdout, _, _, _)
-        for intensity in stdout:gmatch("[^\r\n]+") do
+        for day_value in stdout:gmatch("[^\r\n]+") do
+            intensity = day_value:sub(1, 1)
+            date = day_value:sub(3, 12)
             if day_idx %7 == 0 then
                 table.insert(row, col)
                 col = {layout = wibox.layout.fixed.vertical}
             end
-            table.insert(col, get_square(widget_themes[theme][tonumber(intensity)]))
+            table.insert(col, get_square(
+                             date,
+                             widget_themes[theme][tonumber(intensity)]
+            ))
             day_idx = day_idx + 1
         end
         github_contributions_widget:setup(
@@ -100,7 +112,7 @@ local function worker(user_args)
     end
 
     awful.spawn.easy_async(string.format(GET_CONTRIBUTIONS_CMD, username, days),
-        function(stdout)
+        function(stdout, stderr,reason,exit_code)
             update_widget(github_contributions_widget, stdout)
         end)
 
