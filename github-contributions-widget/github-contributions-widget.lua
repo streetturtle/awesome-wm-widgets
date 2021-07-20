@@ -76,8 +76,8 @@ local function worker(user_args)
 
     local col = {layout = wibox.layout.fixed.vertical}
     local row = {layout = wibox.layout.fixed.horizontal}
-    local day_idx = 5 - os.date('%w')
-    for _ = 0, day_idx do
+    local day_idx = 6 - os.date('%w')
+    for _ = 1, day_idx do
         table.insert(col, get_square(color_of_empty_cells))
     end
 
