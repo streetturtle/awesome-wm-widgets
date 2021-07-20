@@ -112,7 +112,7 @@ local function worker(user_args)
     end
 
     awful.spawn.easy_async(string.format(GET_CONTRIBUTIONS_CMD, username, days),
-        function(stdout, stderr,reason,exit_code)
+        function(stdout)
             update_widget(github_contributions_widget, stdout)
         end)
 
