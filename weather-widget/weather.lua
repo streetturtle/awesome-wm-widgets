@@ -17,12 +17,23 @@ local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/weather-widget'
 local GET_FORECAST_CMD = [[bash -c "curl -s --show-error -X GET '%s'"]]
 
+local SYS_LANG = os.getenv("LANG"):sub(1, 2)
+-- default language is ENglish
+local LANG = gears.filesystem.file_readable(WIDGET_DIR .. "/" .. "locale/" ..
+                                      SYS_LANG .. ".lua") and SYS_LANG or "en"
+local LCLE = require("awesome-wm-widgets.weather-widget.locale." .. LANG)
+
+
 local function show_warning(message)
     naughty.notify {
         preset = naughty.config.presets.critical,
-        title = 'Weather Widget',
+        title = LCLE.warning_title,
         text = message
     }
+end
+
+if SYS_LANG ~= LANG then
+    show_warning("Your language is not supported yet. Language set to English")
 end
 
 local weather_widget = {}
@@ -69,10 +80,7 @@ local icon_map = {
 local function to_direction(degrees)
     -- Ref: https://www.campbellsci.eu/blog/convert-wind-directions
     if degrees == nil then return "Unknown dir" end
-    local directions = {
-        "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW",
-        "WSW", "W", "WNW", "NW", "NNW", "N"
-    }
+    local directions = LCLE.directions
     return directions[math.floor((degrees % 360) / 22.5) + 1]
 end
 
@@ -120,9 +128,9 @@ local function worker(user_args)
 
     --- Validate required parameters
     if args.coordinates == nil or args.api_key == nil then
-        show_warning('Required parameters are not set: ' ..
-                         (args.coordinates == nil and '<b>coordinates</b>' or '') ..
-                         (args.api_key == nil and ', <b>api_key</b> ' or ''))
+        show_warning(LCLE.parameter_warning ..
+                     (args.coordinates == nil and '<b>coordinates</b>' or '') ..
+                     (args.api_key == nil and ', <b>api_key</b> ' or ''))
         return
     end
 
@@ -144,7 +152,8 @@ local function worker(user_args)
             '?lat=' .. coordinates[1] .. '&lon=' .. coordinates[2] .. '&appid=' .. api_key ..
             '&units=' .. units .. '&exclude=minutely' ..
             (show_hourly_forecast == false and ',hourly' or '') ..
-            (show_daily_forecast == false and ',daily' or ''))
+            (show_daily_forecast == false and ',daily' or '') ..
+            '&lang=' .. LANG)
 
     weather_widget = wibox.widget {
         {
@@ -256,12 +265,12 @@ local function worker(user_args)
                 ICONS_DIR .. icon_map[weather.weather[1].icon] .. icons_extension)
             self:get_children_by_id('temp')[1]:set_text(gen_temperature_str(weather.temp, '%.0f', false, units))
             self:get_children_by_id('feels_like_temp')[1]:set_text(
-                'Feels like ' .. gen_temperature_str(weather.feels_like, '%.0f', false, units))
+                LCLE.feels_like .. gen_temperature_str(weather.feels_like, '%.0f', false, units))
             self:get_children_by_id('description')[1]:set_text(weather.weather[1].description)
             self:get_children_by_id('wind')[1]:set_markup(
-                'Wind: <b>' .. weather.wind_speed .. 'm/s (' .. to_direction(weather.wind_deg) .. ')</b>')
-            self:get_children_by_id('humidity')[1]:set_markup('Humidity: <b>' .. weather.humidity .. '%</b>')
-            self:get_children_by_id('uv')[1]:set_markup('UV: ' .. uvi_index_color(weather.uvi))
+                LCLE.wind .. '<b>' .. weather.wind_speed .. 'm/s (' .. to_direction(weather.wind_deg) .. ')</b>')
+            self:get_children_by_id('humidity')[1]:set_markup(LCLE.humidity .. '<b>' .. weather.humidity .. '%</b>')
+            self:get_children_by_id('uv')[1]:set_markup(LCLE.uv .. uvi_index_color(weather.uvi))
         end
     }
 
