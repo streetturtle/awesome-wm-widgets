@@ -6,29 +6,55 @@ local gears = require("gears")
 
 local storage_bar_widget = {}
 
+--- Table with widget configuration, consists of three sections:
+---  - general - general configuration
+---  - widget - configuration of the widget displayed on the wibar
+---  - popup - configuration of the popup
+local config = {}
+
+-- general
+config.mounts = { '/' }
+config.refresh_rate = 60
+
+-- wibar widget
+config.widget_width = 40
+config.widget_bar_color = '#aaaaaa'
+config.widget_onclick_bg = '#ff0000'
+config.widget_border_color = '#535d6c66'
+config.widget_background_color = '#22222233'
+
+-- popup
+config.popup_bg = '#22222233'
+config.popup_border_width = 1
+config.popup_border_color = '#535d6c66'
+config.popup_bar_color = '#aaaaaa'
+config.popup_bar_background_color = '#22222233'
+config.popup_bar_border_color = '#535d6c66'
+
 local function worker(user_args)
     local args = user_args or {}
-    local mounts = args.mounts or { '/' }
-    local timeout = args.timeout or 60
+
+    -- Setup config for the widget instance.
+    -- The `_config` table will keep the first existing value after checking
+    -- in this order: user parameter > beautiful > module default.
+    local _config = {}
+    for prop, value in pairs(config) do
+        _config[prop] = args[prop] or beautiful[prop] or value
+    end
 
     storage_bar_widget = wibox.widget {
         {
             id = 'progressbar',
+            color = _config.widget_bar_color,
             max_value = 100,
             forced_height = 20,
-            forced_width = 35,
-            paddings = 1,
+            forced_width = _config.widget_width,
+            paddings = 2,
             margins = 4,
             border_width = 1,
             border_radius = 2,
-            border_color = beautiful.fg_normal,
-            background_color = beautiful.bg_normal,
-            bar_border_width = 1,
-            bar_border_color = beautiful.bg_focus,
-            color = "linear:150,0:0,0:0,"
-                    .. beautiful.fg_normal
-                    .. ":0.3," .. beautiful.bg_urgent .. ":0.6,"
-                    .. beautiful.fg_normal,
+            border_color = _config.widget_border_color,
+            background_color = _config.widget_background_color,
             widget = wibox.widget.progressbar
         },
         shape = function(cr, width, height)
@@ -63,11 +89,12 @@ local function worker(user_args)
     disk_header:ajust_ratio(1, 0, 0.3, 0.7)
 
     local popup = awful.popup {
+        bg = _config.popup_bg,
         ontop = true,
         visible = false,
         shape = gears.shape.rounded_rect,
-        border_width = 1,
-        border_color = beautiful.bg_normal,
+        border_width = _config.popup_border_width,
+        border_color = _config.popup_border_color,
         maximum_width = 400,
         offset = { y = 5 },
         widget = {}
@@ -80,7 +107,7 @@ local function worker(user_args)
                             popup.visible = not popup.visible
                             storage_bar_widget:set_bg('#00000000')
                         else
-                            storage_bar_widget:set_bg(beautiful.bg_focus)
+                            storage_bar_widget:set_bg(_config.widget_background_color)
                             popup:move_next_to(mouse.current_widget_geometry)
                         end
                     end)
@@ -88,10 +115,11 @@ local function worker(user_args)
     )
 
     local disks = {}
-    watch([[bash -c "df | tail -n +2"]], timeout,
+    watch([[bash -c "df | tail -n +2"]], _config.refresh_rate,
             function(widget, stdout)
                 for line in stdout:gmatch("[^\r\n$]+") do
-                    local filesystem, size, used, avail, perc, mount = line:match('([%p%w]+)%s+([%d%w]+)%s+([%d%w]+)%s+([%d%w]+)%s+([%d]+)%%%s+([%p%w]+)')
+                    local filesystem, size, used, avail, perc, mount =
+                        line:match('([%p%w]+)%s+([%d%w]+)%s+([%d%w]+)%s+([%d%w]+)%s+([%d]+)%%%s+([%p%w]+)')
 
                     disks[mount] = {}
                     disks[mount].filesystem = filesystem
@@ -101,12 +129,12 @@ local function worker(user_args)
                     disks[mount].perc = perc
                     disks[mount].mount = mount
 
-                    if disks[mount].mount == mounts[1] then
+                    if disks[mount].mount == _config.mounts[1] then
                         widget:set_value(tonumber(disks[mount].perc))
                     end
                 end
 
-                for k, v in ipairs(mounts) do
+                for k, v in ipairs(_config.mounts) do
 
                     local row = wibox.widget {
                         {
@@ -115,22 +143,18 @@ local function worker(user_args)
                             widget = wibox.widget.textbox
                         },
                         {
+                            color = _config.popup_bar_color,
                             max_value = 100,
                             value = tonumber(disks[v].perc),
                             forced_height = 20,
                             paddings = 1,
                             margins = 4,
                             border_width = 1,
-                            border_color = beautiful.bg_focus,
-                            background_color = beautiful.bg_normal,
+                            border_color = _config.popup_bar_border_color,
+                            background_color = _config.popup_bar_background_color,
                             bar_border_width = 1,
-                            bar_border_color = beautiful.bg_focus,
-                            color = "linear:150,0:0,0:0,"
-                                    .. beautiful.fg_normal
-                                    .. ":0.3," .. beautiful.bg_urgent .. ":0.6,"
-                                    .. beautiful.fg_normal,
+                            bar_border_color = _config.popup_bar_border_color,
                             widget = wibox.widget.progressbar,
-
                         },
                         {
                             text = math.floor(disks[v].used / 1024 / 1024)
