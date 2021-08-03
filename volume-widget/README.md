@@ -57,7 +57,8 @@ It is possible to customize the widget by providing a table with all or some of 
 | Name | Default | Description |
 |---|---|---|
 | `mixer_cmd` | `pavucontrol` | command to run on middle click (e.g. a mixer program) |
-| `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
+| `widget_type`| `icon_and_text`| widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
+| `step` | 5 | the percentage step when increasing/decreasing the volume 
 
 Depending on the chosen widget type add parameters from the corresponding section below:
 

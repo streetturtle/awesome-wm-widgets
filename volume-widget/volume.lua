@@ -18,8 +18,8 @@ local utils = require("awesome-wm-widgets.volume-widget.utils")
 
 local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
 local GET_VOLUME_CMD = 'amixer -D pulse sget Master'
-local INC_VOLUME_CMD
-local DEC_VOLUME_CMD
+local INC_VOLUME_CMD = 'amixer -D pulse sset Master %d%%+'
+local DEC_VOLUME_CMD = 'amixer -D pulse sset Master %d%%-'
 local TOG_VOLUME_CMD = 'amixer -D pulse sset Master toggle'
 
 
@@ -168,8 +168,8 @@ local function worker(user_args)
     local refresh_rate = args.refresh_rate or 1
     local step = args.step or 5
 
-    INC_VOLUME_CMD = 'amixer -D pulse sset Master ' .. step .. '%+'
-    DEC_VOLUME_CMD = 'amixer -D pulse sset Master ' .. step .. '%-'
+    INC_VOLUME_CMD = string.format(INC_VOLUME_CMD, step)
+    DEC_VOLUME_CMD = string.format(DEC_VOLUME_CMD, step)
 
     if widget_types[widget_type] == nil then
         volume.widget = widget_types['icon_and_text'].get_widget(args.icon_and_text_args)
