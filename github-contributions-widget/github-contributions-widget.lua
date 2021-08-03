@@ -11,9 +11,10 @@
 local awful = require("awful")
 local naughty = require("naughty")
 local wibox = require("wibox")
+local gears = require("gears")
 local widget_themes = require("awesome-wm-widgets.github-contributions-widget.themes")
 
-local GET_CONTRIBUTIONS_CMD = [[bash -c "curl -s https://github-contributions.now.sh/api/v1/%s]]
+local GET_CONTRIBUTIONS_CMD = [[bash -c "curl -s https://github-contributions.vercel.app/api/v1/%s]]
     .. [[ | jq -r '[.contributions[] ]]
     .. [[ | select ( .date | strptime(\"%%Y-%%m-%%d\") | mktime < now)][:%s]| .[].intensity'"]]
 
@@ -35,7 +36,6 @@ end
 local function worker(user_args)
 
     local args = user_args or {}
-
     local username = args.username or 'streetturtle'
     local days = args.days or 365
     local color_of_empty_cells = args.color_of_empty_cells
@@ -50,25 +50,17 @@ local function worker(user_args)
 
     if with_border == nil then with_border = true end
 
-    local function hex2rgb(hex)
-        if color_of_empty_cells ~= nil and hex == widget_themes[theme][0] then
-            hex = color_of_empty_cells
-        end
-        hex = tostring(hex):gsub('#','')
-        return tonumber('0x' .. hex:sub(1, 2)),
-                tonumber('0x' .. hex:sub(3, 4)),
-                tonumber('0x' .. hex:sub(5, 6))
-    end
-
     local function get_square(color)
-        local r, g, b = hex2rgb(color)
+        if color_of_empty_cells ~= nil and color == widget_themes[theme][0] then
+            color = color_of_empty_cells
+        end
 
         return wibox.widget{
             fit = function()
                 return 3, 3
             end,
             draw = function(_, _, cr, _, _)
-                cr:set_source_rgb(r/255, g/255, b/255)
+                cr:set_source(gears.color(color))
                 cr:rectangle(0, 0, with_border and 2 or 3, with_border and 2 or 3)
                 cr:fill()
             end,

@@ -8,7 +8,7 @@
    </a>
 </p>
 
-The widget showing current, hourly and daily weather forecast.
+The widget showing current, hourly and daily weather forecast:
 
 <p align="center">
  <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/weather-widget/weather-widget.png" alt="screenshot" style="max-width:100%;">

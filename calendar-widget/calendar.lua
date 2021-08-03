@@ -142,7 +142,7 @@ local function worker(user_args)
         -- highlight only today's day
         if flag == 'focus' then
             local today = os.date('*t')
-            if today.month ~= date.month then
+            if not (today.month == date.month and today.year == date.year) then
                 flag = 'normal'
             end
         end

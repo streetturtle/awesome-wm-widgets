@@ -4,6 +4,8 @@ This widget shows the RAM usage. When clicked another widget appears with more d
 
 ![screenshot](./out.gif)
 
+Note: this widget is compatible with Awesome v4.3+, as it is using [awful.popup](https://awesomewm.org/doc/api/classes/awful.popup.html)
+
 ## Customization
 
 It is possible to customize widget by providing a table with all or some of the following config parameters:
