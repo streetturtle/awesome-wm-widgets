@@ -163,7 +163,7 @@ local function worker()
     local update_graphic = function(widget, stdout, _, _, _)
         -- mpdstatus, artist, current_song = stdout:match("(%w+)%;+(.-)%;(.*)")
         local words = {}
-        for w in stdout:gmatch("([^;]*)") do table.insert(words, w) end
+        for w in stdout:gmatch("([^;]*);") do table.insert(words, w) end
 
         mpdstatus = words[1]
         artist = words[2]
