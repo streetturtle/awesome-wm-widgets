@@ -129,7 +129,7 @@ end
 
 local function worker()
 
-    -- retriving song info
+    -- retrieve song info
     local current_song, artist, mpdstatus, art, artUrl
 
     local icon = wibox.widget {
