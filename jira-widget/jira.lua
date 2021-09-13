@@ -167,13 +167,22 @@ local function worker(user_args)
 
         local cur_status = ''
         for _, issue in ipairs(result.issues) do
-            local path_to_avatar = HOME_DIR ..'/.cache/awmw/jira-widget/avatars/' .. issue.fields.assignee.name
+
+            local path_to_avatar = HOME_DIR ..'/.cache/awmw/jira-widget/avatars/' .. issue.fields.assignee.name or issue.fields.assignee.displayName
+            local name = ''
+            if issue.fields.assignee.name == nil then
+              name = issue.fields.assignee.displayName 
+            else 
+              name = issue.fields.assignee.name 
+            end
+
+            local path_to_avatar = HOME_DIR ..'/.cache/awmw/jira-widget/avatars/' .. name
 
             if not gfs.file_readable(path_to_avatar) then
                 spawn.easy_async(string.format(
                         DOWNLOAD_AVATAR_CMD,
                         HOME_DIR,
-                        issue.fields.assignee.name,
+                        name,
                         issue.fields.assignee.avatarUrls['48x48']))
             end
 
