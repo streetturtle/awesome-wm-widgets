@@ -18,7 +18,7 @@ local CMD = [[sh -c "grep '^cpu.' /proc/stat; ps -eo '%p|%c|%C|' -o "%mem" -o '|
     .. [[| head -11 | tail -n +2"]]
 
 -- A smaller command, less resource intensive, used when popup is not shown.
-local CMD_slim = [[sh -c "grep '^cpu.' /proc/stat | head -n 1" ]]
+local CMD_slim = [[grep --max-count=1 '^cpu.' /proc/stat]]
 
 local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/cpu-widget'
