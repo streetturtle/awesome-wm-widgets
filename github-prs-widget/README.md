@@ -11,7 +11,9 @@ The widget shows the number of pull requests assigned to the user and when click
  - when was created;
  - number of comments;
 
-![screenshot](./screenshots/screenshot1.png)
+<p align="center">
+<img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/github-prs-widget/screenshots/screenshot1.png">
+</p>
 
 ## Customization
 
