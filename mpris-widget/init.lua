@@ -52,8 +52,8 @@ local mpris_widget = wibox.widget{
         widget = wibox.widget.textbox
     },
     layout = wibox.layout.fixed.horizontal,
-    set_text = function(self, artis, title)
-        self:get_children_by_id('artist')[1]:set_text(artis)
+    set_text = function(self, artist, title)
+        self:get_children_by_id('artist')[1]:set_text(artist)
         self:get_children_by_id('title')[1]:set_text(title)
     end
 }
@@ -129,7 +129,7 @@ end
 
 local function worker()
 
-    -- retriving song info
+    -- retrieve song info
     local current_song, artist, mpdstatus, art, artUrl
 
     local icon = wibox.widget {
@@ -163,7 +163,7 @@ local function worker()
     local update_graphic = function(widget, stdout, _, _, _)
         -- mpdstatus, artist, current_song = stdout:match("(%w+)%;+(.-)%;(.*)")
         local words = {}
-        for w in stdout:gmatch("([^;]*)") do table.insert(words, w) end
+        for w in stdout:gmatch("([^;]*);") do table.insert(words, w) end
 
         mpdstatus = words[1]
         artist = words[2]
@@ -188,7 +188,7 @@ local function worker()
             icon.image = PAUSE_ICON_NAME
             widget.colors = {beautiful.widget_main_color}
             mpdarc_current_song_widget.markup = current_song
-            widget.set_text(artist, current_song)
+            widget:set_text(artist, current_song)
         elseif mpdstatus == "Stopped" then
             mpdarc_icon_widget.visible = true
             icon.image = STOP_ICON_NAME
