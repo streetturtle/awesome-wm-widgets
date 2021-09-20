@@ -44,7 +44,7 @@ local github_widget = wibox.widget {
                     {
                         id = 'error_marker',
                         draw = function(_, _, cr, width, height)
-                            cr:set_source(color(_config.fg_urgent))
+                            cr:set_source(color('#BF616A'))
                             cr:arc(width - height / 6, height / 6, height / 6, 0, math.pi * 2)
                             cr:fill()
                         end,
