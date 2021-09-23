@@ -43,8 +43,8 @@ Note that widget uses following command the get the current volume: `amixer -D p
 To improve responsiveness of the widget when volume level is changed by a shortcut use corresponding methods of the widget:
 
 ```lua
-awful.key({ modkey }, "]", function() volume_widget:inc() end),
-awful.key({ modkey }, "[", function() volume_widget:dec() end),
+awful.key({ modkey }, "]", function() volume_widget:inc(5) end),
+awful.key({ modkey }, "[", function() volume_widget:dec(5) end),
 awful.key({ modkey }, "\\", function() volume_widget:toggle() end),
 ```
 
@@ -57,6 +57,7 @@ It is possible to customize the widget by providing a table with all or some of 
 | Name | Default | Description |
 |---|---|---|
 | `mixer_cmd` | `pavucontrol` | command to run on middle click (e.g. a mixer program) |
+| `step` | `5` | How much the volume is raised or lowered at once (in %) |
 | `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
 
 Depending on the chosen widget type add parameters from the corresponding section below:
