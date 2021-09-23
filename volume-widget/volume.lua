@@ -18,8 +18,8 @@ local utils = require("awesome-wm-widgets.volume-widget.utils")
 
 local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
 local GET_VOLUME_CMD = 'amixer -D pulse sget Master'
-local INC_VOLUME_CMD
-local DEC_VOLUME_CMD
+local function INC_VOLUME_CMD(step) return 'amixer -D pulse sset Master ' .. step .. '%+' end
+local function DEC_VOLUME_CMD(step) return 'amixer -D pulse sset Master ' .. step .. '%-' end
 local TOG_VOLUME_CMD = 'amixer -D pulse sset Master toggle'
 
 
@@ -168,9 +168,6 @@ local function worker(user_args)
     local refresh_rate = args.refresh_rate or 1
     local step = args.step or 5
 
-    INC_VOLUME_CMD = 'amixer -D pulse sset Master ' .. step .. '%+'
-    DEC_VOLUME_CMD = 'amixer -D pulse sset Master ' .. step .. '%-'
-
     if widget_types[widget_type] == nil then
         volume.widget = widget_types['icon_and_text'].get_widget(args.icon_and_text_args)
     else
@@ -187,12 +184,12 @@ local function worker(user_args)
         widget:set_volume_level(volume_level)
     end
 
-    function volume:inc()
-        spawn.easy_async(INC_VOLUME_CMD, function(stdout) update_graphic(volume.widget, stdout) end)
+    function volume:inc(s)
+        spawn.easy_async(INC_VOLUME_CMD(s or step), function(stdout) update_graphic(volume.widget, stdout) end)
     end
 
-    function volume:dec()
-        spawn.easy_async(DEC_VOLUME_CMD, function(stdout) update_graphic(volume.widget, stdout) end)
+    function volume:dec(s)
+        spawn.easy_async(DEC_VOLUME_CMD(s or step), function(stdout) update_graphic(volume.widget, stdout) end)
     end
 
     function volume:toggle()
