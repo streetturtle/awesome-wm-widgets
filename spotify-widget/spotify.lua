@@ -16,8 +16,8 @@ local GET_SPOTIFY_STATUS_CMD = 'sp status'
 local GET_CURRENT_SONG_CMD = 'sp current'
 
 local function ellipsize(text, length)
-    return (text:len() > length and length > 0)
-        and text:sub(0, length - 3) .. '...'
+    return (utf8.len(text) > length and length > 0)
+        and text:sub(0, utf8.offset(text, length - 2) - 1) .. '...'
         or text
 end
 
