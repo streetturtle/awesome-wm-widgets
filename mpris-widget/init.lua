@@ -208,7 +208,7 @@ local function worker()
 
 
     local notification
-    local function show_MPD_status()
+    local function show_status()
         spawn.easy_async(GET_MPD_CMD, function()
             notification = naughty.notify {
                 margin = 10,
@@ -216,17 +216,17 @@ local function worker()
                 hover_timeout = 0.5,
                 width = 240,
                 height = 90,
-                title = "<b>" .. player_status .. "</b>",
-                text = current_song .. " <b>by</b> " .. artist,
+                title = player_status,
+                text = current_song .. " - " .. artist,
                 image = artUrl
             }
         end)
     end
 
-    mpdarc:connect_signal("mouse::enter", function()
-        if current_song ~= nil and artist ~= nil then show_MPD_status() end
+    mpris_widget:connect_signal("mouse::enter", function()
+        if current_song ~= nil and artist ~= nil then show_status() end
     end)
-    mpdarc:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
+    mpris_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
 
     watch(string.format(GET_MPD_CMD, "'" .. default_player .. "'"), 1, update_graphic, mpris_widget)
 
