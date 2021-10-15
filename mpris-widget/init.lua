@@ -73,7 +73,7 @@ local popup = awful.popup{
 local function rebuild_popup()
     awful.spawn.easy_async(LIST_PLAYERS_CMD, function(stdout, _, _, _)
         for player_name in stdout:gmatch("[^\r\n]+") do
-            if player_name ~='' or player_name ~=nil then
+            if player_name ~='' and player_name ~=nil then
                 for i = 0, #rows do rows[i]=nil end
 
                 local checkbox = wibox.widget{
