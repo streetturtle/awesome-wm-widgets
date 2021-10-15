@@ -16,8 +16,6 @@ local gears = require("gears")
 local GET_MPD_CMD = "playerctl -p %s -f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}}' metadata"
 
 local TOGGLE_MPD_CMD = "playerctl play-pause"
-local PAUSE_MPD_CMD = "playerctl pause"
-local STOP_MPD_CMD = "playerctl stop"
 local NEXT_MPD_CMD = "playerctl next"
 local PREV_MPD_CMD = "playerctl previous"
 local LIST_PLAYERS_CMD = "playerctl -l"
@@ -200,25 +198,6 @@ local function worker()
             widget.colors = {beautiful.widget_red}
         end
     end
-
-    mpdarc:connect_signal("button::press", function(_, _, _, button)
-        if (button == 1) then
-            awful.spawn(TOGGLE_MPD_CMD, false) -- left click
-        elseif (button == 2) then
-            awful.spawn(STOP_MPD_CMD, false)
-        elseif (button == 3) then
-            awful.spawn(PAUSE_MPD_CMD, false)
-        elseif (button == 4) then
-            awful.spawn(NEXT_MPD_CMD, false) -- scroll up
-        elseif (button == 5) then
-            awful.spawn(PREV_MPD_CMD, false) -- scroll down
-        end
-
-        -- spawn.easy_async(string.format(GET_MPD_CMD, "'" .. default_player .. "'"),
-        -- function(stdout, stderr, exitreason, exitcode)
-        --     update_graphic(mpdarc, stdout, stderr, exitreason, exitcode)
-        -- end)
-    end)
 
     mpris_widget:buttons(
             awful.util.table.join(
