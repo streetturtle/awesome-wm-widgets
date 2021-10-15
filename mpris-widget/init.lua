@@ -28,12 +28,19 @@ local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/music-library.png"
 
 local default_player = ''
 
+local icon = wibox.widget {
+    id = "icon",
+    widget = wibox.widget.imagebox,
+    image = PLAY_ICON_NAME
+}
+
 local mpris_widget = wibox.widget{
     {
         id = 'artist',
         widget = wibox.widget.textbox
     },
     {
+        icon,
         max_value = 1,
         value = 0,
         thickness = 2,
@@ -130,29 +137,6 @@ local function worker()
     -- retrieve song info
     local current_song, artist, player_status, art, artUrl
 
-    local icon = wibox.widget {
-        id = "icon",
-        widget = wibox.widget.imagebox,
-        image = PLAY_ICON_NAME
-    }
-    local mirrored_icon = wibox.container.mirror(icon, {horizontal = true})
-
-    local mpdarc = wibox.widget {
-        mirrored_icon,
-        -- max_value = 1,
-        -- value = 0,
-        thickness = 2,
-        start_angle = 4.71238898, -- 2pi*3/4
-        forced_height = 24,
-        forced_width = 24,
-        rounded_edge = true,
-        bg = "#ffffff11",
-        paddings = 0,
-        widget = wibox.container.arcchart
-    }
-
-    local mpdarc_icon_widget = wibox.container.mirror(mpdarc, {horizontal = true})
-
     local update_graphic = function(widget, stdout, _, _, _)
         local words = {}
         for w in stdout:gmatch("([^;]*);") do table.insert(words, w) end
@@ -170,21 +154,17 @@ local function worker()
         if art ~= nil then artUrl = string.sub(art, 8, -1) end
 
         if player_status == "Playing" then
-            mpdarc_icon_widget.visible = true
             icon.image = PLAY_ICON_NAME
             widget.colors = {beautiful.widget_main_color}
             widget:set_text(artist, current_song)
         elseif player_status == "Paused" then
-            mpdarc_icon_widget.visible = true
             icon.image = PAUSE_ICON_NAME
             widget.colors = {beautiful.widget_main_color}
             widget:set_text(artist, current_song)
         elseif player_status == "Stopped" then
-            mpdarc_icon_widget.visible = true
             icon.image = STOP_ICON_NAME
         else -- no player is running
             icon.image = LIBRARY_ICON_NAME
-            mpdarc_icon_widget.visible = false
             widget.colors = {beautiful.widget_red}
         end
     end
