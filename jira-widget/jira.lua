@@ -168,12 +168,11 @@ local function worker(user_args)
         local cur_status = ''
         for _, issue in ipairs(result.issues) do
 
-            local path_to_avatar = HOME_DIR ..'/.cache/awmw/jira-widget/avatars/' .. issue.fields.assignee.name or issue.fields.assignee.displayName
-            local name = ''
+            local name
             if issue.fields.assignee.name == nil then
-              name = issue.fields.assignee.displayName 
-            else 
-              name = issue.fields.assignee.name 
+              name = issue.fields.assignee.displayName
+            else
+              name = issue.fields.assignee.name
             end
 
             local path_to_avatar = HOME_DIR ..'/.cache/awmw/jira-widget/avatars/' .. name
