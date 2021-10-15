@@ -152,11 +152,6 @@ local function worker()
     }
 
     local mpdarc_icon_widget = wibox.container.mirror(mpdarc, {horizontal = true})
-    local mpdarc_current_song_widget = wibox.widget {
-        id = 'current_song',
-        widget = wibox.widget.textbox,
-        font = 'Play 10'
-    }
 
     local update_graphic = function(widget, stdout, _, _, _)
         local words = {}
@@ -178,22 +173,18 @@ local function worker()
             mpdarc_icon_widget.visible = true
             icon.image = PLAY_ICON_NAME
             widget.colors = {beautiful.widget_main_color}
-            mpdarc_current_song_widget.markup = current_song
             widget:set_text(artist, current_song)
         elseif player_status == "Paused" then
             mpdarc_icon_widget.visible = true
             icon.image = PAUSE_ICON_NAME
             widget.colors = {beautiful.widget_main_color}
-            mpdarc_current_song_widget.markup = current_song
             widget:set_text(artist, current_song)
         elseif player_status == "Stopped" then
             mpdarc_icon_widget.visible = true
             icon.image = STOP_ICON_NAME
-            mpdarc_current_song_widget.markup = ""
         else -- no player is running
             icon.image = LIBRARY_ICON_NAME
             mpdarc_icon_widget.visible = false
-            mpdarc_current_song_widget.markup = ""
             widget.colors = {beautiful.widget_red}
         end
     end
