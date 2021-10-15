@@ -135,23 +135,19 @@ end
 local function worker()
 
     -- retrieve song info
-    local current_song, artist, player_status, art, artUrl
+    local current_song, artist, player_status, artUrl
 
     local update_graphic = function(widget, stdout, _, _, _)
-        local words = {}
-        for w in stdout:gmatch("([^;]*);") do table.insert(words, w) end
-
+        local words = gears.string.split(stdout, ';')
         player_status = words[1]
         artist = words[2]
         current_song = words[3]
-        art = words[4]
+        artUrl = words[4]
         if current_song ~= nil then
             if string.len(current_song) > 18 then
                 current_song = string.sub(current_song, 0, 9) .. ".."
             end
         end
-
-        if art ~= nil then artUrl = string.sub(art, 8, -1) end
 
         if player_status == "Playing" then
             icon.image = PLAY_ICON_NAME
