@@ -220,7 +220,7 @@ local function worker()
     local notification
     local function show_MPD_status()
         spawn.easy_async(GET_MPD_CMD, function()
-            notification = naughty.notification {
+            notification = naughty.notify {
                 margin = 10,
                 timeout = 5,
                 hover_timeout = 0.5,
