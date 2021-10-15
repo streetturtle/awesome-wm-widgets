@@ -128,7 +128,7 @@ end
 local function worker()
 
     -- retrieve song info
-    local current_song, artist, mpdstatus, art, artUrl
+    local current_song, artist, player_status, art, artUrl
 
     local icon = wibox.widget {
         id = "icon",
@@ -159,11 +159,10 @@ local function worker()
     }
 
     local update_graphic = function(widget, stdout, _, _, _)
-        -- mpdstatus, artist, current_song = stdout:match("(%w+)%;+(.-)%;(.*)")
         local words = {}
         for w in stdout:gmatch("([^;]*);") do table.insert(words, w) end
 
-        mpdstatus = words[1]
+        player_status = words[1]
         artist = words[2]
         current_song = words[3]
         art = words[4]
@@ -175,19 +174,19 @@ local function worker()
 
         if art ~= nil then artUrl = string.sub(art, 8, -1) end
 
-        if mpdstatus == "Playing" then
+        if player_status == "Playing" then
             mpdarc_icon_widget.visible = true
             icon.image = PLAY_ICON_NAME
             widget.colors = {beautiful.widget_main_color}
             mpdarc_current_song_widget.markup = current_song
             widget:set_text(artist, current_song)
-        elseif mpdstatus == "Paused" then
+        elseif player_status == "Paused" then
             mpdarc_icon_widget.visible = true
             icon.image = PAUSE_ICON_NAME
             widget.colors = {beautiful.widget_main_color}
             mpdarc_current_song_widget.markup = current_song
             widget:set_text(artist, current_song)
-        elseif mpdstatus == "Stopped" then
+        elseif player_status == "Stopped" then
             mpdarc_icon_widget.visible = true
             icon.image = STOP_ICON_NAME
             mpdarc_current_song_widget.markup = ""
@@ -226,7 +225,7 @@ local function worker()
                 hover_timeout = 0.5,
                 width = 240,
                 height = 90,
-                title = "<b>" .. mpdstatus .. "</b>",
+                title = "<b>" .. player_status .. "</b>",
                 text = current_song .. " <b>by</b> " .. artist,
                 image = artUrl
             }
