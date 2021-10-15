@@ -51,6 +51,7 @@ local weather_popup = awful.popup {
     border_color = beautiful.bg_focus,
     maximum_width = 400,
     offset = {y = 5},
+    hide_on_right_click = true,
     widget = {}
 }
 
