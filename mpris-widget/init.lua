@@ -7,13 +7,11 @@
 -------------------------------------------------
 local awful = require("awful")
 local beautiful = require("beautiful")
-local spawn = require("awful.spawn")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
-local naughty = require("naughty")
 local gears = require("gears")
 
-local GET_MPD_CMD = "playerctl -p %s -f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}}' metadata"
+local GET_MPD_CMD = "playerctl -p %s -f '{{status}};{{xesam:artist}};{{xesam:title}}' metadata"
 
 local TOGGLE_MPD_CMD = "playerctl play-pause"
 local NEXT_MPD_CMD = "playerctl next"
@@ -135,14 +133,13 @@ end
 local function worker()
 
     -- retrieve song info
-    local current_song, artist, player_status, artUrl
+    local current_song, artist, player_status
 
     local update_graphic = function(widget, stdout, _, _, _)
         local words = gears.string.split(stdout, ';')
         player_status = words[1]
         artist = words[2]
         current_song = words[3]
-        artUrl = words[4]
         if current_song ~= nil then
             if string.len(current_song) > 18 then
                 current_song = string.sub(current_song, 0, 9) .. ".."
@@ -180,29 +177,6 @@ local function worker()
                     awful.button({}, 1, function() awful.spawn(TOGGLE_MPD_CMD, false) end)
             )
     )
-
-
-
-    local notification
-    local function show_status()
-        spawn.easy_async(GET_MPD_CMD, function()
-            notification = naughty.notify {
-                margin = 10,
-                timeout = 5,
-                hover_timeout = 0.5,
-                width = 240,
-                height = 90,
-                title = player_status,
-                text = current_song .. " - " .. artist,
-                image = artUrl
-            }
-        end)
-    end
-
-    mpris_widget:connect_signal("mouse::enter", function()
-        if current_song ~= nil and artist ~= nil then show_status() end
-    end)
-    mpris_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
 
     watch(string.format(GET_MPD_CMD, "'" .. default_player .. "'"), 1, update_graphic, mpris_widget)
 
