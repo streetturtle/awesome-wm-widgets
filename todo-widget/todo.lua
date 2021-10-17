@@ -9,7 +9,8 @@
 
 local awful = require("awful")
 local wibox = require("wibox")
-local json = require("json.json")
+--local json = require("awesome-wm-widgets.todo-widgets.json.json")
+local json = require("awesome-wm-widgets.todo-widget.json.json")
 local spawn = require("awful.spawn")
 local gears = require("gears")
 local beautiful = require("beautiful")
