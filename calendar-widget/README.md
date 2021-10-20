@@ -4,18 +4,27 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
 
 ## Features
 
+
+### Customization
+
+| Name | Default | Description |
+|---|---|---|
+| theme     | `naughty` | The theme to use          |
+| placement | `top`     | The position of the popup |
+| radius    |  8        | The popup radius          |
+
  - themes:
-  
+
     | Name | Screenshot |
     |---|---|
-    | nord (default) | ![nord_theme](./nord.png) |
-    | outrun | ![outrun_theme](./outrun.png) |
-    | light | ![outrun_theme](./light.png) |
-    | dark | ![outrun_theme](./dark.png) |
+    | nord           | ![nord_theme](./nord.png) |
+    | outrun         | ![outrun_theme](./outrun.png) |
+    | light          | ![outrun_theme](./light.png) |
+    | dark           | ![outrun_theme](./dark.png) |
     | naughty (default) | from local theme |
-  
+
  - setup widget placement
-  
+
   top center - in case you clock is centered:
 
    ![calendar_top](./calendar_top.png)
@@ -48,7 +57,7 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
 
 ## How to use
 
-This widget needs an 'anchor' - another widget which triggers visibility of the calendar. Default `mytextclock` is the perfect candidate!  
+This widget needs an 'anchor' - another widget which triggers visibility of the calendar. Default `mytextclock` is the perfect candidate!
 Just after mytextclock is instantiated, create the widget and add the mouse listener to it.
 
 ```lua
@@ -67,7 +76,7 @@ local cw = calendar_widget({
     previous_month_button = 1,
     next_month_button = 3,
 })
-mytextclock:connect_signal("button::press", 
+mytextclock:connect_signal("button::press",
     function(_, _, _, button)
         if button == 1 then cw.toggle() end
     end)
