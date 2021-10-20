@@ -12,6 +12,7 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
 | theme     | `naughty` | The theme to use          |
 | placement | `top`     | The position of the popup |
 | radius    |  8        | The popup radius          |
+| start_sunday | false  | Start the week on Sunday  |
 
  - themes:
 
@@ -37,6 +38,10 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
 
   ![calendar_bottom_right](./calendar_bottom_right.png)
 
+ - setup first day of week
+
+   By setting `start_sunday` to true:
+   ![calendar_start_sunday](./calendar_start_sunday.png)
 
  - mouse support:
     move to the next and previous month. Using mouse buttons or scroll wheel.
@@ -44,13 +49,13 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
     You can configure this by specifying the button to move to next/previous.
     Usually these are configured as follows. If you want to use other mouse buttons, you can find their number using `xev`.
 
-    | number | button |
-    |--------|--------|
-    | 4      | scroll up |
-    | 5      | scroll down |
-    | 1      | left click |
-    | 2 | right click |
-    | 3 | middles click |
+    | number | button        |
+    |--------|---------------|
+    | 4      | scroll up     |
+    | 5      | scroll down   |
+    | 1      | left click    |
+    | 2      | right click   |
+    | 3      | middles click |
 
     By default `previous_month_button` is 5, `next_month_button` is 4.
 
@@ -71,6 +76,7 @@ local cw = calendar_widget()
 local cw = calendar_widget({
     theme = 'outrun',
     placement = 'bottom_right',
+    start_sunday = true,
     radius = 8,
 -- with customized next/previous (see table above)
     previous_month_button = 1,

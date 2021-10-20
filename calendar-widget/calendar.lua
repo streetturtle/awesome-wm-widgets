@@ -97,6 +97,7 @@ local function worker(user_args)
     local radius = args.radius or 8
     local next_month_button = args.next_month_button or 4
     local previous_month_button = args.previous_month_button or 5
+    local start_sunday = args.start_sunday or false
 
     local styles = {}
     local function rounded_shape(size)
@@ -184,6 +185,7 @@ local function worker(user_args)
         font = beautiful.get_font(),
         fn_embed = decorate_cell,
         long_weekdays = true,
+        start_sunday = start_sunday,
         widget = wibox.widget.calendar.month
     }
 
