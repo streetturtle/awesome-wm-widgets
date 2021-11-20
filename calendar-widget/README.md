@@ -4,7 +4,6 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
 
 ## Features
 
- - mouse support: scroll up - shows next month, scroll down - previous
  - themes:
   
     | Name | Screenshot |
@@ -30,6 +29,23 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
   ![calendar_bottom_right](./calendar_bottom_right.png)
 
 
+ - mouse support:
+    move to the next and previous month. Using mouse buttons or scroll wheel.
+
+    You can configure this by specifying the button to move to next/previous.
+    Usually these are configured as follows. If you want to use other mouse buttons, you can find their number using `xev`.
+
+    | number | button |
+    |--------|--------|
+    | 4      | scroll up |
+    | 5      | scroll down |
+    | 1      | left click |
+    | 2 | right click |
+    | 3 | middles click |
+
+    By default `previous_month_button` is 5, `next_month_button` is 4.
+
+
 ## How to use
 
 This widget needs an 'anchor' - another widget which triggers visibility of the calendar. Default `mytextclock` is the perfect candidate!  
@@ -47,6 +63,9 @@ local cw = calendar_widget({
     theme = 'outrun',
     placement = 'bottom_right',
     radius = 8,
+-- with customized next/previous (see table above)
+    previous_month_button = 1,
+    next_month_button = 3,
 })
 mytextclock:connect_signal("button::press", 
     function(_, _, _, button)
