@@ -71,7 +71,7 @@ local function worker(user_args)
                     resize = false,
                     widget = wibox.widget.imagebox,
                 },
-                valigh = 'center',
+                valign = 'center',
                 layout = wibox.container.place
             },
             {
@@ -93,7 +93,7 @@ local function worker(user_args)
                     resize = true,
                     widget = wibox.widget.imagebox,
                 },
-                valigh = 'center',
+                valign = 'center',
                 layout = wibox.container.place
             },
             max_value = 100,
