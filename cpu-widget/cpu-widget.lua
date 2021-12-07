@@ -16,7 +16,8 @@ local gears = require("gears")
 
 local CMD = [[sh -c "grep '^cpu.' /proc/stat; ps -eo '%p|%c|%C|' -o "%mem" -o '|%a' --sort=-%cpu ]]
     .. [[| head -11 | tail -n +2"]]
-local CMD_FREQ = [[sh -c "cpupower -c all frequency-info -l; cpupower -c all frequency-info -f"]]
+local CMD_FREQ = [[sh -c "cpupower -c all frequency-info -l; cpupower -c all frequency-info -f;]] ..
+    [[sensors | awk 'BEGIN {n=0} /^Core/ {printf(\"Core%d: %s\n\"), n, \$3; n++}'"]]
 
 -- A smaller command, less resource intensive, used when popup is not shown.
 local CMD_slim = [[grep --max-count=1 '^cpu.' /proc/stat]]
@@ -30,6 +31,10 @@ local cpu_rows = {
     layout = wibox.layout.fixed.vertical,
 }
 local cpu_freq_rows = {
+    spacing = 4,
+    layout = wibox.layout.fixed.vertical,
+}
+local cpu_temp_rows = {
     spacing = 4,
     layout = wibox.layout.fixed.vertical,
 }
@@ -235,6 +240,7 @@ local function worker(user_args)
             if show_cpu_freq then
                 local n_minmax = 1
                 local n_cpu = 1
+                local n_core = 1
                 for line in stdout:gmatch("[^\r\n]+") do
                     if line:find("^[0-9]+") then
                         if cpus[n_minmax] == nil then cpus[n_minmax] = {} end
@@ -242,6 +248,14 @@ local function worker(user_args)
                         cpus[n_minmax]['min'] = min
                         cpus[n_minmax]['max'] = max
                         n_minmax = n_minmax + 1
+                    elseif starts_with(line, 'Core') then
+                        local row = wibox.widget
+                        {
+                            create_textbox{text = line, align = 'center'},
+                            layout  = wibox.layout.ratio.horizontal
+                        }
+                        cpu_temp_rows[n_core] = row
+                        n_core = n_core + 1
                     elseif line:find("current CPU frequency:") then
                         local cur = line:match('%s+(%d+)%s+')
                         local name = string.format("cpu%d:", n_cpu - 1)
@@ -419,6 +433,7 @@ local function worker(user_args)
                             color = beautiful.bg_focus,
                             widget = wibox.widget.separator
                         },
+                        cpu_temp_rows,
                         layout = wibox.layout.fixed.vertical,
                     },
                     margins = 8,
