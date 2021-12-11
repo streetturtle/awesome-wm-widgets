@@ -60,7 +60,7 @@ local function worker(user_args)
             widget = wibox.widget.imagebox,
             resize = false
         },
-        valigh = 'center',
+        valign = 'center',
         layout = wibox.container.place,
     }
     local level_widget = wibox.widget {

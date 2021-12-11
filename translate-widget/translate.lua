@@ -77,7 +77,7 @@ local function translate(to_translate, lang, api_key, url)
                             widget = wibox.widget.imagebox,
                             resize = false
                         },
-                        valigh = 'center',
+                        valign = 'center',
                         layout = wibox.container.place,
                     },
                     {
