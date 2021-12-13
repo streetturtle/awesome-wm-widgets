@@ -1,6 +1,6 @@
 # Logout Popup Widget
 
-Widget which allows to perform lock, reboot, log out, power off and sleep actions. It can be called either by a shortcut, or by clicking on a widget in wibar.
+Widget which allows performing lock, reboot, log out, power off and sleep actions. It can be called either by a shortcut, or by clicking on a widget in wibar.
 
 <p align="center">
     <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/logout-popup-widget/screenshot.gif" alt="screenshot">

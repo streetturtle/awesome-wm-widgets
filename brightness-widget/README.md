@@ -33,7 +33,7 @@ To choose the right `program` argument, first you need to check which of them wo
 
     If there is no output it means that it doesn't work, you can either try to fix it, or try to use `light`.
 
- - using `light` command
+ - using `light` command:
  
     Install (on Ubuntu it's available in the apt repository) from the repo: [github.com/haikarainen/light](https://github.com/haikarainen/light) and check if it works by running
 
