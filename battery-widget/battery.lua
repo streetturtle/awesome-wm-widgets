@@ -78,21 +78,39 @@ local function worker(user_args)
     -- One way of creating a pop-up notification - naughty.notify
     local notification
     local function show_battery_status(batteryType)
-        awful.spawn.easy_async([[bash -c 'acpi']],
-        function(stdout, _, _, _)
-            naughty.destroy(notification)
-            notification = naughty.notify{
-                text =  stdout,
-                title = "Battery status",
-                icon = path_to_icons .. batteryType .. ".svg",
-                icon_size = dpi(16),
-                position = position,
-                timeout = 5, hover_timeout = 0.5,
-                width = 200,
-                screen = mouse.screen
-            }
+        if battery_backend == "acpi" then
+          awful.spawn.easy_async([[bash -c 'acpi']],
+          function(stdout, _, _, _)
+              naughty.destroy(notification)
+              notification = naughty.notify{
+                  text =  stdout,
+                  title = "Battery status",
+                  icon = path_to_icons .. batteryType .. ".svg",
+                  icon_size = dpi(16),
+                  position = position,
+                  timeout = 5, hover_timeout = 0.5,
+                  width = 200,
+                  screen = mouse.screen
+              }
+          end
+          )
+        elseif battery_backend == "upower" then
+          awful.spawn.easy_async({ awful.util.shell, "-c", [[ upower -i $(upower -e | grep BAT) | awk '{ if ($1 == "native-path:") {print $2} else if ($1 == "percentage:") {print $2} else if ($1 == "state:") {print $2} else if ($1 == "time") {print $4" "$5} }' ]] },
+          function(stdout, _, _, _)
+              naughty.destroy(notification)
+              notification = naughty.notify{
+                  text =  stdout,
+                  title = "Battery status",
+                  icon = path_to_icons .. batteryType .. ".svg",
+                  icon_size = dpi(16),
+                  position = position,
+                  timeout = 5, hover_timeout = 0.5,
+                  width = 200,
+                  screen = mouse.screen
+              }
+          end
+          )
         end
-        )
     end
 
     -- Alternative to naughty.notify - tooltip. You can compare both and choose the preferred one
