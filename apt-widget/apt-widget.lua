@@ -192,7 +192,7 @@ local function worker(user_args)
                             {
                                 refresh_button,
                                 halign = 'right',
-                                valigh = 'center',
+                                valign = 'center',
                                 fill_horizontal = true,
                                 layout = wibox.container.place,
                             },
@@ -307,7 +307,7 @@ local function worker(user_args)
                     {
                         header_refresh_icon,
                         halign = 'right',
-                        valigh = 'center',
+                        valign = 'center',
                         layout = wibox.container.place,
                     },
                     layout = wibox.layout.align.horizontal

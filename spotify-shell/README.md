@@ -10,7 +10,7 @@
     - any other string will start a search and play the first result for a given search query;
     - feh - shows the current artwork with `feh`;
 
-1. Stores history and allows navigate through it;
+1. Stores history and allows navigating through it;
 
 1. Highly customizable
 

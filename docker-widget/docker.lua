@@ -298,7 +298,7 @@ local function worker(user_args)
                                 margins = 8,
                                 layout = wibox.container.margin
                             },
-                            valigh = 'center',
+                            valign = 'center',
                             layout = wibox.container.place
                         },
                         {
@@ -318,7 +318,7 @@ local function worker(user_args)
                                 forced_width = 180,
                                 layout = wibox.layout.fixed.vertical
                             },
-                            valigh = 'center',
+                            valign = 'center',
                             layout = wibox.container.place
                         },
                         {

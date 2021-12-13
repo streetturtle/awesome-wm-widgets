@@ -13,7 +13,7 @@ Left click toggles mute and middle click opens a mixer ([pavucontrol](https://fr
 
 ### Features
 
- - switch between sinks/sources by right clicking on the widget;
+ - switch between sinks/sources by right click on the widget;
  - more responsive than previous versions of volume widget, which were refreshed once a second;
  - 5 predefined customizable looks;
 
@@ -60,7 +60,7 @@ It is possible to customize the widget by providing a table with all or some of 
 | `step` | `5` | How much the volume is raised or lowered at once (in %) |
 | `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
 
-Depending on the chosen widget type add parameters from the corresponding section below:
+Depends on the chosen widget type add parameters from the corresponding section below:
 
 #### `icon` parameters
 

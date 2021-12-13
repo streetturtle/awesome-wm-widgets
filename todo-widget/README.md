@@ -1,6 +1,6 @@
 # ToDo Widget
 
-This widget displays a list of to do items and allows to mark item as done/undone, delete an item and create new ones:
+This widget displays a list of todo items and allows marking item as done/undone, delete an item and create new ones:
 
 ![screenshot](./todo.gif)
 
@@ -25,4 +25,4 @@ Also note that widget uses [Arc Icons](https://github.com/horst3180/arc-icon-the
 
 # Theming
 
-Widget uses your theme's colors. In case you want to have different colors, without changing your theme, please create an issue for it. I'll extract them as a widget parameters.
+Widget uses your theme's colors. In case you want to have different colors, without changing your theme, please create an issue for it. I'll extract them as widget parameters.

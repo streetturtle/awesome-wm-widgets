@@ -105,7 +105,7 @@ local function launch(args)
                     spacing = 8,
                     layout = wibox.layout.fixed.horizontal
                 },
-                valigh = 'center',
+                valign = 'center',
                 layout = wibox.container.place
             },
             {
@@ -118,7 +118,7 @@ local function launch(args)
         },
         id = 'a',
         shape_border_width = 1,
-        valigh = 'center',
+        valign = 'center',
         layout = wibox.container.place
     }
 
