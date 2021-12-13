@@ -36,7 +36,7 @@ s.mytasklist, -- Middle widget
         },
 ```
 
-Note that widget uses following command the get the current volume: `amixer -D pulse sget Master`, so please make sure that it works for you, otherwise you need to install `pulseaudio-alsa` package.
+Note that widget uses following command the get the current volume: `amixer -D pulse sget Master`, so please make sure that it works for you, otherwise you need to set parameter `device = 'default'`.
 
 ### Shortcuts
 
@@ -59,6 +59,7 @@ It is possible to customize the widget by providing a table with all or some of 
 | `mixer_cmd` | `pavucontrol` | command to run on middle click (e.g. a mixer program) |
 | `step` | `5` | How much the volume is raised or lowered at once (in %) |
 | `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
+| `device` | `pulse` | Select the device name to control |
 
 Depends on the chosen widget type add parameters from the corresponding section below:
 
