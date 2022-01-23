@@ -9,5 +9,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Rename readme file
-      run: ./scripts/update_site.sh
+    - name: Rename readme files
+      run:  |
+        ./scripts/update_site.sh
+        git config --global user.name 'GitHub Action'
+        git config --global user.email 'action@github.com'
+        git add ./_widgets
+        git commit -m "update from master"
+        git fetch                         
+        git checkout gh-pages
+        git merge master
+        git checkout master
+        git reset --hard HEAD~3 # Go back 3 commits. You *will* lose uncommitted work.
+        git checkout gh-pages
+        git push origin gh-pages
+        
