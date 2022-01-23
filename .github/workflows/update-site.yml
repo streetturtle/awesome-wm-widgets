@@ -1,5 +1,7 @@
 name: update site
 
+on: workflow_dispatch  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -8,4 +10,4 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Rename readme file
-    run: ./screepts/update_site.sh
+      run: ./screepts/update_site.sh
