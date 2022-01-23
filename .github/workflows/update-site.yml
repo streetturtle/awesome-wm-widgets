@@ -19,9 +19,13 @@ jobs:
         git add ./_widgets
         git stash
         git fetch
+        echo "git checkout gh-pages"
         git checkout gh-pages
+        echo "rm -rf ./_widgets"
         rm -rf ./_widgets
+        echo "git stash pop"
         git stash pop
+        echo "git add ./_widgets"
         git add ./_widgets
         git commit -m "update from master"
         git push origin gh-pages
