@@ -23,6 +23,7 @@ jobs:
         git checkout gh-pages
         echo "rm -rf ./_widgets"
         rm -rf ./_widgets
+        ls -alF
         echo "git stash pop"
         git stash pop
         echo "git add ./_widgets"
