@@ -10,4 +10,4 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Rename readme file
-      run: ./screepts/update_site.sh
+      run: ./scripts/update_site.sh
