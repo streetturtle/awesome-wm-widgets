@@ -1,3 +1,4 @@
+mkdir ./_widgets
 for D in *; do
     if [[ -d "${D}" ]] && [[ ${D} == *"-widget"* ]]; then
         echo "${D}"
