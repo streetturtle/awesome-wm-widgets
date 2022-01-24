@@ -53,6 +53,7 @@ It is possible to customize widget by providing a table with all or some of the 
 ## Installation
 
 This widget reads the output of acpi tool.
+
 - install `acpi` and check the output:
 
 ```bash
