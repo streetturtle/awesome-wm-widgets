@@ -6,7 +6,7 @@ This widget shows a menu with options to log out from the current session, lock,
 
 ## Installation
 
-Clone this repo (if not cloned yet) **./.config/awesome/**
+Clone this repo (if not cloned yet) under **./.config/awesome/**
 
 ```bash
 cd ./.config/awesome/
