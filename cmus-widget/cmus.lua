@@ -10,7 +10,6 @@ local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
-local naughty = require("naughty")
 
 local cmus_widget = {}
 
