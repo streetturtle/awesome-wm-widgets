@@ -10,13 +10,14 @@ local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
+local beautiful = require('beautiful')
 
 local cmus_widget = {}
 
 local function worker(user_args)
 
     local args = user_args or {}
-    local font = args.font or "Play 9"
+    local font = args.font or beautiful.font
 
     local path_to_icons = args.path_to_icons or "/usr/share/icons/Arc/actions/symbolic/"
     local timeout = args.timeout or 10
