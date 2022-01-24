@@ -1,0 +1,35 @@
+name: update site
+
+on: workflow_dispatch  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Generate md
+      run: ./scripts/update_site.sh
+
+    - name: Push to gh-pages branch
+      run: |
+        git config --global user.name 'GitHub Action'
+        git config --global user.email 'action@github.com'
+        git add ./_widgets
+        git add ./assets/img
+        git stash
+        git fetch
+        echo "git checkout gh-pages"
+        git checkout gh-pages
+        rm -rf ./_widgets
+        rm -rf ./assets/img
+        ls -alF
+        echo "git stash pop"
+        git checkout stash -- ./_widgets
+        git checkout stash -- ./assets
+        git add ./_widgets
+        git add ./assets/img
+        git commit -m "update from master"
+        git push origin gh-pages
+        
