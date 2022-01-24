@@ -17,19 +17,19 @@ jobs:
         git config --global user.name 'GitHub Action'
         git config --global user.email 'action@github.com'
         git add ./_widgets
-        git add ./assets/img
+        git add ./assets/img/widgets
         git stash
         git fetch
         echo "git checkout gh-pages"
         git checkout gh-pages
         rm -rf ./_widgets
-        rm -rf ./assets/img
+        rm -rf ./assets/img/widgets
         ls -alF
         echo "git stash pop"
         git checkout stash -- ./_widgets
         git checkout stash -- ./assets
         git add ./_widgets
-        git add ./assets/img
+        git add ./assets/img/widgets
         git commit -m "update from master"
         git push origin gh-pages
         
