@@ -14,13 +14,6 @@ local naughty = require("naughty")
 
 local cmus_widget = {}
 
-local function show_warning(message)
-    naughty.notify{
-        preset = naughty.config.presets.critical,
-        title = "Cmus Widget",
-        text = message}
-end
-
 local function worker(user_args)
 
     local args = user_args or {}
@@ -54,7 +47,7 @@ local function worker(user_args)
         end
     }
 
-    function update_widget(widget, stdout, _, _, code)
+    local function update_widget(widget, stdout, _, _, code)
         if code == 0 then
             local cmus_info = {}
 
@@ -64,12 +57,12 @@ local function worker(user_args)
                 if key and val then
                     cmus_info[key] = val
                 else
-                    local key, val = string.match(s, "^set (%a+) (.+)$")
+                    key, val = string.match(s, "^set (%a+) (.+)$")
 
                     if key and val then
                         cmus_info[key] = val
                     else
-                        local key, val = string.match(s, "^(%a+) (.+)$")
+                        key, val = string.match(s, "^(%a+) (.+)$")
                         if key and val then
                             cmus_info[key] = val
                         end
