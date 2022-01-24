@@ -5,7 +5,7 @@ layout: page
 
 Cmus widget that shows the current playing track.
 
-![widget](cmus-widget.png)
+![widget](../awesome-wm-widgets/assets/img/screenshots/cmus-widget/cmus-widget.png)
 
 Left click toggles playback.
 
