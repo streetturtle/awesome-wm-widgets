@@ -13,6 +13,7 @@ local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
 local naughty = require("naughty")
+local beautiful = require("beautiful")
 
 local ICON_DIR = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/brightness-widget/'
 local get_brightness_cmd
@@ -35,7 +36,7 @@ local function worker(user_args)
 
     local type = args.type or 'arc' -- arc or icon_and_text
     local path_to_icon = args.path_to_icon or ICON_DIR .. 'brightness.svg'
-    local font = args.font or 'Play 9'
+    local font = args.font or beautiful.font
     local timeout = args.timeout or 100
 
     local program = args.program or 'light'
