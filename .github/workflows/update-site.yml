@@ -27,6 +27,7 @@ jobs:
         ls -alF
         echo "git stash pop"
         git checkout stash -- ./_widgets
+        git checkout stash -- ./assets
         git add ./_widgets
         git add ./assets/img
         git commit -m "update from master"
