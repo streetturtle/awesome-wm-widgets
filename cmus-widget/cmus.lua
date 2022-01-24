@@ -89,7 +89,6 @@ local function worker(user_args)
                 widget.visible = true
             else
                 widget.visible = false
-                widget.width = 0
             end
         else
             widget.visible = false
