@@ -44,6 +44,7 @@ local function worker(user_args)
             font = font,
             widget = wibox.widget.textbox
         },
+        spacing = space,
         layout = wibox.layout.fixed.horizontal,
         update_icon = function(self, name)
             self:get_children_by_id("playback_icon")[1]:set_image(path_to_icons .. name)
