@@ -5,7 +5,7 @@ layout: page
 
 This widget shows a menu with options to log out from the current session, lock, reboot, suspend and power off the computer, similar to [logout-popup-widget](https://github.com/streetturtle/awesome-wm-widgets/tree/master/logout-popup-widget):
 
-![demo](./logout-menu.gif)
+![demo](../awesome-wm-widgets/assets/img/screenshots/logout-menu-widget/logout-menu.gif)
 
 ## Installation
 

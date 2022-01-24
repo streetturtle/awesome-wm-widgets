@@ -3,7 +3,7 @@ layout: page
 ---
 # Brightness widget
 
-This widget represents current brightness level, depending on config parameters could be an arcchart or icon with text: ![Brightness widget](./br-wid-1.png)
+This widget represents current brightness level, depending on config parameters could be an arcchart or icon with text: ![Brightness widget](../awesome-wm-widgets/assets/img/screenshots/brightness-widget/br-wid-1.png)
 
 ## Customization
 

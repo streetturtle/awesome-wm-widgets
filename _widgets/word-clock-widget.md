@@ -5,7 +5,7 @@ layout: page
 
 Widget displaying current time using words:
 
-![screenshot](./screenshots/halfpastthree.png)
+![screenshot](../awesome-wm-widgets/assets/img/screenshots/word-clock-widget/halfpastthree.png)
 
 ## Customization
 
@@ -45,7 +45,7 @@ s.mytasklist, -- Middle widget
     is_human_readable = true,
 }
 ```
-![](./screenshots/halfpastthree_color.png)
+![](../awesome-wm-widgets/assets/img/screenshots/word-clock-widget/halfpastthree_color.png)
 
 
 ```lua
@@ -54,7 +54,7 @@ word_clock{
     is_human_readable = true,
 }
 ```
-![](./screenshots/twentythreepastnine.png)
+![](../awesome-wm-widgets/assets/img/screenshots/word-clock-widget/twentythreepastnine.png)
 
 
 ```lua
@@ -64,7 +64,7 @@ word_clock{
     military_time = true
 }
 ```
-![](./screenshots/twentythreepasttwentyone.png)
+![](../awesome-wm-widgets/assets/img/screenshots/word-clock-widget/twentythreepasttwentyone.png)
 
 
 ```lua
@@ -74,4 +74,4 @@ word_clock{
     main_color = '#0f0',
 }
 ```
-![](./screenshots/onetwentyseven.png)
+![](../awesome-wm-widgets/assets/img/screenshots/word-clock-widget/onetwentyseven.png)

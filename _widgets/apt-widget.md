@@ -5,7 +5,7 @@ layout: page
 
 Widget which shows a list of APT packages to be updated:
 
-![screenshot](./screenshots/screenshot.gif)
+![screenshot](../awesome-wm-widgets/assets/img/screenshots/apt-widget/screenshot.gif)
 
 Features:
  - scrollable list !!! (thanks to this [post](https://www.reddit.com/r/awesomewm/comments/isx89x/scrolling_a_layout_fixed_flexed_layout_widget/) of reddit)

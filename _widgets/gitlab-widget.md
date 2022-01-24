@@ -15,7 +15,7 @@ The widget shows the number of merge requests assigned to the user and when clic
  - number of comments;
  - number of approvals.
 
-![screenshot](./screenshot.png)
+![screenshot](../awesome-wm-widgets/assets/img/screenshots/gitlab-widget/screenshot.png)
 
 ## Customization
 

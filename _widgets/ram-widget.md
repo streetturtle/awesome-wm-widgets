@@ -5,7 +5,7 @@ layout: page
 
 This widget shows the RAM usage. When clicked another widget appears with more detailed information:
 
-![screenshot](./out.gif)
+![screenshot](../awesome-wm-widgets/assets/img/screenshots/ram-widget/out.gif)
 
 Note: this widget is compatible with Awesome v4.3+, as it is using [awful.popup](https://awesomewm.org/doc/api/classes/awful.popup.html)
 
