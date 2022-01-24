@@ -38,7 +38,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `warning_msg_icon` | ~/.config/awesome/awesome-wm-widgets/battery-widget/spaceman.jpg | Icon of the warning popup |
 | `enable_battery_warning` | `true` | Display low battery warning |
 
-*Note: the widget expects following icons be present in the folder:
+*Note: the widget expects following icons to be present in the folder:
 
  - battery-caution-charging-symbolic.svg
  - battery-empty-charging-symbolic.svg
@@ -56,6 +56,7 @@ It is possible to customize widget by providing a table with all or some of the 
 ## Installation
 
 This widget reads the output of acpi tool.
+
 - install `acpi` and check the output:
 
 ```bash

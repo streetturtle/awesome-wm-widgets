@@ -34,7 +34,10 @@ s.mytasklist, -- Middle widget
 To improve responsiveness of the widget when playback is changed by a shortcut use corresponding methods of the widget:
 
 ```lua
-awful.key({ modkey, "Shift"   }, "p", function () cmus_widget:play_pause() end, {description = "play/pause cmus", group = "custom"}),
+awful.key({ modkey, "Shift"   }, 
+        "p", 
+        function() cmus_widget:play_pause() end, 
+        {description = "play/pause cmus", group = "custom"}),
 ```
 
 ## Customization
