@@ -9,9 +9,9 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
 
 | Name | Default | Description |
 |---|---|---|
-| theme     | `naughty` | The theme to use          |
-| placement | `top`     | The position of the popup |
-| radius    |  8        | The popup radius          |
+| theme        | `naughty` | The theme to use          |
+| placement    | `top`     | The position of the popup |
+| radius       |  8        | The popup radius          |
 | start_sunday | false  | Start the week on Sunday  |
 
  - themes:
