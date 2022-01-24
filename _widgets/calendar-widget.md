@@ -21,30 +21,30 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
 
     | Name | Screenshot |
     |---|---|
-    | nord           | ![nord_theme](../awesome-wm-widgets/assets/img/screenshots/calendar-widget/nord.png) |
-    | outrun         | ![outrun_theme](../awesome-wm-widgets/assets/img/screenshots/calendar-widget/outrun.png) |
-    | light          | ![outrun_theme](../awesome-wm-widgets/assets/img/screenshots/calendar-widget/light.png) |
-    | dark           | ![outrun_theme](../awesome-wm-widgets/assets/img/screenshots/calendar-widget/dark.png) |
+    | nord           | ![nord_theme](../awesome-wm-widgets/assets/img/widgets/screenshots/calendar-widget/nord.png) |
+    | outrun         | ![outrun_theme](../awesome-wm-widgets/assets/img/widgets/screenshots/calendar-widget/outrun.png) |
+    | light          | ![outrun_theme](../awesome-wm-widgets/assets/img/widgets/screenshots/calendar-widget/light.png) |
+    | dark           | ![outrun_theme](../awesome-wm-widgets/assets/img/widgets/screenshots/calendar-widget/dark.png) |
     | naughty (default) | from local theme |
 
  - setup widget placement
 
   top center - in case you clock is centered:
 
-   ![calendar_top](../awesome-wm-widgets/assets/img/screenshots/calendar-widget/calendar_top.png)
+   ![calendar_top](../awesome-wm-widgets/assets/img/widgets/screenshots/calendar-widget/calendar_top.png)
 
   top right - for default awesome config:
 
-  ![calendar_top_right](../awesome-wm-widgets/assets/img/screenshots/calendar-widget/calendar_top_right.png)
+  ![calendar_top_right](../awesome-wm-widgets/assets/img/widgets/screenshots/calendar-widget/calendar_top_right.png)
 
   bottom right - in case your wibar at the bottom:
 
-  ![calendar_bottom_right](../awesome-wm-widgets/assets/img/screenshots/calendar-widget/calendar_bottom_right.png)
+  ![calendar_bottom_right](../awesome-wm-widgets/assets/img/widgets/screenshots/calendar-widget/calendar_bottom_right.png)
 
  - setup first day of week
 
    By setting `start_sunday` to true:
-   ![calendar_start_sunday](../awesome-wm-widgets/assets/img/screenshots/calendar-widget/calendar_start_sunday.png)
+   ![calendar_start_sunday](../awesome-wm-widgets/assets/img/widgets/screenshots/calendar-widget/calendar_start_sunday.png)
 
  - mouse support:
     move to the next and previous month. Using mouse buttons or scroll wheel.

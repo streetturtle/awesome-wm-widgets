@@ -9,16 +9,16 @@ This widget is more informative version of [battery widget](https://github.com/s
 
 Depending of the battery status it could look following ways:
 
- - ![10_d](../awesome-wm-widgets/assets/img/screenshots/batteryarc-widget/10_d.png) - less than 15 percent
- - ![10_c](../awesome-wm-widgets/assets/img/screenshots/batteryarc-widget/10_c.png) - less than 15 percent, charging
- - ![20_d](../awesome-wm-widgets/assets/img/screenshots/batteryarc-widget/20_d.png) - between 15 and 40 percent
- - ![20_c](../awesome-wm-widgets/assets/img/screenshots/batteryarc-widget/20_c.png) - between 15 and 40 percent, charging
- - ![80_d](../awesome-wm-widgets/assets/img/screenshots/batteryarc-widget/80_d.png) - more than 40 percent
- - ![80_c](../awesome-wm-widgets/assets/img/screenshots/batteryarc-widget/80_c.png) - more than 40 percent, charging
+ - ![10_d](../awesome-wm-widgets/assets/img/widgets/screenshots/batteryarc-widget/10_d.png) - less than 15 percent
+ - ![10_c](../awesome-wm-widgets/assets/img/widgets/screenshots/batteryarc-widget/10_c.png) - less than 15 percent, charging
+ - ![20_d](../awesome-wm-widgets/assets/img/widgets/screenshots/batteryarc-widget/20_d.png) - between 15 and 40 percent
+ - ![20_c](../awesome-wm-widgets/assets/img/widgets/screenshots/batteryarc-widget/20_c.png) - between 15 and 40 percent, charging
+ - ![80_d](../awesome-wm-widgets/assets/img/widgets/screenshots/batteryarc-widget/80_d.png) - more than 40 percent
+ - ![80_c](../awesome-wm-widgets/assets/img/widgets/screenshots/batteryarc-widget/80_c.png) - more than 40 percent, charging
 
 If a battery level is low then warning popup will show up:
 
-![warning](../awesome-wm-widgets/assets/img/screenshots/batteryarc-widget/warning.png)
+![warning](../awesome-wm-widgets/assets/img/widgets/screenshots/batteryarc-widget/warning.png)
 
 ## Customization
 

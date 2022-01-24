@@ -53,7 +53,7 @@ To add your custom icons, create a folder with the pack name under `/icons` and 
 
 #### Custom font, icons
 
-![example1](../awesome-wm-widgets/assets/img/screenshots/weather-widget/example1.png)
+![example1](../awesome-wm-widgets/assets/img/widgets/screenshots/weather-widget/example1.png)
 
 ```lua
 weather_curl_widget({
@@ -72,7 +72,7 @@ weather_curl_widget({
 
 #### Only current weather
 
-![example2](../awesome-wm-widgets/assets/img/screenshots/weather-widget/example2.png)
+![example2](../awesome-wm-widgets/assets/img/widgets/screenshots/weather-widget/example2.png)
 
 ```lua
 weather_curl_widget({
@@ -136,11 +136,11 @@ weather_curl_widget({
 
 Only negative temperature:
 
-![negative](../awesome-wm-widgets/assets/img/screenshots/weather-widget/negative.png)
+![negative](../awesome-wm-widgets/assets/img/widgets/screenshots/weather-widget/negative.png)
 
 Both positive and negative tempertature:
 
-![both](../awesome-wm-widgets/assets/img/screenshots/weather-widget/both.png)
+![both](../awesome-wm-widgets/assets/img/widgets/screenshots/weather-widget/both.png)
 
 ## How it works
 

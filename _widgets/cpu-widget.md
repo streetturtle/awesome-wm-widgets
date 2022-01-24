@@ -7,7 +7,7 @@ layout: page
 
 This widget shows the average CPU load among all cores of the machine:
 
-![screenshot](../awesome-wm-widgets/assets/img/screenshots/cpu-widget/cpu.gif)
+![screenshot](../awesome-wm-widgets/assets/img/widgets/screenshots/cpu-widget/cpu.gif)
 
 ## How it works
 
@@ -48,7 +48,7 @@ cpu_widget({
 
 The config above results in the following widget:
 
-![custom](../awesome-wm-widgets/assets/img/screenshots/cpu-widget/custom.png)
+![custom](../awesome-wm-widgets/assets/img/widgets/screenshots/cpu-widget/custom.png)
 
 ## Installation
 

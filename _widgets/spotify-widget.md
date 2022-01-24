@@ -3,7 +3,7 @@ layout: page
 ---
 # Spotify widget
 
-This widget displays currently playing song on [Spotify for Linux](https://www.spotify.com/download/linux/) client: ![screenshot](../awesome-wm-widgets/assets/img/screenshots/spotify-widget/spo-wid-1.png)
+This widget displays currently playing song on [Spotify for Linux](https://www.spotify.com/download/linux/) client: ![screenshot](../awesome-wm-widgets/assets/img/widgets/screenshots/spotify-widget/spo-wid-1.png)
 
 Some features:
 
@@ -56,10 +56,10 @@ spotify_widget({
 Gives following widget
 
 Playing:
-![screenshot](../awesome-wm-widgets/assets/img/screenshots/spotify-widget/spotify-widget-custom-playing.png)
+![screenshot](../awesome-wm-widgets/assets/img/widgets/screenshots/spotify-widget/spotify-widget-custom-playing.png)
 
 Paused:
-![screenshot](../awesome-wm-widgets/assets/img/screenshots/spotify-widget/spotify-widget-custom-paused.png)
+![screenshot](../awesome-wm-widgets/assets/img/widgets/screenshots/spotify-widget/spotify-widget-custom-paused.png)
 
 ## Installation
 

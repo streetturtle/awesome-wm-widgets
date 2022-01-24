@@ -71,10 +71,10 @@ Then
 
 Some color themes for inspiration:
 
-![nord](../awesome-wm-widgets/assets/img/screenshots/logout-popup-widget/logout-nord.png)
-![outrun](../awesome-wm-widgets/assets/img/screenshots/logout-popup-widget/logout-outrun.png)
-![dark](../awesome-wm-widgets/assets/img/screenshots/logout-popup-widget/logout-dark.png)
-![dracula](../awesome-wm-widgets/assets/img/screenshots/logout-popup-widget/logout-dracula.png)
+![nord](../awesome-wm-widgets/assets/img/widgets/screenshots/logout-popup-widget/logout-nord.png)
+![outrun](../awesome-wm-widgets/assets/img/widgets/screenshots/logout-popup-widget/logout-outrun.png)
+![dark](../awesome-wm-widgets/assets/img/widgets/screenshots/logout-popup-widget/logout-dark.png)
+![dracula](../awesome-wm-widgets/assets/img/widgets/screenshots/logout-popup-widget/logout-dracula.png)
 
 ```lua
 logout.launch{

@@ -5,7 +5,7 @@ layout: page
 
 When clicked, widget shows latest questions from stackoverflow.com with a given tag(s).
 
-![screenshot](../awesome-wm-widgets/assets/img/screenshots/stackoverflow-widget/screenshot.png)
+![screenshot](../awesome-wm-widgets/assets/img/widgets/screenshots/stackoverflow-widget/screenshot.png)
 
 ## Customization
 

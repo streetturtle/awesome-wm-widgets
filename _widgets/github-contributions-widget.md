@@ -5,11 +5,11 @@ layout: page
 
 The widget is inspired by the https://github-contributions.now.sh/ and relies on it's API. 
 
-It shows the contribution graph, similar to the one on the github profile page: ![screenshot](../awesome-wm-widgets/assets/img/screenshots/github-contributions-widget/screenshot.jpg)
+It shows the contribution graph, similar to the one on the github profile page: ![screenshot](../awesome-wm-widgets/assets/img/widgets/screenshots/github-contributions-widget/screenshot.jpg)
 
 You might wonder what could be the reason to have your github's contributions in front of you all day long? The more you contribute, the nicer widget looks! Check out [Thomashighbaugh](https://github.com/Thomashighbaugh)'s graph:
 
-![](../awesome-wm-widgets/assets/img/screenshots/github-contributions-widget/Thomashighbaugh.png)
+![](../awesome-wm-widgets/assets/img/widgets/screenshots/github-contributions-widget/Thomashighbaugh.png)
 
 ## Customization
 
@@ -32,22 +32,22 @@ Following themes are available:
 
 | Theme name | Preview |
 |---|---|
-| standard | ![standard](../awesome-wm-widgets/assets/img/screenshots/github-contributions-widget/standard.png) |
-| classic | ![classic](../awesome-wm-widgets/assets/img/screenshots/github-contributions-widget/classic.png) |
-| teal | ![teal](../awesome-wm-widgets/assets/img/screenshots/github-contributions-widget/teal.png) |
-| leftpad | ![leftpad](../awesome-wm-widgets/assets/img/screenshots/github-contributions-widget/leftpad.png) |
-| dracula | ![dracula](../awesome-wm-widgets/assets/img/screenshots/github-contributions-widget/dracula.png) |
-| pink | ![pink](../awesome-wm-widgets/assets/img/screenshots/github-contributions-widget/pink.png) |
+| standard | ![standard](../awesome-wm-widgets/assets/img/widgets/screenshots/github-contributions-widget/standard.png) |
+| classic | ![classic](../awesome-wm-widgets/assets/img/widgets/screenshots/github-contributions-widget/classic.png) |
+| teal | ![teal](../awesome-wm-widgets/assets/img/widgets/screenshots/github-contributions-widget/teal.png) |
+| leftpad | ![leftpad](../awesome-wm-widgets/assets/img/widgets/screenshots/github-contributions-widget/leftpad.png) |
+| dracula | ![dracula](../awesome-wm-widgets/assets/img/widgets/screenshots/github-contributions-widget/dracula.png) |
+| pink | ![pink](../awesome-wm-widgets/assets/img/widgets/screenshots/github-contributions-widget/pink.png) |
 
 To add a new theme, simply add a new entry in `themes` table (themes.lua) with the colors of your theme.
 
 ### Screenshots
 
 1000 days, with border:  
-![screenshot1](../awesome-wm-widgets/assets/img/screenshots/github-contributions-widget/screenshot1.jpg)
+![screenshot1](../awesome-wm-widgets/assets/img/widgets/screenshots/github-contributions-widget/screenshot1.jpg)
 
 365 days, no border:  
-![screenshot2](../awesome-wm-widgets/assets/img/screenshots/github-contributions-widget/screenshot2.jpg)
+![screenshot2](../awesome-wm-widgets/assets/img/widgets/screenshots/github-contributions-widget/screenshot2.jpg)
 
 ## Installation
 

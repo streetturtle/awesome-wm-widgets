@@ -5,17 +5,17 @@ layout: page
 
 It shows number of currently assigned reviews in [Gerrit](https://www.gerritcodereview.com/) to the user (by default) :
  
- ![gerrit_widget](../awesome-wm-widgets/assets/img/screenshots/gerrit-widget/gerrit_widget.png)
+ ![gerrit_widget](../awesome-wm-widgets/assets/img/widgets/screenshots/gerrit-widget/gerrit_widget.png)
  
  when clicked it shows reviews in a list:
  
- ![popup](../awesome-wm-widgets/assets/img/screenshots/gerrit-widget/popup.png)
+ ![popup](../awesome-wm-widgets/assets/img/widgets/screenshots/gerrit-widget/popup.png)
  
  left click on an item will open review in the default browser, right click will copy the review number, which you can use to checkout this review by running `git-review -d <review number>`.
  
  Also, if a new review is assigned to the user, there will be a pop-up:
  
- ![new_review](../awesome-wm-widgets/assets/img/screenshots/gerrit-widget/new_review.png)
+ ![new_review](../awesome-wm-widgets/assets/img/widgets/screenshots/gerrit-widget/new_review.png)
 
 ## Customization
 

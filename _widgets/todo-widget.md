@@ -5,7 +5,7 @@ layout: page
 
 This widget displays a list of todo items and allows marking item as done/undone, delete an item and create new ones:
 
-![screenshot](../awesome-wm-widgets/assets/img/screenshots/todo-widget/todo.gif)
+![screenshot](../awesome-wm-widgets/assets/img/widgets/screenshots/todo-widget/todo.gif)
 
 # Installation
 
