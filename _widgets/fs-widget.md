@@ -3,9 +3,9 @@ layout: page
 ---
 # Filesystem Widget
 
-This widget shows file system disk space usage which is based on the `df` output. When clicked another widget appears with more detailed information. By default it monitors the "/" mount. It can be configured with a list of mounts to monitor though only the first will show in the wibar. To have multiple mounts displayed on the wibar simply define multiple `fs_widgets` with different mounts as arguments.
+This widget shows file system disk space usage which is based on the `df` output. When clicked another widget appears with more detailed information. By default, it monitors the "/" mount. It can be configured with a list of mounts to monitor though only the first will show in the wibar. To have multiple mounts displayed on the wibar simply define multiple `fs_widgets` with different mounts as arguments.
 
-![](../awesome-wm-widgets/assets/img/screenshots/fs-widget/screenshot.png)
+![](./screenshot.png)
 
 ## Customizations
 

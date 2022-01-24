@@ -49,7 +49,7 @@ And test if it works by calling the API:
 curl -s -n 'https://api.bitbucket.org/2.0/repositories/'
 ```
 
-Also to properly setup required parameters you can use `test_bitbucket_api.sh` script - it uses the same curl call as widget.
+Also, to properly setup required parameters you can use `test_bitbucket_api.sh` script - it uses the same curl call as widget.
 
 Then clone/download repo and use widget in **rc.lua**:
 

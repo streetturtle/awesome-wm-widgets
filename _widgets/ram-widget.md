@@ -5,7 +5,9 @@ layout: page
 
 This widget shows the RAM usage. When clicked another widget appears with more detailed information:
 
-![screenshot](../awesome-wm-widgets/assets/img/screenshots/ram-widget/out.gif)
+![screenshot](./out.gif)
+
+Note: this widget is compatible with Awesome v4.3+, as it is using [awful.popup](https://awesomewm.org/doc/api/classes/awful.popup.html)
 
 ## Customization
 
@@ -22,3 +24,19 @@ It is possible to customize widget by providing a table with all or some of the 
 ## Installation
 
 Please refer to the [installation](https://github.com/streetturtle/awesome-wm-widgets#installation) section of the repo.
+
+Clone repo, include widget and use it in **rc.lua**:
+
+```lua
+local ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
+...
+s.mytasklist, -- Middle widget
+	{ -- Right widgets
+    	layout = wibox.layout.fixed.horizontal,
+		...
+		ram_widget(),
+    		...
+	}
+	...
+```
+

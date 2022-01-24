@@ -24,6 +24,6 @@ s.mytasklist, -- Middle widget
 	{ -- Right widgets
     layout = wibox.layout.fixed.horizontal,
 		...
-    mpris_widget,
+    mpris_widget(),
 		...
 ```

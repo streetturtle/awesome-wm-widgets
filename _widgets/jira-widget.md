@@ -28,7 +28,7 @@ It is possible to customize widget by providing a table with all or some of the 
 
 ## Installation
 
-Create a .netrc file in you home directory with following content:
+Create a .netrc file in your home directory with following content:
 
 ```bash
 machine turtlejira.com
