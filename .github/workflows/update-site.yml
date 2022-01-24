@@ -25,7 +25,7 @@ jobs:
         rm -rf ./_widgets
         ls -alF
         echo "git stash pop"
-        git stash pop
+        git checkout stash -- .
         echo "git add ./_widgets"
         git add ./_widgets
         git commit -m "update from master"
