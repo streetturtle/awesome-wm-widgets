@@ -9,6 +9,6 @@ for D in *; do
 
         find ${D}/ \( -name '*.jpg' -o -name '*.png' -o -name '*.gif' \) -exec cp '{}' ./assets/img/widgets/screenshots/${D} \;
 
-        sed -i "s/](\.\(\/screenshots\)\{0,1\}/](..\/awesome-wm-widgets\/assets\/img\/screenshots\/$D/g" ./_widgets/${D}.md
+        sed -i "s/](\.\(\/screenshots\)\{0,1\}/](..\/awesome-wm-widgets\/assets\/img\/widgets\/screenshots\/$D/g" ./_widgets/${D}.md
     fi
 done
