@@ -2,7 +2,7 @@
 
 Cmus widget that shows the current playing track.
 
-![widget](cmus-widget.png)
+![widget](./screenshots/cmus-widget.png)
 
 Left click toggles playback.
 
