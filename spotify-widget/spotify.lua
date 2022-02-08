@@ -16,6 +16,10 @@ local GET_SPOTIFY_STATUS_CMD = 'sp status'
 local GET_CURRENT_SONG_CMD = 'sp current'
 
 local function ellipsize(text, length)
+    -- utf8 only available in Lua 5.3+
+    if utf8 == nil then
+        return text:sub(0, length)
+    end
     return (utf8.len(text) > length and length > 0)
         and text:sub(0, utf8.offset(text, length - 2) - 1) .. '...'
         or text
