@@ -46,7 +46,7 @@ Clone the repo under **~/.config/awesome/**, then follow an Installation section
 In case of any doubts/questions/problems:
  - create an [issue](https://github.com/streetturtle/awesome-wm-widgets/issues/new/choose)
  - raise a question on [Discussions](https://github.com/streetturtle/awesome-wm-widgets/discussions)!
- - ping me on AwesomeWM's discord, here's an [invite](https://discord.gg/XYvn8R5)
+ - ping me on AwesomeWM's discord, here's an [invite](https://discord.gg/BPat4F87dg)
 
 # Support
 
