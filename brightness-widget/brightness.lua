@@ -43,6 +43,7 @@ local function worker(user_args)
     local base = args.base or 20
     local current_level = 0 -- current brightness value
     local tooltip = args.tooltip or false
+    local percentage = args.percentage or false
     if program == 'light' then
         get_brightness_cmd = 'light -G'
         set_brightness_cmd = 'light -S %d' -- <level>
@@ -82,7 +83,11 @@ local function worker(user_args)
             spacing = 4,
             layout = wibox.layout.fixed.horizontal,
             set_value = function(self, level)
-                self:get_children_by_id('txt')[1]:set_text(level .. '%')
+                local display_level = level
+                if percentage then
+                    display_level = display_level .. '%'
+                end
+                self:get_children_by_id('txt')[1]:set_text(display_level)
             end
         }
     elseif type == 'arc' then
