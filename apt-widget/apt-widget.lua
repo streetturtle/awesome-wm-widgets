@@ -19,7 +19,7 @@ local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/apt-widget'
 local ICONS_DIR = WIDGET_DIR .. '/icons/'
 
-local LIST_PACKAGES = [[sh -c "apt list --upgradable 2>/dev/null"]]
+local LIST_PACKAGES = [[sh -c "LC_ALL=c apt list --upgradable 2>/dev/null"]]
 
 --- Utility function to show warning messages
 local function show_warning(message)
