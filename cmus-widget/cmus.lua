@@ -20,7 +20,6 @@ local function worker(user_args)
 
     local path_to_icons = args.path_to_icons or "/usr/share/icons/Arc/actions/symbolic/"
     local timeout = args.timeout or 10
-    local space = args.space or 3
 
     cmus_widget.widget = wibox.widget {
         {
