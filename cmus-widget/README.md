@@ -21,7 +21,6 @@ s.mytasklist, -- Middle widget
         cmus_widget(),
         -- customized
         cmus_widget{
-            space = 5,
             timeout = 5
         },
 ```
@@ -31,9 +30,9 @@ s.mytasklist, -- Middle widget
 To improve responsiveness of the widget when playback is changed by a shortcut use corresponding methods of the widget:
 
 ```lua
-awful.key({ modkey, "Shift"   }, 
-        "p", 
-        function() cmus_widget:play_pause() end, 
+awful.key({ modkey, "Shift"   },
+        "p",
+        function() cmus_widget:play_pause() end,
         {description = "play/pause cmus", group = "custom"}),
 ```
 
@@ -48,4 +47,3 @@ It is possible to customize the widget by providing a table with all or some of 
 | `font` | `Play 9` | Font used for the track title |
 | `path_to_icons` | `/usr/share/icons/Arc/actions/symbolic/` | Alternative path for the icons |
 | `timeout`| `10` | Refresh cooldown |
-| `space` | `3` | Space between icon and track title |
