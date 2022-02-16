@@ -14,13 +14,6 @@ local naughty = require("naughty")
 
 local cmus_widget = {}
 
-local function show_warning(message)
-    naughty.notify{
-        preset = naughty.config.presets.critical,
-        title = "Cmus Widget",
-        text = message}
-end
-
 local function worker(user_args)
 
     local args = user_args or {}
