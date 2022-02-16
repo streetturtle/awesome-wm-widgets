@@ -54,12 +54,12 @@ local function worker(user_args)
                 if key and val then
                     cmus_info[key] = val
                 else
-                    local key, val = string.match(s, "^set (%a+) (.+)$")
+                    key, val = string.match(s, "^set (%a+) (.+)$")
 
                     if key and val then
                         cmus_info[key] = val
                     else
-                        local key, val = string.match(s, "^(%a+) (.+)$")
+                        key, val = string.match(s, "^(%a+) (.+)$")
                         if key and val then
                             cmus_info[key] = val
                         end
