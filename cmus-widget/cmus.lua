@@ -44,7 +44,7 @@ local function worker(user_args)
         end
     }
 
-    function update_widget(widget, stdout, _, _, code)
+    local function update_widget(widget, stdout, _, _, code)
         if code == 0 then
             local cmus_info = {}
 
