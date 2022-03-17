@@ -10,16 +10,9 @@ local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
-local naughty = require("naughty")
+local dpi = require('beautiful').xresources.apply_dpi
 
 local cmus_widget = {}
-
-local function show_warning(message)
-    naughty.notify{
-        preset = naughty.config.presets.critical,
-        title = "Cmus Widget",
-        text = message}
-end
 
 local function worker(user_args)
 
@@ -44,6 +37,7 @@ local function worker(user_args)
             font = font,
             widget = wibox.widget.textbox
         },
+        spacing = dpi(space),
         layout = wibox.layout.fixed.horizontal,
         update_icon = function(self, name)
             self:get_children_by_id("playback_icon")[1]:set_image(path_to_icons .. name)
@@ -53,7 +47,7 @@ local function worker(user_args)
         end
     }
 
-    function update_widget(widget, stdout, _, _, code)
+    local function update_widget(widget, stdout, _, _, code)
         if code == 0 then
             local cmus_info = {}
 
@@ -63,12 +57,12 @@ local function worker(user_args)
                 if key and val then
                     cmus_info[key] = val
                 else
-                    local key, val = string.match(s, "^set (%a+) (.+)$")
+                    key, val = string.match(s, "^set (%a+) (.+)$")
 
                     if key and val then
                         cmus_info[key] = val
                     else
-                        local key, val = string.match(s, "^(%a+) (.+)$")
+                        key, val = string.match(s, "^(%a+) (.+)$")
                         if key and val then
                             cmus_info[key] = val
                         end
