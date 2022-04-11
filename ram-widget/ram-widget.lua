@@ -15,6 +15,8 @@ local function worker(user_args)
     local color_free = args.color_free or beautiful.fg_normal
     local color_buf  = args.color_buf  or beautiful.border_color_active
     local widget_show_buf = args.widget_show_buf or false
+    local widget_height = args.widget_height or 25
+    local widget_width = args.widget_width or 25
 
     --- Main ram widget shown on wibar
     ramgraph_widget = wibox.widget {
@@ -25,7 +27,8 @@ local function worker(user_args)
            color_buf,
         },
         display_labels = false,
-        forced_width = 25,
+        forced_height = widget_height,
+        forced_width = widget_width,
         widget = wibox.widget.piechart
     }
 
