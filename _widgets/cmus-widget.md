@@ -48,7 +48,7 @@ It is possible to customize the widget by providing a table with all or some of 
 
 | Name | Default | Description |
 |---|---|---|
-| `font` | `Play 9` | Font used for the track title |
+| `font` | `beautiful.font` | Font name and size, like `Play 12` |
 | `path_to_icons` | `/usr/share/icons/Arc/actions/symbolic/` | Alternative path for the icons |
 | `timeout`| `10` | Refresh cooldown |
 | `space` | `3` | Space between icon and track title |
