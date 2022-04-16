@@ -10,21 +10,14 @@ local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
-local naughty = require("naughty")
+local beautiful = require('beautiful')
 
 local cmus_widget = {}
-
-local function show_warning(message)
-    naughty.notify{
-        preset = naughty.config.presets.critical,
-        title = "Cmus Widget",
-        text = message}
-end
 
 local function worker(user_args)
 
     local args = user_args or {}
-    local font = args.font or "Play 9"
+    local font = args.font or beautiful.font
 
     local path_to_icons = args.path_to_icons or "/usr/share/icons/Arc/actions/symbolic/"
     local timeout = args.timeout or 10
@@ -44,6 +37,7 @@ local function worker(user_args)
             font = font,
             widget = wibox.widget.textbox
         },
+        spacing = space,
         layout = wibox.layout.fixed.horizontal,
         update_icon = function(self, name)
             self:get_children_by_id("playback_icon")[1]:set_image(path_to_icons .. name)
@@ -53,7 +47,7 @@ local function worker(user_args)
         end
     }
 
-    function update_widget(widget, stdout, _, _, code)
+    local function update_widget(widget, stdout, _, _, code)
         if code == 0 then
             local cmus_info = {}
 
@@ -63,12 +57,12 @@ local function worker(user_args)
                 if key and val then
                     cmus_info[key] = val
                 else
-                    local key, val = string.match(s, "^set (%a+) (.+)$")
+                    key, val = string.match(s, "^set (%a+) (.+)$")
 
                     if key and val then
                         cmus_info[key] = val
                     else
-                        local key, val = string.match(s, "^(%a+) (.+)$")
+                        key, val = string.match(s, "^(%a+) (.+)$")
                         if key and val then
                             cmus_info[key] = val
                         end
@@ -96,7 +90,6 @@ local function worker(user_args)
                 widget.visible = true
             else
                 widget.visible = false
-                widget.width = 0
             end
         else
             widget.visible = false
