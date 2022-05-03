@@ -229,14 +229,14 @@ local function worker(user_args)
             popup.visible = not popup.visible
         else
             if placement == 'top' then
-                awful.placement.top(popup, { margins = { top = 30 }, parent = awful.screen.focused() })
+                awful.placement.top(popup, { margins = { top = 50 }, parent = awful.screen.focused() })
             elseif placement == 'top_right' then
-                awful.placement.top_right(popup, { margins = { top = 30, right = 10}, parent = awful.screen.focused() })
+                awful.placement.top_right(popup, { margins = { top = 50, right = 10}, parent = awful.screen.focused() })
             elseif placement == 'bottom_right' then
-                awful.placement.bottom_right(popup, { margins = { bottom = 30, right = 10},
+                awful.placement.bottom_right(popup, { margins = { bottom = 50, right = 10},
                     parent = awful.screen.focused() })
             else
-                awful.placement.top(popup, { margins = { top = 30 }, parent = awful.screen.focused() })
+                awful.placement.top(popup, { margins = { top = 50 }, parent = awful.screen.focused() })
             end
 
             popup.visible = true
