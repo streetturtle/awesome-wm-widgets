@@ -18,6 +18,37 @@ local calendar_widget = {}
 
 local function worker(user_args)
 
+    -- fallback function
+    local is_holiday = function(d)
+        return false
+    end
+    -- assuming ~/.local/holiday.csv contains multiple lines of `2022-01-01,true,元旦`
+    local csv_path = os.getenv("HOME") .. "/.local/holiday.csv"
+    local csv_file = io.open(csv_path, "r")
+    if csv_file ~= nil then
+        local fields = { "date", "is_holiday", "holiday_name" }
+        csv_file:close()
+        -- construct holiday map
+        local holiday = {}
+        for line in io.lines(csv_path) do
+            -- first, convert line to a object `row = { date: "xxx", is_holiday: true, holiday_name: "xxx" }`
+            local row = {}
+            local i = 1
+            for value in line:gmatch("[^,]+") do
+                row[fields[i]] = value
+                i = i + 1
+            end
+            holiday[row.date] = {
+                is_holiday = row.is_holiday == 'true',
+                holiday_name = row.holiday_name,
+            }
+        end
+        is_holiday = function (d)
+            return holiday[d]
+        end
+    end
+
+
     local calendar_themes = {
         nord = {
             bg = '#2E3440',
@@ -149,9 +180,18 @@ local function worker(user_args)
             end
         end
 
+        if flag == 'normal' or flag == 'focus' then
+            local ds = string.format("%4d-%02d-%02d", date.year, date.month, date.day)
+            local ih = is_holiday(ds)
+            if ih ~= nil and ih.is_holiday and widget.get_text and widget.set_markup then
+                widget:set_markup("<i><u>" .. widget:get_text() .. "</u></i>")
+            end
+            gears.debug.print_error(ds .. " " ..flag)
+        end
+
         local props = styles[flag] or {}
         if props.markup and widget.get_text and widget.set_markup then
-            widget:set_markup(props.markup(widget:get_text()))
+            widget:set_markup(props.markup(widget:get_markup()))
         end
         -- Change bg color for weekends
         local d = { year = date.year, month = (date.month or 1), day = (date.day or 1) }
@@ -182,7 +222,7 @@ local function worker(user_args)
 
     local cal = wibox.widget {
         date = os.date('*t'),
-        font = beautiful.get_font(),
+        font = "sans 15",
         fn_embed = decorate_cell,
         long_weekdays = true,
         start_sunday = start_sunday,
