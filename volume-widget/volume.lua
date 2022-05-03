@@ -16,7 +16,11 @@ local watch = require("awful.widget.watch")
 local utils = require("awesome-wm-widgets.volume-widget.utils")
 
 
-local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
+--local LIST_DEVICES_CMD = [[sh -c "pactl list short sinks; pactl list short sources"]]
+local LIST_SINKS_CMD = "pactl list short sinks"
+local LIST_SOURCES_CMD = "pactl list short sources"
+local GET_DEFAULT_SINK_CMD = "pactl get-default-sink"
+local GET_DEFAULT_SOURCE_CMD = "pactl get-default-source"
 local function GET_VOLUME_CMD(device) return 'amixer -D ' .. device .. ' sget Master' end
 local function INC_VOLUME_CMD(device, step) return 'amixer -D ' .. device .. ' sset Master ' .. step .. '%+' end
 local function DEC_VOLUME_CMD(device, step) return 'amixer -D ' .. device .. ' sset Master ' .. step .. '%-' end
@@ -70,7 +74,8 @@ local function build_rows(devices, on_checkbox_click, device_type)
         }
 
         checkbox:connect_signal("button::press", function()
-            spawn.easy_async(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name), function()
+            --spawn.easy_async(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name), function()
+            spawn.easy_async(string.format([[sh -c 'pactl set-default-%s "%s"']], device_type, device.name), function()
                 on_checkbox_click()
             end)
         end)
@@ -85,7 +90,8 @@ local function build_rows(devices, on_checkbox_click, device_type)
                     },
                     {
                         {
-                            text = build_main_line(device),
+                            --text = build_main_line(device),
+                            text = device.name,
                             align = 'left',
                             widget = wibox.widget.textbox
                         },
@@ -119,7 +125,8 @@ local function build_rows(devices, on_checkbox_click, device_type)
         end)
 
         row:connect_signal("button::press", function()
-            spawn.easy_async(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name), function()
+            --spawn.easy_async(string.format([[sh -c 'pacmd set-default-%s "%s"']], device_type, device.name), function()
+            spawn.easy_async(string.format([[sh -c 'pactl set-default-%s "%s"']], device_type, device.name), function()
                 on_checkbox_click()
             end)
         end)
@@ -143,18 +150,57 @@ local function build_header_row(text)
 end
 
 local function rebuild_popup()
-    spawn.easy_async(LIST_DEVICES_CMD, function(stdout)
+    --spawn.easy_async(LIST_DEVICES_CMD, function(stdout)
 
-        local sinks, sources = utils.extract_sinks_and_sources(stdout)
+    --    local sinks, sources = utils.extract_sinks_and_sources(stdout)
 
-        for i = 0, #rows do rows[i]=nil end
+    --    for i = 0, #rows do rows[i]=nil end
 
-        table.insert(rows, build_header_row("SINKS"))
-        table.insert(rows, build_rows(sinks, function() rebuild_popup() end, "sink"))
-        table.insert(rows, build_header_row("SOURCES"))
-        table.insert(rows, build_rows(sources, function() rebuild_popup() end, "source"))
+    --    table.insert(rows, build_header_row("SINKS"))
+    --    table.insert(rows, build_rows(sinks, function() rebuild_popup() end, "sink"))
+    --    table.insert(rows, build_header_row("SOURCES"))
+    --    table.insert(rows, build_rows(sources, function() rebuild_popup() end, "source"))
 
-        popup:setup(rows)
+    --    popup:setup(rows)
+    --end)
+    local count = 0
+    local sinks
+    local sources
+    local default_sink
+    local default_source
+    local function try_setup()
+        count = count + 1
+        if count == 4 then
+            for _, sink in pairs(sinks) do
+                sink.is_default = sink.name == default_sink
+                gears.debug.print_error(sink.name .. " default: ".. tostring(sink.is_default).. "  "..default_sink)
+            end
+            for _, source in pairs(sources) do
+                source.is_default = source.name == default_source
+            end
+            for i = 0, #rows do rows[i]=nil end
+            table.insert(rows, build_header_row("SINKS"))
+            table.insert(rows, build_rows(sinks, function() rebuild_popup() end, "sink"))
+            table.insert(rows, build_header_row("SOURCES"))
+            table.insert(rows, build_rows(sources, function() rebuild_popup() end, "source"))
+            popup:setup(rows)
+        end
+    end
+    spawn.easy_async(LIST_SINKS_CMD, function(stdout)
+        sinks = utils.extract_pactl_devices(stdout)
+        try_setup()
+    end)
+    spawn.easy_async(LIST_SOURCES_CMD, function(stdout)
+        sources = utils.extract_pactl_devices(stdout)
+        try_setup()
+    end)
+    spawn.easy_async(GET_DEFAULT_SINK_CMD, function(stdout)
+        default_sink = utils.trim(stdout)
+        try_setup()
+    end)
+    spawn.easy_async(GET_DEFAULT_SOURCE_CMD, function(stdout)
+        default_source = utils.trim(stdout)
+        try_setup()
     end)
 end
 

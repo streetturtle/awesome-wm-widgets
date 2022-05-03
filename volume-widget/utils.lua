@@ -1,5 +1,4 @@
 
-
 local utils = {}
 
 local function split(string_to_split, separator)
@@ -11,6 +10,42 @@ local function split(string_to_split, separator)
     end
 
     return t
+end
+
+local pactl_property_names = {
+    "id",
+    "name",
+    "type",
+    "code",
+    "channel",
+    "freq",
+    "status"
+}
+
+function utils.extract_pactl_devices(pactl_output)
+    local devices = {}
+    local device
+    local properties
+    for line in pactl_output:gmatch("[^\r\n]+") do
+        -- convert line to properties object
+        properties = {}
+        local i = 0
+        for value in line:gmatch("[^%s]+") do
+            i = i + 1
+            properties[pactl_property_names[i]] = value
+        end
+        -- convert properties to device object
+        device = {
+            id = properties.id,
+            name = properties.name,
+            driver = properties.type,
+            is_default = properties.status == "RUNNING",
+            properties = {
+            }
+        }
+        table.insert(devices, device)
+    end
+    return devices
 end
 
 function utils.extract_sinks_and_sources(pacmd_output)
@@ -100,6 +135,11 @@ function utils.extract_sinks_and_sources(pacmd_output)
     end
 
     return sinks, sources
+end
+
+
+function utils.trim(s)
+   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
 return utils
