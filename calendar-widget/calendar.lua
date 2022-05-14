@@ -186,7 +186,6 @@ local function worker(user_args)
             if ih ~= nil and ih.is_holiday and widget.get_text and widget.set_markup then
                 widget:set_markup("<i><u>" .. widget:get_text() .. "</u></i>")
             end
-            gears.debug.print_error(ds .. " " ..flag)
         end
 
         local props = styles[flag] or {}
