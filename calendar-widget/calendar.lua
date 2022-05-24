@@ -232,8 +232,13 @@ local function worker(user_args)
                 awful.placement.top(popup, { margins = { top = 30 }, parent = awful.screen.focused() })
             elseif placement == 'top_right' then
                 awful.placement.top_right(popup, { margins = { top = 30, right = 10}, parent = awful.screen.focused() })
+            elseif placement == 'top_left' then
+                awful.placement.top_left(popup, { margins = { top = 30, left = 10}, parent = awful.screen.focused() })
             elseif placement == 'bottom_right' then
                 awful.placement.bottom_right(popup, { margins = { bottom = 30, right = 10},
+                    parent = awful.screen.focused() })
+            elseif placement == 'bottom_left' then
+                awful.placement.bottom_left(popup, { margins = { bottom = 30, left = 10},
                     parent = awful.screen.focused() })
             else
                 awful.placement.top(popup, { margins = { top = 30 }, parent = awful.screen.focused() })
