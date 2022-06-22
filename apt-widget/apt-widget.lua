@@ -353,6 +353,13 @@ local function worker(user_args)
 		end
 	end)))
 
+
+	wibox_popup:connect_signal("mouse::leave", function()
+		if wibox_popup.visible then
+			wibox_popup.visible = false
+		end
+	end)
+
 	return apt_widget_button
 end
 
