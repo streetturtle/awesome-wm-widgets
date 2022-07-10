@@ -124,7 +124,7 @@ local function worker(user_args)
     end
 
     function cmus_widget:prev_track()
-        spawn("cmus-remote -p")
+        spawn("cmus-remote -r")
         cmus_widget.update()
     end
 
