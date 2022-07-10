@@ -109,22 +109,27 @@ local function worker(user_args)
     end
 
     function cmus_widget:pause()
-        spawn("cmus-remote -u")
+        spawn("cmus-remote -U")
         cmus_widget.update()
     end
 
     function cmus_widget:play()
-        spawn("cmus-remote -u")
+        spawn("cmus-remote -p")
         cmus_widget.update()
     end
 
     function cmus_widget:next_track()
-        spawn("cmus-remote -u")
+        spawn("cmus-remote -n")
         cmus_widget.update()
     end
 
     function cmus_widget:prev_track()
-        spawn("cmus-remote -u")
+        spawn("cmus-remote -p")
+        cmus_widget.update()
+    end
+
+    function cmus_widget:stop()
+        spawn("cmus-remote -s")
         cmus_widget.update()
     end
 
