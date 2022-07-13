@@ -32,6 +32,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `dim_when_paused` | `false` | Decrease the widget opacity if spotify is paused |
 | `dim_opacity` | `0.2` | Widget's opacity when dimmed, `dim_when_paused` should be set to `true` |
 | `max_length` | `15` | Maximum lentgh of artist and title names. Text will be ellipsized if longer. |
+| `title_scroll_length` | `100` | Maximum length of title name before it begins scrolling. -1 prevents scrolling entirely. |
 | `show_tooltip` | `true` | Show tooltip on hover with information about the playing song |
 | `timeout` | 1 | How often in seconds the widget refreshes |
 
