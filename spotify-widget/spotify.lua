@@ -77,7 +77,7 @@ local function worker(user_args)
         },
         layout = wibox.layout.align.horizontal,
         set_status = function(self, is_playing)
-            self.icon.image = (is_playing and play_icon or pause_icon)
+            self:get_children_by_id('icon')[1]:set_image(is_playing and play_icon or pause_icon)
             if dim_when_paused then
                 self:get_children_by_id('icon')[1]:set_opacity(is_playing and 1 or dim_opacity)
 
