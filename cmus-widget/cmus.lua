@@ -96,12 +96,41 @@ local function worker(user_args)
         end
     end
 
-    function cmus_widget:play_pause()
-        spawn("cmus-remote -u")
+    function cmus_widget:update()
         spawn.easy_async("cmus-remote -Q",
         function(stdout, _, _, code)
             update_widget(cmus_widget.widget, stdout, _, _, code)
         end)
+    end
+
+    function cmus_widget:play_pause()
+        spawn("cmus-remote -u")
+        cmus_widget.update()
+    end
+
+    function cmus_widget:pause()
+        spawn("cmus-remote -U")
+        cmus_widget.update()
+    end
+
+    function cmus_widget:play()
+        spawn("cmus-remote -p")
+        cmus_widget.update()
+    end
+
+    function cmus_widget:next_track()
+        spawn("cmus-remote -n")
+        cmus_widget.update()
+    end
+
+    function cmus_widget:prev_track()
+        spawn("cmus-remote -r")
+        cmus_widget.update()
+    end
+
+    function cmus_widget:stop()
+        spawn("cmus-remote -s")
+        cmus_widget.update()
     end
 
     cmus_widget.widget:buttons(
