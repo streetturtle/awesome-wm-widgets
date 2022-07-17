@@ -12,10 +12,11 @@ local awful = require("awful")
 local wibox = require("wibox")
 local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
+local gfs = require("gears.filesystem")
 local naughty = require("naughty")
 local beautiful = require("beautiful")
 
-local ICON_DIR = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/brightness-widget/'
+local ICON_DIR = gfs.get_configuration_dir() .. "awesome-wm-widgets/brightness-widget/"
 local get_brightness_cmd
 local set_brightness_cmd
 local inc_brightness_cmd
@@ -24,15 +25,15 @@ local dec_brightness_cmd
 local brightness_widget = {}
 
 local function show_warning(message)
-    naughty.notify{
-        preset = naughty.config.presets.critical,
-        title = 'Brightness Widget',
-        text = message}
+	naughty.notify({
+		preset = naughty.config.presets.critical,
+		title = "Brightness Widget",
+		text = message,
+	})
 end
 
 local function worker(user_args)
-
-    local args = user_args or {}
+	  local args = user_args or {}
 
     local type = args.type or 'arc' -- arc or icon_and_text
     local path_to_icon = args.path_to_icon or ICON_DIR .. 'brightness.svg'
@@ -56,10 +57,10 @@ local function worker(user_args)
         inc_brightness_cmd = 'xbacklight -inc ' .. step
         dec_brightness_cmd = 'xbacklight -dec ' .. step
     elseif program == 'brightnessctl' then
-        get_brightness_cmd = 'bash -c "brightnessctl -m | cut -d, -f4 | tr -d %"'
-        set_brightness_cmd = 'brightnessctl set %d%%' -- <level>
-        inc_brightness_cmd = 'brightnessctl set +' .. step .. '%'
-        dec_brightness_cmd = 'brightnessctl set ' .. step .. '-%'
+  	get_brightness_cmd = "brightnessctl get"
+		set_brightness_cmd = "brightnessctl set %d%%" -- <level>
+		inc_brightness_cmd = "brightnessctl set +" .. step .. "%"
+		dec_brightness_cmd = "brightnessctl set " .. step .. "-%"  
     else
         show_warning(program .. " command is not supported by the widget")
         return
@@ -187,6 +188,8 @@ local function worker(user_args)
     return brightness_widget.widget
 end
 
-return setmetatable(brightness_widget, { __call = function(_, ...)
-    return worker(...)
-end })
+return setmetatable(brightness_widget, {
+	__call = function(_, ...)
+		return worker(...)
+	end,
+})
