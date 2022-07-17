@@ -52,8 +52,17 @@ local function worker(user_args)
             widget = wibox.widget.textbox,
         },
         {
-            id = "icon",
-            widget = wibox.widget.imagebox,
+            layout = wibox.layout.stack,
+            {
+                id = "icon",
+                widget = wibox.widget.imagebox,
+            },
+            {
+                widget = wibox.widget.textbox,
+                font = font,
+                text = ' ',
+                forced_height = 1
+            }
         },
         {
             layout = wibox.container.scroll.horizontal,
