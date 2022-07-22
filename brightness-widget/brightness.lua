@@ -57,12 +57,12 @@ local function worker(user_args)
         inc_brightness_cmd = 'xbacklight -inc ' .. step
         dec_brightness_cmd = 'xbacklight -dec ' .. step
     elseif program == 'brightnessctl' then
-  	get_brightness_cmd = "brightnessctl get"
-		set_brightness_cmd = "brightnessctl set %d%%" -- <level>
-		inc_brightness_cmd = "brightnessctl set +" .. step .. "%"
-		dec_brightness_cmd = "brightnessctl set " .. step .. "-%"  
+        get_brightness_cmd = 'bash -c "brightnessctl -m | cut -d, -f4 | tr -d %"'
+		set_brightness_cmd = 'brightnessctl set %d%%' -- <level>
+		inc_brightness_cmd = 'brightnessctl set +' .. step .. '%'
+		dec_brightness_cmd = 'brightnessctl set ' .. step .. '-%'
     else
-        show_warning(program .. " command is not supported by the widget")
+        show_warning(program .. ' command is not supported by the widget')
         return
     end
 
