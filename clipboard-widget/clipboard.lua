@@ -85,10 +85,8 @@ local function build_popup()
         widget = {}
     }
 
-    local row = build_item(popup, "Hello")
-    local row2 = build_item(popup, "Hello2")
 
-    local rows = { row, row2, layout = wibox.layout.fixed.vertical }
+    local rows = { layout = wibox.layout.fixed.vertical }
 
     -- Add rows to the popup
     popup:setup(rows)
@@ -103,6 +101,25 @@ local function worker()
     }
 
     local popup = build_popup()
+
+    watch("xclip -selection clipboard -o -rmlastnl", 1,
+        function(widget, stdout)
+            local hasItem = false
+            -- Remove trailing whitespace
+            stdout = (stdout:gsub("^%s*(.-)%s*$", "%1"))
+
+            for i, v in ipairs(menu_items) do
+                if (v == stdout) then
+                    hasItem = true
+                    break
+                end
+            end
+
+            if (not hasItem) then
+                local row = build_item(popup, stdout)
+                popup.widget:add(row)
+            end
+        end)
 
     -- Mouse click handler
     clipboard_widget:buttons(
