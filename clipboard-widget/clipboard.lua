@@ -13,6 +13,17 @@ local watch = require("awful.widget.watch")
 local clipboard_widget = {}
 local menu_items = {}
 
+local prev_highlight = nil
+
+local function highlight_item(item)
+    if (not (prev_highlight == nil)) then
+        prev_highlight.opacity = 0.7
+    end
+    item.opacity = 1
+    prev_highlight = item
+
+end
+
 local function build_item(popup, name)
     table.insert(menu_items, name)
 
@@ -53,6 +64,7 @@ local function build_item(popup, name)
             awful.button({}, 1, function()
                 popup.visible = not popup.visible
                 awful.spawn.with_shell('echo -n "' .. name .. '" | xclip -selection clipboard')
+                highlight_item(row)
             end),
             awful.button({}, 3, function()
                 local index = 0
@@ -117,6 +129,7 @@ local function worker()
 
             if (not hasItem) then
                 local row = build_item(popup, stdout)
+                highlight_item(row)
                 popup.widget:add(row)
             end
 
