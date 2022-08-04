@@ -29,6 +29,16 @@ local function build_item(popup, name)
         widget = wibox.container.background
     }
 
+    -- Mouse click handler
+    row:buttons(
+        awful.util.table.join(
+            awful.button({}, 1, function()
+                popup.visible = not popup.visible
+                awful.spawn.with_shell('echo -n "' .. name .. '" | xclip -selection clipboard')
+            end)
+        )
+    )
+
     return row
 end
 
@@ -47,8 +57,9 @@ local function build_popup()
     }
 
     local row = build_item(popup, "Hello")
+    local row2 = build_item(popup, "Hello2")
 
-    local rows = { row, layout = wibox.layout.fixed.vertical }
+    local rows = { row, row2, layout = wibox.layout.fixed.vertical }
 
     -- Add rows to the popup
     popup:setup(rows)
