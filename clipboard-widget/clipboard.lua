@@ -59,7 +59,18 @@ local function worker()
     }
 
     local popup = build_popup()
-    popup.visible = true
+
+    -- Mouse click handler
+    clipboard_widget:buttons(
+        awful.util.table.join(
+            awful.button({}, 1, function()
+                if popup.visible then
+                    popup.visible = not popup.visible
+                else
+                    popup:move_next_to(mouse.current_widget_geometry)
+                end
+            end))
+    )
 
     return clipboard_widget
 end
