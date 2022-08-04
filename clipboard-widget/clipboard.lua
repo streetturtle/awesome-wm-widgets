@@ -53,6 +53,17 @@ local function build_item(popup, name)
             awful.button({}, 1, function()
                 popup.visible = not popup.visible
                 awful.spawn.with_shell('echo -n "' .. name .. '" | xclip -selection clipboard')
+            end),
+            awful.button({}, 3, function()
+                local index = 0
+                for i, v in ipairs(menu_items) do
+                    if (v == name) then
+                        index = i
+                        break
+                    end
+                end
+                table.remove(menu_items, index)
+                popup.widget:remove(index)
             end)
         )
     )
