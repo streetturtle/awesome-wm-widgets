@@ -119,6 +119,11 @@ local function worker()
                 local row = build_item(popup, stdout)
                 popup.widget:add(row)
             end
+
+            if (#menu_items > 10) then
+                table.remove(menu_items, 1)
+                popup.widget:remove(1)
+            end
         end)
 
     -- Mouse click handler
