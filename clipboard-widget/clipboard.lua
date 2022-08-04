@@ -30,12 +30,8 @@ local function build_popup()
     local row = wibox.widget {
         {
             {
-                {
-                    text = "Hello",
-                    widget = wibox.widget.textbox
-                },
-                spacing = 16,
-                layout = wibox.layout.fixed.horizontal
+                text = "Hello",
+                widget = wibox.widget.textbox
             },
             margins = 16,
             widget = wibox.container.margin
