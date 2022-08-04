@@ -29,6 +29,24 @@ local function build_item(popup, name)
         widget = wibox.container.background
     }
 
+    -- Change item background on mouse hover
+    row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
+    row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
+
+    -- Change cursor on mouse hover
+    local old_cursor, old_wibox
+    row:connect_signal("mouse::enter", function()
+        local wb = mouse.current_wibox
+        old_cursor, old_wibox = wb.cursor, wb
+        wb.cursor = "hand1"
+    end)
+    row:connect_signal("mouse::leave", function()
+        if old_wibox then
+            old_wibox.cursor = old_cursor
+            old_wibox = nil
+        end
+    end)
+
     -- Mouse click handler
     row:buttons(
         awful.util.table.join(
