@@ -13,6 +13,25 @@ local watch = require("awful.widget.watch")
 local clipboard_widget = {}
 local menu_items = {}
 
+local function build_item(popup, name)
+    table.insert(menu_items, name)
+
+    local row = wibox.widget {
+        {
+            {
+                text = (string.len(name) > 64 and string.sub(name, 0, 64) .. "..." or name),
+                widget = wibox.widget.textbox
+            },
+            margins = 16,
+            widget = wibox.container.margin
+        },
+        bg = beautiful.bg_normal,
+        widget = wibox.container.background
+    }
+
+    return row
+end
+
 local function build_popup()
     local popup = awful.popup {
         ontop = true,
@@ -27,18 +46,7 @@ local function build_popup()
         widget = {}
     }
 
-    local row = wibox.widget {
-        {
-            {
-                text = "Hello",
-                widget = wibox.widget.textbox
-            },
-            margins = 16,
-            widget = wibox.container.margin
-        },
-        bg = beautiful.bg_normal,
-        widget = wibox.container.background
-    }
+    local row = build_item(popup, "Hello")
 
     local rows = { row, layout = wibox.layout.fixed.vertical }
 
