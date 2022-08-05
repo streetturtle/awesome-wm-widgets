@@ -120,6 +120,11 @@ local function worker()
             -- Remove trailing whitespace
             stdout = (stdout:gsub("^%s*(.-)%s*$", "%1"))
 
+            -- No empty items
+            if (stdout == "") then
+                return
+            end
+
             for i, v in ipairs(menu_items) do
                 if (v == stdout) then
                     hasItem = true
