@@ -15,25 +15,26 @@ local menu_items = {}
 
 local prev_highlight = nil
 
-local function highlight_item(item)
+local function highlight_item(item, unactive_item_dim)
     if (not (prev_highlight == nil)) then
-        prev_highlight.opacity = 0.7
+        prev_highlight.opacity = unactive_item_dim
     end
     item.opacity = 1
     prev_highlight = item
 
 end
 
-local function build_item(popup, name)
+local function build_item(popup, name, max_show_length, margin, unactive_item_dim, font)
     table.insert(menu_items, name)
 
     local row = wibox.widget {
         {
             {
-                text = (string.len(name) > 64 and string.sub(name, 0, 64) .. "..." or name),
-                widget = wibox.widget.textbox
+                text = (string.len(name) > max_show_length and string.sub(name, 0, max_show_length) .. "..." or name),
+                widget = wibox.widget.textbox,
+                font = font
             },
-            margins = 16,
+            margins = margin,
             widget = wibox.container.margin
         },
         bg = beautiful.bg_normal,
@@ -64,7 +65,7 @@ local function build_item(popup, name)
             awful.button({}, 1, function()
                 popup.visible = not popup.visible
                 awful.spawn.with_shell('echo -n "' .. name .. '" | xclip -selection clipboard')
-                highlight_item(row)
+                highlight_item(row, unactive_item_dim)
             end),
             awful.button({}, 3, function()
                 local index = 0
@@ -83,7 +84,7 @@ local function build_item(popup, name)
     return row
 end
 
-local function build_popup()
+local function build_popup(maximum_popup_width)
     local popup = awful.popup {
         ontop = true,
         visible = false,
@@ -92,11 +93,10 @@ local function build_popup()
         end,
         border_width = 1,
         border_color = beautiful.bg_focus,
-        maximum_width = 400,
+        maximum_width = maximum_popup_width,
         offset = { y = 5 },
         widget = {}
     }
-
 
     local rows = { layout = wibox.layout.fixed.vertical }
 
@@ -106,15 +106,26 @@ local function build_popup()
     return popup
 end
 
-local function worker()
+local function worker(user_args)
+    local args = user_args or {}
+
+    local font = args.font or "Play 12"
+    local timeout = args.timeout or 1
+    local margin = args.margin or 16
+    local max_items = args.max_items or 10
+    local max_show_length = args.max_show_length or 64
+    local maximum_popup_width = args.maximum_popup_width or 400
+    local widget_name = (args.widget_name or "Clip") .. " "
+    local unactive_item_dim = args.unactive_item_dim or 0.7
+
     clipboard_widget = wibox.widget {
         widget = wibox.widget.textbox,
-        text = "Clip "
+        text = widget_name
     }
 
-    local popup = build_popup()
+    local popup = build_popup(maximum_popup_width)
 
-    watch("xclip -selection clipboard -o -rmlastnl", 1,
+    watch("xclip -selection clipboard -o -rmlastnl", timeout,
         function(widget, stdout)
             local hasItem = false
             -- Remove trailing whitespace
@@ -133,12 +144,12 @@ local function worker()
             end
 
             if (not hasItem) then
-                local row = build_item(popup, stdout)
-                highlight_item(row)
+                local row = build_item(popup, stdout, max_show_length, margin, unactive_item_dim, font)
+                highlight_item(row, unactive_item_dim)
                 popup.widget:add(row)
             end
 
-            if (#menu_items > 10) then
+            if (#menu_items > max_items) then
                 table.remove(menu_items, 1)
                 popup.widget:remove(1)
             end
