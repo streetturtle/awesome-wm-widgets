@@ -51,3 +51,8 @@ s.mytasklist, -- Middle widget
     }
     ...
 ```
+
+## Controls
+
+Right-click an item => copy to clipboard
+Left-click an item => remove from popup
