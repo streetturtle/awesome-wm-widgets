@@ -132,12 +132,14 @@ local function worker(user_args)
 
     -- Load items from storage
     awful.spawn.easy_async_with_shell('cat ~/.config/awesome/clipboard-widget/clipboard-widget/storage.txt', function(stdout)
-        local sep = "\n"
+        local sep = "~"
         local t = {}
         for str in string.gmatch(stdout, "([^" .. sep .. "]+)") do
             -- Remove trailing whitespace
             str = (str:gsub("^%s*(.-)%s*$", "%1"))
-            table.insert(t, str)
+            if (not (str == "")) then
+                table.insert(t, str)
+            end
         end
 
         for i, v in ipairs(t) do
@@ -152,7 +154,7 @@ local function worker(user_args)
     function clipboard_widget:save_items()
         local content = ""
         for i, v in ipairs(menu_items) do
-            content = content .. v .. "\n"
+            content = content .. v .. "~"
         end
         awful.spawn.with_shell('echo -n "' .. content .. '"> ~/.config/awesome/clipboard-widget/clipboard-widget/storage.txt')
     end
@@ -170,6 +172,7 @@ local function worker(user_args)
 
             for i, v in ipairs(menu_items) do
                 if (v == stdout) then
+                    highlight_item(popup.widget.children[i], unactive_item_dim)
                     hasItem = true
                     break
                 end

@@ -1,1 +1,1 @@
-watch(xclip -selection clipboard -o -rmlastnl, timeout,
+people~y~Discover~interesting~projects~
