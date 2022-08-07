@@ -10,10 +10,14 @@ local gears = require("gears")
 local watch = require("awful.widget.watch")
 
 --- Widget to add to the wibar
+local HOME = os.getenv("HOME")
+local WIDGET_DIR = HOME .. '/.config/awesome/clipboard_widget/clipboard-widget/'
+
 local clipboard_widget = {}
 local menu_items = {}
 
 local prev_highlight = nil
+
 
 local function highlight_item(item, unactive_item_dim)
     if (not (prev_highlight == nil)) then
@@ -30,6 +34,7 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
     local row = wibox.widget {
         {
             {
+                id = "name",
                 text = (string.len(name) > max_show_length and string.sub(name, 0, max_show_length) .. "..." or name),
                 widget = wibox.widget.textbox,
                 font = font
@@ -118,12 +123,39 @@ local function worker(user_args)
     local widget_name = (args.widget_name or "Clip") .. " "
     local unactive_item_dim = args.unactive_item_dim or 0.7
 
-    clipboard_widget = wibox.widget {
+    clipboard_widget.widget = wibox.widget {
         widget = wibox.widget.textbox,
-        text = widget_name
+        text = widget_name,
     }
 
     local popup = build_popup(maximum_popup_width)
+
+    -- Load items from storage
+    awful.spawn.easy_async_with_shell('cat ~/.config/awesome/clipboard-widget/clipboard-widget/storage.txt', function(stdout)
+        local sep = "\n"
+        local t = {}
+        for str in string.gmatch(stdout, "([^" .. sep .. "]+)") do
+            -- Remove trailing whitespace
+            str = (str:gsub("^%s*(.-)%s*$", "%1"))
+            table.insert(t, str)
+        end
+
+        for i, v in ipairs(t) do
+            local row = build_item(popup, v, max_show_length, margin, unactive_item_dim, font)
+            highlight_item(row, unactive_item_dim)
+            popup.widget:add(row)
+        end
+
+    end)
+
+    -- Save item to storage
+    function clipboard_widget:save_items()
+        local content = ""
+        for i, v in ipairs(menu_items) do
+            content = content .. v .. "\n"
+        end
+        awful.spawn.with_shell('echo -n "' .. content .. '"> ~/.config/awesome/clipboard-widget/clipboard-widget/storage.txt')
+    end
 
     watch("xclip -selection clipboard -o -rmlastnl", timeout,
         function(widget, stdout)
@@ -156,7 +188,7 @@ local function worker(user_args)
         end)
 
     -- Mouse click handler
-    clipboard_widget:buttons(
+    clipboard_widget.widget:buttons(
         awful.util.table.join(
             awful.button({}, 1, function()
                 if popup.visible then
@@ -166,6 +198,7 @@ local function worker(user_args)
                 end
             end))
     )
+
 
     return clipboard_widget
 end
