@@ -41,9 +41,9 @@ s.mytasklist, -- Middle widget
         layout = wibox.layout.fixed.horizontal,
         ...
         -- default
-        clipboard-widget({}),
+        clipboard_widget({}),
         -- or customized
-        brightness_widget{
+        clipboard_widget{
             font = 'monospace 12',
             max_items = '8',
             widget_name = 'Clippy',        
