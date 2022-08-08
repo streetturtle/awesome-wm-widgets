@@ -28,6 +28,15 @@ local function highlight_item(item, unactive_item_dim)
 
 end
 
+-- Save item to storage
+local function save_items()
+    local content = ""
+    for i, v in ipairs(menu_items) do
+        content = content .. v .. "~~"
+    end
+    awful.spawn.with_shell("echo -nE '" .. content .. "' > " .. WIDGET_DIR .. "storage.txt")
+end
+
 local function build_item(popup, name, max_show_length, margin, unactive_item_dim, font)
     table.insert(menu_items, name)
 
@@ -83,10 +92,12 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
                 end
                 table.remove(menu_items, index)
                 popup.widget:remove(index)
+                save_items()
             end)
         )
     )
 
+    save_items()
     return row
 end
 
@@ -152,14 +163,6 @@ local function worker(user_args)
 
     end)
 
-    -- Save item to storage
-    function clipboard_widget:save_items()
-        local content = ""
-        for i, v in ipairs(menu_items) do
-            content = content .. v .. "~~"
-        end
-        awful.spawn.with_shell("echo -nE '" .. content .. "' > " .. WIDGET_DIR .. "storage.txt")
-    end
 
     watch("xclip -selection clipboard -o -rmlastnl", timeout,
         function(widget, stdout)
