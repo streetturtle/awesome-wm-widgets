@@ -9,15 +9,14 @@ local beautiful = require("beautiful")
 local gears = require("gears")
 local watch = require("awful.widget.watch")
 
---- Widget to add to the wibar
 local HOME = os.getenv("HOME")
 local WIDGET_DIR = HOME .. '/.config/awesome/clipboard-widget/clipboard-widget/'
 
+--- Widget to add to the wibar
 local clipboard_widget = {}
 local menu_items = {}
 
 local prev_highlight = nil
-
 
 local function highlight_item(item, unactive_item_dim)
     if (not (prev_highlight == nil)) then
@@ -25,7 +24,6 @@ local function highlight_item(item, unactive_item_dim)
     end
     item.opacity = 1
     prev_highlight = item
-
 end
 
 -- Save item to storage
@@ -43,7 +41,7 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
     local row = wibox.widget {
         {
             {
-                id = "name",
+                -- Show only a part of text
                 text = (string.len(name) > max_show_length and string.sub(name, 0, max_show_length) .. "..." or name),
                 widget = wibox.widget.textbox,
                 font = font
@@ -52,7 +50,7 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
             widget = wibox.container.margin
         },
         bg = beautiful.bg_normal,
-        widget = wibox.container.background
+        widget = wibox.container.background,
     }
 
     -- Change item background on mouse hover
@@ -90,6 +88,12 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
                         break
                     end
                 end
+
+                -- If the item is currently in clipboard clear it
+                if (row.opacity == 1) then
+                    awful.spawn.with_shell("echo -nE  | xclip -selection clipboard")
+                end
+
                 table.remove(menu_items, index)
                 popup.widget:remove(index)
                 save_items()
@@ -206,7 +210,6 @@ local function worker(user_args)
                 end
             end))
     )
-
 
     return clipboard_widget
 end
