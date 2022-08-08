@@ -11,7 +11,7 @@ local watch = require("awful.widget.watch")
 
 --- Widget to add to the wibar
 local HOME = os.getenv("HOME")
-local WIDGET_DIR = HOME .. '/.config/awesome/clipboard_widget/clipboard-widget/'
+local WIDGET_DIR = HOME .. '/.config/awesome/clipboard-widget/clipboard-widget/'
 
 local clipboard_widget = {}
 local menu_items = {}
@@ -69,7 +69,8 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
         awful.util.table.join(
             awful.button({}, 1, function()
                 popup.visible = not popup.visible
-                awful.spawn.with_shell('echo -n "' .. name .. '" | xclip -selection clipboard')
+
+                awful.spawn.with_shell("echo -nE '" .. name .. "' | xclip -selection clipboard")
                 highlight_item(row, unactive_item_dim)
             end),
             awful.button({}, 3, function()
@@ -131,12 +132,13 @@ local function worker(user_args)
     local popup = build_popup(maximum_popup_width)
 
     -- Load items from storage
-    awful.spawn.easy_async_with_shell('cat ~/.config/awesome/clipboard-widget/clipboard-widget/storage.txt', function(stdout)
-        local sep = "~"
+    awful.spawn.easy_async_with_shell('cat ' .. WIDGET_DIR .. 'storage.txt', function(stdout)
+        local sep = "~~"
         local t = {}
         for str in string.gmatch(stdout, "([^" .. sep .. "]+)") do
             -- Remove trailing whitespace
             str = (str:gsub("^%s*(.-)%s*$", "%1"))
+
             if (not (str == "")) then
                 table.insert(t, str)
             end
@@ -144,7 +146,7 @@ local function worker(user_args)
 
         for i, v in ipairs(t) do
             local row = build_item(popup, v, max_show_length, margin, unactive_item_dim, font)
-            highlight_item(row, unactive_item_dim)
+            row.opacity = unactive_item_dim
             popup.widget:add(row)
         end
 
@@ -154,9 +156,9 @@ local function worker(user_args)
     function clipboard_widget:save_items()
         local content = ""
         for i, v in ipairs(menu_items) do
-            content = content .. v .. "~"
+            content = content .. v .. "~~"
         end
-        awful.spawn.with_shell('echo -n "' .. content .. '"> ~/.config/awesome/clipboard-widget/clipboard-widget/storage.txt')
+        awful.spawn.with_shell("echo -nE '" .. content .. "' > " .. WIDGET_DIR .. "storage.txt")
     end
 
     watch("xclip -selection clipboard -o -rmlastnl", timeout,
