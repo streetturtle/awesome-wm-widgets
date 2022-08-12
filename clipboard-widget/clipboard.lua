@@ -131,7 +131,7 @@ local function worker(user_args)
     local args = user_args or {}
 
     local font = args.font or beautiful.font
-    local timeout = args.timeout or 1
+    local timeout = args.timeout or 0.1
     local margin = args.margin or 16
     local max_items = args.max_items or 10
     local max_show_length = args.max_show_length or 64
