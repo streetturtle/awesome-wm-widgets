@@ -59,7 +59,12 @@ To easily see what's in your clipboard right now you can create a keybind that w
 ```lua
 awful.key({ modkey }, "c", function() clipboard_widget:show_contents() end),
 ```
+To control selection of items
 
+```lua
+    awful.key({ modkey }, ".", function() clipboard_widget:next_item() end,
+    awful.key({ modkey }, ",", function() clipboard_widget:previous_item() end,
+```
 ## Controls
 
 Right-click an item => copy to clipboard
