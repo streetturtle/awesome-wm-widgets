@@ -39,8 +39,11 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
     table.insert(menu_items, name)
 
     local row = wibox.widget {
+        id = "first",
         {
+            id = "second",
             {
+                id = "third",
                 -- Show only a part of text
                 text = (string.len(name) > max_show_length and string.sub(name, 0, max_show_length) .. "..." or name),
                 widget = wibox.widget.textbox,
@@ -138,6 +141,7 @@ local function worker(user_args)
     local maximum_popup_width = args.maximum_popup_width or 400
     local widget_name = (args.widget_name or "Clip") .. " "
     local unactive_item_dim = args.unactive_item_dim or 0.7
+    local max_peek_length = args.max_show_length or 32
 
     clipboard_widget.widget = wibox.widget {
         widget = wibox.widget.textbox,
@@ -176,6 +180,8 @@ local function worker(user_args)
 
             -- No empty items
             if (stdout == "") then
+                -- If theres an item highlighted but the clipboard is empty copy the highlited item to clipboard
+                awful.spawn.with_shell("echo -nE '" .. prev_highlight.second.third.text .. "' | xclip -selection clipboard")
                 return
             end
 
@@ -198,6 +204,18 @@ local function worker(user_args)
                 popup.widget:remove(1)
             end
         end)
+
+    local content_shown = false
+    function clipboard_widget:show_content()
+        if (content_shown) then
+            clipboard_widget.widget.text = widget_name
+            content_shown = false
+        else
+            local text = (string.len(prev_highlight.second.third.text) > max_peek_length and string.sub(prev_highlight.second.third.text, 0, max_peek_length) .. "..." or prev_highlight.second.third.text)
+            clipboard_widget.widget.text = text .. " "
+            content_shown = true
+        end
+    end
 
     -- Mouse click handler
     clipboard_widget.widget:buttons(

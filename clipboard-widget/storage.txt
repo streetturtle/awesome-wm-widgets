@@ -1,0 +1,8 @@
+l~~i~~m~~o~~r~~)~~### Shortcuts
+
+To improve responsiveness of the widget when volume level is changed by a shortcut use corresponding methods of the widget:
+
+```lua
+awful.key({ modkey }, "]", function() volume_widget:inc(5) end),
+awful.key({ modkey }, "[", function() volume_widget:dec(5) end),
+awful.key({ modkey }, "\\", function() volume_widget:toggle() end),~~To improve responsiveness of the widget when volume level is changed by a shortcut use corresponding methods of the widget:~~awful.key({ modkey }, "[", function() volume_widget:dec(5) end),~~awful.key({ modkey }, "\\", function() volume_widget:toggle() end),~~`~~
