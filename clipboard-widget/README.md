@@ -65,6 +65,13 @@ To control selection of items
     awful.key({ modkey }, ".", function() clipboard_widget:next_item() end,
     awful.key({ modkey }, ",", function() clipboard_widget:previous_item() end,
 ```
+
+To delete the current item
+
+```lua
+    awful.key({ modkey }, "/", function() clipboard_widget:delete_item() end,
+```
+
 ## Controls
 
 Right-click an item => copy to clipboard

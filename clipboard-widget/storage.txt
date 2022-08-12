@@ -1,4 +1,0 @@
-s~~)~~(~~awful.key({ modkey }, ".", function() clipboard_widget:next_item...~~text = (string.len(name) > max_show_length and string.sub(name, 0, max_show_length) .. "..." or name),~~a~~n~~e~~text = (string.len(name) > max_show_length and string.sub(name, ...~~awful.key({ modkey }, ".", function() clipboard_widget:next_item() end,
-        { description = "reload mods", group = "custom" }),
-    awful.key({ modkey }, ",", function() clipboard_widget:previous_item() end,
-        { description = "reload mods", group = "custom" }),~~{ description = "reload mods", group = "custom" }),~~

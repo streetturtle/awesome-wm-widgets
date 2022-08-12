@@ -183,6 +183,7 @@ local function worker(user_args)
 
             -- No empty items
             if (stdout == "") then
+                clipboard_widget.widget.text = widget_name
                 -- If theres an item highlighted but the clipboard is empty copy the highlited item to clipboard
                 awful.spawn.with_shell("echo -nE '" .. prev_highlight.second.third.text .. "' | xclip -selection clipboard")
                 return
@@ -232,7 +233,7 @@ local function worker(user_args)
         end
 
         index = index + 1
-        if (index > max_items) then
+        if (index > #menu_items) then
             index = 1
         end
 
@@ -251,11 +252,42 @@ local function worker(user_args)
 
         index = index - 1
         if (index < 1) then
-            index = max_items
+            index = #menu_items
         end
 
         awful.spawn.with_shell("echo -nE '" .. popup.widget.children[index].second.third.text .. "' | xclip -selection clipboard")
         highlight_item(popup.widget.children[index], unactive_item_dim)
+    end
+
+    function clipboard_widget:delete_item()
+        if (#menu_items > 0) then
+            local index = 0
+            for i, v in ipairs(menu_items) do
+                if (v == prev_highlight.second.third.text) then
+                    index = i
+                    break
+                end
+            end
+
+            -- If the item is currently in clipboard clear it
+            if (prev_highlight.opacity == 1) then
+                awful.spawn.with_shell("echo -nE '' | xclip -selection clipboard")
+                prev_highlight.second.third.text = ""
+            end
+
+            table.remove(menu_items, index)
+            popup.widget:remove(index)
+            save_items()
+
+            if (index > #menu_items) then
+                index = #menu_items
+            end
+
+            if (#menu_items > 0) then
+                awful.spawn.with_shell("echo -nE '" .. popup.widget.children[index].second.third.text .. "' | xclip -selection clipboard")
+                highlight_item(popup.widget.children[index], unactive_item_dim)
+            end
+        end
     end
 
     -- Mouse click handler
