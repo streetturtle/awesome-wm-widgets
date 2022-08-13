@@ -101,6 +101,7 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
                 if (row.opacity == 1) then
                     copy_to_clipboard("")
                     prev_highlight.second.third.text = ""
+                    prev_highlight.second.third.actual_text = ""
                 end
 
                 table.remove(menu_items, index)
@@ -192,7 +193,7 @@ local function worker(user_args)
             if (stdout == "") then
                 clipboard_widget.widget.text = widget_name
                 -- If theres an item highlighted but the clipboard is empty copy the highlited item to clipboard
-                if (not prev_highlight == nil) then
+                if (not (prev_highlight == nil)) then
                     copy_to_clipboard(prev_highlight.second.third.actual_text)
                 end
                 return
@@ -286,6 +287,7 @@ local function worker(user_args)
             if (prev_highlight.opacity == 1) then
                 copy_to_clipboard("")
                 prev_highlight.second.third.text = ""
+                prev_highlight.second.third.actual_text = ""
             end
 
             table.remove(menu_items, index)
