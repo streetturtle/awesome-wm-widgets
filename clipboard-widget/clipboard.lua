@@ -50,6 +50,7 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
                 id = "third",
                 -- Show only a part of text
                 text = (string.len(name) > max_show_length and string.sub(name, 0, max_show_length) .. "..." or name),
+                actual_text = name,
                 widget = wibox.widget.textbox,
                 font = font
             },
@@ -178,7 +179,6 @@ local function worker(user_args)
 
 
     local content_shown = false
-    local str = 'hello'
 
     watch("xclip -selection clipboard -o -rmlastnl", timeout,
         function(widget, stdout)
@@ -193,7 +193,7 @@ local function worker(user_args)
                 clipboard_widget.widget.text = widget_name
                 -- If theres an item highlighted but the clipboard is empty copy the highlited item to clipboard
                 if (not prev_highlight == nil) then
-                    copy_to_clipboard(prev_highlight.second.third.text)
+                    copy_to_clipboard(prev_highlight.second.third.actual_text)
                 end
                 return
             end
@@ -247,7 +247,7 @@ local function worker(user_args)
                 index = 1
             end
 
-            copy_to_clipboard(popup.widget.children[index].second.third.text)
+            copy_to_clipboard(popup.widget.children[index].second.third.actual_text)
             highlight_item(popup.widget.children[index], unactive_item_dim)
         end
     end
@@ -267,7 +267,7 @@ local function worker(user_args)
                 index = #menu_items
             end
 
-            copy_to_clipboard(popup.widget.children[index].second.third.text)
+            copy_to_clipboard(popup.widget.children[index].second.third.actual_text)
             highlight_item(popup.widget.children[index], unactive_item_dim)
         end
     end
@@ -297,7 +297,7 @@ local function worker(user_args)
             end
 
             if (#menu_items > 0) then
-                copy_to_clipboard(popup.widget.children[index].second.third.text)
+                copy_to_clipboard(popup.widget.children[index].second.third.actual_text)
                 highlight_item(popup.widget.children[index], unactive_item_dim)
             end
         end

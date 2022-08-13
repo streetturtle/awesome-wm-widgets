@@ -1,1 +1,11 @@
-local str = hello~~watch(xclip -selection clipboard -o -rmlastnl, timeout,~~e~~
+local function highlight_item(item, unactive_item_dim)
+    if (not (prev_highlight == nil)) then
+        prev_highlight.opacity = unactive_item_dim
+    end
+    item.opacity = 1
+    prev_highlight = item
+end
+
+local function copy_to_clipboard(text)
+    awful.spawn.with_shell([[echo -n ]] .. text .. [[ | xclip -selection clipboard]])
+end~~-- Save item to storage~~
