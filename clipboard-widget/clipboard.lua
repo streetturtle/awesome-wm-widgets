@@ -236,7 +236,7 @@ local function worker(user_args)
         if (#menu_items > 0) then
             local index = 0
             for i, v in ipairs(menu_items) do
-                if (v == prev_highlight.second.third.text) then
+                if (v == prev_highlight.second.third.actual_text) then
                     index = i
                     break
                 end
@@ -256,7 +256,7 @@ local function worker(user_args)
         if (#menu_items > 0) then
             local index = 0
             for i, v in ipairs(menu_items) do
-                if (v == prev_highlight.second.third.text) then
+                if (v == prev_highlight.second.third.actual_text) then
                     index = i
                     break
                 end
@@ -276,7 +276,7 @@ local function worker(user_args)
         if (#menu_items > 0) then
             local index = 0
             for i, v in ipairs(menu_items) do
-                if (v == prev_highlight.second.third.text) then
+                if (v == prev_highlight.second.third.actual_text) then
                     index = i
                     break
                 end
