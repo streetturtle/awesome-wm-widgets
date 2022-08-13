@@ -26,6 +26,10 @@ local function highlight_item(item, unactive_item_dim)
     prev_highlight = item
 end
 
+local function copy_to_clipboard(text)
+    awful.spawn.with_shell([[echo -n "]] .. text .. [[" | xclip -selection clipboard]])
+end
+
 -- Save item to storage
 local function save_items()
     local content = ""
@@ -80,7 +84,7 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
             awful.button({}, 1, function()
                 popup.visible = not popup.visible
 
-                awful.spawn.with_shell("echo -nE '" .. name .. "' | xclip -selection clipboard")
+                copy_to_clipboard(name)
                 highlight_item(row, unactive_item_dim)
             end),
             awful.button({}, 3, function()
@@ -94,7 +98,7 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
 
                 -- If the item is currently in clipboard clear it
                 if (row.opacity == 1) then
-                    awful.spawn.with_shell("echo -nE '' | xclip -selection clipboard")
+                    copy_to_clipboard("")
                     prev_highlight.second.third.text = ""
                 end
 
@@ -174,18 +178,23 @@ local function worker(user_args)
 
 
     local content_shown = false
+    local str = 'hello'
 
     watch("xclip -selection clipboard -o -rmlastnl", timeout,
         function(widget, stdout)
             local hasItem = false
             -- Remove trailing whitespace
             stdout = (stdout:gsub("^%s*(.-)%s*$", "%1"))
+            -- Starts to freak out and cant interpret the strings whithout it
+            stdout = string.gsub(stdout, '"', "'")
 
             -- No empty items
             if (stdout == "") then
                 clipboard_widget.widget.text = widget_name
                 -- If theres an item highlighted but the clipboard is empty copy the highlited item to clipboard
-                awful.spawn.with_shell("echo -nE '" .. prev_highlight.second.third.text .. "' | xclip -selection clipboard")
+                if (not prev_highlight == nil) then
+                    copy_to_clipboard(prev_highlight.second.third.text)
+                end
                 return
             end
 
@@ -224,39 +233,43 @@ local function worker(user_args)
     end
 
     function clipboard_widget:next_item()
-        local index = 0
-        for i, v in ipairs(menu_items) do
-            if (v == prev_highlight.second.third.text) then
-                index = i
-                break
+        if (#menu_items > 0) then
+            local index = 0
+            for i, v in ipairs(menu_items) do
+                if (v == prev_highlight.second.third.text) then
+                    index = i
+                    break
+                end
             end
-        end
 
-        index = index + 1
-        if (index > #menu_items) then
-            index = 1
-        end
+            index = index + 1
+            if (index > #menu_items) then
+                index = 1
+            end
 
-        awful.spawn.with_shell("echo -nE '" .. popup.widget.children[index].second.third.text .. "' | xclip -selection clipboard")
-        highlight_item(popup.widget.children[index], unactive_item_dim)
+            copy_to_clipboard(popup.widget.children[index].second.third.text)
+            highlight_item(popup.widget.children[index], unactive_item_dim)
+        end
     end
 
     function clipboard_widget:previous_item()
-        local index = 0
-        for i, v in ipairs(menu_items) do
-            if (v == prev_highlight.second.third.text) then
-                index = i
-                break
+        if (#menu_items > 0) then
+            local index = 0
+            for i, v in ipairs(menu_items) do
+                if (v == prev_highlight.second.third.text) then
+                    index = i
+                    break
+                end
             end
-        end
 
-        index = index - 1
-        if (index < 1) then
-            index = #menu_items
-        end
+            index = index - 1
+            if (index < 1) then
+                index = #menu_items
+            end
 
-        awful.spawn.with_shell("echo -nE '" .. popup.widget.children[index].second.third.text .. "' | xclip -selection clipboard")
-        highlight_item(popup.widget.children[index], unactive_item_dim)
+            copy_to_clipboard(popup.widget.children[index].second.third.text)
+            highlight_item(popup.widget.children[index], unactive_item_dim)
+        end
     end
 
     function clipboard_widget:delete_item()
@@ -271,7 +284,7 @@ local function worker(user_args)
 
             -- If the item is currently in clipboard clear it
             if (prev_highlight.opacity == 1) then
-                awful.spawn.with_shell("echo -nE '' | xclip -selection clipboard")
+                copy_to_clipboard("")
                 prev_highlight.second.third.text = ""
             end
 
@@ -284,7 +297,7 @@ local function worker(user_args)
             end
 
             if (#menu_items > 0) then
-                awful.spawn.with_shell("echo -nE '" .. popup.widget.children[index].second.third.text .. "' | xclip -selection clipboard")
+                copy_to_clipboard(popup.widget.children[index].second.third.text)
                 highlight_item(popup.widget.children[index], unactive_item_dim)
             end
         end
