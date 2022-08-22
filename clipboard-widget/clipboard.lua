@@ -182,7 +182,12 @@ local function worker(user_args)
     local content_shown = false
 
     watch("xclip -selection clipboard -o -rmlastnl", timeout,
-        function(widget, stdout)
+        function(widget, stdout, stderr)
+            -- Prevents images and other stuff that cant be converted to string from breaking the clipboard
+            if (not (stderr == "")) then
+                return
+            end
+
             local hasItem = false
             -- Remove trailing whitespace
             stdout = (stdout:gsub("^%s*(.-)%s*$", "%1"))
