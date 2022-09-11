@@ -102,6 +102,7 @@ local function build_item(popup, name, max_show_length, margin, unactive_item_di
                     copy_to_clipboard("")
                     prev_highlight.second.third.text = ""
                     prev_highlight.second.third.actual_text = ""
+                    prev_highlight = nil
                 end
 
                 table.remove(menu_items, index)
@@ -183,8 +184,19 @@ local function worker(user_args)
 
     watch("xclip -selection clipboard -o -rmlastnl", timeout,
         function(widget, stdout, stderr)
-            -- Prevents images and other stuff that cant be converted to string from breaking the clipboard
-            if (not (stderr == "")) then
+            -- Exiting the window from where you copied the string outputs this error, fix
+            if (stderr == "xclip: Error: There is no owner for the CLIPBOARD selection\n") then
+                if (prev_highlight) then
+                    copy_to_clipboard(prev_highlight.second.third.actual_text)
+                else
+                    if (#menu_items > 0) then
+                        copy_to_clipboard(popup.widget.children[#menu_items].second.third.actual_text)
+                        highlight_item(popup.widget.children[#menu_items], unactive_item_dim)
+                    end
+                end
+                return
+                -- Prevents images and other stuff that cant be converted to string from breaking the clipboard
+            elseif (string.len(stderr) > 0) then
                 return
             end
 
@@ -198,8 +210,9 @@ local function worker(user_args)
             if (stdout == "") then
                 clipboard_widget.widget.text = widget_name
                 -- If theres an item highlighted but the clipboard is empty copy the highlited item to clipboard
-                if (not (prev_highlight == nil)) then
+                if (prev_highlight) then
                     copy_to_clipboard(prev_highlight.second.third.actual_text)
+                    clipboard_widget.widget.text = prev_highlight.second.third.text
                 end
                 return
             end
@@ -240,41 +253,51 @@ local function worker(user_args)
 
     function clipboard_widget:next_item()
         if (#menu_items > 0) then
-            local index = 0
-            for i, v in ipairs(menu_items) do
-                if (v == prev_highlight.second.third.actual_text) then
-                    index = i
-                    break
+            if (prev_highlight) then
+                local index = 0
+                for i, v in ipairs(menu_items) do
+                    if (v == prev_highlight.second.third.actual_text) then
+                        index = i
+                        break
+                    end
                 end
-            end
 
-            index = index + 1
-            if (index > #menu_items) then
-                index = 1
-            end
+                index = index + 1
+                if (index > #menu_items) then
+                    index = 1
+                end
 
-            copy_to_clipboard(popup.widget.children[index].second.third.actual_text)
-            highlight_item(popup.widget.children[index], unactive_item_dim)
+                copy_to_clipboard(popup.widget.children[index].second.third.actual_text)
+                highlight_item(popup.widget.children[index], unactive_item_dim)
+            else
+                copy_to_clipboard(popup.widget.children[#menu_items].second.third.actual_text)
+                highlight_item(popup.widget.children[#menu_items], unactive_item_dim)
+            end
         end
     end
 
     function clipboard_widget:previous_item()
         if (#menu_items > 0) then
-            local index = 0
-            for i, v in ipairs(menu_items) do
-                if (v == prev_highlight.second.third.actual_text) then
-                    index = i
-                    break
+            if (prev_highlight) then
+                local index = 0
+                for i, v in ipairs(menu_items) do
+                    if (v == prev_highlight.second.third.actual_text) then
+                        index = i
+                        break
+                    end
                 end
-            end
 
-            index = index - 1
-            if (index < 1) then
-                index = #menu_items
-            end
+                index = index - 1
+                if (index < 1) then
+                    index = #menu_items
+                end
 
-            copy_to_clipboard(popup.widget.children[index].second.third.actual_text)
-            highlight_item(popup.widget.children[index], unactive_item_dim)
+                copy_to_clipboard(popup.widget.children[index].second.third.actual_text)
+                highlight_item(popup.widget.children[index], unactive_item_dim)
+            else
+                copy_to_clipboard(popup.widget.children[#menu_items].second.third.actual_text)
+                highlight_item(popup.widget.children[#menu_items], unactive_item_dim)
+            end
         end
     end
 
@@ -293,6 +316,7 @@ local function worker(user_args)
                 copy_to_clipboard("")
                 prev_highlight.second.third.text = ""
                 prev_highlight.second.third.actual_text = ""
+                prev_highlight = nil
             end
 
             table.remove(menu_items, index)
