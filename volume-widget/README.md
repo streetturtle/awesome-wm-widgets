@@ -60,14 +60,9 @@ It is possible to customize the widget by providing a table with all or some of 
 | `step` | `5` | How much the volume is raised or lowered at once (in %) |
 | `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
 | `device` | `pulse` | Select the device name to control |
+| `icon_dir`| `./icons`| Path to the folder with icons | 
 
 Depends on the chosen widget type add parameters from the corresponding section below:
-
-#### `icon` parameters
-
-| Name | Default | Description |
-|---|---|---|
-| `icon_dir`| `./icons`| Path to the folder with icons | 
 
 _Note:_ if you are changing icons, the folder should contain following .svg images: 
  - audio-volume-high-symbolic
@@ -75,11 +70,14 @@ _Note:_ if you are changing icons, the folder should contain following .svg imag
  - audio-volume-low-symbolic
  - audio-volume-muted-symbolic
 
+#### `icon` parameters
+
+(None)
+
 #### `icon_and_text` parameters
 
 | Name | Default | Description |
 |---|---|---|
-| `icon_dir`| `./icons`| Path to the folder with icons | 
 | `font` | `beautiful.font` | Font name and size, like `Play 12` |
 
 #### `arc` parameters
