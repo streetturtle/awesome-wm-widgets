@@ -36,7 +36,7 @@ awful.key({                 }, "XF86AudioPlay",  function () cmus_widget:play() 
 awful.key({                 }, "XF86AudioPause", function () cmus_widget:play()       end, {description = "pause track",    group = "cmus"}),
 awful.key({                 }, "XF86AudioNext",  function () cmus_widget:next_track() end, {description = "next track",     group = "cmus"}),
 awful.key({                 }, "XF86AudioPrev",  function () cmus_widget:prev_track() end, {description = "previous track", group = "cmus"}),
-awful.key({                 }, "XF86AudioStop",  function () cmus_widget:stop()       end, {description = "stop cmus",      group = "cmus"}),
+awful.key({                 }, "XF86AudioStop",  function () cmus_widget:stop()       end, {description = "stop track",      group = "cmus"}),
 ```
 
 ## Customization
@@ -50,4 +50,5 @@ It is possible to customize the widget by providing a table with all or some of 
 | `font` | `beautiful.font` | Font name and size, like `Play 12` |
 | `path_to_icons` | `/usr/share/icons/Arc/actions/symbolic/` | Alternative path for the icons |
 | `timeout`| `10` | Refresh cooldown |
+| `max_length` | `30` | Maximum lentgh of title. Text will be ellipsized if longer. |
 | `space` | `3` | Space between icon and track title |
