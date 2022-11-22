@@ -40,6 +40,9 @@ local function worker(user_args)
 
     local GET_SPOTIFY_STATUS_CMD = sp_bin .. ' status'
     local GET_CURRENT_SONG_CMD = sp_bin .. ' current'
+    local PLAY_PAUSE_CMD = sp_bin .. ' play'
+    local NEXT_SONG_CMD = sp_bin .. ' next'
+    local PREVIOUS_SONG_CMD = sp_bin .. ' prev'
 
     local cur_artist = ''
     local cur_title = ''
@@ -135,11 +138,11 @@ local function worker(user_args)
     --  - scroll down - play previous song
     spotify_widget:connect_signal("button::press", function(_, _, _, button)
         if (button == 1) then
-            awful.spawn("sp play", false)      -- left click
+            awful.spawn(PLAY_PAUSE_CMD, false)      -- left click
         elseif (button == 4) then
-            awful.spawn("sp next", false)  -- scroll up
+            awful.spawn(NEXT_SONG_CMD, false)       -- scroll up
         elseif (button == 5) then
-            awful.spawn("sp prev", false)  -- scroll down
+            awful.spawn(PREVIOUS_SONG_CMD, false)   -- scroll down
         end
         awful.spawn.easy_async(GET_SPOTIFY_STATUS_CMD, function(stdout, stderr, exitreason, exitcode)
             update_widget_icon(spotify_widget, stdout, stderr, exitreason, exitcode)
