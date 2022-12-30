@@ -135,10 +135,6 @@ local function worker(user_args)
         end
 
         local capacity = 0
-        for _, cap in ipairs(capacities) do
-            capacity = capacity + cap
-        end
-
         local charge = 0
         local status
         for i, batt in ipairs(battery_info) do
@@ -149,6 +145,7 @@ local function worker(user_args)
                 end
 
                 charge = charge + batt.charge * capacities[i]
+                capacity = capacity + capacities[i]
             end
         end
         charge = charge / capacity
