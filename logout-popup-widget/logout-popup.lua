@@ -12,11 +12,10 @@ local capi = {keygrabber = keygrabber }
 local wibox = require("wibox")
 local gears = require("gears")
 local beautiful = require("beautiful")
-local awesomebuttons = require("awesome-buttons.awesome-buttons")
+local awesomebuttons = require("widgets.awesome-buttons.awesome-buttons")
 
-
-local HOME_DIR = os.getenv("HOME")
-local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/logout-popup-widget'
+local filename = debug.getinfo(1,"S").source:sub(2)
+local WIDGET_DIR = string.gsub(filename,"/[^/]*$","/")
 
 
 local w = wibox {
