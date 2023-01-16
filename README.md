@@ -62,5 +62,5 @@ If you find anything useful here, you can:
 </a>
 
 # Edit from original
-It can install any path in "~/.config/awesome/" such as "~/.config/awesome/widgets".
+It can install any path in "\~/.config/awesome/" such as "\~/.config/awesome/widgets".
 see also [#1](/../../issues/1)
