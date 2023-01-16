@@ -19,8 +19,8 @@ local dpi = require('beautiful').xresources.apply_dpi
 -- Battery 0: Discharging, 75%, 01:51:38 remaining
 -- Battery 0: Charging, 53%, 00:57:43 until charged
 
-local HOME = os.getenv("HOME")
-local WIDGET_DIR = HOME .. '/.config/awesome/awesome-wm-widgets/battery-widget'
+local filename = debug.getinfo(1,"S").source:sub(2)
+local WIDGET_DIR = string.gsub(filename,"/[^/]*$","/")
 
 local battery_widget = {}
 local function worker(user_args)
