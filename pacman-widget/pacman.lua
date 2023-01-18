@@ -8,7 +8,7 @@ local DIR = os.getenv("HOME") .. "/.config/awesome/pacman-widget/"
 local ICON_DIR = DIR .. "icons/"
 
 local pacman_widget = {}
-local config = {}
+local config, timer = {}, {}
 
 config.interval = 600
 config.popup_bg_color = "#222222"
@@ -38,19 +38,19 @@ local function worker(user_args)
         },
         {
             id = "txt",
-            font = font,
+            font = args.font,
             widget = wibox.widget.textbox
         },
         spacing = 5,
         layout = wibox.layout.fixed.horizontal,
-    } 
-    function pacman_widget:set(new_value)
+    }
+    function pacman_widget.set(new_value)
         pacman_widget:get_children_by_id("txt")[1]:set_text(new_value)
         pacman_widget:get_children_by_id("icon")[1]:set_image(
             ICON_DIR .. (tonumber(new_value) > 0 and "pacman" or "pacman-full") .. ".svg"
         )
     end
-   
+
     local rows, ptr = wibox.layout.fixed.vertical(), 0
     rows:connect_signal("button::press", function(_,_,_,button)
           if button == 4 then
@@ -65,7 +65,7 @@ local function worker(user_args)
               end
           end
        end)
-    
+
     local popup = awful.popup {
         border_width = _config.popup_border_width,
         border_color = _config.popup_border_color,
@@ -83,7 +83,7 @@ local function worker(user_args)
                     popup.visible = false
                 else
                     popup.visible = true
-                    popup:move_next_to(mouse.current_widget_geometry)
+                    popup:move_next_to(_G.mouse.current_widget_geometry)
                 end
             end)
         )
@@ -106,13 +106,13 @@ local function worker(user_args)
         if not busy then
             c:set_opacity(1)
             c:emit_signal("widget::redraw_needed")
-            local wb = mouse.current_wibox
+            local wb = _G.mouse.current_wibox
             old_cursor, old_wibox = wb.cursor, wb
             wb.cursor = "hand2"
         end
     end)
     upgr_btn:connect_signal("mouse::leave", function(c)
-        if not busy then 
+        if not busy then
             c:set_opacity(upgr_opacity)
             c:emit_signal("widget::redraw_needed")
             if old_wibox then
@@ -129,28 +129,30 @@ local function worker(user_args)
             old_wibox = nil
         end
         if not busy then
-            busy, one_shot = true, true
+            busy = true
+            local one_shot = true
             awful.spawn.with_line_callback("bash -c " .. DIR .. "upgrade", {
                 stdout = function()
                     if one_shot then
                         upgrading, one_shot = true, false
-                        timer:emit_signal("timeout") 
+                        timer:emit_signal("timeout")
                     end
                 end,
                 stderr = function(line)
                     if (line ~= nil and line ~= "") then
-                        notification = string.find(line, "warning") and
+                        if string.find(line, "warning") then
                             naughty.notify({
                                 title = "Warning!",
                                 text = line,
                                 timeout = 0
                                 })
-                            or
+                        else
                             naughty.notify({
                                 preset = naughty.config.presets.critical,
                                 title = "Error!",
                                 text = line,
                             })
+                        end
                     end
                 end,
                 exit = function()
@@ -163,21 +165,21 @@ local function worker(user_args)
         end
     end)
 
-    _, timer = awful.widget.watch([[bash -c "checkupdates 2>/dev/null"]],
+    timer = select(2, awful.widget.watch([[bash -c "checkupdates 2>/dev/null"]],
         _config.interval,
         function(widget, stdout)
             local upgrades_tbl = {}
             for value in stdout:gmatch("([^\n]+)") do
-                upgrades_tbl[#upgrades_tbl+1] = value 
+                upgrades_tbl[#upgrades_tbl+1] = value
             end
-            widget:set(#upgrades_tbl)
-           
+            widget.set(#upgrades_tbl)
+
             local popup_header_height, popup_row_height = 30, 20
             local header = wibox.widget {
                 {
                     nil,
                     {
-                        markup = "<b>" .. (upgrading and "Upgrading " .. #upgrades_tbl .. " Packages" or 
+                        markup = "<b>" .. (upgrading and "Upgrading " .. #upgrades_tbl .. " Packages" or
                             (#upgrades_tbl == 0 and "No" or #upgrades_tbl) .. " Available Upgrades") .. "</b>",
                         layout = wibox.widget.textbox,
                     },
@@ -197,7 +199,7 @@ local function worker(user_args)
 
             for k, v in ipairs(upgrades_tbl) do
                 for i = 1, #rows.children do
-                    if v == rows.children[i]:get_txt() then goto continue end
+                    if v == rows.children[i].get_txt() then goto continue end
                 end
                 local row = wibox.widget{
                     {
@@ -214,8 +216,8 @@ local function worker(user_args)
                     },
                     layout = wibox.layout.ratio.horizontal,
                 }
-                function row:get_txt() return row:get_children_by_id("txt")[1].text end
-                function row:set_idx(idx) row:get_children_by_id("idx")[1]:set_text(idx) end
+                function row.get_txt() return row:get_children_by_id("txt")[1].text end
+                function row.set_idx(idx) row:get_children_by_id("idx")[1]:set_text(idx) end
                 row:ajust_ratio(2, 0.1, 0.9, 0)
                 rows:insert(k, row)
                 ::continue::
@@ -246,7 +248,7 @@ local function worker(user_args)
             }
        end,
        pacman_widget
-    )
+    ))
     return pacman_widget
 end
 
