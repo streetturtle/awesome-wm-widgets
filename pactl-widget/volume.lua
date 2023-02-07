@@ -157,6 +157,7 @@ local function worker(user_args)
     local refresh_rate = args.refresh_rate or 1
     local step = args.step or 5
     local device = args.device or '@DEFAULT_SINK@'
+    local tooltip = args.tooltip or false
 
     if widget_types[widget_type] == nil then
         volume.widget = widget_types['icon_and_text'].get_widget(args.icon_and_text_args)
@@ -225,6 +226,15 @@ local function worker(user_args)
             update_graphic(volume.widget)
         end
     }
+
+    if tooltip then
+        awful.tooltip {
+            objects        = { volume.widget },
+            timer_function = function()
+                return pactl.get_volume(device) .. " %"
+            end,
+        }
+    end
 
     return volume.widget
 end

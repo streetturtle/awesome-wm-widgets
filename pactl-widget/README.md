@@ -49,6 +49,7 @@ the following config parameters:
 | `step` | `5` | How much the volume is raised or lowered at once (in %) |
 | `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
 | `device` | `@DEFAULT_SINK@` | Select the device name to control |
+| `tooltip` | `false` | Display volume level in a tooltip when the mouse cursor hovers the widget |
 
 For more details on parameters depending on the chosen widget type, please
 refer to the original Volume widget.
