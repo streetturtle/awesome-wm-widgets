@@ -16,7 +16,9 @@ local gfs = require("gears.filesystem")
 local naughty = require("naughty")
 local beautiful = require("beautiful")
 
-local ICON_DIR = gfs.get_configuration_dir() .. "awesome-wm-widgets/brightness-widget/"
+local filename = debug.getinfo(1,"S").source:sub(2)
+local ICON_DIR = string.gsub(filename,"/[^/]*$","/")
+
 local get_brightness_cmd
 local set_brightness_cmd
 local inc_brightness_cmd

@@ -61,3 +61,6 @@ If you find anything useful here, you can:
   <img src="https://contrib.rocks/image?repo=streetturtle/awesome-wm-widgets" />
 </a>
 
+# Edit from original
+It can install any path in "\~/.config/awesome/" such as "\~/.config/awesome/widgets".
+see also [#1](/../../issues/1)
