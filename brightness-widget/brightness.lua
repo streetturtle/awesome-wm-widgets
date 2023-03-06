@@ -46,6 +46,7 @@ local function worker(user_args)
     local current_level = 0 -- current brightness value
     local tooltip = args.tooltip or false
     local percentage = args.percentage or false
+    local rmb_set_max = args.rmb_set_max or false
     if program == 'light' then
         get_brightness_cmd = 'light -G'
         set_brightness_cmd = 'light -S %d' -- <level>
@@ -136,19 +137,23 @@ local function worker(user_args)
     end
     local old_level = 0
     function brightness_widget:toggle()
-        if old_level < 0.1 then
-            -- avoid toggling between '0' and 'almost 0'
-            old_level = 1
-        end
-        if current_level < 0.1 then
-            -- restore previous level
-            current_level = old_level
+        if rmb_set_max then
+            brightness_widget:set(100)
         else
-            -- save current brightness for later
-            old_level = current_level
-            current_level = 0
+            if old_level < 0.1 then
+                -- avoid toggling between '0' and 'almost 0'
+                old_level = 1
+            end
+            if current_level < 0.1 then
+                -- restore previous level
+                current_level = old_level
+            else
+                -- save current brightness for later
+                old_level = current_level
+                current_level = 0
+            end
+            brightness_widget:set(current_level)
         end
-        brightness_widget:set(current_level)
     end
     function brightness_widget:inc()
         spawn.easy_async(inc_brightness_cmd, function()
