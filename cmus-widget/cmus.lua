@@ -12,6 +12,16 @@ local watch = require("awful.widget.watch")
 local spawn = require("awful.spawn")
 local beautiful = require('beautiful')
 
+local function ellipsize(text, length)
+    -- utf8 only available in Lua 5.3+
+    if utf8 == nil then
+        return text:sub(0, length)
+    end
+    return (utf8.len(text) > length and length > 0)
+        and text:sub(0, utf8.offset(text, length - 2) - 1) .. '...'
+        or text
+end
+
 local cmus_widget = {}
 
 local function worker(user_args)
@@ -21,6 +31,7 @@ local function worker(user_args)
 
     local path_to_icons = args.path_to_icons or "/usr/share/icons/Arc/actions/symbolic/"
     local timeout = args.timeout or 10
+    local max_length = args.max_length or 30
     local space = args.space or 3
 
     cmus_widget.widget = wibox.widget {
@@ -86,7 +97,7 @@ local function worker(user_args)
                     widget:update_icon("media-playback-stop-symbolic.svg")
                 end
 
-                widget:set_title(title)
+                widget:set_title(ellipsize(title, max_length))
                 widget.visible = true
             else
                 widget.visible = false
