@@ -36,7 +36,7 @@ function pactl.get_volume(device)
 end
 
 function pactl.get_mute(device)
-    local stdout = utils.popen_and_return('pactl get-sink-mute ' .. device)
+    local stdout = utils.popen_and_return('LC_ALL=C pactl get-sink-mute ' .. device)
     if string.find(stdout, "yes") then
         return true
     else
@@ -57,7 +57,7 @@ function pactl.get_sinks_and_sources()
     local value
     local in_section
 
-    for line in utils.popen_and_return('pactl list'):gmatch('[^\r\n]*') do
+    for line in utils.popen_and_return('LC_ALL=C pactl list'):gmatch('[^\r\n]*') do
 
         if string.match(line, '^%a+ #') then
             in_section = nil
