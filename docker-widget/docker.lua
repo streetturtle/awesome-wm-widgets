@@ -64,7 +64,7 @@ local docker_widget = wibox.widget {
 
 local parse_container = function(line)
     local name, id, image, how_long, size, actual_status
-    if string.find(line, 'Created') then
+    if string.find(line, '::Created::') then
         name, id, image, size = line:match(DOCKER_CREATED_STATUS_PATTERN)
         actual_status = 'Created'
         how_long = 'Never started'
