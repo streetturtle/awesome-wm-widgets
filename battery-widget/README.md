@@ -34,6 +34,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `warning_msg_position` | `bottom_right` | Position of the warning popup |
 | `warning_msg_icon` | ~/.config/awesome/awesome-wm-widgets/battery-widget/spaceman.jpg | Icon of the warning popup |
 | `enable_battery_warning` | `true` | Display low battery warning |
+| `battery_backend` | acpi | Backend to provide battery information, acpi or upower |
 
 *Note: the widget expects following icons to be present in the folder:
 
