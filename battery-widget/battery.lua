@@ -223,52 +223,52 @@ local function worker(user_args)
     end,
     icon_widget)
     elseif battery_backend == "upower" then
-        watch(
-            { awful.util.shell, "-c", "upower -i $(upower -e | grep BAT) | sed -n '/present/,/icon-name/p'" },
-            timeout,
-            function(widget, stdout)
-                local bat_now = {
-                    state        = "N/A",
-                    timefull     = "N/A",
-                    percentage   = "N/A",
-                }
+    watch(
+        { awful.util.shell, "-c", "upower -i $(upower -e | grep BAT) | sed -n '/present/,/icon-name/p'" },
+        timeout,
+        function(widget, stdout)
+        local bat_now = {
+            state        = "N/A",
+            timefull     = "N/A",
+            percentage   = "N/A",
+        }
 
-                for k, v in string.gmatch(stdout, '([%a]+[%a|-]+):%s*([%a|%d]+[,|%a|%d]-)') do
-                    if     k == "state"      then bat_now.state      = v
-                    elseif k == 'full'       then bat_now.timefull   = v
-                    elseif k == "percentage" then bat_now.percentage = tonumber(v)
-                    end
-                end
+        for k, v in string.gmatch(stdout, '([%a]+[%a|-]+):%s*([%a|%d]+[,|%a|%d]-)') do
+            if     k == "state"      then bat_now.state      = v
+            elseif k == 'full'       then bat_now.timefull   = v
+            elseif k == "percentage" then bat_now.percentage = tonumber(v)
+            end
+        end
 
-                -- customize here
-                local charge = bat_now.percentage
-                local status = bat_now.state
-                if show_current_level then
-                    level_widget.text = string.format('%d%%', charge)
-                end
+        -- customize here
+        local charge = bat_now.percentage
+        local status = bat_now.state
+        if show_current_level then
+            level_widget.text = string.format('%d%%', charge)
+        end
 
-                if (charge >= 0 and charge < 15) then
-                    batteryType = "battery-empty%s-symbolic"
-                    if enable_battery_warning and status ~= 'charging' and os.difftime(os.time(), last_battery_check) > 300 then
-                        -- if 5 minutes have elapsed since the last warning
-                        last_battery_check = os.time()
+        if (charge >= 0 and charge < 15) then
+            batteryType = "battery-empty%s-symbolic"
+            if enable_battery_warning and status ~= 'charging' and os.difftime(os.time(), last_battery_check) > 300 then
+                -- if 5 minutes have elapsed since the last warning
+                last_battery_check = os.time()
 
-                        show_battery_warning()
-                    end
-                elseif (charge >= 15 and charge < 40) then batteryType = "battery-caution%s-symbolic"
-                elseif (charge >= 40 and charge < 60) then batteryType = "battery-low%s-symbolic"
-                elseif (charge >= 60 and charge < 80) then batteryType = "battery-good%s-symbolic"
-                elseif (charge >= 80 and charge <= 100) then batteryType = "battery-full%s-symbolic"
-                end
+                show_battery_warning()
+            end
+        elseif (charge >= 15 and charge < 40) then batteryType = "battery-caution%s-symbolic"
+        elseif (charge >= 40 and charge < 60) then batteryType = "battery-low%s-symbolic"
+        elseif (charge >= 60 and charge < 80) then batteryType = "battery-good%s-symbolic"
+        elseif (charge >= 80 and charge <= 100) then batteryType = "battery-full%s-symbolic"
+        end
 
-                if (status == 'charging' and bat_now.timefull ~= "N/A") then
-                    batteryType = string.format(batteryType, '-charging')
-                else
-                    batteryType = string.format(batteryType, '')
-                end
+        if (status == 'charging' and bat_now.timefull ~= "N/A") then
+            batteryType = string.format(batteryType, '-charging')
+        else
+            batteryType = string.format(batteryType, '')
+        end
 
-                widget.icon:set_image(path_to_icons .. batteryType .. ".svg")
-            end,
+        widget.icon:set_image(path_to_icons .. batteryType .. ".svg")
+        end,
         icon_widget)
     end
 
