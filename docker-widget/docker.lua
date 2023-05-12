@@ -93,7 +93,7 @@ end
 
 local status_to_icon_name = {
     Up = ICONS_DIR .. 'play.svg',
-    Created = ICONS_DIR .. 'play.svg',
+    Created = ICONS_DIR .. 'square.svg',
     Exited = ICONS_DIR .. 'square.svg',
     Paused = ICONS_DIR .. 'pause.svg'
 }
