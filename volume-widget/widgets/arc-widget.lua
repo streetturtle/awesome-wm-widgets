@@ -13,7 +13,8 @@ function widget.get_widget(widgets_args)
     local bg_color = args.bg_color or '#ffffff11'
     local mute_color = args.mute_color or beautiful.fg_urgent
     local size = args.size or 18
-    local icon = args.icon or ICON_DIR .. 'audio-volume-high-symbolic.svg'
+    local icon_dir = args.icon_dir or ICON_DIR
+    local icon = args.icon_path or icon_dir .. 'audio-volume-high-symbolic.svg'
 
     return wibox.widget {
         {
