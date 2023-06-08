@@ -95,8 +95,9 @@ local function worker(user_args)
         end
         )
         elseif battery_backend == "upower" then
-        awful.spawn.easy_async({ awful.util.shell, "-c",
-            [[ for battery in $(upower -e | grep battery); do
+        awful.spawn.easy_async(
+            { awful.util.shell, "-c",
+            [[ for battery in $(upower -e | grep 'battery\|headphone'); do
                    upower -i $battery | awk '
             {    if ($1 == "native-path:") {path=$2}
             else if ($1 == "percentage:") {percent=$2}
@@ -105,20 +106,20 @@ local function worker(user_args)
             END { sub("battery-","",path) }
             END { printf "%s:\n %s %s %s\n", path, percent, state, time }' ;
             done ]]
-        },
-        function(stdout, _, _, _)
-            naughty.destroy(notification)
-            notification = naughty.notify{
-                text =  stdout,
-                title = "Battery status",
-                icon = path_to_icons .. batteryType .. ".svg",
-                icon_size = dpi(16),
-                position = position,
-                timeout = 5, hover_timeout = 0.5,
-                width = 200,
-                screen = mouse.screen
-            }
-        end
+            },
+            function(stdout, _, _, _)
+                naughty.destroy(notification)
+                notification = naughty.notify{
+                    text =  stdout,
+                    title = "Battery status",
+                    icon = path_to_icons .. batteryType .. ".svg",
+                    icon_size = dpi(16),
+                    position = position,
+                    timeout = 5, hover_timeout = 0.5,
+                    width = 200,
+                    screen = mouse.screen
+                }
+            end
         )
         end
     end
