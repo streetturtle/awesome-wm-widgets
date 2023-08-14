@@ -31,9 +31,9 @@ s.mytasklist, -- Middle widget
         -- default
         volume_widget(),
         -- customized
-        volume_widget{
+        volume_widget({
             widget_type = 'arc'
-        },
+        }),
 ```
 
 Note that widget uses following command the get the current volume: `amixer -D pulse sget Master`, so please make sure that it works for you, otherwise you need to set parameter `device = 'default'`.
