@@ -34,6 +34,7 @@ local function worker(user_args)
     local dim_when_paused = args.dim_when_paused == nil and false or args.dim_when_paused
     local dim_opacity = args.dim_opacity or 0.2
     local max_length = args.max_length or 15
+    local title_scroll_length = args.title_scroll_length or 100
     local show_tooltip = args.show_tooltip == nil and true or args.show_tooltip
     local timeout = args.timeout or 1
     local sp_bin = args.sp_bin or 'sp'
@@ -47,6 +48,28 @@ local function worker(user_args)
     local cur_artist = ''
     local cur_title = ''
     local cur_album = ''
+
+    local title_widget = (function()
+            if title_scroll_length >= 0 then
+                return {
+                    layout = wibox.container.scroll.horizontal,
+                    max_size = title_scroll_length,
+                    step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
+                    speed = 40,
+                    {
+                        id = 'titlew',
+                        font = font,
+                        widget = wibox.widget.textbox
+                    }
+                }
+            else
+                return {
+                    id = 'titlew',
+                    font = font,
+                    widget = wibox.widget.textbox
+                }
+            end
+    end)()
 
     spotify_widget = wibox.widget {
         {
@@ -67,17 +90,7 @@ local function worker(user_args)
                 forced_height = 1
             }
         },
-        {
-            layout = wibox.container.scroll.horizontal,
-            max_size = 100,
-            step_function = wibox.container.scroll.step_functions.waiting_nonlinear_back_and_forth,
-            speed = 40,
-            {
-                id = 'titlew',
-                font = font,
-                widget = wibox.widget.textbox
-            }
-        },
+        title_widget,
         layout = wibox.layout.align.horizontal,
         set_status = function(self, is_playing)
             self:get_children_by_id('icon')[1]:set_image(is_playing and play_icon or pause_icon)
