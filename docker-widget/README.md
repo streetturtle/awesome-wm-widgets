@@ -16,7 +16,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | Name | Default | Description |
 |---|---|---|
 | `icon` | `./docker-widget/icons/docker.svg` | Path to the icon |
-| `number_of_containers` | `-1` | Number of last created containers to show |
+| `number_of_containers` | -1 | Number of last created containers to show |
 | `executable_name` | `docker` | Name of the executable to use, defaults to `docker` |
 | `max_widget_width` | 270 | Maximum width of the widget before the text breaks |
 
