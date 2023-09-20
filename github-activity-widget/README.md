@@ -15,7 +15,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | Name | Default | Description |
 |---|---|---|
 | `icon` | `github.png` from the widget sources | Widget icon displayed on the wibar |
-| `username` | Required | Your GitHub username |
+| `username` | Required | GitHub username |
 | `number_of_events` | 10 | Number of events to display in the list |
 
 ## Installation
