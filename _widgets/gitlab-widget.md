@@ -24,8 +24,8 @@ It is possible to customize widget by providing a table with all or some of the 
 | Name | Default | Description |
 |---|---|---|
 | `icon` | `./icons/gitlab-icon.svg` | Path to the icon |
-| `host` | Required | e.g _https://gitlab.yourcompany.com_ |
-| `access_token` | Required | e.g _h2v531iYASDz6McxYk4A_ |
+| `host` | Required | e.g. `https://gitlab.yourcompany.com` |
+| `access_token` | Required | e.g. `h2v531iYASDz6McxYk4A` |
 | `timeout` | 60 | How often in seconds the widget should be refreshed |
 
 _Note:_

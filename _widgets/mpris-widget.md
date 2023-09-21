@@ -7,7 +7,7 @@ Music Player Info widget cy @mgabs
 
 # Prerequisite
 
-Install `playerctl` (mpris implementation), should be available in repo, e.g for Ubuntu:
+Install `playerctl` (mpris implementation), should be available in repo, e.g. for Ubuntu:
 
 ```bash
 sudo apt-get install playerctl

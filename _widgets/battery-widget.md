@@ -24,19 +24,19 @@ It is possible to customize widget by providing a table with all or some of the 
 
 | Name | Default | Description |
 |---|---|---|
-| `font` | Play 8 | Fond |
+| `font` | `Play 8` | Font |
 | `path_to_icons` | `/usr/share/icons/Arc/status/symbolic/` | Path to the folder with icons* |
 | `show_current_level`| false | Show current charge level |
 | `margin_right`|0| The right margin of the widget|
 | `margin_left`|0| The left margin of the widget|
-| `display_notification` | `false` | Display a notification on mouseover |
+| `display_notification` | false | Display a notification on mouseover |
 | `notification_position` | `top_right` | The notification position |
 | `timeout` | 10 | How often in seconds the widget refreshes |
-| `warning_msg_title` | _Huston, we have a problem_ | Title of the warning popup |
-| `warning_msg_text` | _Battery is dying_ | Text of the warning popup |
+| `warning_msg_title` | `Huston, we have a problem` | Title of the warning popup |
+| `warning_msg_text` | `Battery is dying` | Text of the warning popup |
 | `warning_msg_position` | `bottom_right` | Position of the warning popup |
-| `warning_msg_icon` | ~/.config/awesome/awesome-wm-widgets/battery-widget/spaceman.jpg | Icon of the warning popup |
-| `enable_battery_warning` | `true` | Display low battery warning |
+| `warning_msg_icon` | `~/.config/awesome/awesome-wm-widgets/battery-widget/spaceman.jpg` | Icon of the warning popup |
+| `enable_battery_warning` | true | Display low battery warning |
 
 *Note: the widget expects following icons to be present in the folder:
 
