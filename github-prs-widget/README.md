@@ -21,7 +21,7 @@ It is possible to customize widget by providing a table with all or some of the 
 
 | Name | Default | Description |
 |---|---|---|
-| `reviewer` | Required | github user login |
+| `reviewer` | Required | GitHub username |
 
 ## Installation
 

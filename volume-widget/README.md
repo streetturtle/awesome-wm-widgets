@@ -57,7 +57,7 @@ It is possible to customize the widget by providing a table with all or some of 
 | Name | Default | Description |
 |---|---|---|
 | `mixer_cmd` | `pavucontrol` | command to run on middle click (e.g. a mixer program) |
-| `step` | `5` | How much the volume is raised or lowered at once (in %) |
+| `step` | 5 | How much the volume is raised or lowered at once (in %) |
 | `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
 | `device` | `pulse` | Select the device name to control |
 
@@ -98,11 +98,11 @@ _Note:_ if you are changing icons, the folder should contain following .svg imag
 |---|---|---|
 | `main_color` | `beautiful.fg_normal` | Color of the bar |
 | `mute_color` | `beautiful.fg_urgent` | Color of the bar when mute |
-| `bg_color` | `'#ffffff11'` | Color of the bar's background |
-| `width` | `50` | The bar width |
-| `margins` | `10` | Top and bottom margins (if your wibar is 22 px high, bar will be 2 px = 22 - 2*10) |
-| `shape` | `'bar'` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
-| `with_icon` | `true` | Show volume icon|
+| `bg_color` | `#ffffff11` | Color of the bar's background |
+| `width` | 50 | The bar width |
+| `margins` | 10 | Top and bottom margins (if your wibar is 22 px high, bar will be 2 px = 22 - 2*10) |
+| `shape` | `bar` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
+| `with_icon` | true | Show volume icon|
 
 _Note:_ I didn't figure out how does the `forced_height` property of progressbar widget work (maybe it doesn't work at all), thus there is a workaround with margins.
 
@@ -112,8 +112,8 @@ _Note:_ I didn't figure out how does the `forced_height` property of progressbar
 |---|---|---|
 | `main_color` | `beautiful.fg_normal` | Color of the bar |
 | `mute_color` | `beautiful.fg_urgent` | Color of the bar when mute |
-| `bg_color` | `'#ffffff11'` | Color of the bar's background |
-| `width` | `10` | The bar width |
-| `margins` | `20` | Top and bottom margins (if your wibar is 22 px high, bar will be 2 px = 22 - 2*10) |
-| `shape` | `'bar'` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
-| `with_icon` | `true` | Show volume icon| 
+| `bg_color` | `#ffffff11` | Color of the bar's background |
+| `width` | 10 | The bar width |
+| `margins` | 20 | Top and bottom margins (if your wibar is 22 px high, bar will be 2 px = 22 - 2*10) |
+| `shape` | `bar` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
+| `with_icon` | true | Show volume icon| 

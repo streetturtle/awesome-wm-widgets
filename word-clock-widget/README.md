@@ -13,9 +13,9 @@ It is possible to customize widget by providing a table with all or some of the 
 | main_color | `beautiful.fg_normal` | Color of the word on odd position |
 | accent_color | `beautiful.fg_urgent` | Color of the word on even position |
 | font | `beautiful.font` | Font (`Play 20`) |
-| is_human_readable | `false` | _nine fifteen_ or _fifteen past nine_ | 
-| military_time | `false` | 12 or 24 time format |
-| with_spaces | `false` | Separate words with spaces |
+| is_human_readable | false | _nine fifteen_ or _fifteen past nine_ | 
+| military_time | false | 12 or 24 time format |
+| with_spaces | false | Separate words with spaces |
 
 ## Installation
 
