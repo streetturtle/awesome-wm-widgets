@@ -17,10 +17,10 @@ local utils = require("awesome-wm-widgets.volume-widget.utils")
 
 
 local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
-local function GET_VOLUME_CMD(device) return 'amixer -D ' .. device .. ' sget Master' end
-local function INC_VOLUME_CMD(device, step) return 'amixer -D ' .. device .. ' sset Master ' .. step .. '%+' end
-local function DEC_VOLUME_CMD(device, step) return 'amixer -D ' .. device .. ' sset Master ' .. step .. '%-' end
-local function TOG_VOLUME_CMD(device) return 'amixer -D ' .. device .. ' sset Master toggle' end
+local function GET_VOLUME_CMD(card, device, mixer) return 'amixer -c '..card..' -D '..device..' sget '..mixer end
+local function INC_VOLUME_CMD(card, device, mixer, value_type, step) return 'amixer -c '..card..' -D '..device..' sset '..mixer..' '..value_type..' '..step..'%+' end
+local function DEC_VOLUME_CMD(card, device, mixer, value_type, step) return 'amixer -c '..card..' -D '..device..' sset '..mixer..' '..value_type..' '..step..'%-' end
+local function TOG_VOLUME_CMD(card, device, mixer) return 'amixer -c '..card..' -D '..device..' sset '..mixer..' toggle' end
 
 
 local widget_types = {
@@ -167,7 +167,11 @@ local function worker(user_args)
     local widget_type = args.widget_type
     local refresh_rate = args.refresh_rate or 1
     local step = args.step or 5
+    local card = args.card or 1
     local device = args.device or 'pulse'
+    local mixer = args.mixer or 'Master'
+    local value_type = args.value_type or '-M'
+    local toggle_cmd = args.toggle_cmd or nil
 
     if widget_types[widget_type] == nil then
         volume.widget = widget_types['icon_and_text'].get_widget(args.icon_and_text_args)
@@ -186,15 +190,19 @@ local function worker(user_args)
     end
 
     function volume:inc(s)
-        spawn.easy_async(INC_VOLUME_CMD(device, s or step), function(stdout) update_graphic(volume.widget, stdout) end)
+        spawn.easy_async(INC_VOLUME_CMD(card, device, mixer, value_type, s or step), function(stdout) update_graphic(volume.widget, stdout) end)
     end
 
     function volume:dec(s)
-        spawn.easy_async(DEC_VOLUME_CMD(device, s or step), function(stdout) update_graphic(volume.widget, stdout) end)
+        spawn.easy_async(DEC_VOLUME_CMD(card, device, mixer, value_type, s or step), function(stdout) update_graphic(volume.widget, stdout) end)
     end
 
     function volume:toggle()
-        spawn.easy_async(TOG_VOLUME_CMD(device), function(stdout) update_graphic(volume.widget, stdout) end)
+        if toggle_cmd == nil then
+            spawn.easy_async(TOG_VOLUME_CMD(card, device, mixer), function(stdout) update_graphic(volume.widget, stdout) end)
+        else
+            spawn.easy_async(toggle_cmd, function(stdout) spawn.easy_async(GET_VOLUME_CMD(card, device, mixer), function(stdout) update_graphic(volume.widget, stdout) end) end)
+        end
     end
 
     function volume:mixer()
@@ -220,7 +228,7 @@ local function worker(user_args)
             )
     )
 
-    watch(GET_VOLUME_CMD(device), refresh_rate, update_graphic, volume.widget)
+    watch(GET_VOLUME_CMD(card, device, mixer), refresh_rate, update_graphic, volume.widget)
 
     return volume.widget
 end
