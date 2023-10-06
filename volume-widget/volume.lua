@@ -36,6 +36,7 @@ local rows  = { layout = wibox.layout.fixed.vertical }
 
 local popup = awful.popup{
     bg = beautiful.bg_normal,
+    fg = beautiful.fg_normal,
     ontop = true,
     visible = false,
     shape = gears.shape.rounded_rect,
@@ -60,12 +61,12 @@ local function build_rows(devices, on_checkbox_click, device_type)
 
         local checkbox = wibox.widget {
             checked = device.is_default,
-            color = beautiful.bg_normal,
+            color = beautiful.fg_normal,
             paddings = 2,
             shape = gears.shape.circle,
             forced_width = 20,
             forced_height = 20,
-            check_color = beautiful.fg_urgent,
+            check_color = beautiful.fg_normal,
             widget = wibox.widget.checkbox
         }
 
@@ -99,11 +100,22 @@ local function build_rows(devices, on_checkbox_click, device_type)
                 layout = wibox.container.margin
             },
             bg = beautiful.bg_normal,
+            fg = beautiful.fg_normal,
             widget = wibox.container.background
         }
 
-        row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
-        row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
+        row:connect_signal("mouse::enter", function(c)
+            checkbox:set_color(beautiful.fg_focus)
+            checkbox:set_check_color(beautiful.fg_focus)
+            c:set_fg(beautiful.fg_focus)
+            c:set_bg(beautiful.bg_focus)
+        end)
+        row:connect_signal("mouse::leave", function(c)
+            checkbox:set_color(beautiful.fg_normal)
+            checkbox:set_check_color(beautiful.fg_normal)
+            c:set_fg(beautiful.fg_normal)
+            c:set_bg(beautiful.bg_normal)
+        end)
 
         local old_cursor, old_wibox
         row:connect_signal("mouse::enter", function()
@@ -138,6 +150,7 @@ local function build_header_row(text)
             widget = wibox.widget.textbox
         },
         bg = beautiful.bg_normal,
+        fg = beautiful.fg_normal,
         widget = wibox.container.background
     }
 end
