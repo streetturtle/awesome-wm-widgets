@@ -17,7 +17,7 @@ local utils = require("awesome-wm-widgets.volume-widget.utils")
 
 
 local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
-local function GET_VOLUME_CMD(card, device, mixctrl) return 'amixer -c '..card..' -D '..device..' sget '..mixctrl end
+local function GET_VOLUME_CMD(card, device, mixctrl, value_type) return 'amixer -c '..card..' -D '..device..' sget '..mixctrl..' '..value_type  end
 local function INC_VOLUME_CMD(card, device, mixctrl, value_type, step) return 'amixer -c '..card..' -D '..device..' sset '..mixctrl..' '..value_type..' '..step..'%+' end
 local function DEC_VOLUME_CMD(card, device, mixctrl, value_type, step) return 'amixer -c '..card..' -D '..device..' sset '..mixctrl..' '..value_type..' '..step..'%-' end
 local function TOG_VOLUME_CMD(card, device, mixctrl) return 'amixer -c '..card..' -D '..device..' sset '..mixctrl..' toggle' end
@@ -214,7 +214,7 @@ local function worker(user_args)
         if toggle_cmd == nil then
             spawn.easy_async(TOG_VOLUME_CMD(card, device, mixctrl), function(stdout) update_graphic(volume.widget, stdout) end)
         else
-            spawn.easy_async(toggle_cmd, function(stdout) spawn.easy_async(GET_VOLUME_CMD(card, device, mixctrl), function(stdout) update_graphic(volume.widget, stdout) end) end)
+            spawn.easy_async(toggle_cmd, function(stdout) spawn.easy_async(GET_VOLUME_CMD(card, device, mixctrl, value_type), function(stdout) update_graphic(volume.widget, stdout) end) end)
         end
     end
 
@@ -241,7 +241,7 @@ local function worker(user_args)
             )
     )
 
-    watch(GET_VOLUME_CMD(card, device, mixctrl), refresh_rate, update_graphic, volume.widget)
+    watch(GET_VOLUME_CMD(card, device, mixctrl, value_type), refresh_rate, update_graphic, volume.widget)
 
     return volume.widget
 end
