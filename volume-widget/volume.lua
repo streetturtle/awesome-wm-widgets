@@ -214,7 +214,7 @@ local function worker(user_args)
         if toggle_cmd == nil then
             spawn.easy_async(TOG_VOLUME_CMD(card, device, mixctrl), function(stdout) update_graphic(volume.widget, stdout) end)
         else
-            spawn.easy_async(toggle_cmd, function(stdout) spawn.easy_async(GET_VOLUME_CMD(card, device, mixctrl, value_type), function(stdout) update_graphic(volume.widget, stdout) end) end)
+            spawn.easy_async(toggle_cmd, function(_stdout) spawn.easy_async(GET_VOLUME_CMD(card, device, mixctrl, value_type), function(stdout) update_graphic(volume.widget, stdout) end) end)
         end
     end
 
