@@ -73,6 +73,8 @@ It is possible to customize the widget by providing a table with all or some of 
 | `mixctrl`     | `Master`        | Select the mixer name to control                                                                                                      |
 | `value_type`  | `-M`            | Select how the volume is increased/ decreased (intended for `-M`/ `-R` parameters). See `man amixer` for additional info              |
 
+Note: If unmuting or toggling using the default amixer command does not work, this command may work: `pactl set-sink-mute [card] toggle`
+
 Depends on the chosen widget type add parameters from the corresponding section below:
 
 #### `icon` parameters
