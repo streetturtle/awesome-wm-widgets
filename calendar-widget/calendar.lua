@@ -98,6 +98,7 @@ local function worker(user_args)
     local next_month_button = args.next_month_button or 4
     local previous_month_button = args.previous_month_button or 5
     local start_sunday = args.start_sunday or false
+    local week_numbers = args.week_numbers or false
 
     local styles = {}
     local function rounded_shape(size)
@@ -156,7 +157,7 @@ local function worker(user_args)
         -- Change bg color for weekends
         local d = { year = date.year, month = (date.month or 1), day = (date.day or 1) }
         local weekday = tonumber(os.date('%w', os.time(d)))
-        local default_bg = (weekday == 0 or weekday == 6)
+        local default_bg = (flag == 'focus' or flag == 'normal') and (weekday == 0 or weekday == 6)
             and calendar_themes[theme].weekend_day_bg
             or calendar_themes[theme].bg
         local ret = wibox.widget {
@@ -173,7 +174,7 @@ local function worker(user_args)
             shape_border_color = props.border_color or '#000000',
             shape_border_width = props.border_width or 0,
             fg = props.fg_color or calendar_themes[theme].fg,
-            bg = props.bg_color or default_bg,
+            bg = default_bg,
             widget = wibox.container.background
         }
 
@@ -186,6 +187,7 @@ local function worker(user_args)
         fn_embed = decorate_cell,
         long_weekdays = true,
         start_sunday = start_sunday,
+        week_numbers = week_numbers,
         widget = wibox.widget.calendar.month
     }
 
