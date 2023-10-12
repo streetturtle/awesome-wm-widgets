@@ -2,7 +2,8 @@ local wibox = require("wibox")
 
 local widget = {}
 
-local ICON_DIR = os.getenv("HOME") .. '/.config/awesome/awesome-wm-widgets/volume-widget/icons/'
+local filename = debug.getinfo(1,"S").source:sub(2)
+local ICON_DIR = string.gsub(filename,"/[^/]*$","/")
 
 function widget.get_widget(widgets_args)
     local args = widgets_args or {}
