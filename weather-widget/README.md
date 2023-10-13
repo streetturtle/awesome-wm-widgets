@@ -29,11 +29,11 @@ It is possible to customize widget by providing a table with all or some of the 
 | api_key | Required | Get it [here](https://openweathermap.org/appid) |
 | font_name | `beautiful.font:gsub("%s%d+$", "")` | **Name** of the font to use e.g. 'Play' |
 | both_units_widget | false | Show temperature in both units - '28°C (83°F) |
-| units | metric | `metric` for celsius, `imperial` for fahrenheit |
+| units | `metric` | `metric` for celsius, `imperial` for fahrenheit |
 | show_hourly_forecast | false | Show hourly forecase section |
 | time_format_12h |false | 12 or 24 hour format (13:00 - default or 1pm) |
 | show_daily_forecast | false | Show daily forecast section |
-| icon_pack_name | weather-underground-icons | Name of the icon pack, could be `weather-underground-icon` or `VitalyGorbachev` or create your own, more details below |
+| icon_pack_name | `weather-underground-icons` | Name of the icon pack, could be `weather-underground-icon` or `VitalyGorbachev` or create your own, more details below |
 | icons_extension | `.png` | File extension of icons in the pack |
 | timeout | 120 | How often in seconds the widget refreshes |
 
