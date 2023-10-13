@@ -15,8 +15,8 @@ It is possible to customize widget by providing a table with all or some of the 
 | Name | Default | Description |
 |---|---|---|
 | `icon` | `~/.config/awesome/awesome-wm-widgets/bitbucket-widget/bitbucket-icon-gradient-blue.svg` | Path to the icon |
-| `host` | Required | e.g _http://api.bitbucket.org_ |
-| `uuid` | Required | e.g _{123e4567-e89b-12d3-a456-426614174000}_ |
+| `host` | Required | e.g. _http://api.bitbucket.org_ |
+| `uuid` | Required | e.g. _{123e4567-e89b-12d3-a456-426614174000}_ |
 | `workspace` | Required | Workspace ID|
 | `repo_slug` | Required | Repository slug |
 | `timeout` | 60 | How often in seconds the widget refreshes |

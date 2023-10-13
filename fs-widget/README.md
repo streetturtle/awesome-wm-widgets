@@ -10,7 +10,7 @@ It is possible to customize widget by providing a table with all or some of the 
 
 | Name | Default | Description |
 |---|---|---|
-| `mounts` | `{'/'}` | Table with mounts to monitor, check the output from a `df` command for available options (column 'Mounted on') |
+| `mounts` | `{ '/' }` | Table with mounts to monitor, check the output from a `df` command for available options (column `Mounted on`) |
 | `timeout` | 60 | How often in seconds the widget refreshes |
 
 ## Installation

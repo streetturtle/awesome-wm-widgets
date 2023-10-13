@@ -241,7 +241,7 @@ local function worker(user_args)
                         layout = wibox.container.margin
                     },
                     bg = _config.popup_bg_color,
-                    layout = wibox.widget.background
+                    layout = wibox.container.background
                 },
                 forced_width = _config.popup_width,
                 layout = wibox.layout.fixed.horizontal

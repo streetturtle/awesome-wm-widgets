@@ -1,9 +1,9 @@
-# Docker Widget
+# Docker / Podman Widget
 
 [![GitHub issues by-label](https://img.shields.io/github/issues-raw/streetturtle/awesome-wm-widgets/docker)](https://github.com/streetturtle/awesome-wm-widgets/labels/docker)
 ![Twitter URL](https://img.shields.io/twitter/url?url=https%3A%2F%2Fgithub.com%2Fstreetturtle%2Fawesome-wm-widgets%2Fedit%2Fmaster%2Fdocker-widget)
 
-The widget allows to manage docker containers, namely start/stop/pause/unpause:
+The widget allows to manage docker and podman containers, namely start/stop/pause/unpause:
 
 <p align="center">
     <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/docker-widget/docker.gif"/>
@@ -16,7 +16,11 @@ It is possible to customize widget by providing a table with all or some of the 
 | Name | Default | Description |
 |---|---|---|
 | `icon` | `./docker-widget/icons/docker.svg` | Path to the icon |
-| `number_of_containers` | `-1` | Number of last created containers to show |
+| `number_of_containers` | -1 | Number of last created containers to show |
+| `executable_name` | `docker` | Name of the executable to use, defaults to `docker` |
+| `max_widget_width` | 270 | Maximum width of the widget before the text breaks |
+
+The `executable_name` allows you to use `Podman` instead of docker. This works since `Podman` is compatible to `docker` in the sense that the syntax and command outputs are identical.
 
 ## Installation
 
