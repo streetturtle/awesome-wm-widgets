@@ -60,6 +60,7 @@ Then
 | `text_color` | `beautiful.fg_normal` | The color of text |
 | `label_color` | `beautiful.fg_normal` | The color of the button's label |
 | `phrases` | `{ 'Goodbye!' }` | The table with phrase(s) to show, if more than one provided, the phrase is chosen randomly. Leave empty (`{}`) to hide the phrase |
+| `hide_on_leave` | `false` | If the popup should be hidden when the mouse leaves it |
 | `onlogout` | `function() awesome.quit() end` | Function which is called when the logout button is pressed |
 | `onlock` | `function() awful.spawn.with_shell("systemctl suspend") end` | Function which is called when the lock button is pressed |
 | `onreboot` | `function() awful.spawn.with_shell("reboot") end` | Function which is called when the reboot button is pressed |
