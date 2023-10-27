@@ -97,13 +97,14 @@ local function worker(user_args)
         elseif battery_backend == "upower" then
         awful.spawn.easy_async(
             { awful.util.shell, "-c",
-            [[ for battery in $(upower -e | grep 'battery\|headphone'); do
+            [[ for battery in $(upower -e | grep 'battery\|headphone\|phone\|headset'); do
                    upower -i $battery | awk '
             {    if ($1 == "native-path:") {path=$2}
             else if ($1 == "percentage:") {percent=$2}
             else if ($1 == "state:") {state=$2}
             else if ($1 == "time") {time=$4" "$5} }
             END { sub("battery-","",path) }
+            END { sub("/org/bluez/","",path) }
             END { printf "%s:\n %s %s %s\n", path, percent, state, time }' ;
             done ]]
             },
