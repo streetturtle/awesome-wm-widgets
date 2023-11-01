@@ -15,7 +15,7 @@ The widget also uses the `checkupdates` script from the `pacman-contrib` package
 Clone the repo under **~/.config/awesome/** and add the following to **rc.lua**:
 
 ```lua
-local pacman_widget = require('pacman-widget.pacman')
+local pacman_widget = require('awesome-wm-widgets-pacman-widget.pacman')
 ...
 s.mytasklist, -- Middle widget
 	{ -- Right widgets
