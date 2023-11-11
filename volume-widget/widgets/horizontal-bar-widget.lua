@@ -16,12 +16,13 @@ function widget.get_widget(widgets_args)
     local margins = args.margins or 10
     local shape = args.shape or 'bar'
     local with_icon = args.with_icon == true and true or false
+    local icon_dir = args.icon_dir or ICON_DIR
 
     local bar = wibox.widget {
         {
             {
                 id = "icon",
-                image = ICON_DIR .. 'audio-volume-high-symbolic.svg',
+                image = icon_dir .. 'audio-volume-high-symbolic.svg',
                 resize = false,
                 widget = wibox.widget.imagebox,
             },
