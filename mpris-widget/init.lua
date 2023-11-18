@@ -179,13 +179,14 @@ local function worker()
     watch(string.format(GET_MPD_CMD, "'" .. default_player .. "'"), 1, update_graphic, mpris_widget)
 
     local mpris_popup = awful.widget.watch(
-        "playerctl metadata --format '{{ status }}: {{ artist }} - {{ title }}\nDuration: {{ duration(position) }}/{{ duration(mpris:length) }}'",
+        "playerctl metadata --format '{{ status }}: {{ artist }} - {{ title }}\n"
+        .. "Duration: {{ duration(position) }}/{{ duration(mpris:length) }}'",
         1,
-        function(popup, stdout)
+        function(callback_popup, stdout)
             local metadata = stdout
-            if popup.visible then
-                popup:get_widget().text = metadata
-                popup:move_next_to(mouse.current_widget_geometry)
+            if callback_popup.visible then
+                callback_popup:get_widget().text = metadata
+                callback_popup:move_next_to(mouse.current_widget_geometry)
             end
         end,
         awful.popup {
