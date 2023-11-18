@@ -50,7 +50,7 @@ local mpdarc_icon_widget = wibox.container.mirror(mpdarc, { horizontal = true })
 local mpdarc_current_song_widget = wibox.widget {
     id = 'current_song',
     widget = wibox.widget.textbox,
-    font = 'Play 9'
+    font = beautiful.font or 'Play 9'
 }
 
 local update_graphic = function(widget, stdout, _, _, _)
