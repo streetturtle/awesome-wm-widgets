@@ -17,10 +17,10 @@ local utils = require("awesome-wm-widgets.volume-widget.utils")
 
 
 local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
-local function GET_VOLUME_CMD(device) return 'amixer -D ' .. device .. ' sget Master' end
-local function INC_VOLUME_CMD(device, step) return 'amixer -D ' .. device .. ' sset Master ' .. step .. '%+' end
-local function DEC_VOLUME_CMD(device, step) return 'amixer -D ' .. device .. ' sset Master ' .. step .. '%-' end
-local function TOG_VOLUME_CMD(device) return 'amixer -D ' .. device .. ' sset Master toggle' end
+local function GET_VOLUME_CMD(card, device, mixctrl, value_type) return 'amixer -c '..card..' -D '..device..' sget '..mixctrl..' '..value_type  end
+local function INC_VOLUME_CMD(card, device, mixctrl, value_type, step) return 'amixer -c '..card..' -D '..device..' sset '..mixctrl..' '..value_type..' '..step..'%+' end
+local function DEC_VOLUME_CMD(card, device, mixctrl, value_type, step) return 'amixer -c '..card..' -D '..device..' sset '..mixctrl..' '..value_type..' '..step..'%-' end
+local function TOG_VOLUME_CMD(card, device, mixctrl) return 'amixer -c '..card..' -D '..device..' sset '..mixctrl..' toggle' end
 
 
 local widget_types = {
@@ -36,6 +36,7 @@ local rows  = { layout = wibox.layout.fixed.vertical }
 
 local popup = awful.popup{
     bg = beautiful.bg_normal,
+    fg = beautiful.fg_normal,
     ontop = true,
     visible = false,
     shape = gears.shape.rounded_rect,
@@ -60,12 +61,12 @@ local function build_rows(devices, on_checkbox_click, device_type)
 
         local checkbox = wibox.widget {
             checked = device.is_default,
-            color = beautiful.bg_normal,
+            color = beautiful.fg_normal,
             paddings = 2,
             shape = gears.shape.circle,
             forced_width = 20,
             forced_height = 20,
-            check_color = beautiful.fg_urgent,
+            check_color = beautiful.fg_normal,
             widget = wibox.widget.checkbox
         }
 
@@ -99,11 +100,22 @@ local function build_rows(devices, on_checkbox_click, device_type)
                 layout = wibox.container.margin
             },
             bg = beautiful.bg_normal,
+            fg = beautiful.fg_normal,
             widget = wibox.container.background
         }
 
-        row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
-        row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
+        row:connect_signal("mouse::enter", function(c)
+            checkbox:set_color(beautiful.fg_focus)
+            checkbox:set_check_color(beautiful.fg_focus)
+            c:set_fg(beautiful.fg_focus)
+            c:set_bg(beautiful.bg_focus)
+        end)
+        row:connect_signal("mouse::leave", function(c)
+            checkbox:set_color(beautiful.fg_normal)
+            checkbox:set_check_color(beautiful.fg_normal)
+            c:set_fg(beautiful.fg_normal)
+            c:set_bg(beautiful.bg_normal)
+        end)
 
         local old_cursor, old_wibox
         row:connect_signal("mouse::enter", function()
@@ -138,6 +150,7 @@ local function build_header_row(text)
             widget = wibox.widget.textbox
         },
         bg = beautiful.bg_normal,
+        fg = beautiful.fg_normal,
         widget = wibox.container.background
     }
 end
@@ -167,7 +180,11 @@ local function worker(user_args)
     local widget_type = args.widget_type
     local refresh_rate = args.refresh_rate or 1
     local step = args.step or 5
+    local card = args.card or 1
     local device = args.device or 'pulse'
+    local mixctrl = args.mixctrl or 'Master'
+    local value_type = args.value_type or '-M'
+    local toggle_cmd = args.toggle_cmd or nil
 
     if widget_types[widget_type] == nil then
         volume.widget = widget_types['icon_and_text'].get_widget(args.icon_and_text_args)
@@ -186,15 +203,19 @@ local function worker(user_args)
     end
 
     function volume:inc(s)
-        spawn.easy_async(INC_VOLUME_CMD(device, s or step), function(stdout) update_graphic(volume.widget, stdout) end)
+        spawn.easy_async(INC_VOLUME_CMD(card, device, mixctrl, value_type, s or step), function(stdout) update_graphic(volume.widget, stdout) end)
     end
 
     function volume:dec(s)
-        spawn.easy_async(DEC_VOLUME_CMD(device, s or step), function(stdout) update_graphic(volume.widget, stdout) end)
+        spawn.easy_async(DEC_VOLUME_CMD(card, device, mixctrl, value_type, s or step), function(stdout) update_graphic(volume.widget, stdout) end)
     end
 
     function volume:toggle()
-        spawn.easy_async(TOG_VOLUME_CMD(device), function(stdout) update_graphic(volume.widget, stdout) end)
+        if toggle_cmd == nil then
+            spawn.easy_async(TOG_VOLUME_CMD(card, device, mixctrl), function(stdout) update_graphic(volume.widget, stdout) end)
+        else
+            spawn.easy_async(toggle_cmd, function(_stdout) spawn.easy_async(GET_VOLUME_CMD(card, device, mixctrl, value_type), function(stdout) update_graphic(volume.widget, stdout) end) end)
+        end
     end
 
     function volume:mixer()
@@ -220,7 +241,7 @@ local function worker(user_args)
             )
     )
 
-    watch(GET_VOLUME_CMD(device), refresh_rate, update_graphic, volume.widget)
+    watch(GET_VOLUME_CMD(card, device, mixctrl, value_type), refresh_rate, update_graphic, volume.widget)
 
     return volume.widget
 end

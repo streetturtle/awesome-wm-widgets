@@ -36,7 +36,15 @@ s.mytasklist, -- Middle widget
         },
 ```
 
-Note that widget uses following command the get the current volume: `amixer -D pulse sget Master`, so please make sure that it works for you, otherwise you need to set parameter `device = 'default'`.
+Note that the widget uses following command to get the current volume: `amixer -c 1 -D pulse sget Master`, so please make sure that it works for you, otherwise you need to set some parameters by entering this command in the terminal:
+
+Command output:
+- Some data of a mixer: Override all parameters you've changed
+- Error `Invalid card number`: Change parameter `-c`/ `card`
+- Error `Mixer attach pulse error: No such file or directory`: Change parameter `-D`/ `device`
+- Error `Unable to find simple control 'Master',0`: Change parameter `mixctrl`
+
+Note: `amixer[ -c ...][ -D ...]` returns a list of Mixers for the selected card/ device. omitting `-D` falls back to `default`.
 
 ### Shortcuts
 
@@ -54,20 +62,26 @@ It is possible to customize the widget by providing a table with all or some of 
 
 ### Generic parameter
 
-| Name | Default | Description |
-|---|---|---|
-| `mixer_cmd` | `pavucontrol` | command to run on middle click (e.g. a mixer program) |
-| `step` | 5 | How much the volume is raised or lowered at once (in %) |
-| `widget_type`| `icon_and_text`| Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc` |
-| `device` | `pulse` | Select the device name to control |
+| Name          | Default         | Description                                                                                                                           |
+|---------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| `mixer_cmd`   | `pavucontrol`   | command to run on middle click (e.g. a mixer program)                                                                                 |
+| `toggle_cmd`  | *nil*           | Use custom command instead of `amixer ... toggle` because [amixer's unmute option seems to be broken](https://superuser.com/a/822085) |
+| `step`        | 5               | How much the volume is raised or lowered at once (in %)                                                                               |
+| `widget_type` | `icon_and_text` | Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc`                                                  |
+| `card`        | 1               | Select the card name to control                                                                                                       |
+| `device`      | `pulse`         | Select the device name to control                                                                                                     |
+| `mixctrl`     | `Master`        | Select the mixer name to control                                                                                                      |
+| `value_type`  | `-M`            | Select how the volume is increased/ decreased (intended for `-M`/ `-R` parameters). See `man amixer` for additional info              |
+
+Note: If unmuting or toggling using the default amixer command does not work, this command may work: `pactl set-sink-mute [card] toggle`
 
 Depends on the chosen widget type add parameters from the corresponding section below:
 
 #### `icon` parameters
 
-| Name | Default | Description |
-|---|---|---|
-| `icon_dir`| `./icons`| Path to the folder with icons | 
+| Name       | Default              | Description                                   |
+|------------|----------------------|-----------------------------------------------|
+| `icon_dir` | `[widget_dir]/icons` | Path to the folder with icons (absolute path) |
 
 _Note:_ if you are changing icons, the folder should contain following .svg images: 
  - audio-volume-high-symbolic
@@ -77,10 +91,10 @@ _Note:_ if you are changing icons, the folder should contain following .svg imag
 
 #### `icon_and_text` parameters
 
-| Name | Default | Description |
-|---|---|---|
-| `icon_dir`| `./icons`| Path to the folder with icons | 
-| `font` | `beautiful.font` | Font name and size, like `Play 12` |
+| Name       | Default              | Description                                   |
+|------------|----------------------|-----------------------------------------------|
+| `icon_dir` | `[widget_dir]/icons` | Path to the folder with icons (absolute path) | 
+| `font`     | `beautiful.font`     | Font name and size, like `Play 12`            |
 
 #### `arc` parameters
 
