@@ -159,7 +159,7 @@ local function worker(user_args)
                         {
                             text = math.floor(disks[v].used / 1024 / 1024)
                                     .. '/'
-                                    .. math.floor(disks[v].size / 1024 / 1024) .. 'GB('
+                                    .. math.floor(disks[v].size / 1024 / 1024) .. 'GiB('
                                     .. math.floor(disks[v].perc) .. '%)',
                             widget = wibox.widget.textbox
                         },
