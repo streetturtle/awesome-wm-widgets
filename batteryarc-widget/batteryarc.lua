@@ -119,7 +119,7 @@ local function worker(user_args)
             text.text = ''
         end
 
-        if charge < 15 then
+        if charge < 15 and charge > 0 then
             widget.colors = { low_level_color }
             if enable_battery_warning and status ~= 'Charging' and os.difftime(os.time(), last_battery_check) > 300 then
                 -- if 5 minutes have elapsed since the last warning
