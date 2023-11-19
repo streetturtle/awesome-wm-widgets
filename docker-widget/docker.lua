@@ -63,7 +63,7 @@ local docker_widget = wibox.widget {
 }
 
 local parse_container = function(line)
-    local name, id, image, how_long, size, actual_status
+    local name, id, image, status, how_long, size, actual_status
     if string.find(line, '::Created::') then
         name, id, image, size = line:match(DOCKER_CREATED_STATUS_PATTERN)
         actual_status = 'Created'
@@ -182,14 +182,19 @@ local function worker(user_args)
                         status_icon:set_opacity(0.2)
                         status_icon:emit_signal('widget::redraw_needed')
 
-                        spawn.easy_async(executable_name .. ' ' .. command .. ' ' .. container['name'], function(_, stderr)
-                            if stderr ~= '' then show_warning(stderr) end
-                            spawn.easy_async(string.format(LIST_CONTAINERS_CMD, executable_name, number_of_containers),
-                                function(stdout, container_errors)
-                                    rebuild_widget(stdout, container_errors)
-                                end)
-                            end)
-                    end) ) )
+                        spawn.easy_async(executable_name .. ' ' .. command .. ' ' .. container['name'],
+                            function(_, stderr)
+                                if stderr ~= '' then show_warning(stderr) end
+                                spawn.easy_async(
+                                    string.format(LIST_CONTAINERS_CMD,executable_name, number_of_containers),
+                                    function(stdout, container_errors)
+                                        rebuild_widget(stdout, container_errors)
+                                    end
+                                )
+                            end
+                        )
+                    end) )
+                )
             else
                 start_stop_button = nil
             end
@@ -241,12 +246,14 @@ local function worker(user_args)
                         status_icon:set_opacity(0.2)
                         status_icon:emit_signal('widget::redraw_needed')
 
-                        awful.spawn.easy_async(executable_name .. ' ' .. command .. ' ' .. container['name'], function(_, stderr)
-                            if stderr ~= '' then show_warning(stderr) end
-                            spawn.easy_async(string.format(LIST_CONTAINERS_CMD, executable_name, number_of_containers),
-                                function(stdout, container_errors)
-                                    rebuild_widget(stdout, container_errors)
-                                end)
+                        awful.spawn.easy_async(executable_name .. ' ' .. command .. ' ' .. container['name'],
+                            function(_, stderr)
+                                if stderr ~= '' then show_warning(stderr) end
+                                spawn.easy_async(string.format(LIST_CONTAINERS_CMD,
+                                                               executable_name, number_of_containers),
+                                    function(stdout, container_errors)
+                                        rebuild_widget(stdout, container_errors)
+                                    end)
                             end)
                     end) ) )
             else
@@ -273,12 +280,15 @@ local function worker(user_args)
                 }
                 delete_button:buttons(
                         gears.table.join( awful.button({}, 1, function()
-                            awful.spawn.easy_async(executable_name .. ' rm ' .. container['name'], function(_, rm_stderr)
-                                if rm_stderr ~= '' then show_warning(rm_stderr) end
-                                spawn.easy_async(string.format(LIST_CONTAINERS_CMD, executable_name, number_of_containers),
-                                    function(lc_stdout, lc_stderr)
-                                        rebuild_widget(lc_stdout, lc_stderr) end)
-                                    end)
+                            awful.spawn.easy_async(executable_name .. ' rm ' .. container['name'],
+                                function(_, rm_stderr)
+                                    if rm_stderr ~= '' then show_warning(rm_stderr) end
+                                    spawn.easy_async(string.format(LIST_CONTAINERS_CMD,
+                                                                   executable_name, number_of_containers),
+                                        function(lc_stdout, lc_stderr)
+                                            rebuild_widget(lc_stdout, lc_stderr)
+                                        end)
+                                end)
                         end)))
 
                 local old_cursor, old_wibox

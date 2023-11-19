@@ -21,7 +21,6 @@ local function script_path()
 	return str:match("(.*/)")
 end
 
-local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = script_path()
 local ICONS_DIR = WIDGET_DIR .. "/icons/"
 

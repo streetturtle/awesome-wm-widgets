@@ -34,7 +34,7 @@ local process_rows = {
 }
 
 -- Remove spaces at end and beggining of a string
-function trim(s)
+local function trim(s)
    return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
