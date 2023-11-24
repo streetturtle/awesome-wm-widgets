@@ -70,10 +70,10 @@ local function worker(user_args)
             border = '#75715E'
         },
         naughty = {
-            bg = beautiful.notification_bg or beautiful.bg,
-            fg = beautiful.notification_fg or beautiful.fg,
-            focus_date_bg = beautiful.notification_fg or beautiful.fg,
-            focus_date_fg = beautiful.notification_bg or beautiful.bg,
+            bg = beautiful.notification_bg or beautiful.bg or beautiful.bg_normal,
+            fg = beautiful.notification_fg or beautiful.fg or beautiful.fg_normal,
+            focus_date_bg = beautiful.notification_fg or beautiful.fg or beautiful.fg_normal,
+            focus_date_fg = beautiful.notification_bg or beautiful.bg or beautiful.bg_normal,
             weekend_day_bg = beautiful.bg_focus,
             weekday_fg = beautiful.fg,
             header_fg = beautiful.fg,
@@ -155,11 +155,14 @@ local function worker(user_args)
             widget:set_markup(props.markup(widget:get_text()))
         end
         -- Change bg color for weekends
-        local d = { year = date.year, month = (date.month or 1), day = (date.day or 1) }
-        local weekday = tonumber(os.date('%w', os.time(d)))
-        local default_bg = (flag == 'focus' or flag == 'normal') and (weekday == 0 or weekday == 6)
-            and calendar_themes[theme].weekend_day_bg
-            or calendar_themes[theme].bg
+        local default_bg
+        if (flag == "normal") then
+            local d = { year = date.year, month = (date.month or 1), day = (date.day or 1) }
+            local weekday = tonumber(os.date('%w', os.time(d)))
+            default_bg = (weekday == 0 or weekday == 6)
+                and calendar_themes[theme].weekend_day_bg
+                or calendar_themes[theme].bg
+        end
         local ret = wibox.widget {
             {
                 {
@@ -174,7 +177,7 @@ local function worker(user_args)
             shape_border_color = props.border_color or '#000000',
             shape_border_width = props.border_width or 0,
             fg = props.fg_color or calendar_themes[theme].fg,
-            bg = default_bg,
+            bg = props.bg_color or default_bg,
             widget = wibox.container.background
         }
 
