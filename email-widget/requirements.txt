@@ -1,0 +1,2 @@
+html2text==2020.1.16
+python-dotenv==1.0.0
