@@ -13,8 +13,9 @@ local spawn = require("awful.spawn")
 local gears = require("gears")
 local beautiful = require("beautiful")
 local watch = require("awful.widget.watch")
-local utils = require("awesome-wm-widgets.volume-widget.utils")
 
+local this_library_path = (...):match("(.-)[^%.]+$")
+local utils = require(this_library_path .. "utils")
 
 local LIST_DEVICES_CMD = [[sh -c "pacmd list-sinks; pacmd list-sources"]]
 local function GET_VOLUME_CMD(card, device, mixctrl, value_type) return 'amixer -c '..card..' -D '..device..' sget '..mixctrl..' '..value_type  end
@@ -24,11 +25,11 @@ local function TOG_VOLUME_CMD(card, device, mixctrl) return 'amixer -c '..card..
 
 
 local widget_types = {
-    icon_and_text = require("awesome-wm-widgets.volume-widget.widgets.icon-and-text-widget"),
-    icon = require("awesome-wm-widgets.volume-widget.widgets.icon-widget"),
-    arc = require("awesome-wm-widgets.volume-widget.widgets.arc-widget"),
-    horizontal_bar = require("awesome-wm-widgets.volume-widget.widgets.horizontal-bar-widget"),
-    vertical_bar = require("awesome-wm-widgets.volume-widget.widgets.vertical-bar-widget")
+    icon_and_text = require(this_library_path .. "widgets.icon-and-text-widget"),
+    icon = require(this_library_path .. "widgets.icon-widget"),
+    arc = require(this_library_path .. "widgets.arc-widget"),
+    horizontal_bar = require(this_library_path .. "widgets.horizontal-bar-widget"),
+    vertical_bar = require(this_library_path .. "widgets.vertical-bar-widget")
 }
 local volume = {}
 
