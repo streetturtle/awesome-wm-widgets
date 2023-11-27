@@ -56,6 +56,15 @@ awful.key({ modkey }, "[", function() volume_widget:dec(5) end),
 awful.key({ modkey }, "\\", function() volume_widget:toggle() end),
 ```
 
+You also can use Functional keycodes instead of symbols, e.g. `XF86AudioRaiseVolume` instead of `"]"`.
+
+```lua
+awful.key({}, "XF86AudioRaiseVolume", function() volume_widget.inc() end),
+awful.key({}, "XF86AudioLowerVolume", function() volume_widget.dec() end),
+awful.key({}, "XF86AudioMute", function() volume_widget.toggle() end),
+```
+If you don't know the name of the key, you can use `xev` to find it out.
+
 ## Customization
 
 It is possible to customize the widget by providing a table with all or some of the following config parameters:
