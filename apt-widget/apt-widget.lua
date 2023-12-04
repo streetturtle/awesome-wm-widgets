@@ -359,7 +359,7 @@ local function worker(user_args)
 		end
 	end)
 
-	return apt_widget_button
+	return apt_widget -- apt_widget_button
 end
 
 return setmetatable(apt_widget, {
