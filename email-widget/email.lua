@@ -10,7 +10,7 @@ email_widget:set_font('Play 9')
 email_widget:set_text("Loading...")
 
 
-path_to_python_in_venv = currentPath .. "/.venv/bin/python"
+local path_to_python_in_venv = currentPath .. "/.venv/bin/python"
 
 watch(
     path_to_python_in_venv.." "..currentPath.."count_unread_emails.py", 20,    function(_, stdout)

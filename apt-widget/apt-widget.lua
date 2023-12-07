@@ -68,7 +68,7 @@ local apt_widget_button = wibox.widget({
 		apt_widget,
 		widget = wibox.container.margin,
 	},
-	widget = clickable_container,
+	widget = clickable_container, -- luacheck: ignore  (todo fix)
 })
 
 --- Parses the line and creates the package table out of it
