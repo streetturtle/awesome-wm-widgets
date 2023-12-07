@@ -56,6 +56,32 @@ awful.key({ modkey }, "[", function() volume_widget:dec(5) end),
 awful.key({ modkey }, "\\", function() volume_widget:toggle() end),
 ```
 
+You also can use Functional keycodes instead of symbols, e.g. `XF86AudioRaiseVolume` instead of `"]"`.
+
+```lua
+awful.key({}, "XF86AudioRaiseVolume", function() volume_widget.inc() end),
+awful.key({}, "XF86AudioLowerVolume", function() volume_widget.dec() end),
+awful.key({}, "XF86AudioMute", function() volume_widget.toggle() end),
+```
+If you don't know the name of the key, you can use `xev` to find it out.
+Or you can use `amixer` and `playerctl` to control the volume and media players.
+
+```lua
+awful.key({}, "XF86AudioLowerVolume", function ()
+    awful.util.spawn("amixer -q -D pulse sset Master 5%-", false) end),
+awful.key({}, "XF86AudioRaiseVolume", function ()
+    awful.util.spawn("amixer -q -D pulse sset Master 5%+", false) end),
+awful.key({}, "XF86AudioMute", function ()
+    awful.util.spawn("amixer -D pulse set Master 1+ toggle", false) end),
+-- Media Keys
+awful.key({}, "XF86AudioPlay", function()
+    awful.util.spawn("playerctl play-pause", false) end),
+awful.key({}, "XF86AudioNext", function()
+    awful.util.spawn("playerctl next", false) end),
+awful.key({}, "XF86AudioPrev", function()
+    awful.util.spawn("playerctl previous", false) end),
+```
+
 ## Customization
 
 It is possible to customize the widget by providing a table with all or some of the following config parameters:
