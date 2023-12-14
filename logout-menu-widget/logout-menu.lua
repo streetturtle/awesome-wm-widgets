@@ -58,11 +58,11 @@ local function worker(user_args)
     local onpoweroff = args.onpoweroff or function() awful.spawn.with_shell("shutdown now") end
 
     local menu_items = {
-        { name = 'Log out', icon_name = 'log-out.svg', command = onlogout },
-        { name = 'Lock', icon_name = 'lock.svg', command = onlock },
-        { name = 'Reboot', icon_name = 'refresh-cw.svg', command = onreboot },
-        { name = 'Suspend', icon_name = 'moon.svg', command = onsuspend },
-        { name = 'Power off', icon_name = 'power.svg', command = onpoweroff },
+        { name = 'Log out', icon_name = 'log-out.svg', command = function () logout_menu_widget:set_bg('#00000000') onlogout() end },
+        { name = 'Lock', icon_name = 'lock.svg', command = function () logout_menu_widget:set_bg('#00000000') onlock() end },
+        { name = 'Reboot', icon_name = 'refresh-cw.svg', command = function () logout_menu_widget:set_bg('#00000000') onreboot() end },
+        { name = 'Suspend', icon_name = 'moon.svg', command = function () logout_menu_widget:set_bg('#00000000') onsuspend() end },
+        { name = 'Power off', icon_name = 'power.svg', command = function () logout_menu_widget:set_bg('#00000000') onpoweroff() end },
     }
 
     for _, item in ipairs(menu_items) do
@@ -86,12 +86,13 @@ local function worker(user_args)
                 margins = 8,
                 layout = wibox.container.margin
             },
+            fg = beautiful.fg_normal,
             bg = beautiful.bg_normal,
             widget = wibox.container.background
         }
 
-        row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
-        row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
+        row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) c:set_fg(beautiful.fg_focus) end)
+        row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) c:set_fg(beautiful.fg_normal) end)
 
         local old_cursor, old_wibox
         row:connect_signal("mouse::enter", function()
