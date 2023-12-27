@@ -22,7 +22,7 @@ local function script_path()
 end
 
 local WIDGET_DIR = script_path()
-local ICONS_DIR = WIDGET_DIR .. "/icons/"
+local ICONS_DIR = WIDGET_DIR .. "icons/"
 
 local LIST_PACKAGES = [[sh -c "LC_ALL=c apt list --upgradable 2>/dev/null"]]
 
@@ -30,7 +30,7 @@ local LIST_PACKAGES = [[sh -c "LC_ALL=c apt list --upgradable 2>/dev/null"]]
 local function show_warning(message)
 	naughty.notify({
 		preset = naughty.config.presets.critical,
-		title = "Docker Widget",
+		title = "APT Widget",
 		text = message,
 	})
 end
@@ -54,9 +54,9 @@ local apt_widget = wibox.widget({
 			id = "icon",
 			widget = wibox.widget.imagebox,
 		},
-		margins = 4,
-		layout = wibox.container.margin,
+		layout = wibox.container.place,
 	},
+	visible = true,
 	layout = wibox.layout.fixed.horizontal,
 	set_icon = function(self, new_icon)
 		self:get_children_by_id("icon")[1].image = new_icon
@@ -352,14 +352,13 @@ local function worker(user_args)
 		end
 	end)))
 
-
 	wibox_popup:connect_signal("mouse::leave", function()
 		if wibox_popup.visible then
 			wibox_popup.visible = false
 		end
 	end)
 
-	return apt_widget_button
+	return apt_widget
 end
 
 return setmetatable(apt_widget, {
