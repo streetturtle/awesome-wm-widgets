@@ -58,7 +58,7 @@ local function worker(user_args)
         inc_brightness_cmd = 'xbacklight -inc ' .. step
         dec_brightness_cmd = 'xbacklight -dec ' .. step
     elseif program == 'brightnessctl' then
-        get_brightness_cmd = "brightnessctl get"
+        get_brightness_cmd = "sh -c 'brightnessctl -m | cut -d, -f4 | tr -d %'"
         set_brightness_cmd = "brightnessctl set %d%%" -- <level>
         inc_brightness_cmd = "brightnessctl set +" .. step .. "%"
         dec_brightness_cmd = "brightnessctl set " .. step .. "-%"
@@ -130,7 +130,7 @@ local function worker(user_args)
     function brightness_widget:set(value)
         current_level = value
         spawn.easy_async(string.format(set_brightness_cmd, value), function()
-            spawn.easy_async(get_brightness_cmd, function(out)
+            spawn.easy_async_with_shell(get_brightness_cmd, function(out)
                 update_widget(brightness_widget.widget, out)
             end)
         end)
@@ -157,14 +157,14 @@ local function worker(user_args)
     end
     function brightness_widget:inc()
         spawn.easy_async(inc_brightness_cmd, function()
-            spawn.easy_async(get_brightness_cmd, function(out)
+            spawn.easy_async_with_shell(get_brightness_cmd, function(out)
                 update_widget(brightness_widget.widget, out)
             end)
         end)
     end
     function brightness_widget:dec()
         spawn.easy_async(dec_brightness_cmd, function()
-            spawn.easy_async(get_brightness_cmd, function(out)
+            spawn.easy_async_with_shell(get_brightness_cmd, function(out)
                 update_widget(brightness_widget.widget, out)
             end)
         end)
