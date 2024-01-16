@@ -99,6 +99,7 @@ local function worker(user_args)
 	local pointer = 0
 	local min_widgets = 5
 	local carousel = false
+    local icon_control = args.icon_control
 
 	local function rebuild_widget(containers, errors, _, _)
 		local to_update = {}
@@ -353,7 +354,7 @@ local function worker(user_args)
 	end)))
 
 	wibox_popup:connect_signal("mouse::leave", function()
-		if wibox_popup.visible then
+		if wibox_popup.visible and not icon_control then
 			wibox_popup.visible = false
 		end
 	end)
