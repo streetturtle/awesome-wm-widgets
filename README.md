@@ -41,6 +41,8 @@ Clone the repo under **~/.config/awesome/**, then follow an Installation section
 
 [![Stargazers over time](https://starchart.cc/streetturtle/awesome-wm-widgets.svg)](https://starchart.cc/streetturtle/awesome-wm-widgets)
 
+[![Star History](https://api.lucabubi.me/chart?username=streetturtle&repository=awesome-wm-widgets&color=red)](https://github.com/lucabubi/star-history)
+
 # Troubleshooting
 
 In case of any doubts/questions/problems:
