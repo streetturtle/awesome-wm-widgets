@@ -81,6 +81,12 @@ local function launch(args)
     local onsuspend = args.onsuspend or function() awful.spawn.with_shell("systemctl suspend") end
     local onpoweroff = args.onpoweroff or function() awful.spawn.with_shell("shutdown now") end
 
+    local onlogout_key = args.onlogout_key or 'l'
+    local onlock_key = args.onlock_key or 'k'
+    local onreboot_key = args.onreboot_key or 'r'
+    local onsuspend_key = args.onsuspend_key or 'u'
+    local onpoweroff_key = args.onpoweroff_key or 's'
+
     w:set_bg(bg_color)
     if #phrases > 0 then
         phrase_widget:set_markup(
@@ -92,15 +98,15 @@ local function launch(args)
             phrase_widget,
             {
                 {
-                    create_button('log-out', 'Log Out (l)',
+                    create_button('log-out', 'Log Out (' .. onlogout_key .. ')',
                         accent_color, label_color, onlogout, icon_size, icon_margin),
-                    create_button('lock', 'Lock (k)',
+                    create_button('lock', 'Lock (' .. onlock_key .. ')',
                         accent_color, label_color, onlock, icon_size, icon_margin),
-                    create_button('refresh-cw', 'Reboot (r)',
+                    create_button('refresh-cw', 'Reboot (' .. onreboot_key .. ')',
                         accent_color, label_color, onreboot, icon_size, icon_margin),
-                    create_button('moon', 'Suspend (u)',
+                    create_button('moon', 'Suspend (' .. onsuspend_key .. ')',
                         accent_color, label_color, onsuspend, icon_size, icon_margin),
-                    create_button('power', 'Power Off (s)',
+                    create_button('power', 'Power Off (' .. onpoweroff_key .. ')',
                         accent_color, label_color, onpoweroff, icon_size, icon_margin),
                     id = 'buttons',
                     spacing = 8,
@@ -141,14 +147,16 @@ local function launch(args)
                 phrase_widget:set_text('')
                 capi.keygrabber.stop()
                 w.visible = false
-            elseif key == 's' then onpoweroff()
-            elseif key == 'r' then onreboot()
-            elseif key == 'u' then onsuspend()
-            elseif key == 'k' then onlock()
-            elseif key == 'l' then onlogout()
+            elseif string.lower(key) == string.lower(onpoweroff_key) then onpoweroff()
+            elseif string.lower(key) == string.lower(onreboot_key) then onreboot()
+            elseif string.lower(key) == string.lower(onsuspend_key) then onsuspend()
+            elseif string.lower(key) == string.lower(onlock_key) then onlock()
+            elseif string.lower(key) == string.lower(onlogout_key) then onlogout()
             end
 
-            if key == 'Escape' or string.match("srukl", key) then
+            local all_keys = onlogout_key .. onlock_key .. onreboot_key .. onsuspend_key .. onpoweroff_key
+
+            if key == 'Escape' or string.match(all_keys, key) then
                 phrase_widget:set_text('')
                 capi.keygrabber.stop()
                 w.visible = false
