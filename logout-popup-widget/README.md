@@ -71,6 +71,7 @@ Then
 | `onreboot_key` | <kbd>r</kbd> | Keybinding to execute the reboot function |
 | `onsuspend_key` | <kbd>u</kbd> | Keybinding to execute the suspend function |
 | `onpoweroff_key` | <kbd>s</kbd> | Keybinding to execute the poweroff function |
+| `ignore_case` | true | Ignore if CAPS LOCK is enabled |
 
 Some color themes for inspiration:
 

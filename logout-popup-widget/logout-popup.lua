@@ -86,6 +86,18 @@ local function launch(args)
     local onreboot_key = args.onreboot_key or 'r'
     local onsuspend_key = args.onsuspend_key or 'u'
     local onpoweroff_key = args.onpoweroff_key or 's'
+    local all_keys = onlogout_key .. onlock_key .. onreboot_key .. onsuspend_key .. onpoweroff_key
+
+    local ignore_case = args.ignore_case or true
+
+    if ignore_case then
+        onlogout_key = string.lower(onlogout_key)
+        onlock_key = string.lower(onlock_key)
+        onreboot_key = string.lower(onreboot_key)
+        onsuspend_key = string.lower(onsuspend_key)
+        onpoweroff_key = string.lower(onpoweroff_key)
+        all_keys = string.lower(all_keys)
+    end
 
     w:set_bg(bg_color)
     if #phrases > 0 then
@@ -147,19 +159,23 @@ local function launch(args)
                 phrase_widget:set_text('')
                 capi.keygrabber.stop()
                 w.visible = false
-            elseif string.lower(key) == string.lower(onpoweroff_key) then onpoweroff()
-            elseif string.lower(key) == string.lower(onreboot_key) then onreboot()
-            elseif string.lower(key) == string.lower(onsuspend_key) then onsuspend()
-            elseif string.lower(key) == string.lower(onlock_key) then onlock()
-            elseif string.lower(key) == string.lower(onlogout_key) then onlogout()
-            end
+            else
+                if ignore_case then
+                    key = string.lower(key)
+                end
 
-            local all_keys = onlogout_key .. onlock_key .. onreboot_key .. onsuspend_key .. onpoweroff_key
+                if key == onpoweroff_key then onpoweroff()
+                elseif key == onreboot_key then onreboot()
+                elseif key == onsuspend_key then onsuspend()
+                elseif key == onlock_key then onlock()
+                elseif key == onlogout_key then onlogout()
+                end
 
-            if key == 'Escape' or string.match(string.lower(all_keys), string.lower(key)) then
-                phrase_widget:set_text('')
-                capi.keygrabber.stop()
-                w.visible = false
+                if string.match(all_keys, key) then
+                    phrase_widget:set_text('')
+                    capi.keygrabber.stop()
+                    w.visible = false
+                end
             end
         end
     end)
