@@ -156,7 +156,7 @@ local function launch(args)
 
             local all_keys = onlogout_key .. onlock_key .. onreboot_key .. onsuspend_key .. onpoweroff_key
 
-            if key == 'Escape' or string.match(all_keys, key) then
+            if key == 'Escape' or string.match(string.lower(all_keys), string.lower(key)) then
                 phrase_widget:set_text('')
                 capi.keygrabber.stop()
                 w.visible = false
