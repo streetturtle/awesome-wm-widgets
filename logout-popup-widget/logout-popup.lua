@@ -90,15 +90,6 @@ local function launch(args)
 
     local ignore_case = args.ignore_case or true
 
-    if ignore_case then
-        onlogout_key = string.lower(onlogout_key)
-        onlock_key = string.lower(onlock_key)
-        onreboot_key = string.lower(onreboot_key)
-        onsuspend_key = string.lower(onsuspend_key)
-        onpoweroff_key = string.lower(onpoweroff_key)
-        all_keys = string.lower(all_keys)
-    end
-
     w:set_bg(bg_color)
     if #phrases > 0 then
         phrase_widget:set_markup(
@@ -162,6 +153,12 @@ local function launch(args)
             else
                 if ignore_case then
                     key = string.lower(key)
+                    onlogout_key = string.lower(onlogout_key)
+                    onlock_key = string.lower(onlock_key)
+                    onreboot_key = string.lower(onreboot_key)
+                    onsuspend_key = string.lower(onsuspend_key)
+                    onpoweroff_key = string.lower(onpoweroff_key)
+                    all_keys = string.lower(all_keys)
                 end
 
                 if key == onpoweroff_key then onpoweroff()
