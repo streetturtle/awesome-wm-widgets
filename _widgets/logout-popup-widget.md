@@ -69,6 +69,12 @@ Then
 | `onreboot` | `function() awful.spawn.with_shell("reboot") end` | Function which is called when the reboot button is pressed |
 | `onsuspend` | `function() awful.spawn.with_shell("systemctl suspend") end` | Function which is called when the suspend button is pressed |
 | `onpoweroff` | `function() awful.spawn.with_shell("shutdown now") end` | Function which is called when the poweroff button is pressed |
+| `onlogout_key` | <kbd>l</kbd> | Keybinding to execute the logout function |
+| `onlock_key` | <kbd>k</kbd> | Keybinding to execute the lock function |
+| `onreboot_key` | <kbd>r</kbd> | Keybinding to execute the reboot function |
+| `onsuspend_key` | <kbd>u</kbd> | Keybinding to execute the suspend function |
+| `onpoweroff_key` | <kbd>s</kbd> | Keybinding to execute the poweroff function |
+| `ignore_case` | true | Ignore if CAPS LOCK is enabled |
 
 Some color themes for inspiration:
 
