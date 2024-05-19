@@ -11,60 +11,70 @@ local watch             = require("awful.widget.watch")
 local wibox             = require("wibox")
 local gears             = require("gears")
 
-local GET_MPD_CMD       = "playerctl -p %s -f '{{status}};{{xesam:artist}};{{xesam:title}}' metadata"
+local GET_MPD_CMD       = "playerctl -p '%s' -f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}};{{position}};{{mpris:length}}' metadata"
 
 local TOGGLE_MPD_CMD    = "playerctl play-pause"
 local NEXT_MPD_CMD      = "playerctl next"
 local PREV_MPD_CMD      = "playerctl previous"
 local LIST_PLAYERS_CMD  = "playerctl -l"
 
-local PATH_TO_ICONS     = "/usr/share/icons/Arc"
-local PAUSE_ICON_NAME   = PATH_TO_ICONS .. "/actions/24/player_pause.png"
-local PLAY_ICON_NAME    = PATH_TO_ICONS .. "/actions/24/player_play.png"
-local STOP_ICON_NAME    = PATH_TO_ICONS .. "/actions/24/player_stop.png"
-local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/actions/24/music-library.png"
+local PATH_TO_ICONS     = "/usr/share/icons/Adwaita"
+local PAUSE_ICON_NAME   = PATH_TO_ICONS .. "/symbolic/actions/media-playback-pause-symbolic.svg"
+local PLAY_ICON_NAME    = PATH_TO_ICONS .. "/symbolic/actions/media-playback-start-symbolic.svg"
+local STOP_ICON_NAME    = PATH_TO_ICONS .. "/symbolic/actions/media-playback-stop-symbolic.svg"
+local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/symbolic/places/folder-music-symbolic.svg"
+
+local FONT = 'Roboto Mono 18px'
 
 local default_player    = ''
 
-local icon              = wibox.widget {
+local icon = wibox.widget {
     id = "icon",
     widget = wibox.widget.imagebox,
     image = PLAY_ICON_NAME
 }
 
-local mpris_widget      = wibox.widget {
-    {
-        id = 'artist',
-        widget = wibox.widget.textbox
-    },
-    {
-        icon,
-        max_value = 1,
-        value = 0,
-        thickness = 2,
-        start_angle = 4.71238898, -- 2pi*3/4
-        forced_height = 24,
-        forced_width = 24,
-        rounded_edge = true,
-        bg = "#ffffff11",
-        paddings = 0,
-        widget = wibox.container.arcchart
-    },
-    {
-        id = 'title',
-        widget = wibox.widget.textbox
-    },
+local progress_widget = wibox.widget {
+    id = 'progress',
+    widget = wibox.container.arcchart,
+    icon,
+    min_value = 0,
+    max_value = 1,
+    value = 0,
+    thickness = 2,
+    start_angle = 4.71238898, -- 2pi*3/4
+    forced_height = 24,
+    forced_width = 24,
+    rounded_edge = true,
+    bg = "#ffffff11",
+    paddings = 2,
+}
+
+local artist_widget = wibox.widget {
+    id = 'artist',
+    font = FONT,
+    widget = wibox.widget.textbox
+}
+
+local title_widget = wibox.widget {
+    id = 'title',
+    font = FONT,
+    widget = wibox.widget.textbox
+}
+
+local mpris_widget = wibox.widget {
+    artist_widget,
+    progress_widget,
+    title_widget,
+    spacing = 4,
     layout = wibox.layout.fixed.horizontal,
-    set_text = function(self, artist, title)
-        self:get_children_by_id('artist')[1]:set_text(artist)
-        self:get_children_by_id('title')[1]:set_text(title)
-    end
 }
 
 local rows              = { layout = wibox.layout.fixed.vertical }
 
 local popup             = awful.popup {
     bg = beautiful.bg_normal,
+    fg = beautiful.fg_normal,
     ontop = true,
     visible = false,
     shape = gears.shape.rounded_rect,
@@ -88,7 +98,7 @@ local function rebuild_popup()
                         shape         = gears.shape.circle,
                         forced_width  = 20,
                         forced_height = 20,
-                        check_color   = beautiful.fg_urgent,
+                        check_color   = beautiful.fg_normal,
                         widget        = wibox.widget.checkbox
                     },
                     valign = 'center',
@@ -120,6 +130,7 @@ local function rebuild_popup()
                         layout = wibox.container.margin
                     },
                     bg = beautiful.bg_normal,
+                    fg = beautiful.fg_normal,
                     widget = wibox.container.background
                 })
             end
@@ -138,6 +149,7 @@ local function worker()
         player_status = words[1]
         artist = words[2]
         current_song = words[3]
+        art_url = words[4]
         if current_song ~= nil then
             if string.len(current_song) > 18 then
                 current_song = string.sub(current_song, 0, 9) .. ".."
@@ -147,11 +159,15 @@ local function worker()
         if player_status == "Playing" then
             icon.image = PLAY_ICON_NAME
             widget.colors = { beautiful.widget_main_color }
-            widget:set_text(artist, current_song)
+            artist_widget:set_text(artist)
+            title_widget:set_text(current_song)
+            progress_widget.value = tonumber(words[5]) / tonumber(words[6])
         elseif player_status == "Paused" then
             icon.image = PAUSE_ICON_NAME
             widget.colors = { beautiful.widget_main_color }
-            widget:set_text(artist, current_song)
+            artist_widget:set_text(artist)
+            title_widget:set_text(current_song)
+            progress_widget.value = tonumber(words[5]) / tonumber(words[6])
         elseif player_status == "Stopped" then
             icon.image = STOP_ICON_NAME
         else -- no player is running
@@ -176,7 +192,7 @@ local function worker()
         )
     )
 
-    watch(string.format(GET_MPD_CMD, "'" .. default_player .. "'"), 1, update_graphic, mpris_widget)
+    watch(string.format(GET_MPD_CMD, default_player), 1, update_graphic, mpris_widget)
 
     local mpris_popup = awful.widget.watch(
         "playerctl metadata --format '{{ status }}: {{ artist }} - {{ title }}\n"
