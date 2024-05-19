@@ -11,7 +11,7 @@ local watch             = require("awful.widget.watch")
 local wibox             = require("wibox")
 local gears             = require("gears")
 
-local GET_MPD_CMD       = "playerctl -p '%s' -f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}};{{position}};{{mpris:length}}' metadata"
+local GET_MPD_CMD       = "playerctl -f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}};{{position}};{{mpris:length}}' metadata"
 
 local TOGGLE_MPD_CMD    = "playerctl play-pause"
 local NEXT_MPD_CMD      = "playerctl next"
@@ -26,7 +26,7 @@ local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/symbolic/places/folder-music-symbol
 
 local FONT = 'Roboto Mono 18px'
 
-local default_player    = ''
+local default_player    = 'mpv'
 
 local icon = wibox.widget {
     id = "icon",
@@ -69,6 +69,20 @@ local mpris_widget = wibox.widget {
     spacing = 4,
     layout = wibox.layout.fixed.horizontal,
 }
+
+local cover_art_widget = wibox.widget {
+    widget = wibox.widget.imagebox,
+    forced_height = 300,
+    forced_width = 300,
+    resize_allowed = true,
+}
+
+local metadata_widget = wibox.widget {
+    widget        = wibox.widget.textbox,
+    forced_height = 100,
+    forced_width  = 300,
+}
+
 
 local rows              = { layout = wibox.layout.fixed.vertical }
 
@@ -140,34 +154,45 @@ local function rebuild_popup()
     popup:setup(rows)
 end
 
+local function update_metadata(artist, current_song, progress, art_url)
+    artist_widget:set_text(artist)
+    title_widget:set_text(current_song)
+    progress_widget.value = progress
+
+    -- poor man's urldecode
+    art_url = art_url:gsub("file://", "/")
+    art_url = art_url:gsub("%%(%x%x)", function(x) return string.char(tonumber(x, 16)) end)
+    cover_art_widget:set_image(art_url)
+end
+
 local function worker()
     -- retrieve song info
-    local current_song, artist, player_status
+    local current_song, artist, player_status, art_url
 
     local update_graphic = function(widget, stdout, _, _, _)
         local words = gears.string.split(stdout, ';')
         player_status = words[1]
         artist = words[2]
         current_song = words[3]
+
         art_url = words[4]
+
         if current_song ~= nil then
-            if string.len(current_song) > 18 then
-                current_song = string.sub(current_song, 0, 9) .. ".."
+            if string.len(current_song) > 30 then
+                current_song = string.sub(current_song, 0, 28) .. ".."
             end
         end
 
         if player_status == "Playing" then
             icon.image = PLAY_ICON_NAME
             widget.colors = { beautiful.widget_main_color }
-            artist_widget:set_text(artist)
-            title_widget:set_text(current_song)
-            progress_widget.value = tonumber(words[5]) / tonumber(words[6])
+            progress = tonumber(words[5]) / tonumber(words[6])
+            update_metadata(artist, current_song, progress, art_url)
         elseif player_status == "Paused" then
             icon.image = PAUSE_ICON_NAME
             widget.colors = { beautiful.widget_main_color }
-            artist_widget:set_text(artist)
-            title_widget:set_text(current_song)
-            progress_widget.value = tonumber(words[5]) / tonumber(words[6])
+            progress = tonumber(words[5]) / tonumber(words[6])
+            update_metadata(artist, current_song, progress, art_url)
         elseif player_status == "Stopped" then
             icon.image = STOP_ICON_NAME
         else -- no player is running
@@ -192,7 +217,7 @@ local function worker()
         )
     )
 
-    watch(string.format(GET_MPD_CMD, default_player), 1, update_graphic, mpris_widget)
+    watch(GET_MPD_CMD, 1, update_graphic, mpris_widget)
 
     local mpris_popup = awful.widget.watch(
         "playerctl metadata --format '{{ status }}: {{ artist }} - {{ title }}\n"
@@ -201,7 +226,7 @@ local function worker()
         function(callback_popup, stdout)
             local metadata = stdout
             if callback_popup.visible then
-                callback_popup:get_widget().text = metadata
+                metadata_widget:set_text(metadata)
                 callback_popup:move_next_to(mouse.current_widget_geometry)
             end
         end,
@@ -209,10 +234,10 @@ local function worker()
             border_color = beautiful.border_color,
             ontop        = true,
             visible      = false,
-            widget       = wibox.widget {
-                widget        = wibox.widget.textbox,
-                forced_height = 100,
-                forced_width  = 200,
+            widget = wibox.widget {
+                cover_art_widget,
+                metadata_widget,
+                layout = wibox.layout.fixed.vertical,
             }
         }
     )
