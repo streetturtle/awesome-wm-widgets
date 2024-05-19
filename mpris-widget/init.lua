@@ -24,7 +24,7 @@ local PLAY_ICON_NAME    = PATH_TO_ICONS .. "/symbolic/actions/media-playback-sta
 local STOP_ICON_NAME    = PATH_TO_ICONS .. "/symbolic/actions/media-playback-stop-symbolic.svg"
 local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/symbolic/places/folder-music-symbolic.svg"
 
-local FONT = 'Roboto Mono 18px'
+local FONT = 'Roboto Condensed 16px'
 
 local default_player    = 'mpv'
 
@@ -72,13 +72,14 @@ local mpris_widget = wibox.widget {
 
 local cover_art_widget = wibox.widget {
     widget = wibox.widget.imagebox,
-    forced_height = 300,
+    forced_height = 0,
     forced_width = 300,
     resize_allowed = true,
 }
 
 local metadata_widget = wibox.widget {
     widget        = wibox.widget.textbox,
+    font          = FONT,
     forced_height = 100,
     forced_width  = 300,
 }
@@ -162,12 +163,19 @@ local function update_metadata(artist, current_song, progress, art_url)
     -- poor man's urldecode
     art_url = art_url:gsub("file://", "/")
     art_url = art_url:gsub("%%(%x%x)", function(x) return string.char(tonumber(x, 16)) end)
-    cover_art_widget:set_image(art_url)
+
+    if art_url ~= nil and art_url ~= "" then
+        cover_art_widget.image = art_url
+        cover_art_widget.forced_height = 300
+    else
+        cover_art_widget.image = nil
+        cover_art_widget.forced_height = 0
+    end
 end
 
 local function worker()
     -- retrieve song info
-    local current_song, artist, player_status, art_url
+    local current_song, artist, player_status, art_url, progress
 
     local update_graphic = function(widget, stdout, _, _, _)
         local words = gears.string.split(stdout, ';')
@@ -178,20 +186,24 @@ local function worker()
         art_url = words[4]
 
         if current_song ~= nil then
-            if string.len(current_song) > 30 then
-                current_song = string.sub(current_song, 0, 28) .. ".."
+            if string.len(current_song) > 40 then
+                current_song = string.sub(current_song, 0, 38) .. "…"
             end
         end
 
         if player_status == "Playing" then
             icon.image = PLAY_ICON_NAME
             widget.colors = { beautiful.widget_main_color }
-            progress = tonumber(words[5]) / tonumber(words[6])
+            if words[5] ~= nil and words[6] ~= nil then
+                progress = tonumber(words[5]) / tonumber(words[6])
+            end
             update_metadata(artist, current_song, progress, art_url)
         elseif player_status == "Paused" then
             icon.image = PAUSE_ICON_NAME
             widget.colors = { beautiful.widget_main_color }
-            progress = tonumber(words[5]) / tonumber(words[6])
+            if words[5] ~= nil and words[6] ~= nil then
+                progress = tonumber(words[5]) / tonumber(words[6])
+            end
             update_metadata(artist, current_song, progress, art_url)
         elseif player_status == "Stopped" then
             icon.image = STOP_ICON_NAME
