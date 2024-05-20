@@ -11,14 +11,6 @@ local watch             = require("awful.widget.watch")
 local wibox             = require("wibox")
 local gears             = require("gears")
 
-local PATH_TO_ICONS     = "/usr/share/icons/Adwaita"
-local PAUSE_ICON_NAME   = PATH_TO_ICONS .. "/symbolic/actions/media-playback-pause-symbolic.svg"
-local PLAY_ICON_NAME    = PATH_TO_ICONS .. "/symbolic/actions/media-playback-start-symbolic.svg"
-local STOP_ICON_NAME    = PATH_TO_ICONS .. "/symbolic/actions/media-playback-stop-symbolic.svg"
-local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/symbolic/places/folder-music-symbolic.svg"
-
-local FONT = 'Roboto Condensed 16px'
-
 local playerctl = {
     player_name = 'mpv',
 }
@@ -44,9 +36,10 @@ function playerctl:watch(timeout, callback, widget)
     local cb = function(widget, stdout, _, _, _)
         local words = gears.string.split(stdout, ';')
 
-        local progress
-        if words[5] ~= nil and words[6] ~= nil then
-            progress = tonumber(words[5]) / tonumber(words[6])
+        local position, length, progress = tonumber(words[5]), tonumber(words[6])
+
+        if position ~= nil and length ~= nil then
+            progress = position / length
         end
 
         local metadata = {
@@ -54,8 +47,8 @@ function playerctl:watch(timeout, callback, widget)
             artist = words[2],
             current_song = words[3],
             art_url = words[4],
-            position = words[5],
-            length = words[6],
+            position = position,
+            length = length,
             album = words[7],
             progress = progress,
         }
@@ -78,61 +71,6 @@ function playerctl:prev()
     awful.spawn(self:cmd("previous"), false)
 end
 
-local icon = wibox.widget {
-    id = "icon",
-    widget = wibox.widget.imagebox,
-    image = PLAY_ICON_NAME
-}
-
-local progress_widget = wibox.widget {
-    id = 'progress',
-    widget = wibox.container.arcchart,
-    icon,
-    min_value = 0,
-    max_value = 1,
-    value = 0,
-    thickness = 2,
-    start_angle = 4.71238898, -- 2pi*3/4
-    forced_height = 24,
-    forced_width = 24,
-    rounded_edge = true,
-    bg = "#ffffff11",
-    paddings = 2,
-}
-
-local artist_widget = wibox.widget {
-    id = 'artist',
-    font = FONT,
-    widget = wibox.widget.textbox
-}
-
-local title_widget = wibox.widget {
-    id = 'title',
-    font = FONT,
-    widget = wibox.widget.textbox
-}
-
-local mpris_widget = wibox.widget {
-    artist_widget,
-    progress_widget,
-    title_widget,
-    spacing = 4,
-    layout = wibox.layout.fixed.horizontal,
-}
-
-local cover_art_widget = wibox.widget {
-    widget = wibox.widget.imagebox,
-    forced_height = 0,
-    forced_width = 300,
-    resize_allowed = true,
-}
-
-local metadata_widget = wibox.widget {
-    widget        = wibox.widget.textbox,
-    font          = FONT,
-    forced_height = 100,
-    forced_width  = 300,
-}
 
 local player_selector_popup = {
     popup             = awful.popup {
@@ -198,8 +136,9 @@ function player_selector_popup:add_radio_button(player_name)
 end
 
 function player_selector_popup:rebuild()
-    self.rows              = { layout = wibox.layout.fixed.vertical }
     awful.spawn.easy_async("playerctl -l", function(stdout, _, _, _)
+        for i = 0, #self.rows do self.rows[i] = nil end
+
         for name in stdout:gmatch("[^\r\n]+") do
             if name ~= '' and name ~= nil then
                 self:add_radio_button(name)
@@ -221,18 +160,87 @@ function player_selector_popup:toggle()
 end
 
 local function duration(microseconds)
-    local seconds = microseconds / 1000000
-    local minutes = seconds / 60
-    seconds = seconds % 60
-    local hours = minutes / 60
-    minutes = minutes % 60
-    if hours >= 1 then
-        return string.format("%.f:%02.f:%02.f", hours, minutes, seconds)
+    if microseconds == nil then
+        return "--:--"
     end
-    return string.format("%.f:%02.f", minutes, seconds)
+
+    local seconds = math.floor(microseconds / 1000000)
+    local minutes = math.floor(seconds / 60)
+    seconds = seconds - minutes * 60
+    local hours = math.floor(minutes / 60)
+    minutes = minutes - hours * 60
+    if hours >= 1 then
+        return string.format("%d:%02d:%02d", hours, minutes, seconds)
+    end
+    return string.format("%d:%02d", minutes, seconds)
 end
 
-local function worker()
+local mpris_widget = {}
+
+local function worker(user_args)
+    local args = user_args or {}
+
+    local font = args.font or 'Roboto Condensed 16px'
+
+    local path_to_icons = "/usr/share/icons/Adwaita"
+
+    local pause_icon   = args.pause_icon or path_to_icons .. "/symbolic/actions/media-playback-pause-symbolic.svg"
+    local play_icon    = args.play_icon or path_to_icons .. "/symbolic/actions/media-playback-start-symbolic.svg"
+    local stop_icon    = args.stop_icon or path_to_icons .. "/symbolic/actions/media-playback-stop-symbolic.svg"
+    local library_icon = args.library_icon or path_to_icons .. "/symbolic/places/folder-music-symbolic.svg"
+
+    local icon = wibox.widget {
+        widget = wibox.widget.imagebox,
+        image = play_icon
+    }
+
+    local progress_widget = wibox.widget {
+        widget = wibox.container.arcchart,
+        icon,
+        min_value = 0,
+        max_value = 1,
+        value = 0,
+        thickness = 2,
+        start_angle = 4.71238898, -- 2pi*3/4
+        forced_height = 24,
+        forced_width = 24,
+        rounded_edge = true,
+        bg = "#ffffff11",
+        paddings = 2,
+    }
+
+    local artist_widget = wibox.widget {
+        font = font,
+        widget = wibox.widget.textbox
+    }
+
+    local title_widget = wibox.widget {
+        font = font,
+        widget = wibox.widget.textbox
+    }
+
+    mpris_widget = wibox.widget {
+        artist_widget,
+        progress_widget,
+        title_widget,
+        spacing = 4,
+        layout = wibox.layout.fixed.horizontal,
+    }
+
+    local cover_art_widget = wibox.widget {
+        widget = wibox.widget.imagebox,
+        forced_height = 0,
+        forced_width = 300,
+        resize_allowed = true,
+    }
+
+    local metadata_widget = wibox.widget {
+        widget        = wibox.widget.textbox,
+        font          = font,
+        forced_height = 100,
+        forced_width  = 300,
+    }
+
     local update_metadata = function(meta)
         artist_widget:set_text(meta.artist)
         title_widget:set_text(meta.current_song)
@@ -260,17 +268,17 @@ local function worker()
         end
 
         if metadata.status == "Playing" then
-            icon.image = PLAY_ICON_NAME
+            icon.image = play_icon
             widget.colors = { beautiful.widget_main_color }
             update_metadata(metadata)
         elseif metadata.status == "Paused" then
-            icon.image = PAUSE_ICON_NAME
+            icon.image = pause_icon
             widget.colors = { beautiful.widget_main_color }
             update_metadata(metadata)
         elseif metadata.status == "Stopped" then
-            icon.image = STOP_ICON_NAME
+            icon.image = stop_icon
         else -- no player is running
-            icon.image = LIBRARY_ICON_NAME
+            icon.image = library_icon
             widget.colors = { beautiful.widget_red }
         end
     end
