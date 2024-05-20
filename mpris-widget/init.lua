@@ -29,7 +29,7 @@ function playerctl:cmd(cmd)
 end
 
 function playerctl:watch(timeout, callback, widget)
-    local cmd = self:cmd("-f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}};{{position}};{{mpris:length}};{{album}}' metadata")
+    local cmd = self:cmd("-f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}};{{position}};{{mpris:length}};{{album}};{{xesam:contentCreated}}' metadata")
 
     self.watch_params = {timeout = timeout, callback = callback, widget = widget}
 
@@ -50,6 +50,7 @@ function playerctl:watch(timeout, callback, widget)
             position = position,
             length = length,
             album = words[7],
+            year = string.sub(words[8], 0, 4),
             progress = progress,
         }
 
@@ -238,14 +239,13 @@ local function worker(user_args)
     local metadata_widget = wibox.widget {
         widget        = wibox.widget.textbox,
         font          = font,
-        forced_height = 100,
         forced_width  = popup_width,
     }
 
     local update_metadata = function(meta)
         artist_widget:set_text(meta.artist)
         title_widget:set_text(meta.current_song)
-        metadata_widget:set_text(string.format('%s - %s (%s/%s)', meta.album, meta.current_song, duration(meta.position), duration(meta.length)))
+        metadata_widget:set_text(string.format('%s (%s)\n%s (%s/%s)', meta.album, meta.year, meta.current_song, duration(meta.position), duration(meta.length)))
         progress_widget.value = meta.progress
 
         -- poor man's urldecode
