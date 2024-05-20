@@ -246,7 +246,14 @@ local function worker(user_args)
     local update_metadata = function(meta)
         artist_widget:set_text(meta.artist)
         title_widget:set_text(meta.current_song)
-        metadata_widget:set_text(string.format('%s (%s)\n%s (%s/%s)', meta.album, meta.year, meta.current_song, duration(meta.position), duration(meta.length)))
+
+        local s = meta.album;
+        if meta.year ~= nil and #meta.year == 4 then
+            s = s .. " (" .. meta.year .. ")"
+        end
+        s = s .. "\n" .. meta.current_song .. " (" .. duration(meta.position) .. "/" .. duration(meta.length) .. ")"
+        metadata_widget:set_text(s)
+
         progress_widget.value = meta.progress
 
         -- poor man's urldecode
