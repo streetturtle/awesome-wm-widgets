@@ -11,13 +11,6 @@ local watch             = require("awful.widget.watch")
 local wibox             = require("wibox")
 local gears             = require("gears")
 
-local GET_MPD_CMD       = "playerctl -f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}};{{position}};{{mpris:length}}' metadata"
-
-local TOGGLE_MPD_CMD    = "playerctl play-pause"
-local NEXT_MPD_CMD      = "playerctl next"
-local PREV_MPD_CMD      = "playerctl previous"
-local LIST_PLAYERS_CMD  = "playerctl -l"
-
 local PATH_TO_ICONS     = "/usr/share/icons/Adwaita"
 local PAUSE_ICON_NAME   = PATH_TO_ICONS .. "/symbolic/actions/media-playback-pause-symbolic.svg"
 local PLAY_ICON_NAME    = PATH_TO_ICONS .. "/symbolic/actions/media-playback-start-symbolic.svg"
@@ -26,7 +19,64 @@ local LIBRARY_ICON_NAME = PATH_TO_ICONS .. "/symbolic/places/folder-music-symbol
 
 local FONT = 'Roboto Condensed 16px'
 
-local default_player    = 'mpv'
+local playerctl = {
+    player_name = 'mpv',
+}
+
+function playerctl:set_player(name)
+    self.player_name = name
+
+    if self.timer ~= nil then
+        self.timer:stop()
+        playerctl:watch(self.watch_params.timeout, self.watch_params.callback, self.watch_params.widget)
+    end
+end
+
+function playerctl:cmd(cmd)
+    return "playerctl -p '" .. self.player_name .. "' " .. cmd
+end
+
+function playerctl:watch(timeout, callback, widget)
+    local cmd = self:cmd("-f '{{status}};{{xesam:artist}};{{xesam:title}};{{mpris:artUrl}};{{position}};{{mpris:length}};{{album}}' metadata")
+
+    self.watch_params = {timeout = timeout, callback = callback, widget = widget}
+
+    local cb = function(widget, stdout, _, _, _)
+        local words = gears.string.split(stdout, ';')
+
+        local progress
+        if words[5] ~= nil and words[6] ~= nil then
+            progress = tonumber(words[5]) / tonumber(words[6])
+        end
+
+        local metadata = {
+            status = words[1],
+            artist = words[2],
+            current_song = words[3],
+            art_url = words[4],
+            position = words[5],
+            length = words[6],
+            album = words[7],
+            progress = progress,
+        }
+
+        callback(widget, metadata)
+    end
+
+    _, self.timer = awful.widget.watch(cmd, timeout, cb, widget)
+end
+
+function playerctl:toggle()
+    awful.spawn(self:cmd("play-pause"), false)
+end
+
+function playerctl:next()
+    awful.spawn(self:cmd("next"), false)
+end
+
+function playerctl:prev()
+    awful.spawn(self:cmd("previous"), false)
+end
 
 local icon = wibox.widget {
     id = "icon",
@@ -84,128 +134,140 @@ local metadata_widget = wibox.widget {
     forced_width  = 300,
 }
 
+local player_selector_popup = {
+    popup             = awful.popup {
+        bg = beautiful.bg_normal,
+        fg = beautiful.fg_normal,
+        ontop = true,
+        visible = false,
+        shape = gears.shape.rounded_rect,
+        border_width = 1,
+        border_color = beautiful.bg_focus,
+        maximum_width = 400,
+        offset = { y = 5 },
+        widget = {}
+    },
 
-local rows              = { layout = wibox.layout.fixed.vertical }
-
-local popup             = awful.popup {
-    bg = beautiful.bg_normal,
-    fg = beautiful.fg_normal,
-    ontop = true,
-    visible = false,
-    shape = gears.shape.rounded_rect,
-    border_width = 1,
-    border_color = beautiful.bg_focus,
-    maximum_width = 400,
-    offset = { y = 5 },
-    widget = {}
+    rows              = { layout = wibox.layout.fixed.vertical },
 }
 
-local function rebuild_popup()
-    awful.spawn.easy_async(LIST_PLAYERS_CMD, function(stdout, _, _, _)
-        for i = 0, #rows do rows[i] = nil end
-        for player_name in stdout:gmatch("[^\r\n]+") do
-            if player_name ~= '' and player_name ~= nil then
-                local checkbox = wibox.widget {
-                    {
-                        checked       = player_name == default_player,
-                        color         = beautiful.bg_normal,
-                        paddings      = 2,
-                        shape         = gears.shape.circle,
-                        forced_width  = 20,
-                        forced_height = 20,
-                        check_color   = beautiful.fg_normal,
-                        widget        = wibox.widget.checkbox
-                    },
-                    valign = 'center',
-                    layout = wibox.container.place,
-                }
+function player_selector_popup:add_radio_button(player_name)
+    local checkbox = wibox.widget {
+        {
+            checked       = player_name == playerctl.player_name,
+            color         = beautiful.bg_normal,
+            paddings      = 2,
+            shape         = gears.shape.circle,
+            forced_width  = 20,
+            forced_height = 20,
+            check_color   = beautiful.fg_normal,
+            widget        = wibox.widget.checkbox
+        },
+        valign = 'center',
+        layout = wibox.container.place,
+    }
 
-                checkbox:connect_signal("button::press", function()
-                    default_player = player_name
-                    rebuild_popup()
-                end)
-
-                table.insert(rows, wibox.widget {
-                    {
-                        {
-                            checkbox,
-                            {
-                                {
-                                    text = player_name,
-                                    align = 'left',
-                                    widget = wibox.widget.textbox
-                                },
-                                left = 10,
-                                layout = wibox.container.margin
-                            },
-                            spacing = 8,
-                            layout = wibox.layout.align.horizontal
-                        },
-                        margins = 4,
-                        layout = wibox.container.margin
-                    },
-                    bg = beautiful.bg_normal,
-                    fg = beautiful.fg_normal,
-                    widget = wibox.container.background
-                })
-            end
-        end
+    checkbox:connect_signal("button::press", function()
+        playerctl:set_player(player_name)
+        self:toggle()
     end)
 
-    popup:setup(rows)
+    table.insert(self.rows, wibox.widget {
+        {
+            {
+                checkbox,
+                {
+                    {
+                        text = player_name,
+                        align = 'left',
+                        widget = wibox.widget.textbox
+                    },
+                    left = 10,
+                    layout = wibox.container.margin
+                },
+                spacing = 8,
+                layout = wibox.layout.align.horizontal
+            },
+            margins = 4,
+            layout = wibox.container.margin
+        },
+        bg = beautiful.bg_normal,
+        fg = beautiful.fg_normal,
+        widget = wibox.container.background
+    })
 end
 
-local function update_metadata(artist, current_song, progress, art_url)
-    artist_widget:set_text(artist)
-    title_widget:set_text(current_song)
-    progress_widget.value = progress
+function player_selector_popup:rebuild()
+    self.rows              = { layout = wibox.layout.fixed.vertical }
+    awful.spawn.easy_async("playerctl -l", function(stdout, _, _, _)
+        for name in stdout:gmatch("[^\r\n]+") do
+            if name ~= '' and name ~= nil then
+                self:add_radio_button(name)
+            end
+        end
 
-    -- poor man's urldecode
-    art_url = art_url:gsub("file://", "/")
-    art_url = art_url:gsub("%%(%x%x)", function(x) return string.char(tonumber(x, 16)) end)
+        self.popup:setup(self.rows)
+        self.popup.visible = true
+        self.popup:move_next_to(mouse.current_widget_geometry)
+    end)
+end
 
-    if art_url ~= nil and art_url ~= "" then
-        cover_art_widget.image = art_url
-        cover_art_widget.forced_height = 300
+function player_selector_popup:toggle()
+    if self.popup.visible then
+        self.popup.visible = false
     else
-        cover_art_widget.image = nil
-        cover_art_widget.forced_height = 0
+        self:rebuild()
     end
 end
 
+local function duration(microseconds)
+    local seconds = microseconds / 1000000
+    local minutes = seconds / 60
+    seconds = seconds % 60
+    local hours = minutes / 60
+    minutes = minutes % 60
+    if hours >= 1 then
+        return string.format("%.f:%02.f:%02.f", hours, minutes, seconds)
+    end
+    return string.format("%.f:%02.f", minutes, seconds)
+end
+
 local function worker()
-    -- retrieve song info
-    local current_song, artist, player_status, art_url, progress
+    local update_metadata = function(meta)
+        artist_widget:set_text(meta.artist)
+        title_widget:set_text(meta.current_song)
+        metadata_widget:set_text(string.format('%s - %s (%s/%s)', meta.album, meta.current_song, duration(meta.position), duration(meta.length)))
+        progress_widget.value = meta.progress
 
-    local update_graphic = function(widget, stdout, _, _, _)
-        local words = gears.string.split(stdout, ';')
-        player_status = words[1]
-        artist = words[2]
-        current_song = words[3]
+        -- poor man's urldecode
+        local art_url = meta.art_url:gsub("file://", "/")
+        art_url = art_url:gsub("%%(%x%x)", function(x) return string.char(tonumber(x, 16)) end)
 
-        art_url = words[4]
+        if art_url ~= nil and art_url ~= "" then
+            cover_art_widget.image = art_url
+            cover_art_widget.forced_height = 300
+        else
+            cover_art_widget.image = nil
+            cover_art_widget.forced_height = 0
+        end
+    end
 
-        if current_song ~= nil then
-            if string.len(current_song) > 40 then
-                current_song = string.sub(current_song, 0, 38) .. "…"
+    local update_graphic = function(widget, metadata)
+        if metadata.current_song ~= nil then
+            if string.len(metadata.current_song) > 40 then
+                metadata.current_song = string.sub(metadata.current_song, 0, 38) .. "…"
             end
         end
 
-        if player_status == "Playing" then
+        if metadata.status == "Playing" then
             icon.image = PLAY_ICON_NAME
             widget.colors = { beautiful.widget_main_color }
-            if words[5] ~= nil and words[6] ~= nil then
-                progress = tonumber(words[5]) / tonumber(words[6])
-            end
-            update_metadata(artist, current_song, progress, art_url)
-        elseif player_status == "Paused" then
+            update_metadata(metadata)
+        elseif metadata.status == "Paused" then
             icon.image = PAUSE_ICON_NAME
             widget.colors = { beautiful.widget_main_color }
-            if words[5] ~= nil and words[6] ~= nil then
-                progress = tonumber(words[5]) / tonumber(words[6])
-            end
-            update_metadata(artist, current_song, progress, art_url)
-        elseif player_status == "Stopped" then
+            update_metadata(metadata)
+        elseif metadata.status == "Stopped" then
             icon.image = STOP_ICON_NAME
         else -- no player is running
             icon.image = LIBRARY_ICON_NAME
@@ -215,48 +277,30 @@ local function worker()
 
     mpris_widget:buttons(
         awful.util.table.join(
-            awful.button({}, 3, function()
-                if popup.visible then
-                    popup.visible = not popup.visible
-                else
-                    rebuild_popup()
-                    popup:move_next_to(mouse.current_widget_geometry)
-                end
-            end),
-            awful.button({}, 4, function() awful.spawn(NEXT_MPD_CMD, false) end),
-            awful.button({}, 5, function() awful.spawn(PREV_MPD_CMD, false) end),
-            awful.button({}, 1, function() awful.spawn(TOGGLE_MPD_CMD, false) end)
+            awful.button({}, 3, function() player_selector_popup:toggle() end),
+            awful.button({}, 4, function() playerctl:next() end),
+            awful.button({}, 5, function() playerctl:prev() end),
+            awful.button({}, 1, function() playerctl:toggle() end)
         )
     )
 
-    watch(GET_MPD_CMD, 1, update_graphic, mpris_widget)
+    playerctl:watch(1, update_graphic, mpris_widget)
 
-    local mpris_popup = awful.widget.watch(
-        "playerctl metadata --format '{{ status }}: {{ artist }} - {{ title }}\n"
-        .. "Duration: {{ duration(position) }}/{{ duration(mpris:length) }}'",
-        1,
-        function(callback_popup, stdout)
-            local metadata = stdout
-            if callback_popup.visible then
-                metadata_widget:set_text(metadata)
-                callback_popup:move_next_to(mouse.current_widget_geometry)
-            end
-        end,
-        awful.popup {
-            border_color = beautiful.border_color,
-            ontop        = true,
-            visible      = false,
-            widget = wibox.widget {
-                cover_art_widget,
-                metadata_widget,
-                layout = wibox.layout.fixed.vertical,
-            }
+    local mpris_popup = awful.popup {
+        border_color = beautiful.border_color,
+        ontop        = true,
+        visible      = false,
+        widget = wibox.widget {
+            cover_art_widget,
+            metadata_widget,
+            layout = wibox.layout.fixed.vertical,
         }
-    )
+    }
 
     mpris_widget:connect_signal('mouse::enter',
         function()
             mpris_popup.visible = true
+            mpris_popup:move_next_to(mouse.current_widget_geometry)
         end)
     mpris_widget:connect_signal('mouse::leave',
         function()
