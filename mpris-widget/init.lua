@@ -239,6 +239,7 @@ local function worker(user_args)
     local metadata_widget = wibox.widget {
         widget        = wibox.widget.textbox,
         font          = font,
+        forced_height = 100,
         forced_width  = popup_width,
     }
 
