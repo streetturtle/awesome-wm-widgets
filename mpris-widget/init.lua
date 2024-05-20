@@ -188,6 +188,7 @@ local function worker(user_args)
     local play_icon    = args.play_icon or path_to_icons .. "/symbolic/actions/media-playback-start-symbolic.svg"
     local stop_icon    = args.stop_icon or path_to_icons .. "/symbolic/actions/media-playback-stop-symbolic.svg"
     local library_icon = args.library_icon or path_to_icons .. "/symbolic/places/folder-music-symbolic.svg"
+    local popup_width  = args.popup_width or 300
 
     local icon = wibox.widget {
         widget = wibox.widget.imagebox,
@@ -230,7 +231,7 @@ local function worker(user_args)
     local cover_art_widget = wibox.widget {
         widget = wibox.widget.imagebox,
         forced_height = 0,
-        forced_width = 300,
+        forced_width = popup_width,
         resize_allowed = true,
     }
 
@@ -238,7 +239,7 @@ local function worker(user_args)
         widget        = wibox.widget.textbox,
         font          = font,
         forced_height = 100,
-        forced_width  = 300,
+        forced_width  = popup_width,
     }
 
     local update_metadata = function(meta)
@@ -253,7 +254,7 @@ local function worker(user_args)
 
         if art_url ~= nil and art_url ~= "" then
             cover_art_widget.image = art_url
-            cover_art_widget.forced_height = 300
+            cover_art_widget.forced_height = popup_width
         else
             cover_art_widget.image = nil
             cover_art_widget.forced_height = 0
