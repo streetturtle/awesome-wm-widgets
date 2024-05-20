@@ -12,7 +12,7 @@ local wibox             = require("wibox")
 local gears             = require("gears")
 
 local playerctl = {
-    player_name = 'mpv',
+    player_name = nil,
 }
 
 function playerctl:set_player(name)
@@ -190,6 +190,8 @@ local function worker(user_args)
     local stop_icon    = args.stop_icon or path_to_icons .. "/symbolic/actions/media-playback-stop-symbolic.svg"
     local library_icon = args.library_icon or path_to_icons .. "/symbolic/places/folder-music-symbolic.svg"
     local popup_width  = args.popup_width or 300
+
+    playerctl.player_name = args.default_player or 'mpv'
 
     local icon = wibox.widget {
         widget = wibox.widget.imagebox,
