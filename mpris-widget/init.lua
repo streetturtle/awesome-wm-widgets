@@ -279,11 +279,11 @@ local function worker(user_args)
         end
 
         if metadata.status == "Playing" then
-            icon.image = play_icon
+            icon.image = pause_icon
             widget.colors = { beautiful.widget_main_color }
             update_metadata(metadata)
         elseif metadata.status == "Paused" then
-            icon.image = pause_icon
+            icon.image = play_icon
             widget.colors = { beautiful.widget_main_color }
             update_metadata(metadata)
         elseif metadata.status == "Stopped" then
