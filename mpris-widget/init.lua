@@ -209,7 +209,7 @@ local function worker(user_args)
         forced_height = 24,
         forced_width = 24,
         rounded_edge = true,
-        bg = "#ffffff11",
+        colors = {"#ffffff11", "black"},
         paddings = 2,
     }
 
@@ -256,7 +256,7 @@ local function worker(user_args)
         s = s .. "\n" .. meta.current_song .. " (" .. duration(meta.position) .. "/" .. duration(meta.length) .. ")"
         metadata_widget:set_text(s)
 
-        progress_widget.value = meta.progress
+        progress_widget.values = {1.0 - meta.progress, meta.progress}
 
         -- poor man's urldecode
         local art_url = meta.art_url:gsub("file://", "/")
