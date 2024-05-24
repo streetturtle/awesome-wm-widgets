@@ -38,7 +38,7 @@ function playerctl:watch(timeout, callback, widget)
 
         local position, length, progress = tonumber(words[5]), tonumber(words[6])
 
-        if position ~= nil and length ~= nil then
+        if position ~= nil and length ~= nil and length > 0 then
             progress = position / length
         end
 
@@ -256,7 +256,7 @@ local function worker(user_args)
         s = s .. "\n" .. meta.current_song .. " (" .. duration(meta.position) .. "/" .. duration(meta.length) .. ")"
         metadata_widget:set_text(s)
 
-        progress_widget.values = {1.0 - meta.progress, meta.progress}
+        progress_widget.values = {1.0 - (meta.progress or 0.0), meta.progress or 0.0}
 
         -- poor man's urldecode
         local art_url = meta.art_url:gsub("file://", "/")
