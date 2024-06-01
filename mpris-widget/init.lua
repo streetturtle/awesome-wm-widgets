@@ -50,9 +50,12 @@ function playerctl:watch(timeout, callback, widget)
             position = position,
             length = length,
             album = words[7],
-            year = string.sub(words[8], 0, 4),
             progress = progress,
         }
+
+        if words[8] ~= nil then
+            metadata.year = string.sub(words[8], 0, 4)
+        end
 
         callback(widget, metadata)
     end
