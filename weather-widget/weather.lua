@@ -180,7 +180,7 @@ local function worker(user_args)
     local timeout = args.timeout or 120
 
     local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
-		local weather_api =
+        local weather_api =
         ('https://api.weatherapi.com/v1/current.json' ..
             '?q=' .. coordinates[1] .. ',' .. coordinates[2] .. '&key=' .. api_key ..
             '&units=' .. units .. '&lang=' .. LANG)
@@ -322,13 +322,24 @@ local function worker(user_args)
             return
         end
 
+        if string.match(stdout, '<') ~= nil then
+            if not warning_shown then
+                warning_shown = true
+                widget:is_ok(false)
+                tooltip:add_to_object(widget)
+  
+                widget:connect_signal('mouse::enter', function() tooltip.text = stdout end)
+            end
+            return
+        end
+
         warning_shown = false
         tooltip:remove_from_object(widget)
         widget:is_ok(true)
 
         local result = json.decode(stdout)
         widget:set_image(ICONS_DIR .. icon_map[result.current.condition.code] .. icons_extension)
-				-- TODO: if units isn't "metric", read temp_f instead
+        -- TODO: if units isn't "metric", read temp_f instead
         widget:set_text(gen_temperature_str(result.current.temp_c, '%.0f', both_units_widget, units))
 
         current_weather_widget:update(result.current)
