@@ -324,7 +324,7 @@ local function worker(user_args)
                 warning_shown = true
                 widget:is_ok(false)
                 tooltip:add_to_object(widget)
-  
+
                 widget:connect_signal('mouse::enter', function() tooltip.text = stdout end)
             end
             return
