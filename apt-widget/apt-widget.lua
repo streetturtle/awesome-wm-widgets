@@ -63,14 +63,6 @@ local apt_widget = wibox.widget({
 	end,
 })
 
-local apt_widget_button = wibox.widget({
-	{
-		apt_widget,
-		widget = wibox.container.margin,
-	},
-	widget = clickable_container, -- luacheck: ignore  (todo fix)
-})
-
 --- Parses the line and creates the package table out of it
 --- yaru-theme-sound/focal-updates,focal-updates 20.04.10.1 all [upgradable from: 20.04.8]
 local parse_package = function(line)
