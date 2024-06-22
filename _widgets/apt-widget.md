@@ -12,6 +12,15 @@ Features:
  - update single package
  - update multiple packages
 
+## Customizations
+
+It is possible to customize widget by providing a table with the following config parameters:
+
+| Name | Default | Description |
+|---|---|---|
+| `icon_control` | `false` | Set or unset whether _any_ click on the screen closes the dropdown after it has been opened. |
+
+
 ## Installation
 
 Clone the repo under ~/.config/awesome/ folder, then in rc.lua add the following:
@@ -25,6 +34,14 @@ s.mytasklist, -- Middle widget
     	layout = wibox.layout.fixed.horizontal,
 		...
 		apt_widget(),
+		...
+```
+
+Or use the following.
+
+```lua
+		...
+		apt_widget({icon_control=true}),
 		...
 ```
 
