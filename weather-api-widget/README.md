@@ -1,5 +1,7 @@
 # WeatherAPI widget
 
+![Current Weather popup](./popup.png)
+
 The widget consists of one section:
 - current weather, including humidity, wind speed, UV index
 
@@ -30,7 +32,7 @@ use the folder name in widget's config. There should be 18 icons, preferably
 128x128 minimum. Icons should also respect the naming convention, please check
 widget's source.
 
-### Examples:
+### Examples
 
 #### Custom font, icons
 
