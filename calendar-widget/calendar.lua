@@ -243,6 +243,7 @@ local function worker(user_args)
     function calendar_widget.toggle()
 
         if popup.visible then
+	    auto_hide_timer:stop()
             -- to faster render the calendar refresh it and just hide
             cal:set_date(nil) -- the new date is not set without removing the old one
             cal:set_date(os.date('*t'))
