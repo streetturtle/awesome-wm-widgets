@@ -203,6 +203,23 @@ local function worker(user_args)
         border_color = calendar_themes[theme].border,
         widget = cal
     }
+    
+	local auto_hide_timer = gears.timer({
+		timeout = user_args.timeout or 2,
+		single_shot = true,
+		callback = function()
+			calendar_widget.toggle()
+		end,
+	})
+
+	popup:connect_signal("mouse::leave", function()
+        if user_args.auto_hide then 
+		    auto_hide_timer:again()
+        end
+	end)
+	popup:connect_signal("mouse::enter", function()
+		auto_hide_timer:stop()
+	end)
 
     popup:buttons(
             awful.util.table.join(
@@ -226,6 +243,7 @@ local function worker(user_args)
     function calendar_widget.toggle()
 
         if popup.visible then
+            auto_hide_timer:stop()
             -- to faster render the calendar refresh it and just hide
             cal:set_date(nil) -- the new date is not set without removing the old one
             cal:set_date(os.date('*t'))
@@ -250,6 +268,10 @@ local function worker(user_args)
             end
 
             popup.visible = true
+            if user_args.auto_hide then
+                auto_hide_timer:start()
+            end
+
 
         end
     end
