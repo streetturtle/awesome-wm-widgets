@@ -26,7 +26,7 @@ local logout_menu_widget = wibox.widget {
         layout = wibox.container.margin
     },
     shape = function(cr, width, height)
-    gears.shape.rounded_rect(cr, width, height, 4)
+        gears.shape.rounded_rect(cr, width, height, 4)
     end,
     widget = wibox.container.background,
 }
@@ -86,12 +86,13 @@ local function worker(user_args)
                 margins = 8,
                 layout = wibox.container.margin
             },
+            fg = beautiful.fg_normal,
             bg = beautiful.bg_normal,
             widget = wibox.container.background
         }
 
-        row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) end)
-        row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) end)
+        row:connect_signal("mouse::enter", function(c) c:set_bg(beautiful.bg_focus) c:set_fg(beautiful.fg_focus) end)
+        row:connect_signal("mouse::leave", function(c) c:set_bg(beautiful.bg_normal) c:set_fg(beautiful.fg_normal) end)
 
         local old_cursor, old_wibox
         row:connect_signal("mouse::enter", function()
@@ -108,6 +109,7 @@ local function worker(user_args)
 
         row:buttons(awful.util.table.join(awful.button({}, 1, function()
             popup.visible = not popup.visible
+            logout_menu_widget:set_bg('#00000000')
             item.command()
         end)))
 
