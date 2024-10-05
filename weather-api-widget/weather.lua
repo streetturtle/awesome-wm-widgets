@@ -174,13 +174,16 @@ local function worker(user_args)
     local both_units_widget = args.both_units_widget or false
     local icon_pack_name = args.icons or 'weather-underground-icons'
     local icons_extension = args.icons_extension or '.png'
+    local show_forecast = args.show_forecast or false
     local timeout = args.timeout or 120
 
     local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
-        local weather_api =
-        ('https://api.weatherapi.com/v1/current.json' ..
+    -- Forecast endpoint includes current. I could map show_forecast to days here.
+    -- Currently overfetching but only showing when opting in.
+    local weather_api =
+        ('https://api.weatherapi.com/v1/forecast.json' ..
             '?q=' .. coordinates[1] .. ',' .. coordinates[2] .. '&key=' .. api_key ..
-            '&units=' .. units .. '&lang=' .. LANG)
+            '&units=' .. units .. '&lang=' .. LANG .. '&days=3')
 
     weather_widget = wibox.widget {
         {
@@ -301,6 +304,66 @@ local function worker(user_args)
         end
     }
 
+    local forecast_widget = {
+        forced_width = 300,
+        layout = wibox.layout.flex.horizontal,
+        update = function(self, forecast)
+            local count = #self
+            for i = 0, count do self[i] = nil end
+            for i, day in ipairs(forecast) do
+                -- Free plan allows forecast for up to three days, each with hours
+                if i > 3 then break end
+                local day_forecast = wibox.widget {
+                    {
+                        text = os.date('%a', tonumber(day.date_epoch)),
+                        align = 'center',
+                        font = font_name .. ' 9',
+                        widget = wibox.widget.textbox
+                    },
+                    {
+                        {
+                            {
+                                image = ICONS_DIR .. icon_map[day.day.condition.code] .. icons_extension,
+                                resize = true,
+                                forced_width = 48,
+                                forced_height = 48,
+                                widget = wibox.widget.imagebox
+                            },
+                            align = 'center',
+                            layout = wibox.container.place
+                        },
+                        {
+                            text = day.day.condition.text,
+                            font = font_name .. ' 8',
+                            align = 'center',
+                            forced_height = 50,
+                            widget = wibox.widget.textbox
+                        },
+                        layout = wibox.layout.fixed.vertical
+                    },
+                    {
+                        {
+                            text = gen_temperature_str(day.day.mintemp_c, '%.0f', false, units),
+                            align = 'center',
+                            font = font_name .. ' 9',
+                            widget = wibox.widget.textbox
+                        },
+                        {
+                            text = gen_temperature_str(day.day.maxtemp_c, '%.0f', false, units),
+                            align = 'center',
+                            font = font_name .. ' 9',
+                            widget = wibox.widget.textbox
+                        },
+                        layout = wibox.layout.fixed.vertical
+                    },
+                    spacing = 8,
+                    layout = wibox.layout.fixed.vertical
+                }
+                table.insert(self, day_forecast)
+            end
+        end
+    }
+
     local function update_widget(widget, stdout, stderr)
         if stderr ~= '' then
             if not warning_shown then
@@ -346,6 +409,12 @@ local function worker(user_args)
             spacing = 16,
             layout = wibox.layout.fixed.vertical
         }
+
+
+        if show_forecast then
+            forecast_widget:update(result.forecast.forecastday)
+            table.insert(final_widget, forecast_widget)
+        end
 
         weather_popup:setup({
             {
