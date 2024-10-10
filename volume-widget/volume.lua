@@ -220,7 +220,7 @@ local function worker(user_args)
 	local widget_type = args.widget_type
 	local refresh_rate = args.refresh_rate or 1
 	local step = args.step or 5
-	local card = args.card or 1
+	local card = args.card or 0
 	local device = args.device or "pulse"
 	local mixctrl = args.mixctrl or "Master"
 	local value_type = args.value_type or "-M"
