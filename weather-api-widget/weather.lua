@@ -439,7 +439,7 @@ local function worker(user_args)
                     })
 
                     table.insert(temp_below, wibox.widget {
-                        markup = '<span foreground=""'
+                        markup = '<span foreground="'
                             .. (tonumber(hour.temp_c) > 0 and '#2E3440' or '#ECEFF4') .. '">'
                             .. string.format('%.0f', hour.temp_c) .. '°' .. '</span>',
                         align = 'center',
