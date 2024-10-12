@@ -97,7 +97,7 @@ It is possible to customize the widget by providing a table with all or some of 
 | `toggle_cmd`  | *nil*           | Use custom command instead of `amixer ... toggle` because [amixer's unmute option seems to be broken](https://superuser.com/a/822085) |
 | `step`        | 5               | How much the volume is raised or lowered at once (in %)                                                                               |
 | `widget_type` | `icon_and_text` | Widget type, one of `horizontal_bar`, `vertical_bar`, `icon`, `icon_and_text`, `arc`                                                  |
-| `card`        | 1               | Select the card name to control                                                                                                       |
+| `card`        | 0               | Select the card name to control                                                                                                       |
 | `device`      | `pulse`         | Select the device name to control                                                                                                     |
 | `mixctrl`     | `Master`        | Select the mixer name to control                                                                                                      |
 | `value_type`  | `-M`            | Select how the volume is increased/ decreased (intended for `-M`/ `-R` parameters). See `man amixer` for additional info              |
