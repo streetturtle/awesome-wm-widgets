@@ -619,6 +619,18 @@ local function worker(user_args)
         end
     end)))
 
+    weather_widget:connect_signal("mouse::enter", function()
+        weather_widget:set_bg(beautiful.bg_focus)
+        weather_popup:move_next_to(mouse.current_widget_geometry)
+    end)
+
+    weather_widget:connect_signal("mouse::leave", function()
+        if weather_popup.visible then
+            weather_widget:set_bg('#00000000')
+            weather_popup.visible = not weather_popup.visible
+        end
+    end)
+
     watch(
         string.format(GET_FORECAST_CMD, weather_api),
         timeout,  -- API limit is 1k req/day; day has 1440 min; every 2 min is good
