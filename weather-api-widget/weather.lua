@@ -66,6 +66,7 @@ local weather_popup = awful.popup {
 
 --- Maps WeatherAPI condition code to file name w/o extension
 --- See https://www.weatherapi.com/docs/#weather-icons
+--- Day/Night is determined at time of mapping the weather to an icon
 local icon_map = {
     [1000] = "clear-sky",
     [1003] = "few-clouds",
@@ -293,8 +294,13 @@ local function worker(user_args)
         forced_width = 300,
         layout = wibox.layout.flex.horizontal,
         update = function(self, weather)
+            local day_night_extension = ""
+            if weather.is_day then
+                day_night_extension = "-night"
+            end
+
             self:get_children_by_id('icon')[1]:set_image(
-                ICONS_DIR .. icon_map[weather.condition.code] .. icons_extension)
+                ICONS_DIR .. icon_map[weather.condition.code] .. day_night_extension .. icons_extension)
             self:get_children_by_id('temp')[1]:set_text(gen_temperature_str(weather.temp_c, '%.0f', false, units))
             self:get_children_by_id('feels_like_temp')[1]:set_text(
                 LCLE.feels_like .. gen_temperature_str(weather.feelslike_c, '%.0f', false, units))
@@ -315,6 +321,11 @@ local function worker(user_args)
             for i, day in ipairs(forecast) do
                 -- Free plan allows forecast for up to three days, each with hours
                 if i > 3 then break end
+                local day_night_extension = ""
+                if day.is_day then
+                    day_night_extension = "-night"
+                end
+
                 local day_forecast = wibox.widget {
                     {
                         text = os.date('%a', tonumber(day.date_epoch)),
@@ -325,7 +336,10 @@ local function worker(user_args)
                     {
                         {
                             {
-                                image = ICONS_DIR .. icon_map[day.day.condition.code] .. icons_extension,
+                                image = ICONS_DIR
+                                    .. icon_map[day.day.condition.code]
+                                    .. day_night_extension
+                                    .. icons_extension,
                                 resize = true,
                                 forced_width = 48,
                                 forced_height = 48,
@@ -575,7 +589,13 @@ local function worker(user_args)
         widget:is_ok(true)
 
         local result = json.decode(stdout)
-        widget:set_image(ICONS_DIR .. icon_map[result.current.condition.code] .. icons_extension)
+
+        local day_night_extension = ""
+        if result.current.is_day then
+            day_night_extension = "-night"
+        end
+
+        widget:set_image(ICONS_DIR .. icon_map[result.current.condition.code] .. day_night_extension .. icons_extension)
         -- TODO: if units isn't "metric", read temp_f instead
         widget:set_text(gen_temperature_str(result.current.temp_c, '%.0f', both_units_widget, units))
 
