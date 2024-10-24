@@ -295,7 +295,7 @@ local function worker(user_args)
         layout = wibox.layout.flex.horizontal,
         update = function(self, weather)
             local day_night_extension = ""
-            if weather.is_day then
+            if not weather.is_day then
                 day_night_extension = "-night"
             end
 
@@ -322,7 +322,7 @@ local function worker(user_args)
                 -- Free plan allows forecast for up to three days, each with hours
                 if i > 3 then break end
                 local day_night_extension = ""
-                if day.is_day then
+                if not day.is_day then
                     day_night_extension = "-night"
                 end
 
@@ -591,7 +591,7 @@ local function worker(user_args)
         local result = json.decode(stdout)
 
         local day_night_extension = ""
-        if result.current.is_day then
+        if not result.current.is_day then
             day_night_extension = "-night"
         end
 
