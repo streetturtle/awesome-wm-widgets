@@ -66,6 +66,7 @@ local weather_popup = awful.popup {
 
 --- Maps WeatherAPI condition code to file name w/o extension
 --- See https://www.weatherapi.com/docs/#weather-icons
+--- Day/Night is determined at time of mapping the weather to an icon
 local icon_map = {
     [1000] = "clear-sky",
     [1003] = "few-clouds",
@@ -171,14 +172,16 @@ local function worker(user_args)
     local api_key = args.api_key
     local font_name = args.font_name or beautiful.font:gsub("%s%d+$", "")
     local units = args.units or 'metric'
+    local time_format_12h = args.time_format_12h
     local both_units_widget = args.both_units_widget or false
     local icon_pack_name = args.icons or 'weather-underground-icons'
     local icons_extension = args.icons_extension or '.png'
-    local show_forecast = args.show_forecast or false
+    local show_daily_forecast = args.show_daily_forecast or false
+    local show_hourly_forecast = args.show_hourly_forecast or false
     local timeout = args.timeout or 120
 
     local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
-    -- Forecast endpoint includes current. I could map show_forecast to days here.
+    -- Forecast endpoint includes current. I could map show_daily_forecast to days here.
     -- Currently overfetching but only showing when opting in.
     local weather_api =
         ('https://api.weatherapi.com/v1/forecast.json' ..
@@ -291,8 +294,13 @@ local function worker(user_args)
         forced_width = 300,
         layout = wibox.layout.flex.horizontal,
         update = function(self, weather)
+            local day_night_extension = ""
+            if not weather.is_day then
+                day_night_extension = "-night"
+            end
+
             self:get_children_by_id('icon')[1]:set_image(
-                ICONS_DIR .. icon_map[weather.condition.code] .. icons_extension)
+                ICONS_DIR .. icon_map[weather.condition.code] .. day_night_extension .. icons_extension)
             self:get_children_by_id('temp')[1]:set_text(gen_temperature_str(weather.temp_c, '%.0f', false, units))
             self:get_children_by_id('feels_like_temp')[1]:set_text(
                 LCLE.feels_like .. gen_temperature_str(weather.feelslike_c, '%.0f', false, units))
@@ -304,7 +312,7 @@ local function worker(user_args)
         end
     }
 
-    local forecast_widget = {
+    local daily_forecast_widget = {
         forced_width = 300,
         layout = wibox.layout.flex.horizontal,
         update = function(self, forecast)
@@ -313,6 +321,11 @@ local function worker(user_args)
             for i, day in ipairs(forecast) do
                 -- Free plan allows forecast for up to three days, each with hours
                 if i > 3 then break end
+                local day_night_extension = ""
+                if not day.is_day then
+                    day_night_extension = "-night"
+                end
+
                 local day_forecast = wibox.widget {
                     {
                         text = os.date('%a', tonumber(day.date_epoch)),
@@ -323,7 +336,10 @@ local function worker(user_args)
                     {
                         {
                             {
-                                image = ICONS_DIR .. icon_map[day.day.condition.code] .. icons_extension,
+                                image = ICONS_DIR
+                                    .. icon_map[day.day.condition.code]
+                                    .. day_night_extension
+                                    .. icons_extension,
                                 resize = true,
                                 forced_width = 48,
                                 forced_height = 48,
@@ -364,6 +380,181 @@ local function worker(user_args)
         end
     }
 
+    local hourly_forecast_graph = wibox.widget {
+        step_width = 12,
+        color = '#EBCB8B',
+        background_color = beautiful.bg_normal,
+        forced_height = 100,
+        forced_width = 300,
+        widget = wibox.widget.graph,
+        set_max_value = function(self, new_max_value)
+            self.max_value = new_max_value
+        end,
+        set_min_value = function(self, new_min_value)
+            self.min_value = new_min_value
+        end,
+    }
+
+    local hourly_forecast_negative_graph = wibox.widget {
+        step_width = 12,
+        color = '#5E81AC',
+        background_color = beautiful.bg_normal,
+        forced_height = 100,
+        forced_width = 300,
+        widget = wibox.widget.graph,
+        set_max_value = function(self, new_max_value)
+            self.max_value = new_max_value
+        end,
+        set_min_value = function(self, new_min_value)
+            self.min_value = new_min_value
+        end,
+    }
+
+    local hourly_forecast_widget = {
+        layout = wibox.layout.fixed.vertical,
+        update = function(self, hourly)
+            local hours_below = {
+                id = 'hours',
+                forced_width = 300,
+                layout = wibox.layout.flex.horizontal
+            }
+            local temp_below = {
+                id = 'temp',
+                forced_width = 300,
+                layout = wibox.layout.flex.horizontal
+            }
+
+            local max_temp = -1000
+            local min_temp = 1000
+            local values= {}
+
+            -- Yeah, this looks weird. I would expect to have to use ipairs
+            for i, hour in pairs(hourly) do
+                if i > 25 then
+                    break
+                end
+
+                values[i] = hour.temp_c
+
+                if max_temp < hour.temp_c then
+                    max_temp = hour.temp_c
+                end
+
+                if min_temp > hour.temp_c then
+                    min_temp = hour.temp_c
+                end
+
+                if (i - 1) % 5 == 0 then
+                    table.insert(hours_below, wibox.widget {
+                        text = os.date(time_format_12h and '%I%p' or '%H:00', tonumber(hour.time_epoch)),
+                        align = 'center',
+                        font = font_name .. ' 9',
+                        widget = wibox.widget.textbox
+                    })
+
+                    table.insert(temp_below, wibox.widget {
+                        markup = '<span foreground="'
+                            .. (tonumber(hour.temp_c) > 0 and '#2E3440' or '#ECEFF4') .. '">'
+                            .. string.format('%.0f', hour.temp_c) .. '°' .. '</span>',
+                        align = 'center',
+                        font = font_name .. ' 9',
+                        widget = wibox.widget.textbox
+                    })
+                end
+            end
+
+            hourly_forecast_graph:set_max_value(math.max(max_temp, math.abs(min_temp)))
+            hourly_forecast_graph:set_min_value(min_temp > 0 and min_temp * 0.7 or 0)  -- move graph a bit up
+
+            hourly_forecast_negative_graph:set_max_value(math.abs(min_temp))
+            hourly_forecast_negative_graph:set_min_value(max_temp < 0 and math.abs(max_temp) * 0.7 or 0)
+
+            for _, value in ipairs(values) do
+                if value >= 0 then
+                    hourly_forecast_graph:add_value(value)
+                    hourly_forecast_negative_graph:add_value(0)
+                else
+                    hourly_forecast_graph:add_value(0)
+                    hourly_forecast_negative_graph:add_value(math.abs(value))
+                end
+            end
+
+            local count = #self
+            for i = 0, count do
+                self[i] = nil
+            end
+
+            -- all temperatures are positive
+            if min_temp > 0 then
+                table.insert(self, wibox.widget {
+                    {
+                        hourly_forecast_graph,
+                        reflection = { horizontal = true },
+                        widget = wibox.container.mirror
+                    },
+                    {
+                        temp_below,
+                        valign = 'bottom',
+                        widget = wibox.container.place
+                    },
+                    id = 'graph',
+                    layout = wibox.layout.stack
+                })
+                table.insert(self, hours_below)
+
+            -- all temperatures are negative
+            elseif max_temp < 0 then
+                table.insert(self, hours_below)
+                table.insert(self, wibox.widget {
+                    {
+                        hourly_forecast_negative_graph,
+                        reflection = { horizontal = true, vertical = true },
+                        widget = wibox.container.mirror
+                    },
+                    {
+                        temp_below,
+                        valign = 'top',
+                        widget = wibox.container.place
+                    },
+                    id = 'graph',
+                    layout = wibox.layout.stack
+                })
+
+            -- mixed temperatures
+            else
+                table.insert(self, wibox.widget {
+                    {
+                        hourly_forecast_graph,
+                        reflection = { horizontal = true },
+                        widget = wibox.container.mirror
+                    },
+                    {
+                        temp_below,
+                        valign = 'bottom',
+                        widget = wibox.container.place
+                    },
+                    id = 'graph',
+                    layout = wibox.layout.stack
+                })
+
+                table.insert(self, wibox.widget {
+                    {
+                        hourly_forecast_negative_graph,
+                        reflection = { horizontal = true, vertical = true },
+                        widget = wibox.container.mirror
+                    },
+                    {
+                        temp_below,
+                        valign = 'top',
+                        widget = wibox.container.place
+                    },
+                    id = 'graph',
+                    layout = wibox.layout.stack
+                })
+            end
+        end
+    }
+
     local function update_widget(widget, stdout, stderr)
         if stderr ~= '' then
             if not warning_shown then
@@ -398,7 +589,13 @@ local function worker(user_args)
         widget:is_ok(true)
 
         local result = json.decode(stdout)
-        widget:set_image(ICONS_DIR .. icon_map[result.current.condition.code] .. icons_extension)
+
+        local day_night_extension = ""
+        if not result.current.is_day then
+            day_night_extension = "-night"
+        end
+
+        widget:set_image(ICONS_DIR .. icon_map[result.current.condition.code] .. day_night_extension .. icons_extension)
         -- TODO: if units isn't "metric", read temp_f instead
         widget:set_text(gen_temperature_str(result.current.temp_c, '%.0f', both_units_widget, units))
 
@@ -411,9 +608,14 @@ local function worker(user_args)
         }
 
 
-        if show_forecast then
-            forecast_widget:update(result.forecast.forecastday)
-            table.insert(final_widget, forecast_widget)
+        if show_hourly_forecast then
+            hourly_forecast_widget:update(result.forecast.forecastday[1].hour)
+            table.insert(final_widget, hourly_forecast_widget)
+        end
+
+        if show_daily_forecast then
+            daily_forecast_widget:update(result.forecast.forecastday)
+            table.insert(final_widget, daily_forecast_widget)
         end
 
         weather_popup:setup({
@@ -436,6 +638,18 @@ local function worker(user_args)
             weather_popup:move_next_to(mouse.current_widget_geometry)
         end
     end)))
+
+    weather_widget:connect_signal("mouse::enter", function()
+        weather_widget:set_bg(beautiful.bg_focus)
+        weather_popup:move_next_to(mouse.current_widget_geometry)
+    end)
+
+    weather_widget:connect_signal("mouse::leave", function()
+        if weather_popup.visible then
+            weather_widget:set_bg('#00000000')
+            weather_popup.visible = not weather_popup.visible
+        end
+    end)
 
     watch(
         string.format(GET_FORECAST_CMD, weather_api),
