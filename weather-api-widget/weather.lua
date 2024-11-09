@@ -176,10 +176,10 @@ local function worker(user_args)
     local both_units_widget = args.both_units_widget or false
     local icon_pack_name = args.icons or 'weather-underground-icons'
     local icons_extension = args.icons_extension or '.png'
+    local show_forecast_on_hover = args.show_forecast_on_hover or false
     local show_daily_forecast = args.show_daily_forecast or false
     local show_hourly_forecast = args.show_hourly_forecast or false
     local timeout = args.timeout or 120
-
     local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
     -- Forecast endpoint includes current. I could map show_daily_forecast to days here.
     -- Currently overfetching but only showing when opting in.
@@ -640,12 +640,14 @@ local function worker(user_args)
     end)))
 
     weather_widget:connect_signal("mouse::enter", function()
-        weather_widget:set_bg(beautiful.bg_focus)
-        weather_popup:move_next_to(mouse.current_widget_geometry)
+        if show_forecast_on_hover then
+            weather_widget:set_bg(beautiful.bg_focus)
+            weather_popup:move_next_to(mouse.current_widget_geometry)
+        end
     end)
 
     weather_widget:connect_signal("mouse::leave", function()
-        if weather_popup.visible then
+        if show_forecast_on_hover and weather_popup.visible then
             weather_widget:set_bg('#00000000')
             weather_popup.visible = not weather_popup.visible
         end
