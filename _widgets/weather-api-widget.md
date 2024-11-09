@@ -21,6 +21,7 @@ following config parameters:
 | units | `metric` | `metric` for celsius, `imperial` for fahrenheit |
 | icon_pack_name | `weather-underground-icons` | Name of the icon pack, could be `weather-underground-icon` or `VitalyGorbachev` or create your own, more details below |
 | icons_extension | `.png` | File extension of icons in the pack |
+| show_forecast_on_hover | false | Show a forecast on hover, too |
 | show_daily_forecast | false | Show forecast for next three days |
 | show_hourly_forecast | false | Show hourly forecast section |
 | timeout | 120 | How often in seconds the widget refreshes |
