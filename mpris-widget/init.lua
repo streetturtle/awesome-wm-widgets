@@ -70,7 +70,8 @@ function playerctl:watch(timeout, callback, widget)
         callback(cb_widget, metadata)
     end
 
-    _, self.timer = awful.widget.watch(cmd, timeout, cb, widget)
+    local _, timer = awful.widget.watch(cmd, timeout, cb, widget)
+    self.timer = timer
 end
 
 function playerctl:toggle() awful.spawn(self:cmd('play-pause'), false) end
