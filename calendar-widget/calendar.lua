@@ -203,7 +203,7 @@ local function worker(user_args)
         border_color = calendar_themes[theme].border,
         widget = cal
     }
-    
+
 	local auto_hide_timer = gears.timer({
 		timeout = user_args.timeout or 2,
 		single_shot = true,
@@ -213,7 +213,7 @@ local function worker(user_args)
 	})
 
 	popup:connect_signal("mouse::leave", function()
-        if user_args.auto_hide then 
+        if user_args.auto_hide then
 		    auto_hide_timer:again()
         end
 	end)

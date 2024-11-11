@@ -7,7 +7,6 @@
 -------------------------------------------------
 local awful = require('awful')
 local beautiful = require('beautiful')
-local watch = require('awful.widget.watch')
 local wibox = require('wibox')
 local gears = require('gears')
 
@@ -44,7 +43,7 @@ function playerctl:watch(timeout, callback, widget)
 
     self.watch_params = { timeout = timeout, callback = callback, widget = widget }
 
-    local cb = function(widget, stdout, _, _, _)
+    local cb = function(cb_widget, stdout, _, _, _)
         local words = gears.string.split(stdout, ';')
 
         local position, length, progress = tonumber(words[5]), tonumber(words[6])
@@ -68,10 +67,11 @@ function playerctl:watch(timeout, callback, widget)
             metadata.year = string.sub(words[8], 0, 4)
         end
 
-        callback(widget, metadata)
+        callback(cb_widget, metadata)
     end
 
-    _, self.timer = awful.widget.watch(cmd, timeout, cb, widget)
+    local _, timer = awful.widget.watch(cmd, timeout, cb, widget)
+    self.timer = timer
 end
 
 function playerctl:toggle() awful.spawn(self:cmd('play-pause'), false) end
