@@ -3,6 +3,18 @@
 
 This widget provides a simple way to toggle a blue light filter using [Redshift](https://github.com/jonls/redshift). It offers an easy mechanism to switch between day and night modes, reducing eye strain during late-night computer use.
 
+| Day Mode | Night Mode |
+|----------|------------|
+|![Day Mode](day.png) | ![Night Mode](night.png) |
+
+(I couldn't capture the effect itself)
+
+I usually use every widget with my custom (kinda janky) [wrapper widget](https://github.com/VMatt013/MySetup/blob/Debian/.config/awesome/widgets/margin.lua) to make them look cleaner and more unified.
+
+
+**With wrapper**
+![With wrapper](with_wrapper.png)
+
 
 ## Installation
 
@@ -10,12 +22,14 @@ Clone this repository then add the widget to your wibar:
 
 ```lua
 local bluelight_widget = require("awesome-wm-widgets.bluelight-widget")
+local margin = require("awesome-wm-widgets.margin") -- In case you use my wrapper
 
 s.mytasklist, -- Middle widget
     { -- Right widgets
         layout = wibox.layout.fixed.horizontal,
         ...
         bluelight_widget, -- Add the widget here
+        margin(bluelight, true), -- Add the widget with my wrapper
         ...
     }
 ```
