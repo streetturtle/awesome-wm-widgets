@@ -321,10 +321,6 @@ local function worker(user_args)
             for i, day in ipairs(forecast) do
                 -- Free plan allows forecast for up to three days, each with hours
                 if i > 3 then break end
-                local day_night_extension = ""
-                if not day.is_day then
-                    day_night_extension = "-night"
-                end
 
                 local day_forecast = wibox.widget {
                     {
@@ -336,9 +332,9 @@ local function worker(user_args)
                     {
                         {
                             {
+                                -- No extension to decide between day and night
                                 image = ICONS_DIR
                                     .. icon_map[day.day.condition.code]
-                                    .. day_night_extension
                                     .. icons_extension,
                                 resize = true,
                                 forced_width = 48,
