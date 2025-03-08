@@ -144,7 +144,7 @@ _Note:_ if you are changing icons, the folder should contain following .svg imag
 | `bg_color` | `#ffffff11` | Color of the bar's background |
 | `width` | 50 | The bar width |
 | `margins` | 10 | Top and bottom margins (if your wibar is 22 px high, bar will be 2 px = 22 - 2*10) |
-| `shape` | `bar` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
+| `shape` | `gears.shape.bar` | A shape painter function (see [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html)) |
 | `with_icon` | true | Show volume icon|
 
 _Note:_ I didn't figure out how does the `forced_height` property of progressbar widget work (maybe it doesn't work at all), thus there is a workaround with margins.
@@ -158,5 +158,5 @@ _Note:_ I didn't figure out how does the `forced_height` property of progressbar
 | `bg_color` | `#ffffff11` | Color of the bar's background |
 | `width` | 10 | The bar width |
 | `margins` | 20 | Top and bottom margins (if your wibar is 22 px high, bar will be 2 px = 22 - 2*10) |
-| `shape` | `bar` | [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html), could be `octogon`, `hexagon`, `powerline`, etc |
+| `shape` | `gears.shape.bar` | A shape painter function (see [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html)) |
 | `with_icon` | true | Show volume icon| 
