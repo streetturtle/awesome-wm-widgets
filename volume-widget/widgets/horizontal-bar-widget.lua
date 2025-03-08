@@ -14,7 +14,7 @@ function widget.get_widget(widgets_args)
     local bg_color = args.bg_color or '#ffffff11'
     local width = args.width or 50
     local margins = args.margins or 10
-    local shape = args.shape or 'bar'
+    local shape = args.shape or gears.shape.bar
     local with_icon = args.with_icon == true and true or false
 
     local bar = wibox.widget {
@@ -36,7 +36,8 @@ function widget.get_widget(widgets_args)
             color = main_color,
             margins = { top = margins, bottom = margins },
             background_color = bg_color,
-            shape = gears.shape[shape],
+            shape = shape,
+            bar_shape = shape,
             widget = wibox.widget.progressbar,
         },
         spacing = 4,
