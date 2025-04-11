@@ -15,7 +15,7 @@ local gears = require("gears")
 local beautiful = require("beautiful")
 
 local HOME_DIR = os.getenv("HOME")
-local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/weather-widget'
+local WIDGET_DIR = HOME_DIR .. '/.config/awesome/awesome-wm-widgets/weather-api-widget'
 local GET_FORECAST_CMD = [[bash -c "curl -s --show-error -X GET '%s'"]]
 
 local SYS_LANG = os.getenv("LANG"):sub(1, 2)
@@ -23,26 +23,36 @@ if SYS_LANG == "C" or SYS_LANG == "C." then
     -- C-locale is a common fallback for simple English
     SYS_LANG = "en"
 end
--- default language is ENglish
-local LANG = gears.filesystem.file_readable(WIDGET_DIR .. "/" .. "locale/" ..
-                                      SYS_LANG .. ".lua") and SYS_LANG or "en"
-local LCLE = require("awesome-wm-widgets.weather-widget.locale." .. LANG)
--- WeatherAPI supports only these according to https://www.weatherapi.com/docs/
--- ar, bn, bg, zh, zh_tw, cs, da, nl, fi, fr, de, el, hi, hu, it, ja, jv, ko,
--- zh_cmn, mr, pl, pt, pa, ro, ru, sr, si, sk, es, sv, ta, te, tr, uk, ur, vi,
--- zh_wuu, zh_hsn, zh_yue, zu
 
-
-local function show_warning(message)
+local function show_warning(message, locale)
     naughty.notify {
         preset = naughty.config.presets.critical,
-        title = LCLE.warning_title,
+        title = locale.warning_title,
         text = message
     }
 end
 
-if SYS_LANG ~= LANG then
-    show_warning("Your language is not supported yet. Language set to English")
+local function get_locale(data)
+  -- WeatherAPI supports only these according to https://www.weatherapi.com/docs/
+  -- ar, bn, bg, zh, zh_tw, cs, da, nl, fi, fr, de, el, hi, hu, it, ja, jv, ko,
+  -- zh_cmn, mr, pl, pt, pa, ro, ru, sr, si, sk, es, sv, ta, te, tr, uk, ur, vi,
+  -- zh_wuu, zh_hsn, zh_yue, zu
+
+-- default language is ENglish
+  local lang = gears.filesystem.file_readable(
+    WIDGET_DIR .. "/" .. "locale/" .. data .. ".lua"
+  ) and data or "en"
+
+  local locale = require("awesome-wm-widgets.weather-api-widget.locale." .. lang)
+
+  if data ~= lang then
+    show_warning(
+      string.format("Your language (%s) is not supported yet. Language set to English", data),
+      locale
+    )
+  end
+
+  return locale
 end
 
 local weather_widget = {}
@@ -162,7 +172,7 @@ local function worker(user_args)
 
     --- Validate required parameters
     if args.coordinates == nil or args.api_key == nil then
-        show_warning(LCLE.parameter_warning ..
+        show_warning(locale.parameter_warning ..
                      (args.coordinates == nil and '<b>coordinates</b>' or '') ..
                      (args.api_key == nil and ', <b>api_key</b> ' or ''))
         return
@@ -172,6 +182,7 @@ local function worker(user_args)
     local api_key = args.api_key
     local font_name = args.font_name or beautiful.font:gsub("%s%d+$", "")
     local units = args.units or 'metric'
+    local lang = args.lang or SYS_LANG
     local time_format_12h = args.time_format_12h
     local both_units_widget = args.both_units_widget or false
     local icon_pack_name = args.icons or 'weather-underground-icons'
@@ -181,12 +192,15 @@ local function worker(user_args)
     local show_hourly_forecast = args.show_hourly_forecast or false
     local timeout = args.timeout or 120
     local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
+
+    local locale = get_locale(lang)
+
     -- Forecast endpoint includes current. I could map show_daily_forecast to days here.
     -- Currently overfetching but only showing when opting in.
     local weather_api =
         ('https://api.weatherapi.com/v1/forecast.json' ..
             '?q=' .. coordinates[1] .. ',' .. coordinates[2] .. '&key=' .. api_key ..
-            '&units=' .. units .. '&lang=' .. LANG .. '&days=3')
+            '&units=' .. units .. '&lang=' .. lang .. '&days=3')
 
     weather_widget = wibox.widget {
         {
@@ -303,12 +317,12 @@ local function worker(user_args)
                 ICONS_DIR .. icon_map[weather.condition.code] .. day_night_extension .. icons_extension)
             self:get_children_by_id('temp')[1]:set_text(gen_temperature_str(weather.temp_c, '%.0f', false, units))
             self:get_children_by_id('feels_like_temp')[1]:set_text(
-                LCLE.feels_like .. gen_temperature_str(weather.feelslike_c, '%.0f', false, units))
+                locale.feels_like .. gen_temperature_str(weather.feelslike_c, '%.0f', false, units))
             self:get_children_by_id('description')[1]:set_text(weather.condition.text)
             self:get_children_by_id('wind')[1]:set_markup(
-                LCLE.wind .. '<b>' .. weather.wind_kph .. 'km/h (' .. weather.wind_dir .. ')</b>')
-            self:get_children_by_id('humidity')[1]:set_markup(LCLE.humidity .. '<b>' .. weather.humidity .. '%</b>')
-            self:get_children_by_id('uv')[1]:set_markup(LCLE.uv .. uvi_index_color(weather.uv))
+                locale.wind .. '<b>' .. weather.wind_kph .. 'km/h (' .. weather.wind_dir .. ')</b>')
+            self:get_children_by_id('humidity')[1]:set_markup(locale.humidity .. '<b>' .. weather.humidity .. '%</b>')
+            self:get_children_by_id('uv')[1]:set_markup(locale.uv .. uvi_index_color(weather.uv))
         end
     }
 
@@ -324,7 +338,7 @@ local function worker(user_args)
 
                 local day_forecast = wibox.widget {
                     {
-                        text = os.date('%a', tonumber(day.date_epoch)),
+                        text = locale.days[os.date('%a', tonumber(day.date_epoch))],
                         align = 'center',
                         font = font_name .. ' 9',
                         widget = wibox.widget.textbox
