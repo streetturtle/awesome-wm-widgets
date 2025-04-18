@@ -23,7 +23,7 @@ following config parameters:
 | show_daily_forecast | false | Show forecast for next three days |
 | show_hourly_forecast | false | Show hourly forecast section |
 | timeout | 120 | How often in seconds the widget refreshes |
-| lang | The language of your system from the environment (`LANG` variable)` or `en`  | Widget's language |
+| lang | The language of your system from the environment (`LANG` variable) or `en`. Languages currently supported: `de`, `en`, `fr`, `pt`, `ru`. | Widget's language |
 
 In [#461](https://github.com/streetturtle/awesome-wm-widgets/issues/461) it was
 reported that some machines replace the dot with a comma in coordinates. If

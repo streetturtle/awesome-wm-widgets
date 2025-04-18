@@ -10,13 +10,13 @@ local fr = {
   humidity = "Humidité : ",
   uv = "Indice UV : ",
   days = {
-    Mon = "Mon",
-    Tue = "Tue",
-    Wed = "Wed",
-    Thu = "Thu",
-    Fri = "Fri",
-    Sat = "Sat",
-    Sun = "Sun",
+    Mon = "Lu",
+    Tue = "Ma",
+    Wed = "Me",
+    Thu = "Je",
+    Fri = "Ve",
+    Sat = "Sa",
+    Sun = "Di",
   },
 }
 

@@ -9,14 +9,14 @@ local de = {
   humidity = "Luftfeuchtigkeit: ",
   uv = "UV-Index: ",
   days = {
-    Mon = "Mon",
-    Tue = "Tue",
-    Wed = "Wed",
-    Thu = "Thu",
-    Fri = "Fri",
-    Sat = "Sat",
-    Sun = "Sun",
-  },
+    Mon = "Mo",
+    Tue = "Di",
+    Wed = "Mi",
+    Thu = "Do",
+    Fri = "Fr",
+    Sat = "Sa",
+    Sun = "So",
+  }
 }
 
 return de

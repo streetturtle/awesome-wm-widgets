@@ -10,13 +10,13 @@ local ru = {
   humidity = "Влажность: ",
   uv = "UV: ",
   days = {
-    Mon = "Пнд",
+    Mon = "Пн",
     Tue = "Вт",
     Wed = "Ср",
-    Thu = "Чтв",
-    Fri = "Птн",
-    Sat = "Сбт",
-    Sun = "Вск",
+    Thu = "Чт",
+    Fri = "Пт",
+    Sat = "Сб",
+    Sun = "Вс",
   }
 }
 
