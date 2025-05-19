@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: prettier
 
 on: [push, pull_request]
 
