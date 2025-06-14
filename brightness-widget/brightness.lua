@@ -39,6 +39,8 @@ local function worker(user_args)
     local path_to_icon = args.path_to_icon or ICON_DIR .. 'brightness.svg'
     local font = args.font or beautiful.font
     local timeout = args.timeout or 100
+	local size = args.size or 18
+	local arc_thickness = args.arc_thickness or 2
 
     local program = args.program or 'light'
     local step = args.step or 5
@@ -105,10 +107,10 @@ local function worker(user_args)
                 layout = wibox.container.place
             },
             max_value = 100,
-            thickness = 2,
+            thickness = arc_thickness,
             start_angle = 4.71238898, -- 2pi*3/4
-            forced_height = 18,
-            forced_width = 18,
+            forced_height = size,
+            forced_width = size,
             paddings = 2,
             widget = wibox.container.arcchart,
             set_value = function(self, level)
