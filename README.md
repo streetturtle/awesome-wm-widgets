@@ -37,6 +37,8 @@ Some more screenshots in this reddit [post](https://www.reddit.com/r/unixporn/co
 
 Clone the repo under **~/.config/awesome/**, then follow an Installation section of widget's readme file.
 
+A NixOS package is available, see the [NixOS wiki](https://nixos.wiki/wiki/Awesome) for installation.
+
 # Stargazers
 
 [![Stargazers over time](https://starchart.cc/streetturtle/awesome-wm-widgets.svg)](https://starchart.cc/streetturtle/awesome-wm-widgets)
