@@ -31,6 +31,7 @@ local function worker(user_args)
     local show_current_level = args.show_current_level or false
     local margin_left = args.margin_left or 0
     local margin_right = args.margin_right or 0
+    local battery_backend = args.battery_backend or "acpi"
 
     local display_notification = args.display_notification or false
     local display_notification_onClick = args.display_notification_onClick or true
@@ -77,6 +78,7 @@ local function worker(user_args)
     -- One way of creating a pop-up notification - naughty.notify
     local notification
     local function show_battery_status(batteryType)
+        if battery_backend == "acpi" then
         awful.spawn.easy_async([[bash -c 'acpi']],
         function(stdout, _, _, _)
             naughty.destroy(notification)
@@ -92,6 +94,35 @@ local function worker(user_args)
             }
         end
         )
+        elseif battery_backend == "upower" then
+        awful.spawn.easy_async(
+            { awful.util.shell, "-c",
+            [[ for battery in $(upower -e | grep 'battery\|headphone\|phone\|headset'); do
+                   upower -i $battery | awk '
+            {    if ($1 == "native-path:") {path=$2}
+            else if ($1 == "percentage:") {percent=$2}
+            else if ($1 == "state:") {state=$2}
+            else if ($1 == "time") {time=$4" "$5} }
+            END { sub("battery-","",path) }
+            END { sub("/org/bluez/","",path) }
+            END { printf "%s:\n %s %s %s\n", path, percent, state, time }' ;
+            done ]]
+            },
+            function(stdout, _, _, _)
+                naughty.destroy(notification)
+                notification = naughty.notify{
+                    text =  stdout,
+                    title = "Battery status",
+                    icon = path_to_icons .. batteryType .. ".svg",
+                    icon_size = dpi(16),
+                    position = position,
+                    timeout = 5, hover_timeout = 0.5,
+                    width = 200,
+                    screen = mouse.screen
+                }
+            end
+        )
+        end
     end
 
     -- Alternative to naughty.notify - tooltip. You can compare both and choose the preferred one
@@ -120,6 +151,7 @@ local function worker(user_args)
     local last_battery_check = os.time()
     local batteryType = "battery-good-symbolic"
 
+    if battery_backend == "acpi" then
     watch("acpi -i", timeout,
     function(widget, stdout)
         local battery_info = {}
@@ -192,6 +224,55 @@ local function worker(user_args)
         -- battery_popup.text = string.gsub(stdout, "\n$", "")
     end,
     icon_widget)
+    elseif battery_backend == "upower" then
+    watch(
+        { awful.util.shell, "-c", "upower -i $(upower -e | grep BAT) | sed -n '/present/,/icon-name/p'" },
+        timeout,
+        function(widget, stdout)
+        local bat_now = {
+            state        = "N/A",
+            timefull     = "N/A",
+            percentage   = "N/A",
+        }
+
+        for k, v in string.gmatch(stdout, '([%a]+[%a|-]+):%s*([%a|%d]+[,|%a|%d]-)') do
+            if     k == "state"      then bat_now.state      = v
+            elseif k == 'full'       then bat_now.timefull   = v
+            elseif k == "percentage" then bat_now.percentage = tonumber(v)
+            end
+        end
+
+        -- customize here
+        local charge = bat_now.percentage
+        local status = bat_now.state
+        if show_current_level then
+            level_widget.text = string.format('%d%%', charge)
+        end
+
+        if (charge >= 0 and charge < 15) then
+            batteryType = "battery-empty%s-symbolic"
+            if enable_battery_warning and status ~= 'charging' and os.difftime(os.time(), last_battery_check) > 300 then
+                -- if 5 minutes have elapsed since the last warning
+                last_battery_check = os.time()
+
+                show_battery_warning()
+            end
+        elseif (charge >= 15 and charge < 40) then batteryType = "battery-caution%s-symbolic"
+        elseif (charge >= 40 and charge < 60) then batteryType = "battery-low%s-symbolic"
+        elseif (charge >= 60 and charge < 80) then batteryType = "battery-good%s-symbolic"
+        elseif (charge >= 80 and charge <= 100) then batteryType = "battery-full%s-symbolic"
+        end
+
+        if (status == 'charging' and bat_now.timefull ~= "N/A") then
+            batteryType = string.format(batteryType, '-charging')
+        else
+            batteryType = string.format(batteryType, '')
+        end
+
+        widget.icon:set_image(path_to_icons .. batteryType .. ".svg")
+        end,
+        icon_widget)
+    end
 
     if display_notification then
         battery_widget:connect_signal("mouse::enter", function() show_battery_status(batteryType) end)
