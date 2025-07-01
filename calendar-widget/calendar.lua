@@ -246,11 +246,13 @@ local function worker(user_args)
             auto_hide_timer:stop()
             -- to faster render the calendar refresh it and just hide
             cal:set_date(nil) -- the new date is not set without removing the old one
-            cal:set_date(os.date('*t'))
             popup:set_widget(nil) -- just in case
-            popup:set_widget(cal)
-            popup.visible = not popup.visible
+            popup.visible = false
         else
+            -- apply it when the calendar is opened! - probably slower but fixes the issue that the
+            --  day is not updated when *opening* the popup (only when closing)
+            cal:set_date(os.date('*t'))
+            popup:set_widget(cal)
             if placement == 'top' then
                 awful.placement.top(popup, { margins = { top = 30 }, parent = awful.screen.focused() })
             elseif placement == 'top_right' then
