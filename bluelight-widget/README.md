@@ -29,8 +29,9 @@ s.mytasklist, -- Middle widget
     { -- Right widgets
         layout = wibox.layout.fixed.horizontal,
         ...
-        bluelight_widget, -- Add the widget here
-        margin(bluelight, true), -- Add the widget with my wrapper
+        bluelight_widget(), -- Add the widget here
+        margin(bluelight_widget(), true), -- Add the widget with my wrapper
+        bluelight_widget({night_args = {"-O", "3500", "-P", "-g", "0.75"}}), -- Pass arguments in string or table of strings
         ...
     }
 ```
@@ -43,14 +44,15 @@ s.mytasklist, -- Middle widget
 
 ## Customization
 
-You can customize the widget by modifying the following parameters in the widget's source file:
+You can pass arguments to the bluelight method. The following arguments are avaliable:
 
 | Name       | Default                                | Description                                                |
 |------------|----------------------------------------|------------------------------------------------------------|
-| `ICON_DIR` | ```awesome-wm-widgets/bluelight-widget/```  | Directory where the widget icons (sun.svg and moon.svg) are stored. |
-| `CMD`      | ```redshift```                            | Command to run Redshift.                                   |
-| `NIGHT_CMD`| ```-O 2500 -g 0.75```                     | Command options for activating Night Mode.                 |
-| `DAY_CMD`  | ```-x```                                  | Command options for activating Day Mode.                   |
+| `cmd`      | ```redshift```                            | Command to run Redshift.                                   |
+| `night_args`| ```-O 2500 -g 0.75 -P```            | Command options for activating Night Mode.                 |
+| `day_args`  | ```-x```                                  | Command options for activating Day Mode.                   |
+| `night_icon` | ```awesome-wm-widgets/bluelight-widget/moon.svg```  | Image to show when Night Mode is activated. |
+| `day_icon` | ```awesome-wm-widgets/bluelight-widget/sun.svg```  | Image to show when Day Mode is activated |
 
 ## Dependencies
 
