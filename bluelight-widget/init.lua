@@ -8,6 +8,7 @@
 -------------------------------------------------
 
 local awful = require("awful")
+local gears = require("gears")
 local wibox = require("wibox")
 local gfs = require("gears.filesystem")
 
@@ -21,6 +22,7 @@ local NIGHT_ICON = ICON_DIR .. "moon.svg"
 ---@field day_args string[]? | string?
 ---@field day_icon string?
 ---@field night_icon string?
+---@field auto boolean?
 
 ---@type Bluelight.Widget.Opts
 local default_opts = {
@@ -29,6 +31,7 @@ local default_opts = {
 	day_args = { "-x" },
 	day_icon = DAY_ICON,
 	night_icon = NIGHT_ICON,
+	auto = false,
 }
 
 ---@param opts Bluelight.Widget.Opts
@@ -68,12 +71,14 @@ local factory = function(opts)
 	end
 
 	local function on_day()
+		day = true
 		local args = type(day_args) == "table" and table.concat(day_args, " ") or day_args
 		awful.spawn(cmd .. " " .. args)
 		widget:update()
 	end
 
 	local function on_night()
+		day = false
 		local args = type(night_args) == "table" and table.concat(night_args, " ") or night_args
 		awful.spawn(cmd .. " " .. args)
 		widget:update()
@@ -86,6 +91,29 @@ local factory = function(opts)
 		else
 			on_night()
 		end
+	end
+	if opts.auto then
+		gears.timer({
+			timeout = 60,
+			call_now = true,
+			autostart = true,
+			callback = function()
+				awful.spawn.easy_async({ "redshift", "-p" }, function(stdout)
+					local is_day
+					local percent = stdout:match("Period: Transition %((%d+)%.%d+%% %a+%)")
+					if not percent then
+						is_day = stdout:match("Period: (%a+)") == "Daytime"
+					else
+						is_day = tonumber(percent) > 75
+					end
+					if is_day == true then
+						on_day()
+					else
+						on_night()
+					end
+				end)
+			end,
+		})
 	end
 
 	widget:buttons(awful.util.table.join(awful.button({}, 1, function()

@@ -53,6 +53,7 @@ You can pass arguments to the bluelight method. The following arguments are aval
 | `day_args`  | ```-x```                                  | Command options for activating Day Mode.                   |
 | `night_icon` | ```awesome-wm-widgets/bluelight-widget/moon.svg```  | Image to show when Night Mode is activated. |
 | `day_icon` | ```awesome-wm-widgets/bluelight-widget/sun.svg```  | Image to show when Day Mode is activated |
+| `auto` | false | Automatically change between modes based on location (see [the wiki](https://wiki.archlinux.org/title/Redshift)) |
 
 ## Dependencies
 
