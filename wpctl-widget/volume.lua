@@ -39,7 +39,7 @@ local popup = awful.popup{
     widget = {}
 }
 
-local function build_rows(devices, on_checkbox_click, device_type)
+local function build_rows(devices, on_checkbox_click)
     local device_rows  = { layout = wibox.layout.fixed.vertical }
     for _, device in pairs(devices) do
 
@@ -132,9 +132,9 @@ local function rebuild_popup()
 
     local sinks, sources = wpctl.get_sinks_and_sources()
     table.insert(rows, build_header_row("SINKS"))
-    table.insert(rows, build_rows(sinks, function() rebuild_popup() end, "sink"))
+    table.insert(rows, build_rows(sinks, function() rebuild_popup() end))
     table.insert(rows, build_header_row("SOURCES"))
-    table.insert(rows, build_rows(sources, function() rebuild_popup() end, "source"))
+    table.insert(rows, build_rows(sources, function() rebuild_popup() end))
 
     popup:setup(rows)
 end
@@ -222,7 +222,7 @@ local function worker(user_args)
         awful.tooltip {
             objects        = { volume.widget },
             timer_function = function()
-                local vol,mut = wpctl.get_volume(device)
+                local vol,_ = wpctl.get_volume_and_mute(device)
                 return vol .. "%"
             end,
         }
