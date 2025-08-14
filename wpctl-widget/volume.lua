@@ -222,7 +222,7 @@ local function worker(user_args)
         awful.tooltip {
             objects        = { volume.widget },
             timer_function = function()
-                local vol,mut = wpctl.get_volume(device)
+                local vol,mut = wpctl.get_volume_and_mute(device)
                 return vol .. "%"
             end,
         }
