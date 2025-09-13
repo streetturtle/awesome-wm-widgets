@@ -49,7 +49,7 @@ function wpctl.get_sinks_and_sources()
             end
         end
     end
-    
+
     return sinks, sources
 end
 
