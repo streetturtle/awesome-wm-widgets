@@ -172,14 +172,6 @@ local function worker(user_args)
     local lang = args.lang or SYS_LANG
     local locale = get_locale(lang)
 
-    --- Validate required parameters
-    if args.coordinates == nil or args.api_key == nil then
-        show_warning(locale.parameter_warning ..
-                     (args.coordinates == nil and '<b>coordinates</b>' or '') ..
-                     (args.api_key == nil and ', <b>api_key</b> ' or ''))
-        return
-    end
-
     local coordinates = args.coordinates
     local api_key = args.api_key
     local font_name = args.font_name or beautiful.font:gsub("%s%d+$", "")
@@ -194,6 +186,13 @@ local function worker(user_args)
     local timeout = args.timeout or 120
     local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
 
+    --- Validate required parameters
+    if args.coordinates == nil or args.api_key == nil then
+        show_warning(locale.parameter_warning ..
+                     (args.coordinates == nil and '<b>coordinates</b>' or '') ..
+                     (args.api_key == nil and ', <b>api_key</b> ' or ''))
+        return
+    end
     -- Forecast endpoint includes current. I could map show_daily_forecast to days here.
     -- Currently overfetching but only showing when opting in.
     local weather_api =
