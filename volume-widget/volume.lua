@@ -272,7 +272,7 @@ local function worker(user_args)
 
 	function volume:mixer()
 		if mixer_cmd then
-			spawn.easy_async(mixer_cmd)
+			spawn.easy_async(mixer_cmd, function(stdout, stderr, exitreason, exitcode) end)
 		end
 	end
 
