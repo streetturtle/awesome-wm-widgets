@@ -56,6 +56,7 @@ local function worker(user_args)
     local onreboot = args.onreboot or function() awful.spawn.with_shell("reboot") end
     local onsuspend = args.onsuspend or function() awful.spawn.with_shell("systemctl suspend") end
     local onpoweroff = args.onpoweroff or function() awful.spawn.with_shell("shutdown now") end
+    local onreload = args.onreload or function () awesome.restart() end
 
     local menu_items = {
         { name = 'Log out', icon_name = 'log-out.svg', command = onlogout },
@@ -63,6 +64,7 @@ local function worker(user_args)
         { name = 'Reboot', icon_name = 'refresh-cw.svg', command = onreboot },
         { name = 'Suspend', icon_name = 'moon.svg', command = onsuspend },
         { name = 'Power off', icon_name = 'power.svg', command = onpoweroff },
+        { name = 'Reload awesomewm', icon_name = 'refresh-cw.svg', command = onreload },
     }
 
     for _, item in ipairs(menu_items) do

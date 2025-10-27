@@ -43,3 +43,4 @@ It is possible to customize the widget by providing a table with all or some of 
 | `onreboot` | `function() awful.spawn.with_shell("reboot") end` | Function which is called when the reboot item is clicked |
 | `onsuspend` | `function() awful.spawn.with_shell("systemctl suspend") end` | Function which is called when the suspend item is clicked |
 | `onpoweroff` | `function() awful.spawn.with_shell("shutdown now") end` | Function which is called when the poweroff item is clicked |
+| `onreload` | `function() awesome.restart() end` | Function which is called when the reload item is clicked |
