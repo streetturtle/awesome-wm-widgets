@@ -1,1 +1,10 @@
+# Remember that later matches take precedence here!
+# Try to sort alphabetically whenever it makes sense.
+
 * @streetturtle
+
+/weather-api-widget/ @Ryuno-Ki
+
+/battery-widget/ @utix
+/calendar-widget/ @utix
+/weather-widget/ @utix
