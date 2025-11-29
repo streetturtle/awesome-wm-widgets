@@ -11,7 +11,6 @@
 local awful = require("awful")
 local gears = require("gears")
 local naughty = require("naughty")
-local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 local gfs = require("gears.filesystem")
 local dpi = require('beautiful').xresources.apply_dpi
@@ -24,6 +23,7 @@ local HOME = os.getenv("HOME")
 local WIDGET_DIR = HOME .. '/.config/awesome/awesome-wm-widgets/battery-widget'
 local widgets = {} -- holds all widget instances
 local global_timer -- only one timer!
+local global_last_warning
 
 local battery_config = nil
 local battery_widget = {}
@@ -31,7 +31,6 @@ local battery_widget = {}
 local batteryType = "battery-good-symbolic"
 
 local function update_all_widgets()
-    local last_battery_check = os.time()
     awful.spawn.easy_async("acpi -i", function(stdout)
         local battery_info = {}
         local capacities = {}
@@ -73,10 +72,6 @@ local function update_all_widgets()
             end
         end
         charge = charge / capacity
-
-        if show_current_level then
-            level_widget.text = string.format('%d%%', charge)
-        end
 
         if (charge >= 1 and charge < 15) then
             batteryType = "battery-empty%s-symbolic"
@@ -177,7 +172,7 @@ local function worker(user_args)
       layout = wibox.container.place,
     }
     local level_widget = wibox.widget {
-        font = font,
+        font = battery_config.font,
         widget = wibox.widget.textbox
     }
     battery_widget = wibox.widget {
@@ -189,14 +184,14 @@ local function worker(user_args)
       -- Popup with battery info
       -- One way of creating a pop-up notification - naughty.notify
       local notification
-      local function show_battery_status(batteryType)
+      local function show_battery_status(bat_type)
         awful.spawn.easy_async([[bash -c 'acpi']],
         function(stdout, _, _, _)
           naughty.destroy(notification)
           notification = naughty.notify{
             text =  stdout,
             title = "Battery status",
-            icon = battery_config.path_to_icons .. batteryType .. ".svg",
+            icon = battery_config.path_to_icons .. bat_type .. ".svg",
             icon_size = dpi(16),
             position = position,
             timeout = 5, hover_timeout = 0.5,
