@@ -152,13 +152,17 @@ local function worker(user_args)
     local timeout = args.timeout or 120
 
     local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
-    local owm_one_cal_api =
-        ('https://api.openweathermap.org/data/2.5/onecall' ..
-            '?lat=' .. coordinates[1] .. '&lon=' .. coordinates[2] .. '&appid=' .. api_key ..
-            '&units=' .. units .. '&exclude=minutely' ..
-            (show_hourly_forecast == false and ',hourly' or '') ..
-            (show_daily_forecast == false and ',daily' or '') ..
-            '&lang=' .. LANG)
+    local owm_one_call_api =
+    ('https://api.openweathermap.org/data/3.0/onecall' ..
+        '?lat=' .. coordinates[1] ..
+        '&lon=' .. coordinates[2] ..
+        '&appid=' .. api_key ..
+        '&units=' .. units ..
+        '&exclude=' ..
+            (show_hourly_forecast == false and 'hourly,' or '') ..
+            (show_daily_forecast == false and 'daily,' or '') ..
+            'minutely' ..
+        '&lang=' .. LANG)
 
     weather_widget = wibox.widget {
         {
@@ -564,7 +568,7 @@ local function worker(user_args)
         end)))
 
     watch(
-        string.format(GET_FORECAST_CMD, owm_one_cal_api),
+        string.format(GET_FORECAST_CMD, owm_one_call_api),
         timeout,  -- API limit is 1k req/day; day has 1440 min; every 2 min is good
         update_widget, weather_widget
     )
