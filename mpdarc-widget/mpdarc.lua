@@ -50,7 +50,7 @@ local mpdarc_icon_widget = wibox.container.mirror(mpdarc, { horizontal = true })
 local mpdarc_current_song_widget = wibox.widget {
     id = 'current_song',
     widget = wibox.widget.textbox,
-    font = 'Play 9'
+    font = beautiful.font or 'Play 9'
 }
 
 local update_graphic = function(widget, stdout, _, _, _)
@@ -87,13 +87,20 @@ mpdarc:connect_signal("button::press", function(_, _, _, button)
     elseif (button == 5) then awful.spawn(PREV_MPD_CMD, false)  -- scroll down
     end
 
+	local reset_garbage_collector = 0
     spawn.easy_async(GET_MPD_CMD, function(stdout, stderr, exitreason, exitcode)
         update_graphic(mpdarc, stdout, stderr, exitreason, exitcode)
+		reset_garbage_collector = reset_garbage_collector + 1
+		if (reset_garbage_collector > 10) then
+			collectgarbage()
+			reset_garbage_collector = 0
+		end
     end)
 end)
 
 local notification
 local function show_MPD_status()
+	local reset_garbage_collector = 0
     spawn.easy_async(GET_MPD_CMD,
         function(stdout, _, _, _)
             notification = naughty.notify {
@@ -103,6 +110,11 @@ local function show_MPD_status()
                 hover_timeout = 0.5,
                 width = 600,
             }
+			reset_garbage_collector = reset_garbage_collector + 1
+			if (reset_garbage_collector > 10) then
+				collectgarbage()
+				reset_garbage_collector = 0
+			end
         end)
 end
 
