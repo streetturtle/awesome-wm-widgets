@@ -1,7 +1,7 @@
 ---
 layout: page
 ---
-# Pacman widget for AwesomeWM
+# Pacman Widget
 
 This widget displays the number of upgradable Pacman packages. Clicking the icon reveals a scrollable list of available upgrades. A full system upgrade can be performed from the widget via Polkit.
 

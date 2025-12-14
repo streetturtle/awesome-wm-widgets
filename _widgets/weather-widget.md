@@ -1,7 +1,7 @@
 ---
 layout: page
 ---
-# Weather widget
+# Weather Widget
 
 <p align="center">
   <a href="https://github.com/streetturtle/awesome-wm-widgets/labels/weather" target="_blank"><img alt="GitHub issues by-label" src="https://img.shields.io/github/issues/streetturtle/awesome-wm-widgets/weather"></a>
@@ -11,16 +11,16 @@ layout: page
    </a>
 </p>
 
-The widget showing current, hourly and daily weather forecast:
+This widget shows current, hourly, and daily weather forecast:
 
 <p align="center">
  <img src="https://github.com/streetturtle/awesome-wm-widgets/raw/master/weather-widget/weather-widget.png" alt="screenshot" style="max-width:100%;">
 </p>
 
 The widget consists of three sections:
- - current weather, including humidity, wind speed, UV index
- - hourly forecast for the next 24 hours
- - daily forecast for the next five days
+ - Current weather, including humidity, wind speed, and UV index
+ - Hourly forecast for the next 24 hours
+ - Daily forecast for the next five days
 
 ## Customization
 
@@ -33,7 +33,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | font_name | `beautiful.font:gsub("%s%d+$", "")` | **Name** of the font to use e.g. 'Play' |
 | both_units_widget | false | Show temperature in both units - '28°C (83°F) |
 | units | `metric` | `metric` for celsius, `imperial` for fahrenheit |
-| show_hourly_forecast | false | Show hourly forecase section |
+| show_hourly_forecast | false | Show hourly forecast section |
 | time_format_12h |false | 12 or 24 hour format (13:00 - default or 1pm) |
 | show_daily_forecast | false | Show daily forecast section |
 | icon_pack_name | `weather-underground-icons` | Name of the icon pack, could be `weather-underground-icon` or `VitalyGorbachev` or create your own, more details below |
@@ -115,7 +115,6 @@ weather_curl_widget({
                 api_key='<your-key>',
                 coordinates = {45.5017, -73.5673},
             }),
-            ,
             --customized
             weather_curl_widget({
                 api_key='<your-key>',
@@ -138,7 +137,7 @@ Only negative temperature:
 
 ![negative](../awesome-wm-widgets/assets/img/widgets/screenshots/weather-widget/negative.png)
 
-Both positive and negative tempertature:
+Both positive and negative temperature:
 
 ![both](../awesome-wm-widgets/assets/img/widgets/screenshots/weather-widget/both.png)
 

@@ -3,48 +3,60 @@ layout: page
 ---
 # Email widget
 
-This widget consists of an icon with counter which shows number of unread emails: ![email icon](../awesome-wm-widgets/assets/img/widgets/screenshots/email-widget/em-wid-1.png)
-and a popup message which appears when mouse hovers over an icon: ![email popup](../awesome-wm-widgets/assets/img/widgets/screenshots/email-widget/em-wid-2.png)
+This widget consists of an icon with counter which shows the number of unread emails:
+
+![email icon](../awesome-wm-widgets/assets/img/widgets/screenshots/email-widget/em-wid-1.png)
+
+And a popup message which appears when mouse hovers over the icon:
+
+![email popup](../awesome-wm-widgets/assets/img/widgets/screenshots/email-widget/em-wid-2.png)
 
 ## Installation
+
 1. Clone this repository to your awesome config folder:
 
-```bash
-git clone https://github.com/streetturtle/awesome-wm-widgets/email-widget ~/.config/awesome/email-widget
-```
-2. Make virtual environment and install dependencies:
+    ```bash
+    git clone https://github.com/streetturtle/awesome-wm-widgets/email-widget ~/.config/awesome/email-widget
+    ```
 
-```bash
-cd ~/.config/awesome/email-widget
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-3. Fill .env file with your credentials:
+2. Create virtual environment and install dependencies:
 
-```bash
-cp .env.example .env
-```
-4. Add widget to awesome:
+    ```bash
+    cd ~/.config/awesome/email-widget
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+    ```
 
-```lua
-local email_widget = require("email-widget.email")
-...
-s.mytasklist, -- Middle widget
-	{ -- Right widgets
-		layout = wibox.layout.fixed.horizontal,
-		...
-		email_widget,
-		...      
-```
+3. Fill the .env file with your credentials:
 
-If you want to reduce time of getting emails, you can change maximum number of emails to be fetched in .env file. Default is 10.
-If you want to configure width of popup window, you can change this line in email.lua file:
+    ```bash
+    cp .env.example .env
+    ```
 
-```lua
-                width = 800,
-```
-After this you can change MAX_BODY_LENGTH variable in .env file to change number of characters to be displayed in popup window. Default is 100.
+4. Add widget to **rc.lua**:
+
+    ```lua
+    local email_widget = require("email-widget.email")
+    ...
+    s.mytasklist, -- Middle widget
+        { -- Right widgets
+            layout = wibox.layout.fixed.horizontal,
+            ...
+            email_widget,
+            ...      
+    ```
+
+If you want to reduce the time for fetching emails, you can change the maximum number of emails to be fetched in the .env file. Default is 10.
+
+If you want to configure the width of the popup window, you can change this line in the email.lua file:
+
+    ```lua
+    width = 800,
+    ```
+
+After this you can change the MAX_BODY_LENGTH variable in the .env file to change the number of characters to be displayed in the popup window. Default is 100.
+
 Next step is restarting awesome. You can do this by pressing Mod+Ctrl+r.
 
 ## How it works

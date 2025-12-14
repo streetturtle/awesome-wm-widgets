@@ -3,13 +3,11 @@ layout: page
 ---
 # Net Speed Widget
 
-The widget and readme is in progress
+The widget and README are in progress.
 
 ## Installation
 
-Please refer to the [installation](https://github.com/streetturtle/awesome-wm-widgets#installation) section of the repo.
-
-Clone repo, include widget and use it in **rc.lua**:
+Clone/download repo and use widget in **rc.lua**:
 
 ```lua
 local net_speed_widget = require("awesome-wm-widgets.net-speed-widget.net-speed")

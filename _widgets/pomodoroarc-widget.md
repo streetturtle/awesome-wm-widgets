@@ -3,7 +3,7 @@ layout: page
 ---
 # Pomodoro Widget
 
-:construction: This widget is under construction :construction_worker:
+**Note:** This widget is under construction.
 
 ## Installation
 

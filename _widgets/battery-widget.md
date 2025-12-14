@@ -32,7 +32,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `display_notification` | false | Display a notification on mouseover |
 | `notification_position` | `top_right` | The notification position |
 | `timeout` | 10 | How often in seconds the widget refreshes |
-| `warning_msg_title` | `Huston, we have a problem` | Title of the warning popup |
+| `warning_msg_title` | `Houston, we have a problem` | Title of the warning popup |
 | `warning_msg_text` | `Battery is dying` | Text of the warning popup |
 | `warning_msg_position` | `bottom_right` | Position of the warning popup |
 | `warning_msg_icon` | `~/.config/awesome/awesome-wm-widgets/battery-widget/spaceman.jpg` | Icon of the warning popup |
@@ -55,15 +55,17 @@ It is possible to customize widget by providing a table with all or some of the 
 
 ## Installation
 
-This widget reads the output of acpi tool.
+This widget reads the output of the `acpi` tool.
 
-- install `acpi` and check the output:
+Install `acpi` and check the output:
 
 ```bash
-$ sudo apt-get install acpi
-$ acpi
+sudo apt-get install acpi
+acpi
 Battery 0: Discharging, 66%, 02:34:06 remaining
 ```
+
+Clone/download repo and use widget in **rc.lua**:
 
 ```lua
 local battery_widget = require("awesome-wm-widgets.battery-widget.battery")

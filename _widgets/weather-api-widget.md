@@ -1,13 +1,11 @@
 ---
 layout: page
 ---
-# WeatherAPI widget
+# WeatherAPI Widget
 
 ![Current Weather popup](../awesome-wm-widgets/assets/img/widgets/screenshots/weather-api-widget/popup.png)
 
-The widget consists of one section:
-
-- current weather, including humidity, wind speed, UV index
+This widget shows current weather, including humidity, wind speed, and UV index.
 
 ## Customization
 
@@ -107,7 +105,6 @@ weather_api_widget({
                 api_key='<your-key>',
                 coordinates = {45.5017, -73.5673},
             }),
-            ,
             --customized
             weather_api_widget({
                 api_key='<your-key>',

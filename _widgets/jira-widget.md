@@ -3,7 +3,7 @@ layout: page
 ---
 # Jira widget
 
-The widget shows the number of tickets assigned to the user (or any other result of a JQL query, see customization section) and when clicked shows them in the list, grouped by the ticket status. Left-click on the item opens the issue in the default browser:
+This widget shows the number of tickets assigned to the user (or any other result of a JQL query, see Customization section) and when clicked shows them in a list, grouped by ticket status. Left-click on an item opens the issue in the default browser:
 
 <p align="center">
 <img alt="screenshot" src="https://raw.githubusercontent.com/streetturtle/awesome-wm-widgets/master/jira-widget/screenshot/screenshot.png"/>
@@ -28,7 +28,7 @@ It is possible to customize widget by providing a table with all or some of the 
 
 ## Installation
 
-Create a .netrc file in your home directory with following content:
+Create a **.netrc** file in your home directory with following content:
 
 ```bash
 machine turtlejira.com

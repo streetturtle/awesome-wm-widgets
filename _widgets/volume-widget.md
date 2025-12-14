@@ -39,15 +39,15 @@ s.mytasklist, -- Middle widget
         },
 ```
 
-Note that the widget uses following command to get the current volume: `amixer -c 1 -D pulse sget Master`, so please make sure that it works for you, otherwise you need to set some parameters by entering this command in the terminal:
+**Note:** The widget uses the following command to get the current volume: `amixer -c 1 -D pulse sget Master`. Please make sure that it works for you, otherwise you need to set some parameters by entering this command in the terminal:
 
 Command output:
 - Some data of a mixer: Override all parameters you've changed
-- Error `Invalid card number`: Change parameter `-c`/ `card`
-- Error `Mixer attach pulse error: No such file or directory`: Change parameter `-D`/ `device`
+- Error `Invalid card number`: Change parameter `-c`/`card`
+- Error `Mixer attach pulse error: No such file or directory`: Change parameter `-D`/`device`
 - Error `Unable to find simple control 'Master',0`: Change parameter `mixctrl`
 
-Note: `amixer[ -c ...][ -D ...]` returns a list of Mixers for the selected card/ device. omitting `-D` falls back to `default`.
+**Note:** `amixer[ -c ...][ -D ...]` returns a list of Mixers for the selected card/device. Omitting `-D` falls back to `default`.
 
 ### Shortcuts
 
@@ -102,7 +102,7 @@ It is possible to customize the widget by providing a table with all or some of 
 | `mixctrl`     | `Master`        | Select the mixer name to control                                                                                                      |
 | `value_type`  | `-M`            | Select how the volume is increased/ decreased (intended for `-M`/ `-R` parameters). See `man amixer` for additional info              |
 
-Note: If unmuting or toggling using the default amixer command does not work, this command may work: `pactl set-sink-mute [card] toggle`
+**Note:** If unmuting or toggling using the default amixer command does not work, this command may work: `pactl set-sink-mute [card] toggle`
 
 Depends on the chosen widget type add parameters from the corresponding section below:
 
@@ -112,7 +112,7 @@ Depends on the chosen widget type add parameters from the corresponding section 
 |------------|----------------------|-----------------------------------------------|
 | `icon_dir` | `[widget_dir]/icons` | Path to the folder with icons (absolute path) |
 
-_Note:_ if you are changing icons, the folder should contain following .svg images: 
+**Note:** If you are changing icons, the folder should contain the following .svg images: 
  - audio-volume-high-symbolic
  - audio-volume-medium-symbolic
  - audio-volume-low-symbolic
@@ -147,7 +147,7 @@ _Note:_ if you are changing icons, the folder should contain following .svg imag
 | `shape` | `gears.shape.bar` | A shape painter function (see [gears.shape](https://awesomewm.org/doc/api/libraries/gears.shape.html)) |
 | `with_icon` | true | Show volume icon|
 
-_Note:_ I didn't figure out how does the `forced_height` property of progressbar widget work (maybe it doesn't work at all), thus there is a workaround with margins.
+**Note:** I didn't figure out how the `forced_height` property of the progressbar widget works (maybe it doesn't work at all), thus there is a workaround with margins.
 
 #### `vertical_bar` parameters
 

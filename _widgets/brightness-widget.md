@@ -24,7 +24,7 @@ It is possible to customize widget by providing a table with all or some of the 
 | `size` | 18 | Size of the widget (used only for `arc` type) |
 | `arc_thickness` | 2 | Thickness of the arc (used only for `arc` type) |
 
-_Note:_ If brightness is controlled only by the widget (either by a mouse, or by a shortcut, then the `timeout` could be quite big, as there is no reason to synchronize the brightness level).
+**Note:** If brightness is controlled only by the widget (either by a mouse, or by a shortcut), then the `timeout` could be quite large, as there is no reason to synchronize the brightness level.
 
 ## Installation
 
@@ -53,7 +53,7 @@ To choose the right `program` argument, first you need to check which of them wo
 
   - using `brightnessctl`:
 
-    On Ubuntu it is available in the apt repository. Install and check the ouptut of the following command.
+    On Ubuntu it is available in the apt repository. Install and check the output of the following command.
     ```bash
     brightnessctl --list
     ```

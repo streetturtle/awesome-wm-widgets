@@ -18,7 +18,7 @@ Calendar widget for Awesome WM - slightly improved version of the `wibox.widget.
 | start_sunday | false     | Start the week on Sunday            |
 | week_numbers | false     | Show ISO week numbers (Mon = first) |
 | auto_hide    | false     | Auto hide the popup after timeout   |
-| timeout      | 2         | Auto hide timeout length         |
+| timeout      | 2         | Auto hide timeout length (in seconds) |
 
  - themes:
 

@@ -36,13 +36,13 @@ It is possible to customize widget by providing a table with all or some of the 
 | `low_level_color` | `#e53935` | Arc color when battery charge is less that 15% |
 | `medium_level_color` | `#c0ca33` |  Arc color when battery charge is between 15% and 40% |
 | `charging_color` | `#43a047` |  Color of the circle inside the arc when charging  |
-| `warning_msg_title` | `Huston, we have a problem_` | Title of the warning popup |
+| `warning_msg_title` | `Houston, we have a problem` | Title of the warning popup |
 | `warning_msg_text` | `Battery is dying` | Text of the warning popup |
 | `warning_msg_position` | `bottom_right` | Position of the warning popup |
 | `warning_msg_icon` | `~/.config/awesome/awesome-wm-widgets/batteryarc-widget/spaceman.jpg` | Icon of the warning popup |
 | `enable_battery_warning` | true | Display low battery warning |
 | `show_notification_mode` | `on_hover` | How to trigger a notification with the battery status: `on_hover`, `on_click` or `off`  |
-| `notification_position` | `top_left` | Where to show she notification when triggered. Values: `top_right`, `top_left`, `bottom_left`, `bottom_right`, `top_middle`, `bottom_middle`. (default `top_right`) |
+| `notification_position` | `top_left` | Where to show the notification when triggered. Values: `top_right`, `top_left`, `bottom_left`, `bottom_right`, `top_middle`, `bottom_middle` |
 
 ## Requirements
 
@@ -51,7 +51,7 @@ power information.
 
 ## Installation
 
-Clone repo, include widget and use it in **rc.lua**:
+Clone/download repo and use widget in **rc.lua**:
 
 ```lua
 local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")

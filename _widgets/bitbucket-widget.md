@@ -7,7 +7,7 @@ The widget shows the number of pull requests assigned to the user and when click
 
 ## How it works
 
-Widget uses cURL to query Bitbucket's [REST API](https://developer.atlassian.com/bitbucket/api/2/reference/). In order to be authenticated, widget uses a [netrc](https://ec.haxx.se/usingcurl/usingcurl-netrc) feature of the cURL, which is basically allows storing basic auth credentials in a **.netrc** file in home folder. 
+Widget uses cURL to query Bitbucket's [REST API](https://developer.atlassian.com/bitbucket/api/2/reference/). In order to be authenticated, widget uses a [netrc](https://ec.haxx.se/usingcurl/usingcurl-netrc) feature of cURL, which allows storing basic auth credentials in a **.netrc** file in home folder. 
 
 Bitbucket allows using [App Passwords](https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html) (available in the account settings) - simply generate one for the widget and use it as password in **.netrc** file.
 
@@ -24,13 +24,13 @@ It is possible to customize widget by providing a table with all or some of the 
 | `repo_slug` | Required | Repository slug |
 | `timeout` | 60 | How often in seconds the widget refreshes |
 
-Note:
+**Note:**
  - host most likely should start with _api._
- - to get your UUID you may call `curl -s -n 'https://api.bitbucket.org/2.0/user'`
+ - to get your UUID call `curl -s -n 'https://api.bitbucket.org/2.0/user'`
 
 ## Installation
 
-Create a **.netrc** file in you home directory with following content:
+Create a **.netrc** file in your home directory with following content:
 
 ```bash
 machine api.bitbucket.org
