@@ -313,9 +313,31 @@ local function worker(user_args)
 
             self:get_children_by_id('icon')[1]:set_image(
                 ICONS_DIR .. icon_map[weather.condition.code] .. day_night_extension .. icons_extension)
-            self:get_children_by_id('temp')[1]:set_text(gen_temperature_str((function () if units == "metric" then return weather.temp_c else return weather.temp_f end end)(), '%.0f', false, units))
+            self:get_children_by_id('temp')[1]:set_text(gen_temperature_str(
+                    (function ()
+                            if units == "metric" then
+                                    return weather.temp_c
+                            else 
+                                    return weather.temp_f
+                            end
+                    end)(),
+                    '%.0f',
+                    false,
+                    units
+            ))
             self:get_children_by_id('feels_like_temp')[1]:set_text(
-                locale.feels_like .. gen_temperature_str((function () if units == "metric" then return weather.feelslike_c else return weather.feelslike_f end end)(), '%.0f', false, units))
+                locale.feels_like .. gen_temperature_str(
+                        (function ()
+                                if units == "metric" then
+                                        return weather.feelslike_c
+                                else
+                                        return weather.feelslike_f
+                                end
+                        end)(),
+                        '%.0f',
+                        false,
+                        units
+                ))
             self:get_children_by_id('description')[1]:set_text(weather.condition.text)
             self:get_children_by_id('wind')[1]:set_markup(
                 locale.wind .. '<b>' .. weather.wind_kph .. 'km/h (' .. weather.wind_dir .. ')</b>')
@@ -367,13 +389,35 @@ local function worker(user_args)
                     },
                     {
                         {
-                            text = gen_temperature_str((function () if units == "metric" then return day.day.mintemp_c else return day.day.mintemp_f end end)(), '%.0f', false, units),
+                            text = gen_temperature_str(
+                                    (function ()
+                                            if units == "metric" then
+                                                    return day.day.mintemp_c
+                                            else
+                                                    return day.day.mintemp_f
+                                            end
+                                    end)(),
+                                    '%.0f',
+                                    false,
+                                    units
+                            ),
                             align = 'center',
                             font = font_name .. ' 9',
                             widget = wibox.widget.textbox
                         },
                         {
-                            text = gen_temperature_str((function () if units == "metric" then return day.day.maxtemp_c else return day.day.maxtemp_f end end)(), '%.0f', false, units),
+                            text = gen_temperature_str(
+                                    (function ()
+                                            if units == "metric" then
+                                                    return day.day.maxtemp_c
+                                            else
+                                                    return day.day.maxtemp_f
+                                            end
+                                    end)(),
+                                    '%.0f',
+                                    false,
+                                    units
+                            ),
                             align = 'center',
                             font = font_name .. ' 9',
                             widget = wibox.widget.textbox
@@ -604,8 +648,18 @@ local function worker(user_args)
         end
 
         widget:set_image(ICONS_DIR .. icon_map[result.current.condition.code] .. day_night_extension .. icons_extension)
-        -- TODO: if units isn't "metric", read temp_f instead
-        widget:set_text(gen_temperature_str((function() if units == "metric" then return result.current.temp_c else return result.current.temp_f end end)(), '%.0f', both_units_widget, units))
+        widget:set_text(gen_temperature_str(
+                (function () 
+                        if units == "metric" then 
+                                return result.current.temp_c 
+                        else 
+                                return result.current.temp_f 
+                        end 
+                end)(),
+                '%.0f',
+                both_units_widget,
+                units
+        ))
 
         current_weather_widget:update(result.current)
 
