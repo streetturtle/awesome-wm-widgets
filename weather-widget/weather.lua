@@ -166,7 +166,7 @@ local function worker(user_args)
             'minutely' ..
         '&lang=' .. LANG)
 
-    local weather_widget = wibox.widget {
+    local widget = wibox.widget {
         {
             {
                 {
@@ -559,12 +559,12 @@ local function worker(user_args)
         })
     end
 
-    weather_widget:buttons(gears.table.join(awful.button({}, 1, function()
+    widget:buttons(gears.table.join(awful.button({}, 1, function()
             if weather_popup.visible then
-                weather_widget:set_bg('#00000000')
+                widget:set_bg('#00000000')
                 weather_popup.visible = not weather_popup.visible
             else
-                weather_widget:set_bg(beautiful.bg_focus)
+                widget:set_bg(beautiful.bg_focus)
                 weather_popup:move_next_to(mouse.current_widget_geometry)
             end
         end)))
@@ -572,10 +572,10 @@ local function worker(user_args)
     watch(
         string.format(GET_FORECAST_CMD, owm_one_call_api),
         timeout,  -- API limit is 1k req/day; day has 1440 min; every 2 min is good
-        update_widget, weather_widget
+        update_widget, widget
     )
 
-    return weather_widget
+    return widget
 end
 
 return setmetatable(weather_widget, {__call = function(_, ...) return worker(...) end})
