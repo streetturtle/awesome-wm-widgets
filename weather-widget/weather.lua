@@ -47,18 +47,6 @@ local tooltip = awful.tooltip {
     preferred_positions = {'bottom'}
 }
 
-local weather_popup = awful.popup {
-    ontop = true,
-    visible = false,
-    shape = gears.shape.rounded_rect,
-    border_width = 1,
-    border_color = beautiful.bg_focus,
-    maximum_width = 400,
-    offset = {y = 5},
-    hide_on_right_click = true,
-    widget = {}
-}
-
 --- Maps openWeatherMap icon name to file name w/o extension
 local icon_map = {
     ["01d"] = "clear-sky",
@@ -152,6 +140,20 @@ local function worker(user_args)
     local timeout = args.timeout or 120
 
     local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
+
+    -- Create popup per widget instance to support multiple weather widgets
+    local weather_popup = awful.popup {
+        ontop = true,
+        visible = false,
+        shape = gears.shape.rounded_rect,
+        border_width = 1,
+        border_color = beautiful.bg_focus,
+        maximum_width = 400,
+        offset = {y = 5},
+        hide_on_right_click = true,
+        widget = {}
+    }
+
     local owm_one_call_api =
     ('https://api.openweathermap.org/data/3.0/onecall' ..
         '?lat=' .. coordinates[1] ..
@@ -164,7 +166,7 @@ local function worker(user_args)
             'minutely' ..
         '&lang=' .. LANG)
 
-    weather_widget = wibox.widget {
+    local weather_widget = wibox.widget {
         {
             {
                 {
