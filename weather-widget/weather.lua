@@ -503,7 +503,7 @@ local function worker(user_args)
         end
     }
 
-    local function update_widget(w, stdout, stderr)
+    local function update_widget(weather_icon, stdout, stderr)
         if stderr ~= '' then
             if not warning_shown then
                 if (stderr ~= 'curl: (52) Empty reply from server'
@@ -513,22 +513,22 @@ local function worker(user_args)
                     show_warning(stderr)
                 end
                 warning_shown = true
-                w:is_ok(false)
-                tooltip:add_to_object(w)
+                weather_icon:is_ok(false)
+                tooltip:add_to_object(weather_icon)
 
-                w:connect_signal('mouse::enter', function() tooltip.text = stderr end)
+                weather_icon:connect_signal('mouse::enter', function() tooltip.text = stderr end)
             end
             return
         end
 
         warning_shown = false
-        tooltip:remove_from_object(w)
-        w:is_ok(true)
+        tooltip:remove_from_object(weather_icon)
+        weather_icon:is_ok(true)
 
         local result = json.decode(stdout)
 
-        w:set_image(ICONS_DIR .. icon_map[result.current.weather[1].icon] .. icons_extension)
-        w:set_text(gen_temperature_str(result.current.temp, '%.0f', both_units_widget, units))
+        weather_icon:set_image(ICONS_DIR .. icon_map[result.current.weather[1].icon] .. icons_extension)
+        weather_icon:set_text(gen_temperature_str(result.current.temp, '%.0f', both_units_widget, units))
 
         current_weather_widget:update(result.current)
 
