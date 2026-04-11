@@ -166,31 +166,40 @@ local function worker(user_args)
     end
 
     local function update_graphic(widget)
-        local vol = pactl.get_volume(device)
-        if vol ~= nil then
-            widget:set_volume_level(vol)
-        end
-
-        if pactl.get_mute(device) then
-            widget:mute()
-        else
-            widget:unmute()
-        end
+        pactl.update_async(device, function(vol, is_muted)
+            if vol ~= nil then
+                widget:set_volume_level(vol)
+            end
+            if is_muted then
+                widget:mute()
+            else
+                widget:unmute()
+            end
+        end)
     end
 
     function volume:inc(s)
         pactl.volume_increase(device, s or step)
-        update_graphic(volume.widget)
+        gears.timer.start_new(0.1, function()
+            update_graphic(volume.widget)
+            return false
+        end)
     end
 
     function volume:dec(s)
         pactl.volume_decrease(device, s or step)
-        update_graphic(volume.widget)
+        gears.timer.start_new(0.1, function()
+            update_graphic(volume.widget)
+            return false
+        end)
     end
 
     function volume:toggle()
         pactl.mute_toggle(device)
-        update_graphic(volume.widget)
+        gears.timer.start_new(0.1, function()
+            update_graphic(volume.widget)
+            return false
+        end)
     end
 
     function volume:popup()
@@ -218,7 +227,7 @@ local function worker(user_args)
             )
     )
 
-    gears.timer {
+    local volume_timer = gears.timer {
         timeout   = refresh_rate,
         call_now  = true,
         autostart = true,
@@ -231,7 +240,8 @@ local function worker(user_args)
         awful.tooltip {
             objects        = { volume.widget },
             timer_function = function()
-                return pactl.get_volume(device) .. " %"
+                local vol = pactl.get_volume(device)
+                return (vol and string.format("%.0f", vol) or "?") .. " %"
             end,
         }
     end
