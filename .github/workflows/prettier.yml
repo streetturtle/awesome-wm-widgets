@@ -1,0 +1,17 @@
+name: prettier
+
+on: [push, pull_request]
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.5
+        with:
+          dry: true
+          prettier_options: --check **/*.md
