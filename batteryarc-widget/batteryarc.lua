@@ -88,16 +88,28 @@ local function worker(user_args)
 
     local function update_widget(widget, stdout)
         local charge = 0
-        local status
+        local batteries = 0
+        local status = 'Unknown'
         for s in stdout:gmatch("[^\r\n]+") do
             local cur_status, charge_str, _ = string.match(s, '.+: ([%a%s]+), (%d?%d?%d)%%,?(.*)')
             if cur_status ~= nil and charge_str ~=nil then
                 local cur_charge = tonumber(charge_str)
-                if cur_charge > charge then
-                    status = cur_status
-                    charge = cur_charge
+                if cur_status ~= 'Unknown' then
+                    if status == 'Charging' or cur_status == 'Charging' then
+                        status = 'Charging'
+                    else
+                        status = cur_status
+                    end
+                    charge = charge + cur_charge
+                    batteries = batteries + 1
                 end
             end
+        end
+
+        if batteries > 0 then
+            charge = charge // batteries
+        else
+            charge = 0
         end
 
         widget.value = charge
