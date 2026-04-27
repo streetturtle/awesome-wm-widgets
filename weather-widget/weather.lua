@@ -47,18 +47,6 @@ local tooltip = awful.tooltip {
     preferred_positions = {'bottom'}
 }
 
-local weather_popup = awful.popup {
-    ontop = true,
-    visible = false,
-    shape = gears.shape.rounded_rect,
-    border_width = 1,
-    border_color = beautiful.bg_focus,
-    maximum_width = 400,
-    offset = {y = 5},
-    hide_on_right_click = true,
-    widget = {}
-}
-
 --- Maps openWeatherMap icon name to file name w/o extension
 local icon_map = {
     ["01d"] = "clear-sky",
@@ -152,6 +140,20 @@ local function worker(user_args)
     local timeout = args.timeout or 120
 
     local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
+
+    -- Create popup per widget instance to support multiple weather widgets
+    local weather_popup = awful.popup {
+        ontop = true,
+        visible = false,
+        shape = gears.shape.rounded_rect,
+        border_width = 1,
+        border_color = beautiful.bg_focus,
+        maximum_width = 400,
+        offset = {y = 5},
+        hide_on_right_click = true,
+        widget = {}
+    }
+
     local owm_one_call_api =
     ('https://api.openweathermap.org/data/3.0/onecall' ..
         '?lat=' .. coordinates[1] ..
@@ -164,7 +166,7 @@ local function worker(user_args)
             'minutely' ..
         '&lang=' .. LANG)
 
-    weather_widget = wibox.widget {
+    local widget = wibox.widget {
         {
             {
                 {
@@ -501,7 +503,7 @@ local function worker(user_args)
         end
     }
 
-    local function update_widget(widget, stdout, stderr)
+    local function update_widget(weather_icon, stdout, stderr)
         if stderr ~= '' then
             if not warning_shown then
                 if (stderr ~= 'curl: (52) Empty reply from server'
@@ -511,22 +513,22 @@ local function worker(user_args)
                     show_warning(stderr)
                 end
                 warning_shown = true
-                widget:is_ok(false)
-                tooltip:add_to_object(widget)
+                weather_icon:is_ok(false)
+                tooltip:add_to_object(weather_icon)
 
-                widget:connect_signal('mouse::enter', function() tooltip.text = stderr end)
+                weather_icon:connect_signal('mouse::enter', function() tooltip.text = stderr end)
             end
             return
         end
 
         warning_shown = false
-        tooltip:remove_from_object(widget)
-        widget:is_ok(true)
+        tooltip:remove_from_object(weather_icon)
+        weather_icon:is_ok(true)
 
         local result = json.decode(stdout)
 
-        widget:set_image(ICONS_DIR .. icon_map[result.current.weather[1].icon] .. icons_extension)
-        widget:set_text(gen_temperature_str(result.current.temp, '%.0f', both_units_widget, units))
+        weather_icon:set_image(ICONS_DIR .. icon_map[result.current.weather[1].icon] .. icons_extension)
+        weather_icon:set_text(gen_temperature_str(result.current.temp, '%.0f', both_units_widget, units))
 
         current_weather_widget:update(result.current)
 
@@ -557,12 +559,12 @@ local function worker(user_args)
         })
     end
 
-    weather_widget:buttons(gears.table.join(awful.button({}, 1, function()
+    widget:buttons(gears.table.join(awful.button({}, 1, function()
             if weather_popup.visible then
-                weather_widget:set_bg('#00000000')
+                widget:set_bg('#00000000')
                 weather_popup.visible = not weather_popup.visible
             else
-                weather_widget:set_bg(beautiful.bg_focus)
+                widget:set_bg(beautiful.bg_focus)
                 weather_popup:move_next_to(mouse.current_widget_geometry)
             end
         end)))
@@ -570,10 +572,10 @@ local function worker(user_args)
     watch(
         string.format(GET_FORECAST_CMD, owm_one_call_api),
         timeout,  -- API limit is 1k req/day; day has 1440 min; every 2 min is good
-        update_widget, weather_widget
+        update_widget, widget
     )
 
-    return weather_widget
+    return widget
 end
 
 return setmetatable(weather_widget, {__call = function(_, ...) return worker(...) end})
