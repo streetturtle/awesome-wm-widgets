@@ -127,6 +127,28 @@ local function uvi_index_color(uvi)
     return '<span weight="bold" foreground="' .. color .. '">' .. uvi .. '</span>'
 end
 
+local function get_coordinates(val)
+    local coordinates = val
+    if val == "ipBased" then
+        local geofile = "/tmp/geo.json"
+        if not gears.filesystem.file_readable(geofile) then
+            local handle = os.execute("curl -H 'Accept:application/json' ipinfo.io/json -s -o " .. geofile)
+            if handle then
+                show_warning("fail to get coordinates from ip")
+            end
+        end
+        local file = io.open( geofile,"r")
+        local result = file:read("*all")
+        result = json.decode(result)
+        file:close()
+        coordinates = {}
+        for match in result.loc:gmatch("[^,%s]+") do
+            coordinates[#coordinates + 1] = tonumber(match)
+        end
+    end
+    return coordinates
+end
+
 local function worker(user_args)
 
     local args = user_args or {}
@@ -139,7 +161,7 @@ local function worker(user_args)
         return
     end
 
-    local coordinates = args.coordinates
+    local coordinates = get_coordinates(args.coordinates)
     local api_key = args.api_key
     local font_name = args.font_name or beautiful.font:gsub("%s%d+$", "")
     local units = args.units or 'metric'
