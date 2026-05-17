@@ -9,6 +9,28 @@ function pactl:get_volume_cmd()
     return [[sh -c "pactl get-sink-volume @DEFAULT_SINK@ && pactl get-sink-mute @DEFAULT_SINK@"]]
 end
 
+local function notify_default_changed(self)
+    return function()
+        spawn.easy_async(self:get_volume_cmd(), function(stdout) 
+            local volume, is_muted = self:parse_volume_cmd(stdout)
+            if self.adapter and self.adapter.notify_default_changed then
+                self.adapter.notify_default_changed(volume, is_muted)
+            end
+        end)
+    end
+end
+
+local function notify_device_changed(self, device_type, device_name, is_default)
+    return function()
+        spawn.easy_async(self:get_row_volume_cmd(device_type, device_name), function(stdout)
+            local volume, is_muted = self:parse_row_volume(stdout)
+            if self.adapter and self.adapter.notify_device_changed then
+                self.adapter.notify_device_changed(device_name, volume, is_muted, is_default)
+            end
+        end)
+    end
+end
+
 function pactl:inc_volume_cmd()
     return string.format("pactl set-sink-volume @DEFAULT_SINK@ +%d%%", self.step)
 end
@@ -25,15 +47,6 @@ function pactl:dec_volume()
     spawn.easy_async(self:dec_volume_cmd(), notify_default_changed(self))
 end
 
-function notify_default_changed(self)
-    return function()
-        spawn.easy_async(self:get_volume_cmd(), function(stdout) 
-            volume, is_muted = self:parse_volume_cmd(stdout)
-            self.adapter.notify_default_changed(volume, is_muted)
-        end)
-    end
-end
-
 function pactl:tog_volume_cmd()
     return "pactl set-sink-mute @DEFAULT_SINK@ toggle"
 end
@@ -46,6 +59,15 @@ function pactl:set_default_cmd(device_type, device_name)
     return string.format([[pactl set-default-%s "%s"]], device_type, device_name)
 end
 
+function pactl:set_default(device_type, device_name)
+    spawn.easy_async(self:set_default_cmd(device_type, device_name), function()
+        notify_default_changed(self)()
+        if self.adapter and self.adapter.notify_popup_rebuild_required then
+            self.adapter.notify_popup_rebuild_required()
+        end
+    end)
+end
+
 function pactl:move_sink_inputs_cmd(sink_input_id, device_name)
     return string.format([[pactl move-sink-input %s "%s"]], sink_input_id, device_name)
 end
@@ -54,12 +76,24 @@ function pactl:row_volume_up_cmd(device_type, device_name)
     return string.format([[pactl set-%s-volume "%s" +%d%%]], device_type, device_name, self.step)
 end
 
+function pactl:row_volume_up(device_type, device_name, is_default)
+    spawn.easy_async(self:row_volume_up_cmd(device_type, device_name), notify_device_changed(self, device_type, device_name, is_default))
+end
+
 function pactl:row_volume_down_cmd(device_type, device_name)
     return string.format([[pactl set-%s-volume "%s" -%d%%]], device_type, device_name, self.step)
 end
 
+function pactl:row_volume_down(device_type, device_name, is_default)
+    spawn.easy_async(self:row_volume_down_cmd(device_type, device_name), notify_device_changed(self, device_type, device_name, is_default))
+end
+
 function pactl:row_mute_toggle_cmd(device_type, device_name)
     return string.format([[pactl set-%s-mute "%s" toggle]], device_type, device_name)
+end
+
+function pactl:row_mute_toggle(device_type, device_name, is_default)
+    spawn.easy_async(self:row_mute_toggle_cmd(device_type, device_name), notify_device_changed(self, device_type, device_name, is_default))
 end
 
 function pactl:get_row_volume_cmd(device_type, device_name)
@@ -110,8 +144,8 @@ function pactl:extract_sinks_and_sources(stdout)
             local description = line:match("^%s+Description: (.*)")
             if description then current_device.properties.device_description = description end
 
-            local volume = line:match("^%s+Volume:.-(%d+%%)")
-            if volume then current_device.volume = volume end
+            local volume = line:match("^%s+Volume:.-(%d+)%%")
+            if volume then current_device.volume = tonumber(volume) end
 
             local mute = line:match("^%s+Mute: (.*)")
             if mute then current_device.mute = (mute == "yes") end

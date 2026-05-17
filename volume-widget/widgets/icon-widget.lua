@@ -19,13 +19,13 @@ function widget.get_widget(widgets_args)
         layout = wibox.container.place,
         set_volume_level = function(self, new_value)
             local volume_icon_name
-            if self.is_muted then
+            local new_value_num = tonumber(new_value)
+            if self.is_muted or new_value_num == 0 then
                 volume_icon_name = 'audio-volume-muted-symbolic'
             else
-                local new_value_num = tonumber(new_value)
-                if (new_value_num >= 0 and new_value_num < 33) then
+                if (new_value_num <= 30) then
                     volume_icon_name="audio-volume-low-symbolic"
-                elseif (new_value_num < 66) then
+                elseif (new_value_num <= 70) then
                     volume_icon_name="audio-volume-medium-symbolic"
                 else
                     volume_icon_name="audio-volume-high-symbolic"
