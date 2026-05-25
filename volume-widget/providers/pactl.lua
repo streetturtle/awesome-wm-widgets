@@ -101,9 +101,17 @@ function pactl:get_row_volume_cmd(device_type, device_name)
 end
 
 function pactl:parse_row_volume(stdout)
-    local vol = stdout:match('(%d?%d?%d)%%')
+    local volsum, volcnt = 0, 0
+    for vol in string.gmatch(stdout, "(%d?%d?%d)%%") do
+        vol = tonumber(vol)
+        if vol ~= nil then
+            volsum = volsum + vol
+            volcnt = volcnt + 1
+        end
+    end
+    local vol = volcnt > 0 and (volsum / volcnt) or nil
     local is_muted = stdout:match('Mute: (%a+)') == 'yes'
-    return tonumber(vol), is_muted
+    return vol, is_muted
 end
 
 function pactl:parse_volume_cmd(stdout)
@@ -119,6 +127,8 @@ function pactl:extract_sinks_and_sources(stdout)
     local default_sink = stdout:match("Default Sink: (.-)\n")
     local default_source = stdout:match("Default Source: (.-)\n")
 
+    local in_ports = false
+
     for line in stdout:gmatch("[^\n]+") do
         local new_device_type = line:match("^%s*(%a+) #%d+")
         if new_device_type then
@@ -127,7 +137,8 @@ function pactl:extract_sinks_and_sources(stdout)
                 if device_type == "Source" then table.insert(sources, current_device) end
             end
             device_type = new_device_type
-            current_device = { properties = {} }
+            current_device = { properties = {}, ports = {} }
+            in_ports = false
         end
 
         if current_device then
@@ -144,16 +155,57 @@ function pactl:extract_sinks_and_sources(stdout)
             local description = line:match("^%s+Description: (.*)")
             if description then current_device.properties.device_description = description end
 
-            local volume = line:match("^%s+Volume:.-(%d+)%%")
-            if volume then current_device.volume = tonumber(volume) end
+            local volume_line = line:match("^%s+Volume: (.*)")
+            if volume_line then 
+                local volsum, volcnt = 0, 0
+                for vol in string.gmatch(volume_line, "(%d?%d?%d)%%") do
+                    vol = tonumber(vol)
+                    if vol ~= nil then
+                        volsum = volsum + vol
+                        volcnt = volcnt + 1
+                    end
+                end
+                if volcnt > 0 then current_device.volume = volsum / volcnt end
+            end
 
             local mute = line:match("^%s+Mute: (.*)")
             if mute then current_device.mute = (mute == "yes") end
+
+            local active_port = line:match("^%s+Active Port: (.*)")
+            if active_port then 
+                current_device.active_port = active_port 
+                in_ports = false
+            end
+
+            if line:match("^%s+Ports:%s*$") then
+                in_ports = true
+            elseif in_ports then
+                if line:match("^%s+[%w ]+:%s*$") or line:match("^%s+Formats:") or line:match("^%s+Properties:") then
+                    in_ports = false
+                else
+                    local port_id, port_desc = line:match("^%s+([%w%-%.]+):%s+([^(]+)")
+                    if port_id and port_desc then
+                        port_desc = port_desc:gsub("%s+$", "")
+                        current_device.ports[port_id] = port_desc
+                    end
+                end
+            end
         end
     end
     if current_device then
         if device_type == "Sink" then table.insert(sinks, current_device) end
         if device_type == "Source" then table.insert(sources, current_device) end
+    end
+
+    for _, list in ipairs({sinks, sources}) do
+        for _, dev in ipairs(list) do
+            if dev.active_port and dev.ports and dev.ports[dev.active_port] then
+                local port_short = dev.ports[dev.active_port]:match("([^%s]+)")
+                if port_short and dev.properties.device_description then
+                    dev.properties.device_description = dev.properties.device_description .. ' · ' .. port_short
+                end
+            end
+        end
     end
 
     return sinks, sources

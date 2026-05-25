@@ -77,7 +77,7 @@ local function Controller(view, model)
     end
 
     function controller.action_mixer(mixer_cmd)
-        spawn.easy_async(mixer_cmd)
+        spawn(mixer_cmd)
     end
 
     function controller.action_toggle_popup()
