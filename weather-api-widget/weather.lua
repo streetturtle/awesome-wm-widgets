@@ -317,7 +317,7 @@ local function worker(user_args)
                     (function ()
                             if units == "metric" then
                                     return weather.temp_c
-                            else 
+                            else
                                     return weather.temp_f
                             end
                     end)(),
@@ -649,12 +649,12 @@ local function worker(user_args)
 
         widget:set_image(ICONS_DIR .. icon_map[result.current.condition.code] .. day_night_extension .. icons_extension)
         widget:set_text(gen_temperature_str(
-                (function () 
-                        if units == "metric" then 
-                                return result.current.temp_c 
-                        else 
-                                return result.current.temp_f 
-                        end 
+                (function ()
+                        if units == "metric" then
+                                return result.current.temp_c
+                        else
+                                return result.current.temp_f
+                        end
                 end)(),
                 '%.0f',
                 both_units_widget,
